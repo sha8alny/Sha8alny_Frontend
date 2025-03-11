@@ -1,0 +1,12 @@
+{
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "include": ["./src/app/components"],
+    "includePattern": ".(jsx|js|ts|tsx)$"
+  },
+  "opts": {
+    "destination": "./docs"
+  }
+}
