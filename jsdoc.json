@@ -7,6 +7,6 @@
     "includePattern": ".(jsx|js|ts|tsx)$"
   },
   "opts": {
-    "destination": "./docs/settings"
+    "destination": "./docs"
   }
 }
