@@ -47,7 +47,7 @@ const SettingsAccountPrefs = () => {
         <SettingsCard
           header="Subscriptions & payments"
           items={{
-            "Current plan": { label: "Basic", link: () => handleNavigation("/subscription") },
+            "Current plan": { label: "Basic", link: () => handleNavigation("/membership-page") },
           }}
         />
         <SettingsCard

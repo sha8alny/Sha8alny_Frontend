@@ -1,8 +1,8 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import DeleteAccountPresentation from "../presentation/DeleteAccountPresentation";
-import { fetchUser, deleteAccount } from "../../../../services/userMangment";
+import { getName, deleteAccount } from "../../../../services/userMangment";
 import { useRouter } from "next/navigation";
-import {useToast} from '@/app/context/ToastContext'
+import { useToast } from "@/app/context/ToastContext";
 /**
  * DeleteAccountContainer component handles the logic for deleting a user account.
  * It fetches the user data, manages the delete account mutation, and handles success and error scenarios.
@@ -15,16 +15,20 @@ import {useToast} from '@/app/context/ToastContext'
  */
 
 const DeleteAccountContainer = ({ handleDeleteAccountForm }) => {
-  const { data: user, isLoading, error } = useQuery({
-    queryKey: ["user"],
-    queryFn: fetchUser,
+  const {
+    data: data,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["name-settings"],
+    queryFn: getName,
   });
   const router = useRouter();
   const showToast = useToast();
   const handleDeleteSucess = () => {
     router.push("/");
-  }
-  
+  };
+
   const mutation = useMutation({
     mutationFn: deleteAccount,
     onSuccess: () => {
@@ -34,11 +38,11 @@ const DeleteAccountContainer = ({ handleDeleteAccountForm }) => {
       showToast("Failed to delete account", false);
     },
   });
- 
-  return (  
+  console.log("name", data);
+  return (
     <DeleteAccountPresentation
       handleDeleteAccountForm={handleDeleteAccountForm}
-      user={user}
+      name={data?.name}
       isLoading={isLoading}
       error={error}
       deleteAccountMutation={mutation}

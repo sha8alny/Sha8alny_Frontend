@@ -11,7 +11,7 @@ import { useState } from "react";
  * 
  * @param {Object} props - The component props.
  * @param {Function} props.handleDeleteAccountForm - Function to toggle the visibility of the form.
- * @param {Object} props.user - The user object containing user details.
+ * @param {Object} props.name - The user name.
  * @param {boolean} props.isLoading - Flag indicating if the user data is loading.
  * @param {Object} props.error - Error object if there is an error fetching user data.
  * @param {Function} props.deleteAccountMutation - Mutation function to delete the user account.
@@ -20,7 +20,7 @@ import { useState } from "react";
  */
 const DeleteAccountPresentation = ({
   handleDeleteAccountForm,
-  user,
+  name,
   isLoading,
   error,
   deleteAccountMutation,
@@ -45,7 +45,7 @@ const DeleteAccountPresentation = ({
               Delete account
             </h1>
             <p className="text-text text-sm">
-              {user?.name}, we’re sorry to see you go
+              {name}, we’re sorry to see you go
             </p>
           </div>
           <p className="text-gray-500">

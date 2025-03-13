@@ -6,20 +6,20 @@ import ChangePasswordContainer from "../container/ChangePasswordContainer";
  *
  * @component
  * @param {Object} props - The component props.
- * @param {Object} props.user - The user object containing user details.
+ * @param {Object} props.email - user email.
  * @param {boolean} props.loading - The loading state to indicate if data is being fetched.
  * @param {string} props.activeForm - The currently active form identifier.
  * @param {Function} props.setActiveForm - Function to set the active form state.
  * @returns {JSX.Element} The rendered component.
  */
 
-const SettingsSecurityTab = ({ user, loading, activeForm, setActiveForm }) => {
+const SettingsSecurityTab = ({ email, loading, activeForm, setActiveForm }) => {
   const renderContent = () => {
     if (activeForm === "changeEmail")
       return (
         <ChangeEmailCard
           toggleForm={() => setActiveForm(null)}
-          email={user?.email}
+          email={email}
         />
       );
 
@@ -31,7 +31,7 @@ const SettingsSecurityTab = ({ user, loading, activeForm, setActiveForm }) => {
         header="Account access"
         items={{
           "Update email": {
-            label: loading ? "Loading..." : user?.email,
+            label: loading ? "Loading..." : email,
             link: () => setActiveForm("changeEmail"),
           },
           "Change password": {
