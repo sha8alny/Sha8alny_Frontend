@@ -1,3 +1,5 @@
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import Image from "next/image";
 
 /**
  * JobHeader component displays the header section of a job listing.
@@ -12,9 +14,6 @@
  * @param {boolean} props.isLoading - Flag indicating if the job data is still loading.
  * @returns {JSX.Element} The rendered JobHeader component.
  */
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
-import Image from "next/image";
-
 export default function JobHeader({ job, isLoading }) {
   return (
     <div className="border-b pb-6 mb-6">
