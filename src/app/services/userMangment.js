@@ -1,11 +1,11 @@
 export const fetchUser = async () => {    
-  const response = await fetch("http://localhost:5000/user");
+  const response = await fetch("http://localhost:3000/user");
   if (!response.ok) throw new Error("Failed to fetch user");
   return response.json();
 };
 
 export const deleteAccount = async (password) => {
-  const response = await fetch("http://localhost:5000/settings/delete-account", {
+  const response = await fetch("http://localhost:3000/settings/delete-account", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password }),
@@ -15,7 +15,7 @@ export const deleteAccount = async (password) => {
 };
 
 export const updateEmail = async ({ new_email, password }) => {
-  const response = await fetch("http://localhost:5000/settings/update-email", {
+  const response = await fetch("http://localhost:3000/settings/update-email", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ new_email, password }),
@@ -28,7 +28,7 @@ export const updateEmail = async ({ new_email, password }) => {
 };
 
 export const updatePassword = async ({ currentPassword, newPassword }) => {
-  const response = await fetch("http://localhost:5000/settings/update-password", {
+  const response = await fetch("http://localhost:3000/settings/update-password", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ old_password:currentPassword, new_password: newPassword }),
@@ -38,7 +38,7 @@ export const updatePassword = async ({ currentPassword, newPassword }) => {
 };
 
 export const updateUsername = async ({ newUsername }) => {
-  const response = await fetch("http://localhost:5000/settings/update-username", {
+  const response = await fetch("http://localhost:3000/settings/update-username", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: newUsername }),
@@ -48,3 +48,32 @@ export const updateUsername = async ({ newUsername }) => {
   return response.json();
 };
 
+export const handleSignup = async ({ signupData }) => {
+  try{
+    const signupResponse = await fetch("http://localhost:3000/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(signupData),
+    });
+
+    if (!signupResponse.ok) throw new Error("Failed to signup");
+
+    const loginResponse = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: signupData.email,
+        password: signupData.password,
+      }),
+    });
+
+    if (!loginResponse.ok) throw new Error("Auto-login failed");
+
+    const loginData = await loginResponse.json();
+
+    localStorage.setItem("token", loginData.token);
+    navigate("/dashboard");
+  }catch(error){
+    console.error(error);
+  }
+};
