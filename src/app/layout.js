@@ -12,9 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <ReactQueryProvider>
-          <ThemeProvider>
-           {children}
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </ReactQueryProvider>
       </body>
     </html>
