@@ -45,9 +45,7 @@ const SignUpContainer = () => {
     };
     return(
         <div className="flex flex-col h-screen bg-background overflow-x-hidden overflow-y-scroll">
-            <div className="flex flex-col md:flex-row h-full">
                 <SignUpForm handleSubmit={handleSubmit} isSubmitting={mutation.isPending}/>
-            </div> 
            </div>
     );
 };

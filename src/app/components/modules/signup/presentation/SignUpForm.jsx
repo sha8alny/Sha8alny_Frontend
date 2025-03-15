@@ -14,9 +14,9 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
         handleSubmit({username, email, password, recaptcha});
     };
     return(
-        <div className="flex items-center jusifty center min-h-screen bg-background flex-col">
+        <div className="flex items-center jusifty-center min-h-screen bg-background flex-col">
             <h2 className="text-3xl font-bold text-center text-secondary mt-30">Achieve The Best Professional Experience</h2>
-            <div className="bg-foreground p-8 rounded-lg shadow-2xl w-115 mt-9 mb-10">
+            <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary w-115 mt-9 mb-10">
             <div className="flex items-center justify-center w-30 h-15  text-background rounded-full mx-auto">
              <h2 className="text-3xl font-bold text-center text-secondary">Sign Up</h2>
             </div>
@@ -86,13 +86,15 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
                  sign in 
                 </a>
             </p>
-        </div>   
+        </div>  
+        <div className="mb-30">
         <p className="text-center text-sm text-text mb-10">
         Looking to create a page for a business?{""}
                 <a href="#" className="text-secondary hover:underline">
                  Get Help 
                 </a>
             </p>  
+            </div> 
            </div>
     );
 };

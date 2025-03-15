@@ -16,7 +16,7 @@ const SignInForm = ({handleSubmit,isSubmitting}) => {
 
 return(
     <div className="flex items-center justify-center min-h-screen bg-background ">
-        <div className="bg-foreground p-8 rounded-lg shadow-2xl w-96">
+        <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary w-96">
             <div className="flex items-center justify-center w-30 h-15  text-background rounded-full mx-auto">
              <h2 className="text-3xl font-bold text-center text-secondary">Sign In</h2>
             </div>
