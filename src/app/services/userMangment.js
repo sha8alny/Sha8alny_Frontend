@@ -1,50 +1,103 @@
-export const fetchUser = async () => {    
-  const response = await fetch("http://localhost:5000/user");
+const API_URL = "http://localhost:5000";
+
+const getToken = () => {
+  const token = localStorage.getItem("token") || "mock-token";
+  // if (!token) throw new Error("No token found");
+  return token;
+};
+
+export const fetchUser = async () => {
+  const response = await fetch(`${API_URL}/user`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
   if (!response.ok) throw new Error("Failed to fetch user");
   return response.json();
 };
 
-export const deleteAccount = async (password) => {
-  const response = await fetch("http://localhost:5000/settings/delete-account", {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password }),
+export const getName = async () => {
+  const response = await fetch(`${API_URL}/settings/get-name`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
   });
+
+  if (!response.ok) throw new Error("Failed to fetch user name");
+  return response.json();
+};
+
+export const getEmail = async () => {
+  const response = await fetch(`${API_URL}/settings/get-email`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch user email");
+  return response.json();
+}
+
+export const deleteAccount = async (password) => {
+  const response = await fetch(`${API_URL}/settings/delete-account`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+      Password: password,
+    },
+  });
+
   if (!response.ok) throw new Error("Failed to delete account");
   return response.json();
 };
 
 export const updateEmail = async ({ new_email, password }) => {
-  const response = await fetch("http://localhost:5000/settings/update-email", {
+  const response = await fetch(`${API_URL}/settings/update-email`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
     body: JSON.stringify({ new_email, password }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to update email");
-  }
+  if (!response.ok) throw new Error("Failed to update email");
   return response.json();
 };
 
-export const updatePassword = async ({ currentPassword, newPassword }) => {
-  const response = await fetch("http://localhost:5000/settings/update-password", {
+export const changePassword = async ({ currentPassword, newPassword }) => {
+  const response = await fetch(`${API_URL}/settings/change-password`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ old_password:currentPassword, new_password: newPassword }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({
+      old_password: currentPassword,
+      new_password: newPassword,
+    }),
   });
+
   if (!response.ok) throw new Error("Failed to update password");
   return response.json();
 };
 
 export const updateUsername = async ({ newUsername }) => {
-  const response = await fetch("http://localhost:5000/settings/update-username", {
+  const response = await fetch(`${API_URL}/settings/update-username`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
     body: JSON.stringify({ username: newUsername }),
   });
 
   if (!response.ok) throw new Error("Failed to update username");
   return response.json();
 };
-
