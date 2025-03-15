@@ -5,13 +5,13 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 const MembershipStatus = ({
   plan,
-  connections,
+  limits,
   messages,
-  applications,
   renewalDate,
+  isMissed,
 }) => {
-  const isPremium = plan === "Premium";
-  const isExpiredPremium = plan === "Basic" && renewalDate;
+  const isPremium = plan === "premium";
+  const isExpiredPremium = isMissed;
   const goldText = "text-[#F0A24F]";
   const greenText = "text-green-500";
   const maxConnections = 50,
@@ -49,7 +49,7 @@ const MembershipStatus = ({
                 <span className={goldText}>Unlimited</span>
               ) : (
                 <>
-                  {connections}/
+                  {limits.monthly_connection_requests + " "}/
                   <span className={greenText}>{maxConnections}</span>
                 </>
               )}
@@ -61,7 +61,8 @@ const MembershipStatus = ({
                 <span className={goldText}>Unlimited</span>
               ) : (
                 <>
-                  {messages}/<span className={greenText}>{maxMessages}</span>
+                  {messages + " "}/
+                  <span className={greenText}>{maxMessages}</span>
                 </>
               )}
             </div>
@@ -75,21 +76,24 @@ const MembershipStatus = ({
                 <span className={goldText}>Unlimited</span>
               ) : (
                 <>
-                  {applications}/
+                  {limits.daily_job_applications + " "}/
                   <span className={greenText}>{maxApplications}</span>
                 </>
               )}
             </div>
 
-            {isPremium && (
+            {isPremium && !isExpiredPremium && (
               <div className="flex gap-2">
                 <CalendarMonthIcon />
                 Plan ends on: {renewalDate}
               </div>
             )}
             {isExpiredPremium && (
-              <div className="text-red-500">
-                Premium Expired on: {renewalDate}
+              <div className="flex gap-2">
+                <CalendarMonthIcon />
+                <p className="text-red-500">
+                  Premium Expired on: {renewalDate}
+                </p>
               </div>
             )}
           </div>
