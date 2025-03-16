@@ -48,32 +48,55 @@ export const updateUsername = async ({ newUsername }) => {
   return response.json();
 };
 
-export const handleSignup = async ({ signupData }) => {
+export const handleSignup = async ({ username,email,password }) => {
   try{
     const signupResponse = await fetch("http://localhost:3000/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(signupData),
+      body: JSON.stringify(username,email,password),
     });
-
-    if (!signupResponse.ok) throw new Error("Failed to signup");
+    const responseData=await signupResponse.json();
+    if(signupResponse.ok){
+      alert(responseData.message);
+      localStorage.setItem("token",responseData.token);
+      return {success:true}
+    }
+    if (!signupResponse.ok) throw new Error(responseData.message ||"Failed to signup");
 
     const loginResponse = await fetch("http://localhost:3000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: signupData.email,
-        password: signupData.password,
-      }),
+      body: JSON.stringify({email,password }),
     });
+    if (!loginResponse.ok) throw new Error("Login failed");
 
-    if (!loginResponse.ok) throw new Error("Auto-login failed");
+    const {token}=await loginResponse.json()
+    if (token){
+      localStorage.setItem("token",token);
+      return {success:true};
+    }
+    throw new Error ("Token missing in response")
+  }catch(error){
+    throw new Error(error.message);
+  }
+};
 
-    const loginData = await loginResponse.json();
+export const handleSignIn = async ({email,password})=>{
+  try{
+    const loginResponse = await fetch("http://localhost:3000/login",{
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({email,password }),
+    });
+    if (!loginResponse.ok) throw new Error("Login failed");
 
-    localStorage.setItem("token", loginData.token);
-    navigate("/dashboard");
+    const {token}=await loginResponse.json()
+    if (token){
+      localStorage.setItem("token",token);
+      return {success:true};
+    }
   }catch(error){
     console.error(error);
   }
+
 };
