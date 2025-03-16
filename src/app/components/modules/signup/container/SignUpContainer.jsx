@@ -18,11 +18,11 @@ import { handleSignup } from "../../../../services/userMangment";
 const SignUpContainer = () => {
     const router = useRouter();
     
-    const mutation = useMutation({
+    const signupMutation = useMutation({
         mutationFn: handleSignup,
         onSuccess: () => {
-            alert("Registration Successful!");
-            router.push("/signin");
+            alert("Registration Successful & Auto-Login Successful!");
+            router.push("/Home");
         },
         onError: (error) => {
             alert(error.message);
@@ -41,13 +41,15 @@ const SignUpContainer = () => {
             alert("Please verify that you are not a robot");
             return;
         }
-        mutation.mutate({signUpData: formData});
+        const {username, email, password}=formData
+        signupMutation.mutate({username,email,password});
     };
     return(
         <div className="flex flex-col h-screen bg-background overflow-x-hidden overflow-y-scroll">
-                <SignUpForm handleSubmit={handleSubmit} isSubmitting={mutation.isPending}/>
+                <SignUpForm handleSubmit={handleSubmit} isSubmitting={signupMutation.isPending}/>
            </div>
     );
 };
+
 
 export default SignUpContainer;

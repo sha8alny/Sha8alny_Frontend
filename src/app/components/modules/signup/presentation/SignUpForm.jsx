@@ -8,9 +8,29 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [recaptcha, setRecaptcha] = useState("");
-    
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    const validateEmail=(value)=>{
+        setEmail(value);
+        if(!emailRegex.test(value)){
+            setEmailError("Please enter a valid email address.")
+        }else{
+            setEmailError("");
+        }
+    };
+    const validatePassword = (value)=>{
+        setPassword(value);
+        if(value.length<6){
+            setPasswordError("Password must be 6 characters or more");
+        }else{
+            setPasswordError("")
+        };
+    }
     const onSubmit = (e) => {
         e.preventDefault();
+        if (emailError || passwordError) return;
         handleSubmit({username, email, password, recaptcha});
     };
     return(
@@ -24,7 +44,7 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
             <div className="mb-4">
                 <label className="block text-text text-sm font-semibold mb-2"> Username </label>
                 <input
-                    type="username"
+                    type="text"
                     placeholder="Enter your username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -38,10 +58,12 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => validateEmail(e.target.value)}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
+                {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
+                
                 </div>
                 <div className="mb-4">
                 <label className="block text-text text-sm font-semibold mb-2"> Password </label>
@@ -49,10 +71,13 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
                     type="password"
                     placeholder="Enter your password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => validatePassword(e.target.value)}
+                    minLength={6}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
+                 {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
+
                 </div>
                 <ReCAPTCHA
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
@@ -98,5 +123,6 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
            </div>
     );
 };
+
 
 export default SignUpForm
