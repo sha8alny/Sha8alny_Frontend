@@ -6,7 +6,6 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 const MembershipStatus = ({
   plan,
   limits,
-  messages,
   renewalDate,
   isMissed,
 }) => {
@@ -61,7 +60,7 @@ const MembershipStatus = ({
                 <span className={goldText}>Unlimited</span>
               ) : (
                 <>
-                  {messages + " "}/
+                  {limits.daily_message_requests + " "}/
                   <span className={greenText}>{maxMessages}</span>
                 </>
               )}
