@@ -1,10 +1,24 @@
 "use client";
 import { useState } from "react";
 import PostNewJobForm from "../presentation/PostNewJobForm";
-import {postJob} from "../../../../services/companyManagment";
+import { postJob } from "../../../../services/companyManagment";
 
-
-const PostNewJobContainer = () => {
+/**
+ * PostNewJobContainer component
+ * 
+ * This component is responsible for handling the state and logic for posting a new job.
+ * It includes form validation, state management, and submission handling.
+ * 
+ * @component
+ * @param {Object} props - The properties object.
+ * @param {Function} props.onBack - The function to call when the back button is clicked.
+ * 
+ * @example
+ * return (
+ *   <PostNewJobContainer onBack={handleBack} />
+ * )
+ */
+const PostNewJobContainer = ({ onBack }) => {
     const [newJob, setNewJob] = useState({
         title: "",
         description: "",
@@ -45,15 +59,7 @@ const PostNewJobContainer = () => {
             await postJob(newJob);
             alert("Job posted successfully");
             console.log(newJob);
-            setNewJob({
-                title: "",
-                description: "",
-                location: "",
-                industry: "",
-                experience: "",
-                salary: "",
-                time: new Date().toISOString(),
-            });
+            onBack();
         } catch (error) {
             alert("Error posting Job, please try again");
             console.log(error);
@@ -63,12 +69,14 @@ const PostNewJobContainer = () => {
     };
 
     return (
+
         <PostNewJobForm
             newJob={newJob}
             handleChange={handleChange}
             errors={errors}
             isLoading={isLoading}
             handleJobSubmit={handleJobSubmit}
+            onBack={onBack}
         />  
     );
 };

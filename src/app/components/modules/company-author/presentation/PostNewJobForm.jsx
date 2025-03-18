@@ -1,13 +1,20 @@
+import { ArrowBack } from "@mui/icons-material";
 const PostNewJobForm =({
  newJob,
  handleChange,
     errors,
     handleJobSubmit,
     isLoading,
+    onBack,
 })=>{
     return(
         <div className="bg-transparent flex-grow p-6 rounded-lg border border-secondary max-w-2xl m-18 relative grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-2">
         <h2 className="text-3xl text-secondary font-semibold mb-4">Post New Job</h2>
+        <div className="flex justify-end">
+        <ArrowBack onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 "></ArrowBack>
+        </div>
+            </div>
         <form onSubmit={handleJobSubmit} className="space-y-4">
             <div>
                 <label htmlFor="jobTitle" className="block text-text text-semibold font-medium">
