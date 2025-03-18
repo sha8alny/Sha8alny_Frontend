@@ -1,7 +1,7 @@
-import SettingsNavbar from "./SettingsNavbar";
 import SettingsAccountPrefsContainer from "../container/SettingsAccountPrefsContainer";
 import SettingsSecurityContainer from "../container/SettingsSecurityContainer";
 import SettingsSidebarContainer from "../container/SettingsSidebarContainer";
+import SettingsNavbarContainer from "../container/SettingsNavbarContainer";
 
 /**
  * SettingsPresentation component renders the main settings page layout.
@@ -19,14 +19,16 @@ export default function SettingsPresentation({
 }) {
   return (
     <div className="flex flex-col h-screen w-screen bg-background overflow-x-hidden overflow-y-scroll">
-      <SettingsNavbar profilePictureUrl={profilePictureUrl} />
+      <SettingsNavbarContainer />
       <div className="flex flex-col md:flex-row h-full">
         <SettingsSidebarContainer
           profilePictureUrl={profilePictureUrl}
           setActiveSetting={handleSetActiveSetting}
         />
         <div className="flex flex-col gap-4 p-8 rounded-lg h-full w-full">
-          {activeSetting === "Account Preferences" && <SettingsAccountPrefsContainer />}
+          {activeSetting === "Account Preferences" && (
+            <SettingsAccountPrefsContainer />
+          )}
           {activeSetting === "Sign in & Security" && (
             <SettingsSecurityContainer />
           )}

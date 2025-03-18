@@ -1,4 +1,3 @@
-
 "use client";
 import MembershipCardContainer from "../container/MembershipCardContainer";
 import MembershipStatus from "./MembershipStatus";
@@ -18,10 +17,11 @@ import MembershipPageLayout from "./MembershipPageLayout";
  * @returns {JSX.Element} The rendered MembershipPage component with the current subscription details and actions.
  */
 
-
 const MembershipPage = ({
   currentPlan,
   limits,
+  premiumPlanDetails,
+  freePlanDetails,
   renewalDate,
   isMissed,
   handleCancelSubscription,
@@ -45,10 +45,14 @@ const MembershipPage = ({
             plan="Basic"
             price="Free"
             items={[
-              "Create a profile",
-              "Connect with up to 50 people",
-              "Apply to 5 jobs per month",
-              "Send 5 messages per day",
+              `${
+                freePlanDetails.features.create_profile === true
+                  ? "Create a profile"
+                  : "Access to feed"
+              }`,
+              `Connect with up to ${freePlanDetails.features.max_connections} people`,
+              `Apply to ${freePlanDetails.features.job_applications} jobs per month`,
+              `Send ${freePlanDetails.features.daily_messages} messages per day`,
             ]}
             currentPlan={currentPlan}
             renewalDate={renewalDate}
@@ -59,12 +63,24 @@ const MembershipPage = ({
           />
           <MembershipCardContainer
             plan="Premium"
-            price="$9.99/month"
+            price={`${
+              premiumPlanDetails.currency === "USD"
+                ? "$"
+                : premiumPlanDetails.currency
+            }${premiumPlanDetails.price}/month`}
             items={[
               "All Basic Plan features",
-              "Unlimited job applications",
-              "Connect with 500+ people",
-              "Message unlimited connections",
+              `${
+                premiumPlanDetails.features.job_applications == null
+                  ? "unlimited"
+                  : premiumPlanDetails.features.job_applications
+              } job applications`,
+              `Connect with ${premiumPlanDetails.features.max_connections}+ people`,
+              `Message ${
+                premiumPlanDetails.features.daily_messages == null
+                  ? "unlimited"
+                  : premiumPlanDetails.features.daily_messages
+              } connections`,
             ]}
             currentPlan={currentPlan}
             renewalDate={renewalDate}

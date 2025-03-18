@@ -150,8 +150,8 @@ const PaymentFormPresentation = ({
               </div>
               <div className="text-right">
                 <div
-                  className={`font-bold text-text ${
-                    premiumType === "premium_monthly"
+                   className={`font-bold text-text ${
+                    premiumType === "premium_annual"
                       ? "dark:text-text text-white"
                       : ""
                   }`}
