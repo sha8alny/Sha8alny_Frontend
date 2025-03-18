@@ -1,5 +1,8 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
 export const fetchUserProfile = async (username) => {
-    const response = await fetch(`http://localhost:5000/profile/${username}`);
+    const response = await fetch(`${API_URL}/profile/${username}`);
     if (!response.ok) {
       throw new Error("Failed to fetch user profile");
     }    

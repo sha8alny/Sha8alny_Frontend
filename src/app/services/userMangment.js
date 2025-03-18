@@ -1,20 +1,9 @@
-const API_URL = "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const getToken = () => {
   const token = localStorage.getItem("token") || "mock-token";
   // if (!token) throw new Error("No token found");
   return token;
-};
-
-export const fetchUser = async () => {
-  const response = await fetch(`${API_URL}/user`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
-
-  if (!response.ok) throw new Error("Failed to fetch user");
-  return response.json();
 };
 
 export const getName = async () => {
@@ -41,7 +30,7 @@ export const getEmail = async () => {
 
   if (!response.ok) throw new Error("Failed to fetch user email");
   return response.json();
-}
+};
 
 export const deleteAccount = async (password) => {
   const response = await fetch(`${API_URL}/settings/delete-account`, {

@@ -1,3 +1,4 @@
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const getToken = () => {
   const token = localStorage.getItem("token") || "mock-token";
@@ -6,19 +7,39 @@ const getToken = () => {
 };
 
 export const fetchSubscription = async () => {
-  const response = await fetch("http://localhost:5000/subscriptions");
+  const authToken = getToken();
+
+  if (!authToken) {
+    throw new Error("User not authenticated");
+  }
+
+  const response = await fetch(`${API_URL}/subscriptions`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
   if (!response.ok) throw new Error("Failed to fetch subscription data");
   return response.json();
 };
 
 export const cancelSubscription = async () => {
-  const response = await fetch("http://localhost:5000/subscriptions/cancel", {
+  const authToken = getToken();
+
+  if (!authToken) {
+    throw new Error("User not authenticated");
+  }
+
+  const response = await fetch(`${API_URL}/subscriptions/cancel`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
   });
-  if (!response.ok) throw new Error("Failed to fetch subscription data");
+
+  if (!response.ok) throw new Error("Failed to cancel subscription");
   return response.json();
 };
-
 
 export const processPayment = async (paymentData) => {
   try {
@@ -28,7 +49,7 @@ export const processPayment = async (paymentData) => {
       throw new Error("User not authenticated");
     }
 
-    const response = await fetch("http://localhost:5000/subscriptions", {
+    const response = await fetch(`${API_URL}/subscriptions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
