@@ -1,34 +1,47 @@
+
 "use client";
-import SettingsNavbar from "@/app/components/modules/settings/presentation/SettingsNavbar";
-import MembershipCard from "./MembershipCard";
+import MembershipCardContainer from "../container/MembershipCardContainer";
 import MembershipStatus from "./MembershipStatus";
-import PaymentContainer from "../container/PaymentContainer";
+import MembershipPageLayout from "./MembershipPageLayout";
+/**
+ * MembershipPage component displays the membership dashboard with current plan details and options to upgrade or cancel the subscription.
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.currentPlan - The current membership plan of the user.
+ * @param {Object} props.limits - The limits associated with the current plan.
+ * @param {string} props.renewalDate - The renewal date of the current plan.
+ * @param {boolean} props.isMissed - Indicates if the renewal date has been missed.
+ * @param {Function} props.handleCancelSubscription - Function to handle the cancellation of the subscription.
+ * @param {boolean} props.isCancelling - Indicates if the cancellation process is ongoing.
+ * @param {Function} props.handleUpgrade - Function to handle the upgrade of the subscription.
+ *
+ * @returns {JSX.Element} The rendered MembershipPage component with the current subscription details and actions.
+ */
 
 
 const MembershipPage = ({
   currentPlan,
   limits,
-  messages,
   renewalDate,
   isMissed,
+  handleCancelSubscription,
+  isCancelling,
+  handleUpgrade,
 }) => {
-  console.log(renewalDate);
-  
   return (
-    <div className="bg-background min-h-screen text-text font-sans">
-      <SettingsNavbar />
+    <MembershipPageLayout>
       <div className="flex p-4 flex-col gap-4">
-        <h1 className="text-3xl font-bold">Membership</h1>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+
         <MembershipStatus
           plan={currentPlan}
           limits={limits}
-          messages={messages}
           renewalDate={renewalDate}
           isMissed={isMissed}
         />
 
         <div className="flex flex-col items-center  md:flex-row gap-6 justify-center mt-5">
-          <MembershipCard
+          <MembershipCardContainer
             plan="Basic"
             price="Free"
             items={[
@@ -37,33 +50,33 @@ const MembershipPage = ({
               "Apply to 5 jobs per month",
               "Send 5 messages per day",
             ]}
-            handleSubscribe={(selectedPlan) =>
-              console.log(`Subscribing to ${selectedPlan}`)
-            }
             currentPlan={currentPlan}
             renewalDate={renewalDate}
             isMissed={isMissed}
+            handleUpgrade={handleUpgrade}
+            handleCancel={handleCancelSubscription}
+            isCancelling={isCancelling}
           />
-          <MembershipCard
+          <MembershipCardContainer
             plan="Premium"
-            price="$29.99/month"
+            price="$9.99/month"
             items={[
               "All Basic Plan features",
               "Unlimited job applications",
               "Connect with 500+ people",
               "Message unlimited connections",
             ]}
-            handleSubscribe={(selectedPlan) =>
-              console.log(`Subscribing to ${selectedPlan}`)
-            }
             currentPlan={currentPlan}
             renewalDate={renewalDate}
             isMissed={isMissed}
+            handleUpgrade={handleUpgrade}
+            handleCancel={handleCancelSubscription}
+            isCancelling={isCancelling}
           />
         </div>
-        <PaymentContainer />
       </div>
-    </div>
+    </MembershipPageLayout>
   );
 };
+
 export default MembershipPage;
