@@ -1,6 +1,6 @@
 "use client";
 
-import SettingsNavbar from "../../settings/presentation/SettingsNavbar";
+import SettingsNavbarContainer from "../../settings/container/SettingsNavbarContainer";
 
 /**
  * MembershipPageLayout component
@@ -18,7 +18,7 @@ import SettingsNavbar from "../../settings/presentation/SettingsNavbar";
 const MembershipPageLayout = ({ children }) => {
   return (
     <div className="bg-background min-h-screen text-text font-sans">
-      <SettingsNavbar />
+      <SettingsNavbarContainer />
       {children}
     </div>
   );
