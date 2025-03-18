@@ -32,3 +32,20 @@ export const postedJobs = async () => {
             throw new Error(error.message);
         }
 };
+
+
+export const JobApplicants = async (jobId) => {
+    try{
+        const applicantsResponse = await fetch(`http://localhost:3000/company/job/${jobId}/applicants`,{
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!applicantsResponse.ok) {
+            throw new Error("Failed to fetch applicants");}
+        const data = await applicantsResponse.json();
+        console.log("Fetched applicants",data);
+        return data;
+    } catch(error){
+        throw new Error(error.message);
+    }
+};
