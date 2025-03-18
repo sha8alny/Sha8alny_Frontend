@@ -23,6 +23,23 @@ export const fetchSubscription = async () => {
   return response.json();
 };
 
+export const fetchPlansDetails = async () => {
+  const authToken = getToken();
+
+  if (!authToken) {
+    throw new Error("User not authenticated");
+  }
+
+  const response = await fetch(`${API_URL}/plans`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch subscription data");
+  return response.json();
+};
+
 export const cancelSubscription = async () => {
   const authToken = getToken();
 
