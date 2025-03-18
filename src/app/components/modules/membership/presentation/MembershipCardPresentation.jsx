@@ -1,18 +1,18 @@
-import React from "react";
 import DoneIcon from "@mui/icons-material/Done";
 
 /**
  * MembershipCardPresentation component renders the membership card.
- *
+ * @component
  * @param {Object} props - The component props.
  * @param {string} props.plan - The plan name.
  * @param {string} props.price - The plan price.
  * @param {Array} props.items - The list of plan features.
- * @param {function} props.handleSubscribe - Function to handle subscription.
  * @param {boolean} props.isCurrentPlan - Indicates if this is the current plan of the user.
  * @param {boolean} props.isDowngrade - Indicates if this is a downgrade.
- * @param {boolean} props.isPremium - Indicates if this card is for the  premium plan.
+ * @param {boolean} props.isPremium - Indicates if this card is for the premium plan.
  * @param {boolean} props.hasPremiumExpired - Indicates if the premium plan has expired.
+ * @param {function} props.handler - Function to handle subscription or downgrading or renewal.
+ * @param {boolean} props.isCancelling - Indicates if the plan is in the process of being cancelled.
  * @returns {JSX.Element} The rendered component.
  */
 const MembershipCardPresentation = ({
