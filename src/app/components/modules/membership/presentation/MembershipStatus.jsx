@@ -1,7 +1,25 @@
+"use client";
+
 import GroupsIcon from "@mui/icons-material/Groups";
 import ChatIcon from "@mui/icons-material/Chat";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+
+/**
+ * MembershipStatus component displays the current membership plan status of the user.
+ *
+ * @param {Object} props - The properties object.
+ * @param {string} props.plan - The current plan of the user, either "premium" or "basic".
+ * @param {Object} props.limits - The limits object containing the user's usage limits.
+ * @param {number} props.limits.monthly_connection_requests - The number of monthly connection requests.
+ * @param {number} props.limits.daily_message_requests - The number of daily message requests.
+ * @param {number} props.limits.daily_job_applications - The number of daily job applications.
+ * @param {string} props.renewalDate - The renewal date of the current plan.
+ * @param {boolean} props.isMissed - Indicates if the renewal date is missed.
+ *
+ * @returns {JSX.Element} The MembershipStatus component.
+ */
+
 
 const MembershipStatus = ({
   plan,
