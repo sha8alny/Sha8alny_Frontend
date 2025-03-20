@@ -1,7 +1,10 @@
+const jobApi  = process.env.NEXT_PUBLIC_JOB_API_URL;
+
+
 export const fetchJobListings = async ({ pageParam = 1 }) => {
-    const itemsPerPage = 2;
+    const itemsPerPage = 5;
     const url = new URL(
-      `http://localhost:3001/AbdelRahmanHesham/Module7/1.0.0/jobs/search/${pageParam}`
+      `${jobApi}/search/${pageParam}`
     );
     url.searchParams.append("limit", itemsPerPage);
     console.log(url.toString());
@@ -17,7 +20,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
   };
   
   export const fetchJobDetails = async (id) => {
-    const response = await fetch(`http://localhost:3001/AbdelRahmanHesham/Module7/1.0.0/jobs/${id}`);
+    const response = await fetch(`${jobApi}/${id}`);
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -25,3 +28,29 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
   
     return response.json();
   };
+
+  export const submitJobApplication = async (jobId, data, resume) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("coverLetter", data.coverLetter);
+    formData.append("jobId", jobId);
+    if (resume) {
+      formData.append("resume", resume);
+    }
+  
+    const response = await fetch(
+      `${jobApi}/${jobId}/apply`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+  
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Failed to submit application");
+    }
+  };
+  
