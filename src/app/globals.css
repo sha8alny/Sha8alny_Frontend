@@ -1,21 +1,67 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Raleway:wght@400;700&display=swap')
+layer(base);
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-*: initial;
+  --font-sans: Open Sans, sans-serif;
+  --font-raleway: Raleway, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-text: var(--text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Light mode (default) */
+:root {
+  --background: #e9e9e9;
+  --foreground: #f5f5f5;
+  --primary: #191919;
+  --secondary: #0a66c2;
+  --text: #191919;
+  --muted-text-color: #7c7c7c;
+  --muted-bg-color: #0a66c2;
+}
+
+
+/* Dark mode */
+.dark {
+  --background: #1b1f23;
+  --foreground: #2f3438;
+  --primary: #ffffff;
+  --secondary: #71b7fb;
+  --text: #ffffff;
+  --muted-text-color: #99a1af;
+  --muted-bg-color: #d1d5dc;
+}
+
+.text-muted {
+  color: var(--muted-text-color);
+}
+
+.bg-muted {
+  background-color: var(--muted-bg-color);
 }
