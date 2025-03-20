@@ -1,4 +1,4 @@
-import Container from "@/components/layout/container";
+import Container from "@/components/layout/Container";
 import { Pencil, User } from "lucide-react";
 
 export default function ChangeURL({ username }) {
