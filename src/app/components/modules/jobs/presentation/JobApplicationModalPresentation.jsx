@@ -1,3 +1,15 @@
+import React from "react";
+import {
+  Modal,
+  Fade,
+  Button,
+  TextField,
+  Typography,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
+import { Close, CloudUpload, Send, Cancel } from "@mui/icons-material";
+
 /**
  * JobApplicationModalPresenter is a React component that renders a modal for job applications.
  * It includes a form for users to input their details, upload a resume, and submit their application.
@@ -17,17 +29,6 @@
  *
  * @returns {JSX.Element} The rendered JobApplicationModalPresenter component.
  */
-import React from "react";
-import {
-  Modal,
-  Fade,
-  Button,
-  TextField,
-  Typography,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
-import { Close, CloudUpload, Send, Cancel } from "@mui/icons-material";
 
 const JobApplicationModalPresenter = ({
   show,
