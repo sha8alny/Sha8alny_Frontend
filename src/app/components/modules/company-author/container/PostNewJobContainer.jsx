@@ -23,30 +23,49 @@ const PostNewJobContainer = ({ onBack }) => {
         title: "",
         description: "",
         location: "",
+        workLocation: "",
+        employmentType: "",
         industry: "",
         experience: "",
         salary: "",
-        time: new Date().toISOString(),
     });
 
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [alert, setAlert] = useState(null);
 
+    /**
+     * Handles input changes and updates the new job state.
+     * 
+     * @param {Object} e - The event object.
+     */
     const handleChange = (e) => {
-        setNewJob({ ...newJob, [e.target.id]: e.target.value });
+        const { name, value } = e.target;
+        setNewJob({ ...newJob, [name]: value });
     };
 
+    /**
+     * Validates the job form fields.
+     * 
+     * @returns {Object} An object containing validation errors, if any.
+     */
     const validateForm = () => {
         let newErrors = {};
         
-       for (const key in newJob) {
+        for (const key in newJob) {
             if (!newJob[key]) {
                 newErrors[key] = `${key} is required`;
             }
-        };
+        }
         return newErrors;
     };
 
+    /**
+     * Handles the job form submission.
+     * Validates the form, posts the job, and sets the appropriate alert messages.
+     * 
+     * @param {Object} e - The event object.
+     */
     const handleJobSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validateForm();
@@ -55,13 +74,24 @@ const PostNewJobContainer = ({ onBack }) => {
             return;
         }
         setIsLoading(true);
+        setAlert(null);
         try{
             await postJob(newJob);
-            alert("Job posted successfully");
+            setAlert({ type: "success", message: "Job posted successfully" });
+            setNewJob({
+                title: "",
+                description: "",
+                location: "",
+                workLocation: "",
+                employmentType: "",
+                industry: "",
+                experience: "",
+                salary: "",
+            });
             console.log(newJob);
-            onBack();
+            setErrors({});
         } catch (error) {
-            alert("Error posting Job, please try again");
+            setAlert({ type: "error", message: "Error posting job" });
             console.log(error);
         } finally {
             setIsLoading(false);
@@ -77,6 +107,7 @@ const PostNewJobContainer = ({ onBack }) => {
             isLoading={isLoading}
             handleJobSubmit={handleJobSubmit}
             onBack={onBack}
+            alert={alert}
         />  
     );
 };
