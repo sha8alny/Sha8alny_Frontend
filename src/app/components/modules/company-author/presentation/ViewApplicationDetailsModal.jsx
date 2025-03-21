@@ -1,7 +1,7 @@
 "use client";
 import Dialog from '@mui/material/Dialog';
-import { Close } from '@mui/icons-material';
-
+import { Close, CloudUpload } from '@mui/icons-material';
+import { TextField,Button,Typography } from '@mui/material';
 /**
  * ViewApplicationDetailsModal component
  * 
@@ -34,22 +34,93 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                 backdrop:
                 {style: {backgroundColor: 'rgba(0, 0, 0, 0.35)'}}}}
         >
-            <div className='border-3 border-secondary p-8'>
-                <h2  className="text-2xl text-secondary font-bold mb-6">
-                    Application Details
-                </h2>
-            <hr className="border-secondary mb-2"/>
+            <div className='w-full max-w-lg rounded-lg bg-foreground shadow-lg relative p-4'>
+                <div className="items-center p-2">
+                <Typography variant="h5" component="h2" gutterBottom>Application for {application.jobTitle}</Typography>
+                </div>
+            <hr className="p-4 space-y-4"/>
             {isLoading ?(
                     <p className="text-secondary text-2xl font-bold">Loading...</p>
                 ) : (<div>
-                <p className="text-secondary text-xl font-semibold">Name: <span className="text-xl text-text font-semibold">{application.fullName}</span></p>
-                <p className="text-secondary text-xl font-semibold">Email:<span className="text-xl text-text font-semibold">{application.emailAddress}</span></p>
-                <p className="text-secondary text-xl font-semibold"> Phone:<span className="text-xl text-text font-semibold">{application.phoneNumber}</span></p>
-                <p className="text-secondary text-xl font-semibold">Cover Letter: <span className="text-xl text-text font-semibold">{application.coverLetter}</span></p>
-                <p className="text-secondary text-xl font-semibold">Resume/CV: <a className="text-xl text-text font-semibold underline" href={application.resumeCv} target="_blank" rel="noreferrer">Download Resume/CV</a></p>
-                <Close onClick={onClose} className="absolute top-2 right-2 text-secondary cursor-pointer"></Close>
-            </div>
+                 <div className='flex flex-col gap-4'>   
+                <div className="flex flex-col md:flex-row gap-4">
+                        <TextField
+                            required
+                            fullWidth
+                            id="outlined-read-only-input"
+                            label="Full Name"
+                            defaultValue={application.fullName}
+                            slotProps={{
+                                input: {readOnly: true},
+                            }}/>
+                        <TextField
+                            required
+                            fullWidth
+                            id="outlined-read-only-input"
+                            label="Email Address"
+                            defaultValue={application.emailAddress}
+                            slotProps={{
+                                input: {readOnly: true},
+                            }}/>
+                </div>
+                <TextField
+                    required
+                    fullWidth
+                    id="outlined-read-only-input"
+                    label="Phone Number"
+                    defaultValue={application.phoneNumber}
+                    slotProps={{
+                        input: {readOnly: true},
+                    }}/>
+                <TextField
+                    id="outlined-read-only-input"
+                    label="Cover Letter"
+                    defaultValue={application.coverLetter}
+                    multiline
+                    rows={5} />
+                <div>
+                    <Typography variant='subtittle1' gutterBottom>Resume/CV</Typography>
+                    <div className='mt-2 mb-2'>
+                    <label htmlFor="resmue-upload">
+                        <input
+                          disabled
+                          type="file"
+                            id="resume-upload"
+                            className="hidden"
+                        />
+                        <Button
+                          variant="outlined"
+                            component="span"
+                            startIcon={<CloudUpload />}
+                        >
+                            Upload Resume
+                        </Button>
+                        </label>
+                        </div>
+
+                        {(application.resumeFile)?.name ? (
+                            <p className="text-secondary text-xl font-semibold">
+                               Selected: {application.resumeFile.name}
+                            </p>
+                        ):(<p className="text-secondary text-lg font-semibold">
+                            No file selected 
+                            </p>)
+                        }
+                        </div>
+                        {application.resumeUrl && (
+                            <div>
+                                    <a className="text-xl text-secondary font-semibold underline"
+                                     href={application.resumeUrl}
+                                     download={application.resumeFile?.name||"resume"}
+                                     >
+                                     📄 Download Resume
+                                     </a>
+                            </div>)}
+                  </div>
+                  </div>
             )}
+              
+                <Close onClick={onClose} className="absolute top-2 right-2 text-secondary cursor-pointer"></Close>
             </div>
         </Dialog>
     );
