@@ -48,51 +48,45 @@ export const updateUsername = async ({ newUsername }) => {
   return response.json();
 };
 
-export const handleSignup = async ({ username,email,password }) => {
+export const handleSignup = async ({ username,email,password, isAdmin, captcha, rememberMe }) => {
   try{
     const signupResponse = await fetch("http://localhost:3000/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(username,email,password),
+      body: JSON.stringify({username,email,password, isAdmin, captcha}),
     });
-    const responseData=await signupResponse.json();
-    if(signupResponse.ok){
-      alert(responseData.message);
-      localStorage.setItem("token",responseData.token);
-      return {success:true}
-    }
-    if (!signupResponse.ok) throw new Error(responseData.message ||"Failed to signup");
 
-    const loginResponse = await fetch("http://localhost:3000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({email,password }),
-    });
-    if (!loginResponse.ok) throw new Error("Login failed");
+    if (!signupResponse.ok) throw new Error("Failed to signup");
 
-    const {token}=await loginResponse.json()
-    if (token){
-      localStorage.setItem("token",token);
-      return {success:true};
-    }
-    throw new Error ("Token missing in response")
+
+    const loginResponse = await handleSignIn({email,password, rememberMe});
+    if (!loginResponse) throw new Error("Failed to login");
+    return {success:true};
+
   }catch(error){
     throw new Error(error.message);
   }
 };
 
-export const handleSignIn = async ({email,password})=>{
+export const handleSignIn = async ({email,password, rememberMe})=>{
+
   try{
-    const loginResponse = await fetch("http://localhost:3000/login",{
+    const loginResponse = await fetch("http://localhost:3000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({email,password }),
+      body: JSON.stringify({email,password, rememberMe }),
     });
     if (!loginResponse.ok) throw new Error("Login failed");
 
-    const {token}=await loginResponse.json()
-    if (token){
-      localStorage.setItem("token",token);
+    const {accessToken, refreshToken, isAdmin}=await loginResponse.json()
+     if (accessToken){
+      sessionStorage.setItem("accessToken",accessToken);
+     
+      if (rememberMe){
+      localStorage.setItem("refreshToken",refreshToken);
+      }
+      localStorage.setItem("isAdmin",isAdmin);
+      console.log("accessToken",sessionStorage.getItem("accessToken"));
       return {success:true};
     }
   }catch(error){
@@ -100,3 +94,4 @@ export const handleSignIn = async ({email,password})=>{
   }
 
 };
+

@@ -1,6 +1,8 @@
+import { fetchWithAuth } from "./userAuthentication";
+
 export const postJob = async (jobData) => {
     try{
-        const postJobResponse = await fetch("http://localhost:3000/company/job", {
+        const postJobResponse = await fetchWithAuth("http://localhost:3000/company/job", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(jobData),
@@ -18,7 +20,7 @@ export const postJob = async (jobData) => {
 
 export const postedJobs = async () => {
     try{
-        const postedJobsResponse = await fetch ("http://localhost:3000/company/job",{
+        const postedJobsResponse = await fetchWithAuth("http://localhost:3000/company/job",{
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
@@ -36,7 +38,7 @@ export const postedJobs = async () => {
 
 export const JobApplicants = async (jobId, page = 1) => {
     try{
-        const applicantsResponse = await fetch(`http://localhost:3000/employers/${jobId}/applicants/${page}`,{
+        const applicantsResponse = await fetchWithAuth(`http://localhost:3000/employers/${jobId}/applicants/${page}`,{
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
@@ -52,7 +54,7 @@ export const JobApplicants = async (jobId, page = 1) => {
 
 export const getApplication = async (jobId, applicantId) => {
     try{
-        const applicationResponse = await fetch(`http://localhost:3000/employers/${jobId}/${applicantId}/application`,{
+        const applicationResponse = await fetchWithAuth(`http://localhost:3000/employers/${jobId}/${applicantId}/application`,{
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
