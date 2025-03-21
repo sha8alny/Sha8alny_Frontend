@@ -3,6 +3,7 @@ import AddButton from "@/app/components/ui/AddButton";
 import EditButton from "@/app/components/ui/EditButton";
 import { ChevronDown, ChevronUp, Edit, Plus } from "lucide-react";
 import Image from "next/image";
+import ModCertificate from "../container/ModCertificate";
 
 const CertificateCard = ({ certificate }) => {
   return (
@@ -20,7 +21,7 @@ const CertificateCard = ({ certificate }) => {
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
           {certificate.name}{" "}
-          <EditButton/>
+          <ModCertificate certificate={certificate} />
         </h4>
         <p>{certificate.issuingOrganization}</p>
         <p className="text-muted flex">
@@ -33,7 +34,7 @@ const CertificateCard = ({ certificate }) => {
           {certificate.skills.map((skill, index) => (
             <span
               key={index}
-              className="bg-muted text-background px-2 py-1 rounded-full text-xs font-bold"
+              className="bg-secondary text-background px-2 py-1 rounded-full text-xs font-bold"
             >
               {skill}
             </span>
@@ -54,7 +55,7 @@ export default function Certifications({
       <Container className="border border-[#111] rounded-xl shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Certificates{" "}
-          <AddButton/>
+          <ModCertificate adding/>
         </h3>
         <div className="space-y-8">
           {(!allCertificates ? certifications.slice(0, 3) : certifications).map(

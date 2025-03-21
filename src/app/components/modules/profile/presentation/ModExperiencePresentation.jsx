@@ -14,7 +14,7 @@ import { Form, FormField } from "@/app/components/ui/Form";
 import AddButton from "@/app/components/ui/AddButton";
 import { Controller } from "react-hook-form";
 
-export default function ModEducationPresentation({
+export default function ModExperiencePresentation({
   form,
   handleFormSubmit,
   addSkill,
@@ -35,23 +35,23 @@ export default function ModEducationPresentation({
   return (
     <div className="p-4 text-primary overflow-y-auto">
       <div className="text-xl font-bold text-center mb-4">
-        Education Information
+        Experience Information
       </div>
       <Form {...form}>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="flex gap-2">
             <FormField
               control={form.control}
-              name="school"
+              name="title"
               render={({ field }) => (
                 <div className="flex-[2_1_0]">
-                  <Label className="font-semibold mb-2" htmlFor="school">
-                    School
+                  <Label className="font-semibold mb-2" htmlFor="title">
+                    Job Title
                   </Label>
-                  <Input {...field} id="school" placeholder="School" />
-                  {errors.school && (
+                  <Input {...field} id="title" placeholder="Job Title" />
+                  {errors.title && (
                     <p className="text-red-500 text-xs mt-2">
-                      {errors.school.message}
+                      {errors.title.message}
                     </p>
                   )}
                 </div>
@@ -59,16 +59,43 @@ export default function ModEducationPresentation({
             />
             <FormField
               control={form.control}
-              name="degree"
+              name="employmentType"
               render={({ field }) => (
-                <div className="flex-1">
-                  <Label className="font-semibold mb-2" htmlFor="degree">
-                    Degree
+                <div>
+                  <Label
+                    className="font-semibold mb-2"
+                    htmlFor="employmentType"
+                  >
+                    Type
                   </Label>
-                  <Input {...field} id="degree" placeholder="Degree" />
-                  {errors.degree && (
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => setValue("employmentType", value)}
+                  >
+                    <SelectTrigger id="employmentType">
+                      <SelectValue>
+                        <span className={field.value ? "" : "text-muted"}>
+                          {field.value || "Type"}
+                        </span>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[
+                        "Full-time",
+                        "Part-time",
+                        "Contract",
+                        "Freelance",
+                        "Internship",
+                      ].map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.employmentType && (
                     <p className="text-red-500 text-xs mt-2">
-                      {errors.degree.message}
+                      {errors.employmentType.message}
                     </p>
                   )}
                 </div>
@@ -78,20 +105,16 @@ export default function ModEducationPresentation({
           <div className="flex gap-2">
             <FormField
               control={form.control}
-              name="fieldOfStudy"
+              name="company"
               render={({ field }) => (
-                <div className="flex-[3_1_0]">
-                  <Label className="font-semibold mb-2" htmlFor="fieldOfStudy">
-                    Field of Study
+                <div className="flex-[2_1_0]">
+                  <Label className="font-semibold mb-2" htmlFor="company">
+                    Company
                   </Label>
-                  <Input
-                    {...field}
-                    id="fieldOfStudy"
-                    placeholder="Field of Study"
-                  />
-                  {errors.fieldOfStudy && (
+                  <Input {...field} id="company" placeholder="Company Name" />
+                  {errors.company && (
                     <p className="text-red-500 text-xs mt-2">
-                      {errors.fieldOfStudy.message}
+                      {errors.company.message}
                     </p>
                   )}
                 </div>
@@ -99,16 +122,16 @@ export default function ModEducationPresentation({
             />
             <FormField
               control={form.control}
-              name="grade"
+              name="location"
               render={({ field }) => (
                 <div className="flex-1">
-                  <Label className="font-semibold mb-2" htmlFor="grade">
-                    Grade
+                  <Label className="font-semibold mb-2" htmlFor="location">
+                    Location
                   </Label>
-                  <Input {...field} id="grade" placeholder="Grade" />
-                  {errors.grade && (
+                  <Input {...field} id="location" placeholder="Location" />
+                  {errors.location && (
                     <p className="text-red-500 text-xs mt-2">
-                      {errors.grade.message}
+                      {errors.location.message}
                     </p>
                   )}
                 </div>
@@ -126,7 +149,7 @@ export default function ModEducationPresentation({
                   onCheckedChange={(value) => setValue("isCurrent", value)}
                 />
                 <Label className="font-semibold mb-2" htmlFor="isCurrent">
-                  Currently Studying
+                  I currently work here
                 </Label>
               </div>
             )}
@@ -135,7 +158,7 @@ export default function ModEducationPresentation({
             <div className="flex gap-4">
               <FormField
                 control={form.control}
-                name="startMonth"
+                name="startDate.month"
                 render={({ field }) => (
                   <div>
                     <Label className="font-semibold mb-2" htmlFor="startMonth">
@@ -143,7 +166,9 @@ export default function ModEducationPresentation({
                     </Label>
                     <Select
                       value={field.value}
-                      onValueChange={(value) => setValue("startMonth", value)}
+                      onValueChange={(value) =>
+                        setValue("startDate.month", value)
+                      }
                     >
                       <SelectTrigger id="startMonth">
                         <SelectValue>
@@ -160,9 +185,9 @@ export default function ModEducationPresentation({
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.startMonth && (
+                    {errors.startDate?.month && (
                       <p className="text-red-500 text-xs mt-2">
-                        {errors.startMonth.message}
+                        {errors.startDate.month.message}
                       </p>
                     )}
                   </div>
@@ -170,7 +195,7 @@ export default function ModEducationPresentation({
               />
               <FormField
                 control={form.control}
-                name="startYear"
+                name="startDate.year"
                 render={({ field }) => (
                   <div>
                     <Label className="font-semibold mb-2" htmlFor="startYear">
@@ -178,7 +203,9 @@ export default function ModEducationPresentation({
                     </Label>
                     <Select
                       value={field.value}
-                      onValueChange={(value) => setValue("startYear", value)}
+                      onValueChange={(value) =>
+                        setValue("startDate.year", value)
+                      }
                     >
                       <SelectTrigger id="startYear">
                         <SelectValue>
@@ -195,9 +222,9 @@ export default function ModEducationPresentation({
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.startYear && (
+                    {errors.startDate?.year && (
                       <p className="text-red-500 text-xs mt-2">
-                        {errors.startYear.message}
+                        {errors.startDate.year.message}
                       </p>
                     )}
                   </div>
@@ -208,7 +235,7 @@ export default function ModEducationPresentation({
               <div className="flex gap-4">
                 <FormField
                   control={form.control}
-                  name="endMonth"
+                  name="endDate.month"
                   render={({ field }) => (
                     <div>
                       <Label className="font-semibold mb-2" htmlFor="endMonth">
@@ -216,7 +243,9 @@ export default function ModEducationPresentation({
                       </Label>
                       <Select
                         value={field.value}
-                        onValueChange={(value) => setValue("endMonth", value)}
+                        onValueChange={(value) =>
+                          setValue("endDate.month", value)
+                        }
                       >
                         <SelectTrigger id="endMonth">
                           <SelectValue>
@@ -233,9 +262,9 @@ export default function ModEducationPresentation({
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors.endMonth && (
+                      {errors.endDate?.month && (
                         <p className="text-red-500 text-xs mt-2">
-                          {errors.endMonth.message}
+                          {errors.endDate.month.message}
                         </p>
                       )}
                     </div>
@@ -243,7 +272,7 @@ export default function ModEducationPresentation({
                 />
                 <FormField
                   control={form.control}
-                  name="endYear"
+                  name="endDate.year"
                   render={({ field }) => (
                     <div>
                       <Label className="font-semibold mb-2" htmlFor="endYear">
@@ -251,7 +280,9 @@ export default function ModEducationPresentation({
                       </Label>
                       <Select
                         value={field.value}
-                        onValueChange={(value) => setValue("endYear", value)}
+                        onValueChange={(value) =>
+                          setValue("endDate.year", value)
+                        }
                       >
                         <SelectTrigger id="endYear">
                           <SelectValue>
@@ -268,9 +299,9 @@ export default function ModEducationPresentation({
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors.endYear && (
+                      {errors.endDate?.year && (
                         <p className="text-red-500 text-xs mt-2">
-                          {errors.endYear.message}
+                          {errors.endDate.year.message}
                         </p>
                       )}
                     </div>
@@ -278,35 +309,6 @@ export default function ModEducationPresentation({
                 />
               </div>
             )}
-          </div>
-          <div className="space-y-2">
-            <Label className="font-semibold mb-2" htmlFor="activities">
-              Activities
-            </Label>
-            <Controller
-              name="activities"
-              control={form.control}
-              render={({ field }) => (
-                <Textarea
-                  id="activities"
-                  {...field}
-                  placeholder="List your activities"
-                  rows={3}
-                  style={{ resize: "none" }}
-                  className={errors.activities ? "border-red-500" : ""}
-                />
-              )}
-            />
-            <div className="flex justify-between">
-              {errors.activities && (
-                <p className="text-red-500 text-xs">
-                  {errors.activities.message}
-                </p>
-              )}
-              <span className="text-xs text-muted">
-                {watch("activities")?.length || 0}/500
-              </span>
-            </div>
           </div>
           <div className="space-y-2">
             <Label className="font-semibold mb-2" htmlFor="description">
@@ -319,7 +321,7 @@ export default function ModEducationPresentation({
                 <Textarea
                   id="description"
                   {...field}
-                  placeholder="Add a description"
+                  placeholder="Describe your role and responsibilities"
                   rows={4}
                   className={errors.description ? "border-red-500" : ""}
                   style={{ resize: "none" }}

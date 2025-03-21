@@ -8,7 +8,7 @@ export const SkillCard = ({ skill, level }) => {
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">{skill.skill_name}</h3>
-        <span className="text-xs font-medium text-white bg-secondary px-2 py-0.5 rounded-full">
+        <span className="text-xs font-medium text-background bg-secondary px-2 py-0.5 rounded-full">
           {level.level}
         </span>
       </div>

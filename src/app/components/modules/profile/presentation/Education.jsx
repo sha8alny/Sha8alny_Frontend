@@ -46,7 +46,7 @@ const EducationCard = ({ placeOfEducation }) => {
           {placeOfEducation.skills.map((skill, index) => (
             <span
               key={index}
-              className="bg-muted text-background px-2 py-1 rounded-full text-xs font-bold"
+              className="bg-secondary text-background px-2 py-1 rounded-full text-xs font-bold"
             >
               {skill}
             </span>

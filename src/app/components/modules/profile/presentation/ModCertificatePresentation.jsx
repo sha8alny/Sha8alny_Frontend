@@ -1,6 +1,5 @@
 import { Input } from "@/app/components/ui/Input";
 import { Checkbox } from "@/app/components/ui/CheckBox";
-import { Textarea } from "@/app/components/ui/Textarea";
 import { Label } from "@/app/components/ui/Label";
 import { X } from "lucide-react";
 import {
@@ -12,15 +11,14 @@ import {
 } from "@/app/components/ui/Select";
 import { Form, FormField } from "@/app/components/ui/Form";
 import AddButton from "@/app/components/ui/AddButton";
-import { Controller } from "react-hook-form";
 
-export default function ModEducationPresentation({
+export default function ModCertificatePresentation({
   form,
   handleFormSubmit,
   addSkill,
   removeSkill,
   handleSubmit,
-  isCurrent,
+  neverExpires,
   isValid,
   months,
   years,
@@ -35,63 +33,23 @@ export default function ModEducationPresentation({
   return (
     <div className="p-4 text-primary overflow-y-auto">
       <div className="text-xl font-bold text-center mb-4">
-        Education Information
+        Certificate Information
       </div>
       <Form {...form}>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="flex gap-2">
             <FormField
               control={form.control}
-              name="school"
-              render={({ field }) => (
-                <div className="flex-[2_1_0]">
-                  <Label className="font-semibold mb-2" htmlFor="school">
-                    School
-                  </Label>
-                  <Input {...field} id="school" placeholder="School" />
-                  {errors.school && (
-                    <p className="text-red-500 text-xs mt-2">
-                      {errors.school.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="degree"
+              name="name"
               render={({ field }) => (
                 <div className="flex-1">
-                  <Label className="font-semibold mb-2" htmlFor="degree">
-                    Degree
+                  <Label className="font-semibold mb-2" htmlFor="name">
+                    Certificate Name
                   </Label>
-                  <Input {...field} id="degree" placeholder="Degree" />
-                  {errors.degree && (
+                  <Input {...field} id="name" placeholder="Enter the certification name." />
+                  {errors.name && (
                     <p className="text-red-500 text-xs mt-2">
-                      {errors.degree.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-          </div>
-          <div className="flex gap-2">
-            <FormField
-              control={form.control}
-              name="fieldOfStudy"
-              render={({ field }) => (
-                <div className="flex-[3_1_0]">
-                  <Label className="font-semibold mb-2" htmlFor="fieldOfStudy">
-                    Field of Study
-                  </Label>
-                  <Input
-                    {...field}
-                    id="fieldOfStudy"
-                    placeholder="Field of Study"
-                  />
-                  {errors.fieldOfStudy && (
-                    <p className="text-red-500 text-xs mt-2">
-                      {errors.fieldOfStudy.message}
+                      {errors.name.message}
                     </p>
                   )}
                 </div>
@@ -99,16 +57,19 @@ export default function ModEducationPresentation({
             />
             <FormField
               control={form.control}
-              name="grade"
+              name="issuingOrganization"
               render={({ field }) => (
-                <div className="flex-1">
-                  <Label className="font-semibold mb-2" htmlFor="grade">
-                    Grade
+                <div className="flex-1 min-w-0">
+                  <Label
+                    className="font-semibold mb-2"
+                    htmlFor="issuingOrganization"
+                  >
+                    Issuing Organization
                   </Label>
-                  <Input {...field} id="grade" placeholder="Grade" />
-                  {errors.grade && (
+                  <Input {...field} id="issuingOrganization" placeholder="Enter the organization." />
+                  {errors.issuingOrganization && (
                     <p className="text-red-500 text-xs mt-2">
-                      {errors.grade.message}
+                      {errors.issuingOrganization.message}
                     </p>
                   )}
                 </div>
@@ -117,38 +78,40 @@ export default function ModEducationPresentation({
           </div>
           <FormField
             control={form.control}
-            name="isCurrent"
+            name="neverExpires"
             render={({ field }) => (
               <div className="flex items-start gap-2">
                 <Checkbox
                   {...field}
-                  id="isCurrent"
-                  onCheckedChange={(value) => setValue("isCurrent", value)}
+                  id="neverExpires"
+                  onCheckedChange={(value) => setValue("neverExpires", value)}
                 />
-                <Label className="font-semibold mb-2" htmlFor="isCurrent">
-                  Currently Studying
+                <Label className="font-semibold mb-2" htmlFor="neverExpires">
+                  This certificate does not expire
                 </Label>
               </div>
             )}
           />
-          <div className="flex justify-between">
-            <div className="flex gap-4">
+          <div className="flex justify-between gap-6">
+            <div className="flex gap-2">
               <FormField
                 control={form.control}
-                name="startMonth"
+                name="issueDate.month"
                 render={({ field }) => (
                   <div>
-                    <Label className="font-semibold mb-2" htmlFor="startMonth">
-                      Start Month
+                    <Label className="font-semibold mb-2" htmlFor="issueMonth">
+                      Issue Month
                     </Label>
                     <Select
                       value={field.value}
-                      onValueChange={(value) => setValue("startMonth", value)}
+                      onValueChange={(value) =>
+                        setValue("issueDate.month", value)
+                      }
                     >
-                      <SelectTrigger id="startMonth">
+                      <SelectTrigger id="issueMonth">
                         <SelectValue>
-                          <span className={field.value ? "" : "text-muted"}>
-                            {field.value || "Month"}
+                          <span className={!field.value ? "text-muted" : ""}>
+                            {field.value || "Select Month"}
                           </span>
                         </SelectValue>
                       </SelectTrigger>
@@ -160,9 +123,9 @@ export default function ModEducationPresentation({
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.startMonth && (
+                    {errors.issueDate?.month && (
                       <p className="text-red-500 text-xs mt-2">
-                        {errors.startMonth.message}
+                        {errors.issueDate.month.message}
                       </p>
                     )}
                   </div>
@@ -170,20 +133,22 @@ export default function ModEducationPresentation({
               />
               <FormField
                 control={form.control}
-                name="startYear"
+                name="issueDate.year"
                 render={({ field }) => (
                   <div>
-                    <Label className="font-semibold mb-2" htmlFor="startYear">
-                      Start Year
+                    <Label className="font-semibold mb-2" htmlFor="issueYear">
+                      Issue Year
                     </Label>
                     <Select
                       value={field.value}
-                      onValueChange={(value) => setValue("startYear", value)}
+                      onValueChange={(value) =>
+                        setValue("issueDate.year", parseInt(value))
+                      }
                     >
-                      <SelectTrigger id="startYear">
+                      <SelectTrigger id="issueYear">
                         <SelectValue>
-                          <span className={field.value ? "" : "text-muted"}>
-                            {field.value || "Year"}
+                          <span className={!field.value ? "text-muted" : ""}>
+                            {field.value || "Select Year"}
                           </span>
                         </SelectValue>
                       </SelectTrigger>
@@ -195,33 +160,35 @@ export default function ModEducationPresentation({
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.startYear && (
+                    {errors.issueDate?.year && (
                       <p className="text-red-500 text-xs mt-2">
-                        {errors.startYear.message}
+                        {errors.issueDate.year.message}
                       </p>
                     )}
                   </div>
                 )}
               />
             </div>
-            {!isCurrent && (
-              <div className="flex gap-4">
+            {!neverExpires && (
+              <div className="flex gap-2">
                 <FormField
                   control={form.control}
-                  name="endMonth"
+                  name="expirationDate.month"
                   render={({ field }) => (
                     <div>
-                      <Label className="font-semibold mb-2" htmlFor="endMonth">
-                        End Month
+                      <Label className="font-semibold mb-2" htmlFor="expirationMonth">
+                        Exp. Month
                       </Label>
                       <Select
                         value={field.value}
-                        onValueChange={(value) => setValue("endMonth", value)}
+                        onValueChange={(value) =>
+                          setValue("expirationDate.month", value)
+                        }
                       >
-                        <SelectTrigger id="endMonth">
+                        <SelectTrigger id="expirationMonth">
                           <SelectValue>
-                            <span className={field.value ? "" : "text-muted"}>
-                              {field.value || "Month"}
+                            <span className={!field.value ? "text-muted" : ""}>
+                              {field.value || "Select Month"}
                             </span>
                           </SelectValue>
                         </SelectTrigger>
@@ -233,9 +200,9 @@ export default function ModEducationPresentation({
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors.endMonth && (
+                      {errors.expirationDate?.month && (
                         <p className="text-red-500 text-xs mt-2">
-                          {errors.endMonth.message}
+                          {errors.expirationDate.month.message}
                         </p>
                       )}
                     </div>
@@ -243,20 +210,22 @@ export default function ModEducationPresentation({
                 />
                 <FormField
                   control={form.control}
-                  name="endYear"
+                  name="expirationDate.year"
                   render={({ field }) => (
                     <div>
-                      <Label className="font-semibold mb-2" htmlFor="endYear">
-                        End Year
+                      <Label className="font-semibold mb-2" htmlFor="expirationYear">
+                        Exp. Year
                       </Label>
                       <Select
                         value={field.value}
-                        onValueChange={(value) => setValue("endYear", value)}
+                        onValueChange={(value) =>
+                          setValue("expirationDate.year", parseInt(value))
+                        }
                       >
-                        <SelectTrigger id="endYear">
+                        <SelectTrigger id="expirationYear">
                           <SelectValue>
-                            <span className={field.value ? "" : "text-muted"}>
-                              {field.value || "Year"}
+                            <span className={!field.value ? "text-muted" : ""}>
+                              {field.value || "Select Year"}
                             </span>
                           </SelectValue>
                         </SelectTrigger>
@@ -268,9 +237,9 @@ export default function ModEducationPresentation({
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors.endYear && (
+                      {errors.expirationDate?.year && (
                         <p className="text-red-500 text-xs mt-2">
-                          {errors.endYear.message}
+                          {errors.expirationDate.year.message}
                         </p>
                       )}
                     </div>
@@ -278,64 +247,6 @@ export default function ModEducationPresentation({
                 />
               </div>
             )}
-          </div>
-          <div className="space-y-2">
-            <Label className="font-semibold mb-2" htmlFor="activities">
-              Activities
-            </Label>
-            <Controller
-              name="activities"
-              control={form.control}
-              render={({ field }) => (
-                <Textarea
-                  id="activities"
-                  {...field}
-                  placeholder="List your activities"
-                  rows={3}
-                  style={{ resize: "none" }}
-                  className={errors.activities ? "border-red-500" : ""}
-                />
-              )}
-            />
-            <div className="flex justify-between">
-              {errors.activities && (
-                <p className="text-red-500 text-xs">
-                  {errors.activities.message}
-                </p>
-              )}
-              <span className="text-xs text-muted">
-                {watch("activities")?.length || 0}/500
-              </span>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label className="font-semibold mb-2" htmlFor="description">
-              Description
-            </Label>
-            <Controller
-              name="description"
-              control={form.control}
-              render={({ field }) => (
-                <Textarea
-                  id="description"
-                  {...field}
-                  placeholder="Add a description"
-                  rows={4}
-                  className={errors.description ? "border-red-500" : ""}
-                  style={{ resize: "none" }}
-                />
-              )}
-            />
-            <div className="flex justify-between">
-              {errors.description && (
-                <p className="text-red-500 text-xs">
-                  {errors.description.message}
-                </p>
-              )}
-              <span className="text-xs text-muted">
-                {watch("description")?.length || 0}/1000
-              </span>
-            </div>
           </div>
           <div className="space-y-2">
             <Label className="font-semibold mb-2">Skills</Label>
