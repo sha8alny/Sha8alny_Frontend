@@ -3,5 +3,6 @@ export const fetchUserProfile = async (username) => {
     if (!response.ok) {
       throw new Error("Failed to fetch user profile");
     }    
+    console.log("here");
     return response.json();
 };

@@ -1,6 +1,6 @@
-export const updateProfile = async (url, data) => {
+export const changeCustomURL = async (data) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/${url}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/custom-url`,
     {
       method: "PATCH",
       headers: {
@@ -10,7 +10,7 @@ export const updateProfile = async (url, data) => {
     }
   );
   if (!response.ok) {
-    throw new Error("Failed to update user profile");
+    throw new Error("Failed to update custom URL");
   }
   return response.status;
 };
