@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { updateUsername } from "../../../../services/userMangment";
 import ChangeUsernameForm from "../presentation/ChangeUsernameForm";
-import {useToast} from '@/app/context/ToastContext'
+import { useToast } from "@/app/context/ToastContext";
 /**
  * ChangeUsernameContainer component handles the logic for changing the username.
  * It manages the state for the username and error messages, and handles form submission.
- * 
+ *
  * @param {Object} props - The component props.
  * @param {Function} props.handleUsernameForm - Function to toggle the username form visibility.
- * 
+ *
  * @returns {JSX.Element} The rendered ChangeUsernameForm component.
  */
 
