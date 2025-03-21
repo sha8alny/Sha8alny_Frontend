@@ -1,4 +1,4 @@
-import Container from "@/components/layout/Container";
+import Container from "@/app/components/layout/Container";
 import { Shield } from "lucide-react";
 
 export default function ProfileStrength({ profileStrength }) {

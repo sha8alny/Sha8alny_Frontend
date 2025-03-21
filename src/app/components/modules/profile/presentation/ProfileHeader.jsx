@@ -1,4 +1,4 @@
-import Container from "@/components/layout/Container";
+import Container from "@/app/components/layout/Container";
 import Image from "next/image";
 
 export default function ProfileHeader({ userProfile }) {

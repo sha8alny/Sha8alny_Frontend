@@ -1,9 +1,9 @@
 import { Plus } from "lucide-react";
 
-export default function AddButton() {
+export default function AddButton({onClick}) {
   return (
-    <button className="p-1 hover:bg-gray-500 rounded-md">
+    <div onClick={onClick} className="p-1 hover:cursor-pointer hover:bg-gray-500 rounded-md">
       <Plus />
-    </button>
+    </div>
   );
 }

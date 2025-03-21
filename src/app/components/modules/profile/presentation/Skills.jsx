@@ -1,7 +1,7 @@
 import { Plus, ThumbsUp } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/app/components/ui/Button";
 import SkillContainer from "../container/SkillContainer";
-import Container from "@/components/layout/Container";
+import Container from "@/app/components/layout/Container";
 
 export const SkillCard = ({ skill, level }) => {
   return (

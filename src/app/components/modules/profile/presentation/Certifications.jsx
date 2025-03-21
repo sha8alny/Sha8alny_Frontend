@@ -1,6 +1,6 @@
-import Container from "@/components/layout/Container";
-import AddButton from "@/components/ui/AddButton";
-import EditButton from "@/components/ui/EditButton";
+import Container from "@/app/components/layout/Container";
+import AddButton from "@/app/components/ui/AddButton";
+import EditButton from "@/app/components/ui/EditButton";
 import { ChevronDown, ChevronUp, Edit, Plus } from "lucide-react";
 import Image from "next/image";
 
