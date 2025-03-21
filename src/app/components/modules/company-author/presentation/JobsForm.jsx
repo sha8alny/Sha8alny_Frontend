@@ -1,12 +1,31 @@
-import { useState } from "react";
-import PostNewJobContainer from "../container/PostNewJobContainer";
+"use client";
+import RemoveRedEyeOutlined from "@mui/icons-material/RemoveRedEyeOutlined";
+import ContactsOutlined from "@mui/icons-material/ContactsOutlined";
 
-const PostedJobsForm = ({ jobs, isLoading }) => {
+/**
+ * JobsForm component
+ * 
+ * This component renders a list of jobs. It displays a loading indicator while the jobs are being fetched.
+ * 
+ * @component
+ * @param {Object} props - The properties object.
+ * @param {Array} props.jobs - The array of job objects to display.
+ * @param {boolean} props.isLoading - The state indicating if the jobs are being fetched.
+ * @param {Function} props.onShowPostJobForm - The function to call when the "Post new job" button is clicked.
+ * @param {Function} props.onShowApplicants - The function to call when the "Show Applicants" button is clicked.
+ * 
+ * @example
+ * return (
+ *   <JobsForm
+ *     jobs={jobs}
+ *     isLoading={isLoading}
+ *     onShowPostJobForm={onShowPostJobForm}
+ *     onShowApplicants={onShowApplicants}
+ *   />
+ * )
+ */
+const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants}) => {
 
-    const [showPostJobForm, setShowPostJobForm] = useState(false);
-    if (showPostJobForm) {
-        return <PostNewJobContainer onBack={()=>setShowPostJobForm(false)} />;
-    }
     return(
         <div className="flex-grow">
         <section className="flex-grow p-8 bg-transparent border border-secondary rounded-lg shadow-xl m-8 max-w-2xl mt-5 bottom-8 grid grid-cols-2">
@@ -18,7 +37,7 @@ const PostedJobsForm = ({ jobs, isLoading }) => {
         </div>
         <div className="flex justify-end">
             <button 
-            onClick={()=>setShowPostJobForm(true)}
+            onClick={onShowPostJobForm}
             className=" border border-secondary text-lg text-secondary rounded-full px-8 py-2 hover:bg-foreground transition duration-300 ">Post new job</button>
 
             </div>
@@ -28,20 +47,26 @@ const PostedJobsForm = ({ jobs, isLoading }) => {
         <hr className="border-secondary  mt-4"/>
         {isLoading ?( <p className="text-text text-xl text-semibold">Loading...</p> ) : ( jobs.length === 0 ? (
             <p className="text-text text-xl text-semibold">No jobs posted yet</p> ) : (
-                jobs.map((job) => (
+                jobs.map((job,index) => (
         <form
-            key={job.job_id}
+            key={job.job_id || index}
           className=" bg-foreground flex-grow p-10 w-full rounded-lg border border-secondary  mt-8  ">
           <div>
             <div className="grid grid-cols-2 mb-4">
           <h1 className="text-secondary text-2xl text-semibold">{job.title}</h1>
-          <button className=" border border-secondary text-lg text-secondary rounded-full  hover:bg-background transition duration-300 ">Show Applicants</button>
+          <button
+            type="button"
+            onClick={()=>
+                {console.log("Job ID:", job.job_id); 
+                onShowApplicants(job.job_id)}}
+           className=" border border-secondary text-lg text-secondary rounded-full  hover:bg-background transition duration-300 ">Show Applicants</button>
           </div>
           <div className="grid grid-cols-3">
             <div>
             <p className="text-text">{job.location}</p>
             <p className="text-text">{job.industry}</p>
-            <p className="text-secondary">${job.salary}</p>
+            <p className="text-secondary">{job.employmentType}</p>
+            <p className="text-secondary font-bold">${job.salary}</p>
             </div>
             <div className="relative ml-8 flex items-center justify-center h-20"> 
             <div className="w-[4px] h-17 bg-text"></div>
@@ -50,10 +75,24 @@ const PostedJobsForm = ({ jobs, isLoading }) => {
             </div>
             <div>
                 <p className="text-text">{job.experience}</p>
-                <p className="text-secondary">{new Date(job.time).toLocaleDateString()}</p>
+                <p className="text-secondary">{job.workLocation}</p>
+                <p className="text-secondary font-bold">{new Date(job.time).toLocaleDateString()}</p>
             </div>
           </div>
-
+          <div className="mt-2 grid grid-cols-2 gap-100">
+             <div className="relative flex flex-col items-center group cursor-pointer">
+                    <RemoveRedEyeOutlined className="text-secondary" />
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-secondary text-sm"> views:<p className="text-text text-semibold text-sm text-center font-bold">{job.numViews} </p>
+                    </span>
+                </div>
+             <div className="relative flex flex-col items-center group cursor-pointer">
+             <ContactsOutlined className="text-secondary"/>
+             <span className="absolute top-8 text-sm text-secondary bg-none p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opactity duration-300">
+                Applicants:<p className="text-text text-semibold text-center font-bold">{job.numApplications} </p>
+             </span>
+             </div>
+          </div>
+ 
           </div>
 
         </form>
@@ -64,4 +103,4 @@ const PostedJobsForm = ({ jobs, isLoading }) => {
         </div>
     );
 };
-export default PostedJobsForm;
+export default JobsForm;
