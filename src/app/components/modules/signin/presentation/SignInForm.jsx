@@ -1,18 +1,50 @@
 "use client";
-import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
+/**
+ * SignInForm component
+ * 
+ * This component renders a sign-in form with fields for email, password, and a "Remember Me" checkbox.
+ * It includes form validation and handles input changes.
+ * 
+ * @component
+ * @param {Object} props - The properties object.
+ * @param {string} props.email - The email entered by the user.
+ * @param {Function} props.setEmail - The function to set the email state.
+ * @param {string} props.password - The password entered by the user.
+ * @param {Function} props.setPassword - The function to set the password state.
+ * @param {boolean} props.rememberMe - The state indicating if the "Remember Me" checkbox is checked.
+ * @param {Function} props.setRememberMe - The function to set the "Remember Me" state.
+ * @param {Function} props.setRecaptcha - The function to set the reCAPTCHA value.
+ * @param {Function} props.handleSubmit - The function to handle form submission.
+ * @param {boolean} props.isSubmitting - The state indicating if the form is being submitted.
+ * 
+ * @example
+ * return (
+ *   <SignInForm
+ *     email={email}
+ *     setEmail={setEmail}
+ *     password={password}
+ *     setPassword={setPassword}
+ *     rememberMe={rememberMe}
+ *     setRememberMe={setRememberMe}
+ *     setRecaptcha={setRecaptcha}
+ *     handleSubmit={handleSubmit}
+ *     isSubmitting={isSubmitting}
+ *   />
+ * )
+ */
 
-const SignInForm = ({handleSubmit,isSubmitting}) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [recaptcha, setRecaptcha] = useState("");
-
-    
-    const onSubmit = (e) => {
-        e.preventDefault();
-        handleSubmit({email, password, recaptcha});
-    };
+const SignInForm = ({
+    email,
+    setEmail,
+    password,
+    setPassword,
+    rememberMe,
+    setRememberMe,
+    setRecaptcha,
+    handleSubmit,
+    isSubmitting}) => {
 
 return(
     <div className="flex items-center justify-center min-h-screen bg-background ">
@@ -20,7 +52,7 @@ return(
             <div className="flex items-center justify-center w-30 h-15  text-background rounded-full mx-auto">
              <h2 className="text-3xl font-bold text-center text-secondary">Sign In</h2>
             </div>
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="mb-4">
                 <label className="block text-text text-sm font-semibold mb-2"> Email </label>
                 <input
@@ -46,11 +78,11 @@ return(
                 <div>
                 <input
                     type="checkbox"
-                    // value={rememberMe}
-                    // onChange={(e) => setRememberMe(e.target.checked)}
-                    className=" w-4 h-4 accent-secondary"/>
+                    value={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className=" w-3 h-3 accent-secondary"/>
                 <label htmlFor="rememberMe" className="ml-2 text-text text-sm">Remember Me</label>
-                <a href="#" className="ml-22 text-left text-secondary hover:underline text-sm">
+                <a href="#" className="ml-20 text-left text-secondary hover:underline text-sm">
                  Forget password?
                 </a>
                 </div>
@@ -79,7 +111,7 @@ return(
             </form>
             <p className="text-center text-sm text-text mt-4">
                 New shaغalny member?{""}
-                <a href="#" className="text-secondary hover:underline">
+                <a href="/signup" className="text-secondary hover:underline">
                  join the community 
                 </a>
             </p>
