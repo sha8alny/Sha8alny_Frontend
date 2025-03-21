@@ -46,14 +46,14 @@ export const deleteAccount = async (password) => {
   return response.json();
 };
 
-export const updateEmail = async ({ new_email, password }) => {
+export const updateEmail = async ({ email, password }) => {
   const response = await fetch(`${API_URL}/settings/update-email`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
-    body: JSON.stringify({ new_email, password }),
+    body: JSON.stringify({ email, password }),
   });
 
   if (!response.ok) throw new Error("Failed to update email");
@@ -68,8 +68,8 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
       Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({
-      old_password: currentPassword,
-      new_password: newPassword,
+      currentPassword,
+      newPassword,
     }),
   });
 

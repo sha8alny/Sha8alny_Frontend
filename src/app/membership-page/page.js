@@ -1,7 +1,7 @@
 "use client";
 import MembershipPageContainer from "@/app/components/modules/membership/container/MembershipPageContainer";
-const Page = () => {
+const MembershipPage = () => {
   return <MembershipPageContainer />;
 };
 
-export default Page;
+export default MembershipPage;

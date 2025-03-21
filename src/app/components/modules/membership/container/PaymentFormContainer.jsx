@@ -45,7 +45,7 @@ const PaymentFormContainer = () => {
   const [textColor, setTextColor] = useState("#191919");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [premiumType, setPremiumType] = useState("premium_monthly");
+  const [premiumType, setPremiumType] = useState("premiumMonthly");
   const [success, setSuccess] = useState(false);
   
   // price calculations logic
@@ -82,7 +82,7 @@ const PaymentFormContainer = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  // stripe submition logic
+  // stripe submission logic
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCardError(null);
@@ -99,7 +99,7 @@ const PaymentFormContainer = () => {
 
     const { token, error } = await stripe.createToken(
       elements.getElement(CardNumberElement),
-      { name, address_country: country }
+      { name, addressCountry: country }
     );
     setLoading(true);
 
@@ -113,9 +113,9 @@ const PaymentFormContainer = () => {
     if (token) {
       try {
         const paymentData = {
-          plan_id: premiumType,
-          payment_method: "card",
-          stripe_token: token.id,
+          planId: premiumType,
+          paymentMethod: "card",
+          stripeToken: token.id,
         };
         const response = await processPayment(paymentData);
         setSuccess(true);

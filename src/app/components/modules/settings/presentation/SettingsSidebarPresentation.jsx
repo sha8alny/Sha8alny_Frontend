@@ -10,9 +10,14 @@ import React from "react";
  * @param {function} props.handleChangeSetting - Function to handle changing the active setting.
  * @returns {JSX.Element} The rendered component.
  */
-const SettingsSidebarPresentation = ({ profilePictureUrl, settings, highlight, handleChangeSetting }) => {
+const SettingsSidebarPresentation = ({
+  profilePictureUrl,
+  settings,
+  highlight,
+  handleChangeSetting,
+}) => {
   return (
-    <aside className="bg-foreground flex flex-col lg:h-full lg:w-[390px]">
+    <aside className="bg-foreground flex flex-col lg:h-full lg:w-[390px] ">
       <div className="flex flex-row gap-2 mt-3 items-center ml-4 p-2">
         <img
           src={profilePictureUrl}
@@ -23,7 +28,7 @@ const SettingsSidebarPresentation = ({ profilePictureUrl, settings, highlight, h
           Settings
         </h1>
       </div>
-      <div className="flex md:flex-col sm:flex-row gap-8 mt-8 items-start overflow-x-scroll md:overflow-hidden w-max">
+      <div className="flex md:flex-col sm:flex-row gap-8 mt-8 items-start overflow-x-auto w-full">
         {settings.map((setting) => (
           <div
             key={setting.id}
