@@ -46,13 +46,13 @@ const MembershipPage = ({
             price="Free"
             items={[
               `${
-                freePlanDetails.features.create_profile === true
+                freePlanDetails.features.createProfile === true
                   ? "Create a profile"
                   : "Access to feed"
               }`,
-              `Connect with up to ${freePlanDetails.features.max_connections} people`,
-              `Apply to ${freePlanDetails.features.job_applications} jobs per month`,
-              `Send ${freePlanDetails.features.daily_messages} messages per day`,
+              `Connect with up to ${freePlanDetails.features.maxConnections} people`,
+              `Apply to ${freePlanDetails.features.jobApplications} jobs per month`,
+              `Send ${freePlanDetails.features.dailyMessages} messages per day`,
             ]}
             currentPlan={currentPlan}
             renewalDate={renewalDate}
@@ -71,15 +71,15 @@ const MembershipPage = ({
             items={[
               "All Basic Plan features",
               `${
-                premiumPlanDetails.features.job_applications == null
+                premiumPlanDetails.features.jobApplications == null
                   ? "unlimited"
-                  : premiumPlanDetails.features.job_applications
+                  : premiumPlanDetails.features.jobApplications
               } job applications`,
-              `Connect with ${premiumPlanDetails.features.max_connections}+ people`,
+              `Connect with ${premiumPlanDetails.features.maxConnections}+ people`,
               `Message ${
-                premiumPlanDetails.features.daily_messages == null
+                premiumPlanDetails.features.dailyMessages == null
                   ? "unlimited"
-                  : premiumPlanDetails.features.daily_messages
+                  : premiumPlanDetails.features.dailyMessages
               } connections`,
             ]}
             currentPlan={currentPlan}

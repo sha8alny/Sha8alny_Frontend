@@ -11,9 +11,9 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
  * @param {Object} props - The properties object.
  * @param {string} props.plan - The current plan of the user, either "premium" or "basic".
  * @param {Object} props.limits - The limits object containing the user's usage limits.
- * @param {number} props.limits.monthly_connection_requests - The number of monthly connection requests.
- * @param {number} props.limits.daily_message_requests - The number of daily message requests.
- * @param {number} props.limits.daily_job_applications - The number of daily job applications.
+ * @param {number} props.limits.monthlyConnectionRequests - The number of monthly connection requests.
+ * @param {number} props.limits.dailyMessageRequests - The number of daily message requests.
+ * @param {number} props.limits.dailyJobApplications - The number of daily job applications.
  * @param {string} props.renewalDate - The renewal date of the current plan.
  * @param {boolean} props.isMissed - Indicates if the renewal date is missed.
  *
@@ -66,7 +66,7 @@ const MembershipStatus = ({
                 <span className={goldText}>Unlimited</span>
               ) : (
                 <>
-                  {limits.monthly_connection_requests + " "}/
+                  {limits.monthlyConnectionRequests + " "}/
                   <span className={greenText}>{maxConnections}</span>
                 </>
               )}
@@ -78,7 +78,7 @@ const MembershipStatus = ({
                 <span className={goldText}>Unlimited</span>
               ) : (
                 <>
-                  {limits.daily_message_requests + " "}/
+                  {limits.dailyMessageRequests + " "}/
                   <span className={greenText}>{maxMessages}</span>
                 </>
               )}
@@ -93,7 +93,7 @@ const MembershipStatus = ({
                 <span className={goldText}>Unlimited</span>
               ) : (
                 <>
-                  {limits.daily_job_applications + " "}/
+                  {limits.dailyJobApplications + " "}/
                   <span className={greenText}>{maxApplications}</span>
                 </>
               )}

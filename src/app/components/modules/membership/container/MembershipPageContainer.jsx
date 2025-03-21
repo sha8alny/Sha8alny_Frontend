@@ -26,6 +26,7 @@ const MembershipPageContainer = () => {
     queryKey: ["membershipStatus"],
     queryFn: fetchSubscription,
   });
+  
   const {
     data: plansDetails,
     isLoading: isPlansLoading,
@@ -64,28 +65,28 @@ const MembershipPageContainer = () => {
       </p>
     );
 
-  const { max_connections, job_applications, daily_messages } = data?.limits;
+  const { maxConnections, jobApplications, dailyMessages } = data?.limits;
   const limits = {
-    daily_job_applications: job_applications,
-    daily_message_requests: daily_messages,
-    monthly_connection_requests: max_connections,
+    dailyJobApplications: jobApplications,
+    dailyMessageRequests: dailyMessages,
+    monthlyConnectionRequests: maxConnections,
   };
 
-  const plans_details = plansDetails;
+  const plansDetailsList = plansDetails;
 
-  const premiumPlanDetails = plans_details.find(
-    (plan) => plan.plan_id === "premium"
+  const premiumPlanDetails = plansDetailsList.find(
+    (plan) => plan.planId === "premium"
   );
 
-  const freePlanDetails = plans_details.find((plan) => plan.plan_id === "free");
+  const freePlanDetails = plansDetailsList.find((plan) => plan.planId === "free");
   return (
     <MembershipPage
       currentPlan={data?.status}
       limits={limits}
       premiumPlanDetails={premiumPlanDetails}
       freePlanDetails={freePlanDetails}
-      renewalDate={data?.renewal_date}
-      isMissed={data?.is_missed}
+      renewalDate={data?.renewalDate}
+      isMissed={data?.isMissed}
       handleCancelSubscription={handleCancelSubscription}
       isCancelling={cancelMutation.isPending}
       handleUpgrade={handleUpgrade}
