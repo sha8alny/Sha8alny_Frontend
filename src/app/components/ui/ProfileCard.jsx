@@ -6,6 +6,7 @@ const ProfileCard = ({
     profilePic,
     coverPic,
     buttonText,
+    buttonAction,
     showButton
 }) => {
 return(
@@ -33,7 +34,9 @@ return(
         <h2 className="text-2xl font-semibold text-text ">{name}</h2>
         <p className="text-text text-sm font-thin break-words whitespace-normal w-full">{title}</p>
         {showButton && (
-        <button className="bg-None hover:bg-background text-secondary border-1 border-secondary p-2 rounded-lg mt-2">{buttonText}</button>
+        <button 
+        onClick={buttonAction}
+        className="bg-None hover:bg-background text-secondary border-1 border-secondary p-2 rounded-lg mt-2">{buttonText}</button>
         )}
     </div>         
     </div> 
