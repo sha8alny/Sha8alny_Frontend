@@ -1,38 +1,42 @@
 "use client";
 import ReCAPTCHA from "react-google-recaptcha";
-import { useState } from "react";
 
+/**
+ * SignUpForm component
+ * 
+ * This component renders a sign-up form with fields for username, email, password, and an admin checkbox.
+ * It includes form validation and a reCAPTCHA for bot protection.
+ * 
+ * @component
+ * @param {Object} props - The properties object.
+ * @param {Object} props.formData - The form data state.
+ * @param {Object} props.error - The error state.
+ * @param {Function} props.handleSubmit - The function to handle form submission.
+ * @param {Function} props.handleChange - The function to handle input changes.
+ * @param {boolean} props.isSubmitting - The state indicating if the form is being submitted.
+ * @param {Function} props.onRecaptchaChange - The function to handle reCAPTCHA changes.
+ * 
+ * @example
+ * return (
+ *   <SignUpForm
+ *     formData={formData}
+ *     error={error}
+ *     handleSubmit={handleSubmit}
+ *     handleChange={handleChange}
+ *     isSubmitting={isSubmitting}
+ *     onRecaptchaChange={onRecaptchaChange}
+ *   />
+ * )
+ */
+const SignUpForm = ({
+    formData,
+    error,
+    handleSubmit,
+    handleChange,
+    isSubmitting,
+    onRecaptchaChange,
+}) => {
 
-const SignUpForm = ({handleSubmit, isSubmitting}) => {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [recaptcha, setRecaptcha] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    const validateEmail=(value)=>{
-        setEmail(value);
-        if(!emailRegex.test(value)){
-            setEmailError("Please enter a valid email address.")
-        }else{
-            setEmailError("");
-        }
-    };
-    const validatePassword = (value)=>{
-        setPassword(value);
-        if(value.length<6){
-            setPasswordError("Password must be 6 characters or more");
-        }else{
-            setPasswordError("")
-        };
-    }
-    const onSubmit = (e) => {
-        e.preventDefault();
-        if (emailError || passwordError) return;
-        handleSubmit({username, email, password, recaptcha});
-    };
     return(
         <div className="flex items-center jusifty-center min-h-screen bg-background flex-col">
             <h2 className="text-3xl font-bold text-center text-secondary mt-30">Achieve The Best Professional Experience</h2>
@@ -40,14 +44,15 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
             <div className="flex items-center justify-center w-30 h-15  text-background rounded-full mx-auto">
              <h2 className="text-3xl font-bold text-center text-secondary">Sign Up</h2>
             </div>
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="mb-4">
                 <label className="block text-text text-sm font-semibold mb-2"> Username </label>
                 <input
                     type="text"
+                    name="username"
                     placeholder="Enter your username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={formData.username}
+                    onChange={handleChange}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
@@ -56,32 +61,54 @@ const SignUpForm = ({handleSubmit, isSubmitting}) => {
                 <label className="block text-text text-sm font-semibold mb-2"> Email </label>
                 <input
                     type="email"
+                    name="email"
                     placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => validateEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={handleChange}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
-                {emailError && <p className="text-red-500 mt-1">{emailError}</p>}
+                {error.email && <p className="text-red-500 mt-1">{error.email}</p>}
                 
                 </div>
                 <div className="mb-4">
                 <label className="block text-text text-sm font-semibold mb-2"> Password </label>
                 <input
                     type="password"
+                    name="password"
                     placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => validatePassword(e.target.value)}
+                    value={formData.password}
+                    onChange={handleChange}
                     minLength={6}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
-                 {passwordError && <p className="text-red-500 mt-1">{passwordError}</p>}
-
+                 {error.password && <p className="text-red-500 mt-1">{error.password}</p>}
+           
+                </div>
+                <div className="flex justify-between items-center">
+                <div className="w-1/3">
+                <input
+                    type="checkbox"
+                    name="isAdmin"
+                    value={formData.isAdmin}
+                    onChange={handleChange}
+                    className=" w-3 h-3 accent-secondary"/>
+                <label className="ml-2 text-secondary font-semibold text-sm">I am an Admin</label>
+                </div>
+                <div className="w-1/3">
+                <input
+                    type="checkbox"
+                    name="rememberMe"
+                    value={formData.rememberMe}
+                    onChange={handleChange}
+                    className=" w-3 h-3 accent-secondary"/>
+                <label className="ml-2 text-secondary font-semibold text-sm">Remember Me</label>
+                </div>
                 </div>
                 <ReCAPTCHA
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                    onChange={(value) => setRecaptcha(value)}
+                    onChange={onRecaptchaChange}
                     />
 
                 <button
