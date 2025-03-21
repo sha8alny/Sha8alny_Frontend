@@ -34,18 +34,34 @@ export const postedJobs = async () => {
 };
 
 
-export const JobApplicants = async (jobId) => {
+export const JobApplicants = async (jobId, page = 1) => {
     try{
-        const applicantsResponse = await fetch(`http://localhost:3000/company/job/${jobId}/applicants`,{
+        const applicantsResponse = await fetch(`http://localhost:3000/employers/${jobId}/applicants/${page}`,{
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
         if (!applicantsResponse.ok) {
             throw new Error("Failed to fetch applicants");}
         const data = await applicantsResponse.json();
-        console.log("Fetched applicants",data);
+        console.log(`fetched page ${page} applicants:`,data);
         return data;
     } catch(error){
         throw new Error(error.message);
     }
+};
+
+export const getApplication = async (jobId, applicantId) => {
+    try{
+        const applicationResponse = await fetch(`http://localhost:3000/employers/${jobId}/${applicantId}/application`,{
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!applicationResponse.ok) {
+            throw new Error("Failed to fetch application");}
+        const data = await applicationResponse.json();
+        console.log("Fetched application:",data);
+        return data;
+    } catch(error){
+        throw new Error(error.message);
+    };
 };
