@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/router";
-import { useMutation } from "react-query";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import SignUpForm from "../presentation/SignUpForm";
 import { handleSignup } from "../../../../services/userMangment";
 import { RememberMe } from "@mui/icons-material";
