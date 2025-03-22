@@ -4,6 +4,7 @@ import JobsForm from "../presentation/JobsForm";
 import PostNewJobContainer from "./PostNewJobContainer";
 import JobApplicantsPageContainer from "./JobApplicantsPageContainer";
 import { postedJobs } from "../../../../services/companyManagment";
+import { useMutation } from "@tanstack/react-query";
 
 
 /**
@@ -20,26 +21,26 @@ import { postedJobs } from "../../../../services/companyManagment";
  */
 const JobsFormContainer = () => {
     const [jobs, setJobs] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [showPostJobForm, setShowPostJobForm] = useState(false);
     const [showJobApplicants, setShowJobApplicants] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
 
-    useEffect(() => {
-        const getJobs = async () => {
-            setIsLoading(true);
-            try {
-                const jobsData = await postedJobs();
-                console.log("Fetched jobs:",jobsData);
+    const { mutate: getJobs, isPending:isLoading } = useMutation(
+        {
+            mutationFn: postedJobs,
+            onSuccess: (jobsData) => {
+                console.log("Fetched jobs",jobsData);
                 setJobs(jobsData);
-            } catch (error) {
+            },
+            onError: (error) => {
                 console.error("Error fetching jobs:", error);
-            } finally {
-                setIsLoading(false);
             }
-        };
-        getJobs();
-    }, []);
+        }); 
+
+        useEffect(() => {
+            getJobs();
+        }, []);
+    
 
     if (showPostJobForm) {
         return <PostNewJobContainer onBack={() => setShowPostJobForm(false)} />;

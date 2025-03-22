@@ -2,6 +2,7 @@
 import { useState } from "react";
 import PostNewJobForm from "../presentation/PostNewJobForm";
 import { postJob } from "../../../../services/companyManagment";
+import { useMutation } from "@tanstack/react-query";
 
 /**
  * PostNewJobContainer component
@@ -31,7 +32,6 @@ const PostNewJobContainer = ({ onBack }) => {
     });
 
     const [errors, setErrors] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
     const [alert, setAlert] = useState(null);
 
     /**
@@ -66,17 +66,10 @@ const PostNewJobContainer = ({ onBack }) => {
      * 
      * @param {Object} e - The event object.
      */
-    const handleJobSubmit = async (e) => {
-        e.preventDefault();
-        const validationErrors = validateForm();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-        setIsLoading(true);
-        setAlert(null);
-        try{
-            await postJob(newJob);
+
+    const {mutate: JobSubmit, isPending: isLoading} = useMutation({
+        mutationFn: postJob,
+        onSuccess: () => {
             setAlert({ type: "success", message: "Job posted successfully" });
             setNewJob({
                 title: "",
@@ -88,14 +81,23 @@ const PostNewJobContainer = ({ onBack }) => {
                 experience: "",
                 salary: "",
             });
-            console.log(newJob);
             setErrors({});
-        } catch (error) {
+        },
+        onError: (error) => {
             setAlert({ type: "error", message: "Error posting job" });
-            console.log(error);
-        } finally {
-            setIsLoading(false);
+            console.log("Error Posting Job:",error);
         }
+    });
+
+    const handleJobSubmit =(e) => {
+        e.preventDefault();
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        setAlert(null);
+        JobSubmit(newJob);
     };
 
     return (
