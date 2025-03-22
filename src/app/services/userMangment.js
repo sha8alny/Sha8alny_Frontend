@@ -1,11 +1,15 @@
+
+const apiURL= process.env.NEXT_PUBLIC_API_URL;
+
+
 export const fetchUser = async () => {    
-  const response = await fetch("http://localhost:3000/user");
+  const response = await fetch(`${apiURL}/user`);
   if (!response.ok) throw new Error("Failed to fetch user");
   return response.json();
 };
 
 export const deleteAccount = async (password) => {
-  const response = await fetch("http://localhost:3000/settings/delete-account", {
+  const response = await fetch(`${apiURL}/settings/delete-account`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password }),
@@ -15,7 +19,7 @@ export const deleteAccount = async (password) => {
 };
 
 export const updateEmail = async ({ new_email, password }) => {
-  const response = await fetch("http://localhost:3000/settings/update-email", {
+  const response = await fetch(`${apiURL}/settings/update-email`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ new_email, password }),
@@ -28,7 +32,7 @@ export const updateEmail = async ({ new_email, password }) => {
 };
 
 export const updatePassword = async ({ currentPassword, newPassword }) => {
-  const response = await fetch("http://localhost:3000/settings/update-password", {
+  const response = await fetch(`${apiURL}/settings/update-password`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ old_password:currentPassword, new_password: newPassword }),
@@ -38,7 +42,7 @@ export const updatePassword = async ({ currentPassword, newPassword }) => {
 };
 
 export const updateUsername = async ({ newUsername }) => {
-  const response = await fetch("http://localhost:3000/settings/update-username", {
+  const response = await fetch(`${apiURL}/settings/update-username`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username: newUsername }),
@@ -50,7 +54,7 @@ export const updateUsername = async ({ newUsername }) => {
 
 export const handleSignup = async ({ username,email,password, isAdmin, captcha, rememberMe }) => {
   try{
-    const signupResponse = await fetch("http://localhost:3000/signup", {
+    const signupResponse = await fetch(`${apiURL}/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({username,email,password, isAdmin, captcha}),
@@ -71,7 +75,7 @@ export const handleSignup = async ({ username,email,password, isAdmin, captcha, 
 export const handleSignIn = async ({email,password, rememberMe})=>{
 
   try{
-    const loginResponse = await fetch("http://localhost:3000/login", {
+    const loginResponse = await fetch(`${apiURL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({email,password, rememberMe }),

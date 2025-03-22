@@ -1,4 +1,8 @@
 "use client";
+import { useState, useEffect } from "react";
+import  ViewApplicationDetailsModal  from "../presentation/ViewApplicationDetailsModal";
+import { getApplication } from "../../../../services/companyManagment";
+
 /**
  * ViewApplicationDetailsContainer component
  * 
@@ -11,10 +15,6 @@
  *   <ViewApplicationDetailsContainer />
  * )
  */
-import { useState, useEffect } from "react";
-import  ViewApplicationDetailsModal  from "../presentation/ViewApplicationDetailsModal";
-import { getApplication } from "../../../../services/companyManagment";
-
 
 const ViewApplicationDetailsContainer = ({jobId, applicantId, onClose}) => {
 

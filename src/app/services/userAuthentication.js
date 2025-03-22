@@ -1,4 +1,7 @@
 
+const apiURL= process.env.NEXT_PUBLIC_API_URL;
+
+
 export const fetchWithAuth = async (url, options={}) => {
     const accessToken = sessionStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
@@ -32,7 +35,7 @@ export const refreshAccessToken = async () => {
       const refreshToken = localStorage.getItem("refreshToken");
       if(!refreshToken) throw new Error("No refresh token found");
   
-      const response = await fetch("http://localhost:3000/refresh-token",{
+      const response = await fetch(`${apiURL}/refresh-token`,{
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({refreshToken}),
