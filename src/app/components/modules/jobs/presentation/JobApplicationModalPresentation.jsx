@@ -9,6 +9,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Close, CloudUpload, Send, Cancel } from "@mui/icons-material";
+import { useTheme } from "@/app/context/ThemeContext";
 
 /**
  * JobApplicationModalPresenter is a React component that renders a modal for job applications.
@@ -26,10 +27,10 @@ import { Close, CloudUpload, Send, Cancel } from "@mui/icons-material";
  * @param {boolean} props.isSubmitting - Indicates whether the form is currently being submitted.
  * @param {boolean} props.success - Indicates whether the application was submitted successfully.
  * @param {string|null} props.error - Error message to display if the application submission fails.
+ * @param {React.RefObject} props.fileInputRef - Reference to the file input element.
  *
  * @returns {JSX.Element} The rendered JobApplicationModalPresenter component.
  */
-
 const JobApplicationModalPresenter = ({
   show,
   handleClose,
@@ -42,43 +43,68 @@ const JobApplicationModalPresenter = ({
   isSubmitting,
   success,
   error,
-  fileInputRef, // Receive ref
+  fileInputRef,
 }) => {
-  const isDarkMode = document.documentElement.classList.contains("dark");
+  const { theme, toggleTheme } = useTheme();
+  const isDarkMode = theme === "dark";
+
+  // Consistent Material UI styling for dark/light mode
+  const textFieldSx = {
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: isDarkMode ? "rgba(255, 255, 255, 0.23)" : "rgba(0, 0, 0, 0.23)",
+      },
+      "&:hover fieldset": {
+        borderColor: isDarkMode ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: isDarkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.6)",
+    },
+    "& .MuiInputBase-input": {
+      color: isDarkMode ? "white" : "rgba(0, 0, 0, 0.87)",
+    },
+  };
 
   return (
-    <Modal open={show} onClose={handleClose} closeAfterTransition>
+    <Modal 
+      open={show} 
+      onClose={handleClose} 
+      closeAfterTransition
+      aria-labelledby="job-application-modal"
+    >
       <Fade in={show}>
-        <div className="absolute top-1/2 left-1/2 max-w-lg w-11/12 p-5 bg-foreground rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 max-w-lg w-11/12 p-6 bg-foreground rounded-xl shadow-xl transform -translate-x-1/2 -translate-y-1/2">
           <div className="relative">
-            <Close
+            <button
               onClick={handleClose}
-              className="absolute top-2 right-2 cursor-pointer"
+              className="absolute top-1 right-1 p-1 text-text/60 hover:text-text rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               aria-label="Close"
-            />
+            >
+              <Close fontSize="small" />
+            </button>
 
             <Typography
               variant="h5"
               component="h2"
-              gutterBottom
-              className="text-text"
+              className="text-text font-semibold mb-4"
             >
               Apply for {jobTitle}
             </Typography>
 
             {success && (
-              <Alert severity="success" className="mb-2">
+              <Alert severity="success" className="mb-4">
                 Your application has been submitted successfully!
               </Alert>
             )}
 
             {error && (
-              <Alert severity="error" className="mb-2">
+              <Alert severity="error" className="mb-4">
                 {error}
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} noValidate className="mt-2">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <TextField
                 margin="normal"
                 required
@@ -88,21 +114,8 @@ const JobApplicationModalPresenter = ({
                 {...register("phone")}
                 error={!!errors.phone}
                 helperText={errors.phone?.message}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: isDarkMode ? "white" : "#E0E3E7",
-                    }
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: isDarkMode ? "white" : "rgba(0, 0, 0, 0.6)",
-                  },
-                    "& input": {
-                    color: isDarkMode ? "white" : "black",
-                    },
-                  }}
-                  />
-
+                sx={textFieldSx}
+              />
 
               <TextField
                 margin="normal"
@@ -110,34 +123,16 @@ const JobApplicationModalPresenter = ({
                 id="coverLetter"
                 label="Cover Letter"
                 multiline
-                rows={5}
+                rows={4}
                 {...register("coverLetter")}
                 placeholder="Tell us why you're a good fit for this position"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: isDarkMode ? "white" : "#E0E3E7",
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: isDarkMode ? "white" : "rgba(0, 0, 0, 0.6)",
-                  },
-                  }}
-                  slotProps={{
-                    input: {
-                      style: {
-                        color: isDarkMode ? "white" : "grey",
-                      },
-                    },
-                  }}
-                />
+                sx={textFieldSx}
+              />
 
-
-<div className="mt-4 mb-4">
+              <div className="py-2">
                 <Typography
                   variant="subtitle1"
-                  gutterBottom
-                  className="text-text"
+                  className="text-text font-medium mb-2"
                 >
                   Resume/CV
                 </Typography>
@@ -155,47 +150,40 @@ const JobApplicationModalPresenter = ({
                       variant="outlined"
                       component="span"
                       startIcon={<CloudUpload />}
-                      className="text-primary border-primary hover:bg-primary/10"
+                      className="normal-case text-primary border-primary hover:bg-primary/10"
                     >
                       Upload Resume *
                     </Button>
                   </label>
+                  
                   {resume?.name ? (
-                    <Typography variant="body2" className="mt-1 text-text">
+                    <Typography variant="body2" className="mt-2 text-text">
                       Selected: {resume.name}
                     </Typography>
                   ) : (
-                    <Typography
-                      variant="body2"
-                      className="mt-1 text-text/60"
-                    >
+                    <Typography variant="body2" className="mt-2 text-text/60">
                       No file selected
                     </Typography>
                   )}
+                  
                   {errors.resume && (
-                    <Typography
-                      variant="caption"
-                      color="error"
-                      className="block"
-                    >
+                    <Typography variant="caption" color="error" className="block mt-1">
                       {errors.resume.message}
                     </Typography>
                   )}
-                  <Typography
-                    variant="caption"
-                    className="block text-text/60"
-                  >
+                  
+                  <Typography variant="caption" className="block mt-1 text-text/60">
                     Accepted formats: PDF, DOC, DOCX (Max size: 5MB)
                   </Typography>
                 </div>
               </div>
 
-              <div className="flex gap-4 mt-4">
+              <div className="flex gap-4 mt-6 pt-2">
                 <Button
                   variant="outlined"
                   onClick={handleClose}
                   startIcon={<Cancel />}
-                  className="border-primary text-primary hover:bg-primary/10"
+                  className="normal-case border-primary text-primary hover:bg-primary/10"
                 >
                   Cancel
                 </Button>
@@ -203,10 +191,8 @@ const JobApplicationModalPresenter = ({
                   variant="contained"
                   type="submit"
                   disabled={isSubmitting}
-                  startIcon={
-                    isSubmitting ? <CircularProgress size={16} /> : <Send />
-                  }
-                  className="bg-primary text-white hover:bg-primary-dark"
+                  startIcon={isSubmitting ? <CircularProgress size={16} /> : <Send />}
+                  className="normal-case bg-primary text-white hover:bg-primary/90 disabled:bg-primary/70"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Application"}
                 </Button>
