@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -6,11 +6,27 @@ import { useMutation } from "@tanstack/react-query";
 import JobApplicationModalPresentation from "../presentation/JobApplicationModalPresentation";
 import { submitJobApplication } from "@/app/services/jobs";
 
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+// Define accepted file types for resume uploads
+const ACCEPTED_FILE_TYPES = [
+  "application/pdf",                                                   // PDF files
+  "application/msword",                                                // DOC files
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // DOCX files
+];
+
+// Define readable extensions for user-friendly error messages
+const READABLE_EXTENSIONS = ".pdf, .doc, .docx";
 const jobApplicationSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
   phone: z.string().min(11, "Phone number must be at least 11 digits"),
   coverLetter: z.string().optional(),
+  resume: z.any()
+    .refine(file => !!file, "Resume is required")
+    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine(
+      (file) => ACCEPTED_FILE_TYPES.includes(file?.type),
+      `Invalid file type. Accepted formats: ${READABLE_EXTENSIONS}`
+    )
 });
 
 
@@ -29,27 +45,26 @@ const jobApplicationSchema = z.object({
  * @returns {JSX.Element} The JobApplicationModalContainer component.
  */
 const JobApplicationModalContainer = ({ show, handleClose, jobId, jobTitle }) => {
-  const [resume, setResume] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const fileInputRef = useRef(null); // For clearing file input after submission
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const { register, handleSubmit, setValue, formState: { errors }, reset, watch } = useForm({
     resolver: zodResolver(jobApplicationSchema),
     defaultValues: {
-      name: "",
-      email: "",
       phone: "",
       coverLetter: "",
+      resume: null,
     }
-  });
+  }); 
 
 
   const mutation = useMutation({
-    mutationFn: (data) => submitJobApplication(jobId, data, resume),
+    mutationFn: (data) => submitJobApplication(jobId, data, data.resume),
     onSuccess: () => {
       setSuccess(true);
       reset();
-      setResume(null);
+      if (fileInputRef.current) fileInputRef.current.value = ""; // Clear file input
     },
     onError: (error) => {
       setError(error.message || "Failed to submit application");
@@ -62,8 +77,11 @@ const JobApplicationModalContainer = ({ show, handleClose, jobId, jobTitle }) =>
   };
 
   const handleFileChange = (e) => {
-    setResume(e.target.files[0]);
+    const file = e.target.files[0];
+    setValue("resume", file, { shouldValidate: true }); // Bind file to react-hook-form
   };
+
+  const watchedResume = watch("resume");
 
   return (
     <JobApplicationModalPresentation
@@ -73,8 +91,9 @@ const JobApplicationModalContainer = ({ show, handleClose, jobId, jobTitle }) =>
       register={register}
       handleSubmit={handleSubmit(onSubmit)}
       errors={errors}
-      resume={resume}
+      resume={watchedResume} // Reflect in Presenter
       handleFileChange={handleFileChange}
+      fileInputRef={fileInputRef}
       isSubmitting={mutation.isPending}
       success={success}
       error={error}

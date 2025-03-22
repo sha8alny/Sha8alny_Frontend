@@ -42,17 +42,14 @@ const JobApplicationModalPresenter = ({
   isSubmitting,
   success,
   error,
+  fileInputRef, // Receive ref
 }) => {
+  const isDarkMode = document.documentElement.classList.contains("dark");
+
   return (
-    <Modal
-      open={show}
-      onClose={handleClose}
-      closeAfterTransition
-      aria-labelledby="job-application-title"
-      aria-describedby="job-application-description"
-    >
+    <Modal open={show} onClose={handleClose} closeAfterTransition>
       <Fade in={show}>
-        <div className="absolute top-1/2 left-1/2 max-w-lg w-11/12 p-5 bg-white rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 max-w-lg w-11/12 p-5 bg-foreground rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2">
           <div className="relative">
             <Close
               onClick={handleClose}
@@ -60,7 +57,12 @@ const JobApplicationModalPresenter = ({
               aria-label="Close"
             />
 
-            <Typography variant="h5" component="h2" gutterBottom>
+            <Typography
+              variant="h5"
+              component="h2"
+              gutterBottom
+              className="text-text"
+            >
               Apply for {jobTitle}
             </Typography>
 
@@ -77,31 +79,6 @@ const JobApplicationModalPresenter = ({
             )}
 
             <form onSubmit={handleSubmit} noValidate className="mt-2">
-              <div className="flex flex-col md:flex-row gap-4">
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Full Name"
-                  {...register("name")}
-                  error={!!errors.name}
-                  helperText={errors.name?.message}
-                />
-
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  type="email"
-                  {...register("email")}
-                  error={!!errors.email}
-                  helperText={errors.email?.message}
-                />
-              </div>
-
               <TextField
                 margin="normal"
                 required
@@ -111,7 +88,21 @@ const JobApplicationModalPresenter = ({
                 {...register("phone")}
                 error={!!errors.phone}
                 helperText={errors.phone?.message}
-              />
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: isDarkMode ? "white" : "#E0E3E7",
+                    }
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: isDarkMode ? "white" : "rgba(0, 0, 0, 0.6)",
+                  },
+                    "& input": {
+                    color: isDarkMode ? "white" : "black",
+                    },
+                  }}
+                  />
+
 
               <TextField
                 margin="normal"
@@ -122,47 +113,77 @@ const JobApplicationModalPresenter = ({
                 rows={5}
                 {...register("coverLetter")}
                 placeholder="Tell us why you're a good fit for this position"
-              />
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: isDarkMode ? "white" : "#E0E3E7",
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: isDarkMode ? "white" : "rgba(0, 0, 0, 0.6)",
+                  },
+                  }}
+                  slotProps={{
+                    input: {
+                      style: {
+                        color: isDarkMode ? "white" : "grey",
+                      },
+                    },
+                  }}
+                />
 
-              <div className="mt-4 mb-4">
-                <Typography variant="subtitle1" gutterBottom>
+
+<div className="mt-4 mb-4">
+                <Typography
+                  variant="subtitle1"
+                  gutterBottom
+                  className="text-text"
+                >
                   Resume/CV
                 </Typography>
                 <div>
                   <label htmlFor="resume-upload">
                     <input
+                      ref={fileInputRef}
                       className="hidden"
                       id="resume-upload"
-                      name="resume"
                       type="file"
-                      onChange={handleFileChange}
                       accept=".pdf,.doc,.docx"
+                      onChange={handleFileChange}
                     />
                     <Button
                       variant="outlined"
                       component="span"
                       startIcon={<CloudUpload />}
+                      className="text-primary border-primary hover:bg-primary/10"
                     >
-                      Upload Resume
+                      Upload Resume *
                     </Button>
                   </label>
                   {resume?.name ? (
-                    <Typography variant="body2" className="mt-1">
+                    <Typography variant="body2" className="mt-1 text-text">
                       Selected: {resume.name}
                     </Typography>
                   ) : (
                     <Typography
                       variant="body2"
-                      color="text.secondary"
-                      className="mt-1"
+                      className="mt-1 text-text/60"
                     >
                       No file selected
                     </Typography>
                   )}
+                  {errors.resume && (
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      className="block"
+                    >
+                      {errors.resume.message}
+                    </Typography>
+                  )}
                   <Typography
                     variant="caption"
-                    color="text.secondary"
-                    className="block"
+                    className="block text-text/60"
                   >
                     Accepted formats: PDF, DOC, DOCX (Max size: 5MB)
                   </Typography>
@@ -174,6 +195,7 @@ const JobApplicationModalPresenter = ({
                   variant="outlined"
                   onClick={handleClose}
                   startIcon={<Cancel />}
+                  className="border-primary text-primary hover:bg-primary/10"
                 >
                   Cancel
                 </Button>
@@ -184,6 +206,7 @@ const JobApplicationModalPresenter = ({
                   startIcon={
                     isSubmitting ? <CircularProgress size={16} /> : <Send />
                   }
+                  className="bg-primary text-white hover:bg-primary-dark"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Application"}
                 </Button>
