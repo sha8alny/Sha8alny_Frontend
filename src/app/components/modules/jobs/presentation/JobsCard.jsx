@@ -80,17 +80,17 @@ function JobCard({ job, onClick }) {
             >
                 <div className="w-12 h-12 relative">
                     <Image
-                        src={false || "/api/placeholder/48/48"}
+                        src={false || "https://picsum.photos/48/48"}
                         width={48}
                         height={48}
-                        alt={company.name}
+                        alt={company?.name || "Company Logo"}
                         className="w-full h-full object-contain"
                     />
                 </div>
             </div>
             <div className="flex-1">
                 <h3 className="font-semibold text-text">{job.title || "Job Opening"}</h3>
-                <p className="text-sm text-gray-400">{company.name} • {job.location}</p>
+                <p className="text-sm text-gray-400">{company?.name} • {job.location}</p>
                 <JobTags employmentType={job.employment_type} location={job.work_location} />
                 <p className="text-sm text-gray-300 line-clamp-2">{job.description}</p>
                 <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
@@ -118,7 +118,7 @@ function JobsCard({ jobListings = [], handleJobClick = () => {} }) {
 
     return (
         <>
-            <h2 className="text-xl font-semibold mb-4 text-text">Explore</h2>
+            <h2 className="text-xl font-semibold mb-4 text-text px-2">Explore</h2>
             <div className="space-y-4">
                 {jobListings.map((job, index) => (
                     <JobCard key={job.job_id || index} job={job} onClick={handleJobClick} />

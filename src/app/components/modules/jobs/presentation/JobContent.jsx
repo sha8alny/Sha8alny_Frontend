@@ -64,10 +64,10 @@ function JobTags({ job }) {
 function JobDescription({ job }) {
   return (
     <div className="mb-6 mt-6">
-      <h2 className="text-xl font-semibold mb-3 text-gray-800">
+      <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-300">
         Job Description
       </h2>
-      <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+      <p className="text-gray-700 leading-relaxed whitespace-pre-line dark:text-gray-400">
         {job.description}
       </p>
     </div>
@@ -84,8 +84,8 @@ function JobDescription({ job }) {
 function JobRequirements({ job }) {
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-semibold mb-3 text-gray-800">Requirements</h2>
-      <ul className="list-disc list-inside space-y-1 text-gray-700">
+      <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-300">Requirements</h2>
+      <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-400">
         {job?.experience || "0 years"} of experience
         {job?.requirements?.map((requirement, index) => (
           <li key={index}>{requirement}</li>
