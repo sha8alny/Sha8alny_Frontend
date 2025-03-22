@@ -1,4 +1,6 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
+const apiURL= process.env.NEXT_PUBLIC_API_URL;
 
 const getToken = () => {
   const token = localStorage.getItem("token") || "mock-token";
@@ -7,7 +9,7 @@ const getToken = () => {
 };
 
 export const getName = async () => {
-  const response = await fetch(`${API_URL}/settings/get-name`, {
+  const response = await fetch(`${apiURL}/settings/get-name`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -20,7 +22,7 @@ export const getName = async () => {
 };
 
 export const getEmail = async () => {
-  const response = await fetch(`${API_URL}/settings/get-email`, {
+  const response = await fetch(`${apiURL}/settings/get-email`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -33,7 +35,7 @@ export const getEmail = async () => {
 };
 
 export const deleteAccount = async (password) => {
-  const response = await fetch(`${API_URL}/settings/delete-account`, {
+  const response = await fetch(`${apiURL}/settings/delete-account`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -46,30 +48,32 @@ export const deleteAccount = async (password) => {
   return response.json();
 };
 
-export const updateEmail = async ({ new_email, password }) => {
-  const response = await fetch(`${API_URL}/settings/update-email`, {
+
+export const updateEmail = async ({ email, password }) => {
+  const response = await fetch(`${apiURL}/settings/update-email`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
-    body: JSON.stringify({ new_email, password }),
+    body: JSON.stringify({ email, password }),
   });
 
   if (!response.ok) throw new Error("Failed to update email");
   return response.json();
 };
 
+
 export const changePassword = async ({ currentPassword, newPassword }) => {
-  const response = await fetch(`${API_URL}/settings/change-password`, {
+  const response = await fetch(`${apiURL}/settings/change-password`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({
-      old_password: currentPassword,
-      new_password: newPassword,
+      currentPassword,
+      newPassword,
     }),
   });
 
@@ -78,7 +82,7 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
 };
 
 export const updateUsername = async ({ newUsername }) => {
-  const response = await fetch(`${API_URL}/settings/update-username`, {
+  const response = await fetch(`${apiURL}/settings/update-username`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -90,3 +94,53 @@ export const updateUsername = async ({ newUsername }) => {
   if (!response.ok) throw new Error("Failed to update username");
   return response.json();
 };
+
+
+export const handleSignup = async ({ username,email,password, isAdmin, captcha, rememberMe }) => {
+  try{
+    const signupResponse = await fetch(`${apiURL}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({username,email,password, isAdmin, captcha}),
+    });
+
+    if (!signupResponse.ok) throw new Error("Failed to signup");
+
+
+    const loginResponse = await handleSignIn({email,password, rememberMe});
+    if (!loginResponse) throw new Error("Failed to login");
+    return {success:true};
+
+  }catch(error){
+    throw new Error(error.message);
+  }
+};
+
+export const handleSignIn = async ({email,password, rememberMe})=>{
+
+  try{
+    const loginResponse = await fetch(`${apiURL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({email,password, rememberMe }),
+    });
+    if (!loginResponse.ok) throw new Error("Login failed");
+
+    const {accessToken, refreshToken, isAdmin}=await loginResponse.json()
+     if (accessToken){
+      sessionStorage.setItem("accessToken",accessToken);
+     
+      if (rememberMe){
+      localStorage.setItem("refreshToken",refreshToken);
+      }
+      localStorage.setItem("isAdmin",isAdmin);
+      console.log("accessToken",sessionStorage.getItem("accessToken"));
+      return {success:true};
+    }
+  }catch(error){
+    console.error(error);
+  }
+
+};
+
+

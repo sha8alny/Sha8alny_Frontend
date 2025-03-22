@@ -14,7 +14,7 @@ const SettingsSecurityContainer = () => {
   const [activeForm, setActiveForm] = useState(null);
 
   const { data: data, isLoading } = useQuery({
-    queryKey: ["email-settings"],
+    queryKey: ["emailSettings"],
     queryFn: getEmail,
   });
   

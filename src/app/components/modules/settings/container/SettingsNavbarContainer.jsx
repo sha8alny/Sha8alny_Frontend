@@ -24,7 +24,7 @@ const SettingsNavbarContainer = () => {
     queryFn: () => fetchUserProfile("john"),
   });
 
-  const profilePictureUrl = user?.profile_picture_url;
+  const profilePictureUrl = user?.profilePicture;
   const headline = user?.headline;
   const name = user?.name;
   const router = useRouter();

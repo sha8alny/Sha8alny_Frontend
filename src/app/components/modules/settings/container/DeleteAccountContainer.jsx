@@ -38,7 +38,6 @@ const DeleteAccountContainer = ({ handleDeleteAccountForm }) => {
       showToast("Failed to delete account", false);
     },
   });
-  console.log("name", data);
   return (
     <DeleteAccountPresentation
       handleDeleteAccountForm={handleDeleteAccountForm}

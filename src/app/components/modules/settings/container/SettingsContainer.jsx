@@ -21,7 +21,7 @@ export default function SettingsContainer() {
     queryFn: () => fetchUserProfile("john"),
   });
 
-  const profilePictureUrl = user?.profile_picture_url; 
+  const profilePictureUrl = user?.profilePicture; 
 
   useEffect(() => {
     const section = searchParams.get("section");
