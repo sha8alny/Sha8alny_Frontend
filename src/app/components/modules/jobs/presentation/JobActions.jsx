@@ -24,7 +24,7 @@ export default function JobActions({job}) {
 
   return (
     <div className="mt-8 flex space-x-4">
-      <button onClick={handleOpenModal} className="flex items-center gap-2 px-6 py-2 bg-secondary text-white text-sm font-medium rounded-md shadow-md hover:bg-blue-700 transition duration-300" >
+      <button onClick={handleOpenModal} className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow-md hover:bg-secondary transition duration-300" >
         <CheckCircleIcon className="h-5 w-5" />
         Apply Now
       </button>
