@@ -1,3 +1,4 @@
+
 import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
@@ -69,3 +70,47 @@ export const getApplication = async (jobId, applicantId) => {
         throw new Error(error.message);
     };
 };
+
+
+export const createCompany = async (companyData) => {
+    const response =await fetch(`${apiURL}/company`,{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(companyData),
+    });
+    if(!response.ok) throw new Error("Failed to create company");
+    return await response.json();
+};
+
+export const getCompany = async (companyUsername) => {
+    const response = await fetch(`${apiURL}/company/${companyUsername}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok)  throw new Error("Failed to fetch company details");
+    return await response.json();
+};
+
+export const updateCompany = async (companyUsername, companyData) => {
+    const response = await fetch(`${apiURL}/company/${companyUsername}/edit`, {
+        method: "PUT",
+        headers: { 
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(companyData),
+    });
+    if (!response.ok) throw new Error("Failed to update company");
+    return await response.json();
+};
+
+export const deleteCompany = async (companyUsername) => {
+    const response = await fetch(`${apiURL}/company/${companyUsername}/edit`, {
+        method: "DELETE",
+        headers: { 
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok) throw new Error("Failed to delete company");
+    return "Company deleted successfully";
+};
+

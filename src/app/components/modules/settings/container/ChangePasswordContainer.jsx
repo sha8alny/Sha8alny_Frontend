@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { updatePassword } from "../../../../services/userMangment";
+import { changePassword } from "../../../../services/userMangment";
 import ChangePasswordForm from "../presentation/ChangePasswordForm";
 import { useToast } from "@/app/context/ToastContext";
 /**
@@ -45,7 +45,7 @@ const ChangePasswordContainer = ({ toggleForm }) => {
 
   const showToast = useToast();
   const mutation = useMutation({
-    mutationFn: updatePassword,
+    mutationFn: changePassword,
     onSuccess: () => {
       showToast("Password updated successfully");
       toggleForm();
