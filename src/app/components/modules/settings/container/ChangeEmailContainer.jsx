@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import ChangeEmailForm from "../presentation/ChangeEmailFrom";
 import { updateEmail } from "../../../../services/userMangment";
-import {useToast} from '@/app/context/ToastContext'
+import { useToast } from "@/app/context/ToastContext";
+
 /**
  * ChangeEmailContainer component handles the logic for changing the user's email.
  * It includes form validation, mutation for updating the email, and displaying toast notifications.
@@ -35,7 +36,7 @@ const ChangeEmailContainer = ({ toggleForm }) => {
   };
 
   const updateEmailMutation = useMutation({
-    mutationFn: () => updateEmail({ new_email: email, password }),
+    mutationFn: () => updateEmail({ email, password }),
     onSuccess: () => {
       showToast("Email updated successfully");
       toggleForm();
