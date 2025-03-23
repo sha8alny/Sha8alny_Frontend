@@ -35,13 +35,11 @@ export const fetchJobDetails = async (id) => {
 };
 
 export const fetchJobListingsPageNumber = async ({ pageParam = 1 }) => {
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const url = new URL(
     `${API_URL}/jobs/search/${pageParam}`
   );
-  url.searchParams.append("page", pageParam); 
-  url.searchParams.append("limit", itemsPerPage);
-  // console.log(url.toString()); 
+
 
   const response = await fetch(url.toString());
   if (!response.ok) {
