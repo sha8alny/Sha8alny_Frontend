@@ -8,7 +8,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
       `${apiURL}/search/${pageParam}`
     );
     url.searchParams.append("limit", itemsPerPage);
-    console.log(url.toString());
+    //console.log(url.toString());
     const response = await fetch(url.toString());
   
     if (!response.ok) {
@@ -20,13 +20,23 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
     return { data, nextPage: data.length === itemsPerPage ? pageParam + 1 : null };
   };
 
+  export const fetchAppliedJobs = async () => {
+    const response = await fetch(`${apiURL}/applied`);
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  
+    return response.json();
+  };
+
   export const fetchSavedJobs = async ({pageParam = 1}) => {
     const itemsPerPage = 5;
     const url = new URL(
-      `${jobApi}saved/${pageParam}`
+      `${apiURL}saved/${pageParam}`
     );
     url.searchParams.append("limit", itemsPerPage);
-    console.log(url.toString());
+    //console.log(url.toString());
     const response = await fetch(url.toString());
   
     if (!response.ok) {
