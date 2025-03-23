@@ -26,10 +26,10 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
           size="sm"
           disabled={isMyProfile || skill.isEndorsed}
           onClick={() => handleEndorsement(skill.id)}
-          className="h-7 px-2 hover:bg-foreground hover:cursor-pointer"
+          className={`h-7 px-2 hover:bg-foreground hover:cursor-pointer ${skill.isEndorsed ? "text-secondary font-bold" : "text-primary"}`}
         >
           <ThumbsUp className="w-3 h-3 mr-1" />
-          Endorse
+          Endorse{skill.isEndorsed && 'd'}
         </Button>
       </div>
     </div>
