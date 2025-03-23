@@ -14,9 +14,9 @@ const formSchema = z.object({
   fieldOfStudy: z.string().nonempty("Field of Study is required."),
   grade: z.string().nonempty("Grade is required."),
   startMonth: z.string().nonempty("Start month is required."),
-  startYear: z.number().int().positive("Start year is required"),
-  endMonth: z.string().optional().nullable(),
-  endYear: z.number().int().optional(),
+  startYear: z.string().nonempty("Start year is required."),
+  endMonth: z.string().nonempty("End month is required."),
+  endYear: z.string().nonempty("End year is required."),
   isCurrent: z.boolean().default(false),
   activities: z.string().max(500, "Activities is too long.").optional(),
   description: z.string().max(1000, "Description is too long.").optional(),
@@ -70,6 +70,18 @@ export default function ModEducation({ education, adding }) {
   const { errors, isValid } = formState;
   const skills = watch("skills");
   const isCurrent = watch("isCurrent");
+
+  const handleIsCurrent = (value) => {
+    setValue("isCurrent", value, { shouldValidate: true });
+    if (!value) {
+      setValue("endMonth", "", { shouldValidate: true });
+      setValue("endYear", "", { shouldValidate: true });
+    }
+    else {
+      setValue("endMonth", "January", { shouldValidate: true });
+      setValue("endYear", "1900", { shouldValidate: true });
+    }
+  }
 
   const addSkill = (e) => {
     e.preventDefault();

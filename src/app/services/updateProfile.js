@@ -1,8 +1,8 @@
-export const updateProfile = async (url, data) => {
+export const updateProfile = async (url, data, method) => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/${url}`,
     {
-      method: "PATCH",
+      method: method,
       headers: {
         "Content-Type": "application/json",
       },

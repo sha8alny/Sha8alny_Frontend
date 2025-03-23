@@ -146,11 +146,7 @@ export default function ModEducationPresentation({
                       onValueChange={(value) => setValue("startMonth", value)}
                     >
                       <SelectTrigger id="startMonth">
-                        <SelectValue>
-                          <span className={field.value ? "" : "text-muted"}>
-                            {field.value || "Month"}
-                          </span>
-                        </SelectValue>
+                        <SelectValue value={field.value} placeholder="Select Month" />
                       </SelectTrigger>
                       <SelectContent>
                         {months.map((month) => (
@@ -181,11 +177,7 @@ export default function ModEducationPresentation({
                       onValueChange={(value) => setValue("startYear", value)}
                     >
                       <SelectTrigger id="startYear">
-                        <SelectValue>
-                          <span className={field.value ? "" : "text-muted"}>
-                            {field.value || "Year"}
-                          </span>
-                        </SelectValue>
+                        <SelectValue value={field.value} placeholder="Select Year"/>
                       </SelectTrigger>
                       <SelectContent>
                         {years.map((year) => (
@@ -219,11 +211,7 @@ export default function ModEducationPresentation({
                         onValueChange={(value) => setValue("endMonth", value)}
                       >
                         <SelectTrigger id="endMonth">
-                          <SelectValue>
-                            <span className={field.value ? "" : "text-muted"}>
-                              {field.value || "Month"}
-                            </span>
-                          </SelectValue>
+                          <SelectValue value={field.value} placeholder="Select Month" />
                         </SelectTrigger>
                         <SelectContent>
                           {months.map((month) => (
@@ -254,11 +242,7 @@ export default function ModEducationPresentation({
                         onValueChange={(value) => setValue("endYear", value)}
                       >
                         <SelectTrigger id="endYear">
-                          <SelectValue>
-                            <span className={field.value ? "" : "text-muted"}>
-                              {field.value || "Year"}
-                            </span>
-                          </SelectValue>
+                          <SelectValue value={field.value} placeholder="Select Year"/>
                         </SelectTrigger>
                         <SelectContent>
                           {years.map((year) => (

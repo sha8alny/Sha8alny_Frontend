@@ -23,10 +23,19 @@ export default function ModAbout({ about, adding = false }) {
     setError(null);
   };
   const handleSubmit = (data) => {
-    updateProfileMutation.mutate({
-      api: "edit",
-      data: { about: data },
-    });
+    if (adding) {
+      updateProfileMutation.mutate({
+        api: "add",
+        method: "PATCH",
+        data: { about: data },
+      });
+    } else {
+      updateProfileMutation.mutate({
+        api: "edit",
+        method: "PATCH",
+        data: { about: data },
+      });
+    }
   };
 
   return (

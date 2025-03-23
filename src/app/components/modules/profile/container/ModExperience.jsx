@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import Dialog from "@/app/components/ui/Dialog";
 import EditButton from "@/app/components/ui/EditButton";
 import ModExperiencePresentation from "../presentation/ModExperiencePresentation";
@@ -15,12 +15,12 @@ const formSchema = z.object({
   location: z.string().nonempty("Location is required."),
   startDate: z.object({
     month: z.string().nonempty("Start month is required."),
-    year: z.number().int().positive("Start year is required"),
+    year: z.string().nonempty("Start year is required."),
   }),
   endDate: z.object({
-    month: z.string().optional(),
-    year: z.number().int().optional(),
-  }).optional().nullable(),
+    month: z.string().nonempty("End year is required."),
+    year: z.string().nonempty("End year is required."),
+  }),
   isCurrent: z.boolean().default(false),
   description: z.string().max(1000, "Description is too long.").optional(),
   skills: z.array(z.string()).default([]),
@@ -61,10 +61,12 @@ export default function ModExperience({ experience, adding }) {
         month: experience?.startDate?.month || null,
         year: experience?.startDate?.year || null,
       },
-      endMonth: experience?.isCurrent ? null : {
-        month: experience?.endDate?.month || null,
-        year: experience?.endDate?.year || null,
-      },
+      endMonth: experience?.isCurrent
+        ? null
+        : {
+            month: experience?.endDate?.month || null,
+            year: experience?.endDate?.year || null,
+          },
       isCurrent: experience?.isCurrent || false,
       description: experience?.description || "",
       skills: experience?.skills || [],
@@ -76,6 +78,16 @@ export default function ModExperience({ experience, adding }) {
   const { errors, isValid } = formState;
   const skills = watch("skills");
   const isCurrent = watch("isCurrent");
+
+  const handleIsCurrent = (value) => {
+    setValue("isCurrent", value, { shouldValidate: true });
+    if (!value) {
+      setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
+    }
+    else {
+      setValue("endDate", { month: "January", year: "1900"}, { shouldValidate: true });
+    }
+  };
 
   const addSkill = (e) => {
     e.preventDefault();

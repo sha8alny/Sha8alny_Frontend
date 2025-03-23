@@ -17,6 +17,7 @@ export default function ModCertificatePresentation({
   handleFormSubmit,
   addSkill,
   removeSkill,
+  handleNeverExpires,
   handleSubmit,
   neverExpires,
   isValid,
@@ -84,7 +85,7 @@ export default function ModCertificatePresentation({
                 <Checkbox
                   {...field}
                   id="neverExpires"
-                  onCheckedChange={(value) => setValue("neverExpires", value)}
+                  onCheckedChange={(value) => handleNeverExpires(value)}
                 />
                 <Label className="font-semibold mb-2" htmlFor="neverExpires">
                   This certificate does not expire
@@ -109,11 +110,7 @@ export default function ModCertificatePresentation({
                       }
                     >
                       <SelectTrigger id="issueMonth">
-                        <SelectValue>
-                          <span className={!field.value ? "text-muted" : ""}>
-                            {field.value || "Select Month"}
-                          </span>
-                        </SelectValue>
+                        <SelectValue value={field.value} placeholder="Select Month"/>
                       </SelectTrigger>
                       <SelectContent>
                         {months.map((month) => (
@@ -142,15 +139,11 @@ export default function ModCertificatePresentation({
                     <Select
                       value={field.value}
                       onValueChange={(value) =>
-                        setValue("issueDate.year", parseInt(value))
+                        setValue("issueDate.year", value)
                       }
                     >
                       <SelectTrigger id="issueYear">
-                        <SelectValue>
-                          <span className={!field.value ? "text-muted" : ""}>
-                            {field.value || "Select Year"}
-                          </span>
-                        </SelectValue>
+                        <SelectValue value={field.value} placeholder="Select Year"/>
                       </SelectTrigger>
                       <SelectContent>
                         {years.map((year) => (
@@ -186,11 +179,7 @@ export default function ModCertificatePresentation({
                         }
                       >
                         <SelectTrigger id="expirationMonth">
-                          <SelectValue>
-                            <span className={!field.value ? "text-muted" : ""}>
-                              {field.value || "Select Month"}
-                            </span>
-                          </SelectValue>
+                          <SelectValue value={field.value} placeholder="Select Month"/>
                         </SelectTrigger>
                         <SelectContent>
                           {months.map((month) => (
@@ -219,15 +208,11 @@ export default function ModCertificatePresentation({
                       <Select
                         value={field.value}
                         onValueChange={(value) =>
-                          setValue("expirationDate.year", parseInt(value))
+                          setValue("expirationDate.year", value)
                         }
                       >
                         <SelectTrigger id="expirationYear">
-                          <SelectValue>
-                            <span className={!field.value ? "text-muted" : ""}>
-                              {field.value || "Select Year"}
-                            </span>
-                          </SelectValue>
+                          <SelectValue value={field.value} placeholder="Select Year"/>
                         </SelectTrigger>
                         <SelectContent>
                           {years.map((year) => (
@@ -285,6 +270,18 @@ export default function ModCertificatePresentation({
                 Delete
               </button>
             )}
+            <button 
+              type="button" 
+              onClick={() => {
+                console.log("Form state:", form.getValues());
+                console.log("Errors:", errors);
+                console.log("Is valid (from prop):", isValid);
+                console.log("Form is valid (from form):", form.formState.isValid);
+              }}
+              className="hover:cursor-pointer p-2 text-sm font-semibold bg-blue-500 dark:bg-blue-700 text-background rounded-md w-full"
+            >
+              Show Form State
+            </button>
             <button
               className="hover:cursor-pointer disabled:bg-foreground disabled:cursor-default p-2 text-sm font-semibold bg-secondary text-background rounded-md w-full"
               type="submit"

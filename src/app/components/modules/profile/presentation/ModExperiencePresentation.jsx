@@ -73,11 +73,7 @@ export default function ModExperiencePresentation({
                     onValueChange={(value) => setValue("employmentType", value)}
                   >
                     <SelectTrigger id="employmentType">
-                      <SelectValue>
-                        <span className={field.value ? "" : "text-muted"}>
-                          {field.value || "Type"}
-                        </span>
-                      </SelectValue>
+                      <SelectValue value={field.value} placeholder="Type"/>
                     </SelectTrigger>
                     <SelectContent>
                       {[
@@ -171,11 +167,7 @@ export default function ModExperiencePresentation({
                       }
                     >
                       <SelectTrigger id="startMonth">
-                        <SelectValue>
-                          <span className={field.value ? "" : "text-muted"}>
-                            {field.value || "Month"}
-                          </span>
-                        </SelectValue>
+                        <SelectValue value={field.value} placeholder="Select Month"/>
                       </SelectTrigger>
                       <SelectContent>
                         {months.map((month) => (
@@ -208,11 +200,7 @@ export default function ModExperiencePresentation({
                       }
                     >
                       <SelectTrigger id="startYear">
-                        <SelectValue>
-                          <span className={field.value ? "" : "text-muted"}>
-                            {field.value || "Year"}
-                          </span>
-                        </SelectValue>
+                        <SelectValue value={field.value} placeholder="Select Year"/>
                       </SelectTrigger>
                       <SelectContent>
                         {years.map((year) => (
@@ -248,11 +236,7 @@ export default function ModExperiencePresentation({
                         }
                       >
                         <SelectTrigger id="endMonth">
-                          <SelectValue>
-                            <span className={field.value ? "" : "text-muted"}>
-                              {field.value || "Month"}
-                            </span>
-                          </SelectValue>
+                          <SelectValue value={field.value} placeholder="Select Month"/>
                         </SelectTrigger>
                         <SelectContent>
                           {months.map((month) => (
@@ -285,11 +269,7 @@ export default function ModExperiencePresentation({
                         }
                       >
                         <SelectTrigger id="endYear">
-                          <SelectValue>
-                            <span className={field.value ? "" : "text-muted"}>
-                              {field.value || "Year"}
-                            </span>
-                          </SelectValue>
+                          <SelectValue value={field.value} placeholder="Select Year"/>
                         </SelectTrigger>
                         <SelectContent>
                           {years.map((year) => (

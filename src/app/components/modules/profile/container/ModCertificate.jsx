@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import Dialog from "@/app/components/ui/Dialog";
 import EditButton from "@/app/components/ui/EditButton";
 import ModCertificatePresentation from "../presentation/ModCertificatePresentation";
@@ -7,26 +7,49 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
-const formSchema = z.object({
-  name: z.string().nonempty("Certificate name is required."),
-  issuingOrganization: z.string().nonempty("Issuing organization is required."),
-  issueDate: z.object({
-    month: z.string().nonempty("Issue month is required."),
-    year: z.number().int().positive("Issue year is required"),
-  }),
-  expirationDate: z.object({
-    month: z.string().optional(),
-    year: z.number().int().optional(),
-  }),
-  neverExpires: z.boolean().default(false),
-  skills: z.array(z.string()).default([]),
-});
+const formSchema = z
+  .object({
+    name: z.string().nonempty("Certificate name is required."),
+    issuingOrganization: z
+      .string()
+      .nonempty("Issuing organization is required."),
+    issueDate: z.object({
+      month: z.string().nonempty("Issue month is required."),
+      year: z.string().nonempty("Issue year is required."),
+    }),
+    expirationDate: z.object({
+      month: z.string().nonempty("Expiration month is required."),
+      year: z.string().nonempty("Expiration year is required."),
+    }),
+    neverExpires: z.boolean().default(false),
+    skills: z.array(z.string()).default([]),
+  })
+  .refine(
+    (data) => {
+      if (data.neverExpires) {
+        return true; // No validation needed for expiration date if certificate never expires
+      } else {
+        return (
+          data.expirationDate &&
+          data.expirationDate.month &&
+          data.expirationDate.year
+        );
+      }
+    },
+    {
+      message: "Expiration date is required when certificate expires",
+      path: ["expirationDate"],
+    }
+  );
 
 const generateYears = () => {
   const currentYear = new Date().getFullYear();
-  const futureYears = 10; // Allow setting expiration dates up to 10 years in the future
-  return Array.from({ length: 50 + futureYears }, (_, i) => ((currentYear + futureYears) - i).toString());
+  const futureYears = 10;
+  return Array.from({ length: 50 + futureYears }, (_, i) =>
+    (currentYear + futureYears - i).toString()
+  );
 };
 
 const months = [
@@ -44,9 +67,10 @@ const months = [
   "December",
 ];
 
-export default function ModCertificate({ certificate, adding  }) {
+export default function ModCertificate({ certificate, adding }) {
   const [skillInput, setSkillInput] = useState("");
   const years = generateYears();
+  const updateProfileMutation = useUpdateProfile();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -54,12 +78,12 @@ export default function ModCertificate({ certificate, adding  }) {
       name: certificate?.name || "",
       issuingOrganization: certificate?.issuingOrganization || "",
       issueDate: {
-        month: certificate?.issueDate?.month || null,
-        year: certificate?.issueDate?.year || null,
+        month: certificate?.issueDate?.month || "",
+        year: certificate?.issueDate?.year.toString() || "",
       },
-      expirationDate: certificate?.neverExpires ? null : {
-        month: certificate?.expirationDate?.month || null,
-        year: certificate?.expirationDate?.year || null,
+      expirationDate: {
+        month: certificate?.expirationDate?.month || "",
+        year: certificate?.expirationDate?.year.toString() || "",
       },
       neverExpires: certificate?.neverExpires || false,
       skills: certificate?.skills || [],
@@ -71,6 +95,15 @@ export default function ModCertificate({ certificate, adding  }) {
   const { errors, isValid } = formState;
   const skills = watch("skills");
   const neverExpires = watch("neverExpires");
+
+  const handleNeverExpires = (value) => {
+    setValue("neverExpires", value, { shouldValidate: true });
+    if (!value) {
+      setValue("expirationDate", { month: "", year: "" }, { shouldValidate: true });
+    } else {
+      setValue("expirationDate", { month: "January", year: "1900" }, { shouldValidate: true });
+    }
+  };
 
   const addSkill = (e) => {
     e.preventDefault();
@@ -88,12 +121,21 @@ export default function ModCertificate({ certificate, adding  }) {
   };
 
   const handleFormSubmit = (data) => {
-    //Handle expiry date
-    if (data.neverExpires) {
-      data.expirationDate = null;
-    }
     console.log(data);
-    //onSubmit(data);
+    console.log(errors);
+    // if (adding) {
+    //   updateProfileMutation.mutate({
+    //     api: "edit",
+    //     method: "PATCH",
+    //     data: { certificates: [data] },
+    //   });
+    // } else {
+    //   updateProfileMutation.mutate({
+    //     api: "add-certification",
+    //     method: "POST",
+    //     data: { certificates: [data] },
+    //   });
+    // }
   };
 
   return (
@@ -119,6 +161,7 @@ export default function ModCertificate({ certificate, adding  }) {
           setSkillInput={setSkillInput}
           setValue={setValue}
           skills={skills}
+          handleNeverExpires={handleNeverExpires}
         />
       }
     />
