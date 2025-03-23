@@ -23,22 +23,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { FlaggedJobModal } from "./FlaggedJobModal";
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
-/**
- * FlaggedJobsTablePresentation component renders a table of flagged job reports with actions to view details, approve, or reject each report.
- *
- * @param {Object} props - The component props.
- * @param {Object} props.reports - An object containing job reports data and pagination info.
- * @param {boolean} props.isDialogOpen - A boolean indicating if the details dialog is open.
- * @param {Object} props.selectedReport - The currently selected report for viewing details.
- * @param {Function} props.handleViewDetails - Function to handle viewing details of a report.
- * @param {Function} props.handleCloseDialog - Function to handle closing the details dialog.
- * @param {Function} props.handleDeleteReport - Function to handle rejecting a report.
- * @param {Function} props.handleDeleteJob - Function to handle approving a report.
- * @param {number} props.page - The current page number.
- * @param {Function} props.setPage - Function to set the current page number.
- * @param {boolean} props.isFetching - A boolean indicating if data is being fetched.
- */
+import EditCalendarIcon from "@mui/icons-material/EditCalendar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/components/ui/Select";
+
+import TableSkeleton from "./TableSkeleton";
+
 export function FlaggedJobsTablePresentation({
   reports,
   isDialogOpen,
@@ -51,9 +46,44 @@ export function FlaggedJobsTablePresentation({
   page,
   setPage,
   isFetching,
+  statusOptions,
+  toggleStatusFilter,
+  selectedStatuses,
+  getStatusColor,
+  sortOrder,
+  setSortOrder,
+  isLoading,
+  isError,
 }) {
   return (
     <>
+      <div className="flex flex-wrap gap-2 mb-4 justify-between items-center">
+        <div className="flex flex-wrap gap-2">
+          {statusOptions.map((status) => (
+            <button
+              key={status}
+              onClick={() => toggleStatusFilter(status)}
+              className={`text-sm px-2 py-0.5 rounded-md border text-secondary cursor-pointer transition-all duration-200 ${
+                selectedStatuses.includes(status)
+                  ? "bg-secondary text-white border-secondary"
+                  : "bg-transparent text-gray-800 border-gray-600 dark:border-gray-700"
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
+        <Select value={sortOrder} onValueChange={setSortOrder}>
+          <SelectTrigger className="w-full md:w-[180px]">
+            <SelectValue placeholder="Sort by time" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="asc">Ascending</SelectItem>
+            <SelectItem value="des">Descending</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="rounded-md border text-text">
         <Table>
           <TableHeader>
@@ -66,75 +96,94 @@ export function FlaggedJobsTablePresentation({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {reports.data.map((report) => (
-              <TableRow key={report.jobId}>
-                <TableCell>
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage
-                        src={report.companyData.logo}
-                        alt={report.companyData.name}
-                      />
-                      <AvatarFallback>
-                        {report.companyData.name.substring(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{report.title}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {report.companyData.name}
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline" className="text-yellow-600">
-                    {report.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>{report.accountName}</TableCell>
-                <TableCell>
-                  {new Date(report.createdAt).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="w-full flex items-center justify-center">
-                        <MoreHorizIcon className="w-10" />
-                        <span className="sr-only">Open menu</span>
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => handleViewDetails(report)}
-                      >
-                        <VisibilityIcon className="mr-2" fontSize="small" />
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteJob(report.jobId)}
-                      >
-                        <CheckCircleIcon className="mr-2" fontSize="small" />
-                        Approve
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteReport(report._id)}
-                      >
-                        <DeleteIcon className="mr-2" fontSize="small" />
-                        Reject
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleUpdateReport(report._id, "Reviewing")}
-                      >
-                        <EditCalendarIcon className="mr-2" fontSize="small" />
-                        Set Status to Reviewing
-                      </DropdownMenuItem>
-                     
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+            {isLoading ? (
+              <TableSkeleton />
+            ) : isError ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-red-500">
+                  Failed to load reports.
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              reports.data.map((report) => (
+                <TableRow key={report.jobId}>
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage
+                          src={report.companyData.logo}
+                          alt={report.companyData.name}
+                        />
+                        <AvatarFallback>
+                          {report.companyData.name.substring(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{report.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {report.companyData.name}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className={getStatusColor(report.status)}
+                    >
+                      {report.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{report.accountName}</TableCell>
+                  <TableCell>
+                    {new Date(report.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="w-full flex items-center justify-center">
+                          <MoreHorizIcon className="w-10" />
+                          <span className="sr-only">Open menu</span>
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleViewDetails(report)}
+                        >
+                          <VisibilityIcon className="mr-2" fontSize="small" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            handleUpdateReport(report._id, "approved");
+                            handleDeleteJob(report.jobId);
+                          }}
+                        >
+                          <CheckCircleIcon className="mr-2" fontSize="small" />
+                          Approve
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleUpdateReport(report._id, "rejected")
+                          }
+                        >
+                          <DeleteIcon className="mr-2" fontSize="small" />
+                          Reject
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleUpdateReport(report._id, "reviewing")
+                          }
+                        >
+                          <EditCalendarIcon className="mr-2" fontSize="small" />
+                          Set Status to Reviewing
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

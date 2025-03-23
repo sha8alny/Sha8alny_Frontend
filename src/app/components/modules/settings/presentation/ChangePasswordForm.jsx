@@ -28,6 +28,7 @@ const ChangePasswordForm = ({
   showTooltip,
   setShowTooltip,
   tooltipRef,
+  handleForgetPassword
 }) => {
   
 
@@ -116,7 +117,7 @@ const ChangePasswordForm = ({
           )}
 
           <label className="text-sm text-text flex" htmlFor="confirmPassword">
-            Retype your new password{" "}
+            Retype the password{" "}
             <span className="ml-1 text-red-500"> *</span>
           </label>
           <input
@@ -142,7 +143,7 @@ const ChangePasswordForm = ({
             }
           />
         </form>
-          <button className="cursor-pointer w-max hover:text-secondary p-2 rounded-lg">
+          <button onClick={handleForgetPassword} className="cursor-pointer w-max hover:text-secondary p-2 rounded-lg">
             Forgot Password
           </button>
       </div>

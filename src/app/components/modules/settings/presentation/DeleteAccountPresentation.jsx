@@ -2,7 +2,6 @@ import SettingsFormLayout from "./SettingsFormLayout";
 import BackButton from "./BackButton";
 import Button from "./Button";
 import DeleteAccountPassConfirmation from "./DeleteAccountPassConfirm";
-import { useState } from "react";
 /**
  * DeleteAccountPresentation component renders a form for deleting a user account.
  * It displays a confirmation message and a button to proceed with the deletion process.
@@ -24,11 +23,15 @@ const DeleteAccountPresentation = ({
   isLoading,
   error,
   deleteAccountMutation,
+  handleContinueForm,
+  currentFormPage,
+  handleDeleteAccount,
+  setPassword,
+  password
+
 }) => {
   if (isLoading) return <p>Loading user...</p>;
   if (error) return <p>Error fetching user data.</p>;
-  const [currentFormPage, setCurrentFormPage] = useState(0);
-  const handleContinueForm = () => setCurrentFormPage(1);
   
   return (
     <SettingsFormLayout>
@@ -36,6 +39,9 @@ const DeleteAccountPresentation = ({
         <DeleteAccountPassConfirmation
           handleDeleteAccountForm={handleDeleteAccountForm}
           deleteAccountMutation={deleteAccountMutation}
+          handleDeleteAccount={handleDeleteAccount}
+          setPassword={setPassword}
+          password={password}
         />
       ) : (
         <>
