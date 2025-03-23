@@ -1,4 +1,4 @@
-const { default: JobsCard } = require("./JobsCard");
+import JobsCard from "./JobsCard";
 
 /**
  * JobsExplorePresentation component displays job listings with loading, error, and pagination states.
@@ -48,6 +48,7 @@ const JobsExplorePresentation = ({
 
   return (
     <div className="space-y-6">
+      <h2 className="text-xl font-semibold mb-4 text-text px-2">Explore</h2>
       <JobsCard jobListings={data || []} handleJobClick={handleJobClick} />
 
       {isFetchingNextPage && (
