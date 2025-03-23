@@ -5,14 +5,12 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
 
 /**
  * JobsCardContainer component fetches and displays job listings.
- * It supports pagination and can accept an override list of job listings.
+ * It supports pagination and handles navigation to job details.
  *
- * @param {Object} props - The component props.
- * @param {Array} props.jobListingsOverride - An optional array of job listings to override the fetched data.
  * @returns {JSX.Element} The rendered component.
  */
 
-function JobsCardContainer({ jobListingsOverride = [] }) {
+function JobsCardContainer() {
   const {
     data,
     error,
@@ -20,7 +18,7 @@ function JobsCardContainer({ jobListingsOverride = [] }) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useJobListings(jobListingsOverride);
+  } = useJobListings();
 
   const jobsData = data?.pages.flatMap((page) => normalizeJob(page.data));
 
