@@ -1,5 +1,6 @@
 import useJobDetails from "@/hooks/useJobDetails";
 import JobDetailsPresentation from "../presentation/JobDetailsPrenestation";
+import { normalizeJob } from "@/app/utils/normalizeJob";
 
 /**
  * JobDetailsContainer component fetches job details using the useJobDetails hook
@@ -11,10 +12,10 @@ import JobDetailsPresentation from "../presentation/JobDetailsPrenestation";
 
 function JobDetailsContainer() {
   const { job, isLoading, isError, errorMessage } = useJobDetails();
-
+  const normalizedJob = normalizeJob(job);
   return (
     <JobDetailsPresentation
-      job={job}
+      job={normalizedJob}
       isLoading={isLoading}
       isError={isError}
       errorMessage={errorMessage}
