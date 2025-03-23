@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import Dialog from "@/app/components/ui/Dialog";
 import EditButton from "@/app/components/ui/EditButton";
 import ModEducationPresentation from "../presentation/ModEducationPresentation";
@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 const formSchema = z.object({
   school: z.string().nonempty("School is required."),
@@ -54,10 +55,10 @@ export default function ModEducation({ education, adding }) {
       degree: education?.degree || "",
       fieldOfStudy: education?.fieldOfStudy || "",
       grade: education?.grade || "",
-      startMonth: education?.startDate?.month || null,
-      startYear: education?.startDate?.year || null,
-      endMonth: education?.endDate?.month || null,
-      endYear: education?.endDate?.year || null,
+      startMonth: education?.startDate?.month || "",
+      startYear: education?.startDate?.year || "",
+      endMonth: education?.endDate?.month || "",
+      endYear: education?.endDate?.year || "",
       isCurrent: education?.isCurrent || false,
       activities: education?.activities || "",
       description: education?.description || "",
@@ -70,18 +71,18 @@ export default function ModEducation({ education, adding }) {
   const { errors, isValid } = formState;
   const skills = watch("skills");
   const isCurrent = watch("isCurrent");
+  const handleUserUpdate = useUpdateProfile();
 
   const handleIsCurrent = (value) => {
     setValue("isCurrent", value, { shouldValidate: true });
     if (!value) {
       setValue("endMonth", "", { shouldValidate: true });
       setValue("endYear", "", { shouldValidate: true });
-    }
-    else {
+    } else {
       setValue("endMonth", "January", { shouldValidate: true });
       setValue("endYear", "1900", { shouldValidate: true });
     }
-  }
+  };
 
   const addSkill = (e) => {
     e.preventDefault();
@@ -106,11 +107,16 @@ export default function ModEducation({ education, adding }) {
         ? null
         : { month: data.endMonth, year: data.endYear },
     };
-    onSubmit(formattedData);
+    handleUserUpdate({
+      api: adding ? "add-education" : "edit",
+      method: adding ? "POST" : "PATCH",
+      data: { education: [formattedData] },
+    });
   };
 
   return (
     <Dialog
+      className="min-w-max"
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
       AlertContent={
@@ -131,6 +137,7 @@ export default function ModEducation({ education, adding }) {
           setSkillInput={setSkillInput}
           setValue={setValue}
           skills={skills}
+          handleIsCurrent={handleIsCurrent}
         />
       }
     />

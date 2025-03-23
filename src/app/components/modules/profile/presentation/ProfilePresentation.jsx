@@ -20,11 +20,11 @@ export default function ProfilePresentation({
     <div>
       <main className="flex gap-2 p-8 bg-foreground">
         <section className="flex-[3_1_0]">
-          <ProfileHeader userProfile={userProfile} />
-          <About about={userProfile.about} />
+          <ProfileHeader userProfile={userProfile} isMyProfile={isMyProfile}/>
+          <About about={userProfile.about} isMyProfile={isMyProfile}/>
           <ExperienceContainer experience={userProfile.experience} />
           <EducationContainer education={userProfile.education} />
-          <Skills skills={userProfile.skills} />
+          <Skills skills={userProfile.skills} isMyProfile={isMyProfile} />
           <CertificationsContainer
             certifications={userProfile.certifications}
           />

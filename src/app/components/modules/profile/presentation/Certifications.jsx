@@ -1,11 +1,9 @@
 import Container from "@/app/components/layout/Container";
-import AddButton from "@/app/components/ui/AddButton";
-import EditButton from "@/app/components/ui/EditButton";
-import { ChevronDown, ChevronUp, Edit, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import ModCertificate from "../container/ModCertificate";
 
-const CertificateCard = ({ certificate }) => {
+const CertificateCard = ({ certificate, isMyProfile }) => {
   return (
     <div className="flex gap-2">
       <div className="relative size-12 bg-gray-700 rounded-full">
@@ -21,7 +19,7 @@ const CertificateCard = ({ certificate }) => {
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
           {certificate.name}{" "}
-          <ModCertificate certificate={certificate} />
+          {isMyProfile && <ModCertificate certificate={certificate} />}
         </h4>
         <p>{certificate.issuingOrganization}</p>
         <p className="text-muted flex">
@@ -49,19 +47,20 @@ export default function Certifications({
   certifications,
   allCertificates,
   toggleAllCertificates,
+  isMyProfile,
 }) {
   return (
     certifications.length > 0 && (
       <Container className="border border-[#111] rounded-xl shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Certificates{" "}
-          <ModCertificate adding/>
+          {isMyProfile && <ModCertificate adding/>}
         </h3>
         <div className="space-y-8">
           {(!allCertificates ? certifications.slice(0, 3) : certifications).map(
             (exp, index) => (
               <div className="space-y-8" key={index}>
-                <CertificateCard certificate={exp} />
+                <CertificateCard certificate={exp} isMyProfile={isMyProfile}/>
                 {index !== certifications.length - 1 && <hr />}
               </div>
             )

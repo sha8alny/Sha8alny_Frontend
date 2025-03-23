@@ -2,10 +2,9 @@ import { ChevronDown, ChevronUp, Edit, Plus } from "lucide-react";
 import Image from "next/image";
 import ExperienceCardContainer from "../container/ExperienceCardContainer";
 import Container from "@/app/components/layout/Container";
-import EditButton from "@/app/components/ui/EditButton";
 import ModExperience from "../container/ModExperience";
 
-export const ExperienceCard = ({ job, duration }) => {
+export const ExperienceCard = ({ job, duration, isMyProfile }) => {
   return (
     <div className="flex gap-2">
       <div className="relative size-12 bg-gray-700 rounded-full">
@@ -19,7 +18,7 @@ export const ExperienceCard = ({ job, duration }) => {
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
           {job.title}{" "}
-          <ModExperience experience={job} />
+          {isMyProfile && <ModExperience experience={job} />}
         </h4>
         <p className="flex items-center">
           {job.company}
@@ -55,13 +54,14 @@ export default function Experience({
   experience,
   allExperience,
   toggleAllExperience,
+  isMyProfile,
 }) {
   return (
     experience.length > 0 && (
       <Container className="border border-[#111] shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Experience{" "}
-          <ModExperience adding />
+          {isMyProfile && <ModExperience adding />}
         </h3>
         <div className="space-y-8">
           {(!allExperience ? experience.slice(0, 3) : experience).map(

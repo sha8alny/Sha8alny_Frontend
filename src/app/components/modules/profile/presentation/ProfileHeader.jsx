@@ -1,5 +1,6 @@
 import Container from "@/app/components/layout/Container";
 import Image from "next/image";
+import ModHeader from "../container/ModHeader";
 
 export default function ProfileHeader({ userProfile }) {
   return (
@@ -30,30 +31,33 @@ export default function ProfileHeader({ userProfile }) {
           </div>
         </div>
       </div>
-      <div className="py-4 px-8">
-        <div className="flex items-center">
-          <h1 className="text-2xl font-bold">
-            {userProfile.name}
-          </h1>
-          <h6 className="text-muted ml-2">•</h6>
-          <span className="text-muted ml-2">
-            {userProfile.relation ?? "1st"}
-          </span>
-        </div>
-        <h2 className="text-muted text-lg">{userProfile.subtitle}</h2>
-        <div className="flex gap-2 items-center">
-          <p className="text-muted text-sm">{userProfile.location}</p>
-          <h6 className="text-muted">•</h6>
-          <button className="hover:underline text-secondary text-sm">
-            Contact Info
+      <div className="py-4 px-8 flex">
+        <div>
+          <div className="flex items-center">
+            <h1 className="text-2xl font-bold">{userProfile.name}</h1>
+            <h6 className="text-muted ml-2">•</h6>
+            <span className="text-muted ml-2">
+              {userProfile.relation ?? "1st"}
+            </span>
+          </div>
+          <h2 className="text-muted text-lg">{userProfile.subtitle}</h2>
+          <div className="flex gap-2 items-center">
+            <p className="text-muted text-sm">{userProfile.location}</p>
+            <h6 className="text-muted">•</h6>
+            <button className="hover:underline cursor-pointer text-secondary text-sm">
+              Contact Info
+            </button>
+          </div>
+          <button className="hover:underline cursor-pointer text-secondary self-start text-sm">
+            {userProfile.connectionsCount >= 500
+              ? "500+"
+              : userProfile.connectionsCount}{" "}
+            connections
           </button>
         </div>
-        <button className="hover:underline text-secondary text-sm">
-          {userProfile.connectionsCount >= 500
-            ? "500+"
-            : userProfile.connectionsCount}{" "}
-          connections
-        </button>
+        <div className="flex ml-auto self-end">
+          <ModHeader />
+        </div>
       </div>
     </Container>
   );

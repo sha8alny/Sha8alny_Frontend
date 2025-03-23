@@ -28,6 +28,7 @@ export default function ModExperiencePresentation({
   setValue,
   skillInput,
   setSkillInput,
+  handleIsCurrent,
   skills,
   watch,
   adding = false,
@@ -142,7 +143,7 @@ export default function ModExperiencePresentation({
                 <Checkbox
                   {...field}
                   id="isCurrent"
-                  onCheckedChange={(value) => setValue("isCurrent", value)}
+                  onCheckedChange={(value) => handleIsCurrent(value)}
                 />
                 <Label className="font-semibold mb-2" htmlFor="isCurrent">
                   I currently work here
@@ -150,7 +151,7 @@ export default function ModExperiencePresentation({
               </div>
             )}
           />
-          <div className="flex justify-between">
+          <div className="flex gap-4 justify-between">
             <div className="flex gap-4">
               <FormField
                 control={form.control}
@@ -356,6 +357,18 @@ export default function ModExperiencePresentation({
                 Delete
               </button>
             )}
+            <button 
+              type="button" 
+              onClick={() => {
+                console.log("Form state:", form.getValues());
+                console.log("Errors:", errors);
+                console.log("Is valid (from prop):", isValid);
+                console.log("Form is valid (from form):", form.formState.isValid);
+              }}
+              className="hover:cursor-pointer p-2 text-sm font-semibold bg-blue-500 dark:bg-blue-700 text-background rounded-md w-full"
+            >
+              Show Form State
+            </button>
             <button
               className="hover:cursor-pointer disabled:bg-foreground disabled:cursor-default p-2 text-sm font-semibold bg-secondary text-background rounded-md w-full"
               type="submit"

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 const formSchema = z.object({
   title: z.string().nonempty("Job title is required."),
@@ -54,19 +55,17 @@ export default function ModExperience({ experience, adding }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: experience?.title || "",
-      employmentType: experience?.employmentType || null,
+      employmentType: experience?.employmentType || "",
       company: experience?.company || "",
       location: experience?.location || "",
       startDate: {
-        month: experience?.startDate?.month || null,
-        year: experience?.startDate?.year || null,
+        month: experience?.startDate?.month || "",
+        year: experience?.startDate?.year || "",
       },
-      endMonth: experience?.isCurrent
-        ? null
-        : {
-            month: experience?.endDate?.month || null,
-            year: experience?.endDate?.year || null,
-          },
+      endMonth: {
+        month: experience?.endDate?.month || "",
+        year: experience?.endDate?.year || "",
+      },
       isCurrent: experience?.isCurrent || false,
       description: experience?.description || "",
       skills: experience?.skills || [],
@@ -78,14 +77,18 @@ export default function ModExperience({ experience, adding }) {
   const { errors, isValid } = formState;
   const skills = watch("skills");
   const isCurrent = watch("isCurrent");
+  const handleUserUpdate = useUpdateProfile();
 
   const handleIsCurrent = (value) => {
     setValue("isCurrent", value, { shouldValidate: true });
     if (!value) {
       setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
-    }
-    else {
-      setValue("endDate", { month: "January", year: "1900"}, { shouldValidate: true });
+    } else {
+      setValue(
+        "endDate",
+        { month: "January", year: "1900" },
+        { shouldValidate: true }
+      );
     }
   };
 
@@ -105,13 +108,16 @@ export default function ModExperience({ experience, adding }) {
   };
 
   const handleFormSubmit = (data) => {
-    // No need for additional formatting since the form structure already matches
-    // the data structure we want
-    onSubmit(data);
+    handleUserUpdate.mutate({
+      api: adding ? "add-experience" : "edit",
+      method: adding ? "POST" : "PATCH",
+      data: { experience: [data] },
+    });
   };
 
   return (
     <Dialog
+      className="min-w-max"
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
       AlertContent={
@@ -130,6 +136,7 @@ export default function ModExperience({ experience, adding }) {
           watch={watch}
           skillInput={skillInput}
           setSkillInput={setSkillInput}
+          handleIsCurrent={handleIsCurrent}
           setValue={setValue}
           skills={skills}
         />

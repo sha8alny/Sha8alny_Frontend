@@ -2,8 +2,9 @@ import { Plus, ThumbsUp } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
 import SkillContainer from "../container/SkillContainer";
 import Container from "@/app/components/layout/Container";
+import ModSkill from "../container/ModSkill";
 
-export const SkillCard = ({ skill, level }) => {
+export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -23,6 +24,8 @@ export const SkillCard = ({ skill, level }) => {
         <Button
           variant="ghost"
           size="sm"
+          disabled={isMyProfile || skill.isEndorsed}
+          onClick={() => handleEndorsement(skill.id)}
           className="h-7 px-2 hover:bg-foreground hover:cursor-pointer"
         >
           <ThumbsUp className="w-3 h-3 mr-1" />
@@ -33,14 +36,12 @@ export const SkillCard = ({ skill, level }) => {
   );
 };
 
-export default function Skills({ skills }) {
+export default function Skills({ skills, isMyProfile }) {
   return (
     <Container className="border border-[#111] shadow-lg p-8 mt-4">
       <h3 className="flex justify-between text-2xl mb-4 font-bold">
-        Skills{" "}
-        <button className="p-1 hover:bg-gray-500 rounded-md">
-          <Plus />
-        </button>
+        Skills
+       {isMyProfile && <ModSkill skills={skills} />}
       </h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {skills.map((skill, index) => (

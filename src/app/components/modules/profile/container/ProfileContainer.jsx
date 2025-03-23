@@ -2,6 +2,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "@/app/services/userProfile";
 import ProfilePresentation, { ProfileSkeleton } from "../presentation/ProfilePresentation";
+import { IsMyProfileProvider, useIsMyProfile } from "@/app/context/IsMyProfileContext";
+import { useEffect } from "react";
 
 
 /**
@@ -53,8 +55,25 @@ const getStrengthColor = (strength) => {
   return "bg-red-700"; // Dark Red
 };
 
-export const ProfileContainer = ({username}) => {
-  if (!username) return <div className="w-full h-full flex justify-center items-center text-red-400">No username provided.</div>;
+export const ProfileContainer = ({ username }) => {
+  if (!username) {
+    return (
+      <div className="w-full h-full flex justify-center items-center text-red-400">
+        No username provided.
+      </div>
+    );
+  }
+  
+  return (
+    <IsMyProfileProvider>
+      <ProfileContent username={username} />
+    </IsMyProfileProvider>
+  );
+};
+
+function ProfileContent({ username }) {
+  const { setIsMyProfile } = useIsMyProfile();
+  
   const {
     data: userProfile,
     isLoading,
@@ -63,6 +82,12 @@ export const ProfileContainer = ({username}) => {
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
   });
+
+  useEffect(() => {
+    if (userProfile?.isMyProfile) {
+      setIsMyProfile(userProfile.isMyProfile);
+    }
+  }, [userProfile, setIsMyProfile]);
 
   if (isLoading) return <ProfileSkeleton />;
 
@@ -73,19 +98,6 @@ export const ProfileContainer = ({username}) => {
       </div>
     );
   }
-  const strength = determineStrength(userProfile);
-  const profileStrength = {
-    strength,
-    label: getStrengthLabel(strength),
-    color: getStrengthColor(strength),
-    hasProfile: !!userProfile?.profilePictureUrl && userProfile?.profilePictureUrl !== "",
-    hasAbout: userProfile?.about != null && userProfile?.about !== "",
-    hasEducation: userProfile?.education?.length > 0,
-    hasExperience: userProfile?.experience?.length > 0,
-    hasSkills: userProfile?.skills?.length > 0,
-    hasConnections: userProfile?.connectionsCount > 0,
-  };
-
 
   if (!userProfile.isVisible) {
     return (
@@ -95,13 +107,24 @@ export const ProfileContainer = ({username}) => {
     );
   }
 
-  const isMyProfile = userProfile.isMyProfile;
+  const strength = determineStrength(userProfile);
+  const profileStrength = {
+    strength,
+    label: getStrengthLabel(strength),
+    color: getStrengthColor(strength),
+    hasProfile: !!userProfile?.profilePictureUrl && userProfile?.profilePictureUrl !== "",
+    hasAbout: userProfile?.about != null && userProfile?.about !== "",
+    hasEducation: userProfile?.education?.length > 0,
+    hasExperience: userProfile?.experience?.length > 0, 
+    hasSkills: userProfile?.skills?.length > 0,
+    hasConnections: userProfile?.connectionsCount > 0,
+  };
 
   return (
     <ProfilePresentation
       userProfile={userProfile}
       profileStrength={profileStrength}
-      isMyProfile={isMyProfile}
+      isMyProfile={userProfile.isMyProfile}
     />
   );
-};
+}

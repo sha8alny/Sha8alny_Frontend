@@ -1,4 +1,7 @@
+import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 import { SkillCard } from "../presentation/Skills";
+import { use } from "react";
+import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 /**
  * Determine the level of the skill
@@ -14,7 +17,7 @@ const determineLevel = (endorsements) => {
     return "Advanced";
   }
   return "Expert";
-}
+};
 
 /**
  * Determine the width of the progress bar
@@ -30,12 +33,28 @@ const determineWidth = (endorsements) => {
     return 75;
   }
   return 100;
-}
+};
 
 export default function SkillContainer({ skill }) {
+  const { isMyProfile } = useIsMyProfile();
+  const useUpdate = useUpdateProfile();
   const level = {
     level: determineLevel(skill.endorsements_count),
-    width: determineWidth(skill.endorsements_count)
-  }
-  return <SkillCard skill={skill} level={level}/>;
+    width: determineWidth(skill.endorsements_count),
+  };
+  const handleEndorsement = (skillId) => {
+    useUpdate.mutate({
+      api: "endorse-skill",
+      method: "POST",
+      data: { skill_id: skillId },
+    });
+  };
+  return (
+    <SkillCard
+      skill={skill}
+      level={level}
+      isMyProfile={isMyProfile}
+      handleEndorsement={handleEndorsement}
+    />
+  );
 }

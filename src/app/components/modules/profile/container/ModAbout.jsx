@@ -23,23 +23,16 @@ export default function ModAbout({ about, adding = false }) {
     setError(null);
   };
   const handleSubmit = (data) => {
-    if (adding) {
-      updateProfileMutation.mutate({
-        api: "add",
-        method: "PATCH",
-        data: { about: data },
-      });
-    } else {
       updateProfileMutation.mutate({
         api: "edit",
         method: "PATCH",
         data: { about: data },
       });
-    }
   };
 
   return (
     <Dialog
+      className="min-w-max"
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
       AlertContent={

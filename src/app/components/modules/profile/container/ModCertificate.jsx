@@ -121,21 +121,11 @@ export default function ModCertificate({ certificate, adding }) {
   };
 
   const handleFormSubmit = (data) => {
-    console.log(data);
-    console.log(errors);
-    // if (adding) {
-    //   updateProfileMutation.mutate({
-    //     api: "edit",
-    //     method: "PATCH",
-    //     data: { certificates: [data] },
-    //   });
-    // } else {
-    //   updateProfileMutation.mutate({
-    //     api: "add-certification",
-    //     method: "POST",
-    //     data: { certificates: [data] },
-    //   });
-    // }
+    updateProfileMutation.mutate({
+      api: adding ? "add-certification" : "edit",
+      method: adding ? "POST" : "PATCH",
+      data: { certificate: data },
+    });
   };
 
   return (

@@ -4,7 +4,7 @@ import Image from "next/image";
 import ModEducation from "../container/ModEducation";
 import AddButton from "@/app/components/ui/AddButton";
 
-const EducationCard = ({ placeOfEducation }) => {
+const EducationCard = ({ placeOfEducation, isMyProfile }) => {
   return (
     <div className="flex gap-2">
       <div className="relative size-12 bg-gray-700 rounded-full">
@@ -18,7 +18,7 @@ const EducationCard = ({ placeOfEducation }) => {
       <div className="flex flex-col">
         <div className="flex gap-4 text-lg font-bold items-center">
           {placeOfEducation.school}{" "}
-          <ModEducation education={placeOfEducation}/>
+          {isMyProfile && <ModEducation education={placeOfEducation}/>}
         </div>
         <p className="flex items-center">
           {placeOfEducation.degree}
@@ -61,19 +61,20 @@ export default function Education({
   education,
   allEducation,
   toggleAllEducation,
+  isMyProfile,
 }) {
   return (
     education.length > 0 && (
       <Container className="border border-[#111] shadow-lg mt-4 p-8">
         <div className="flex justify-between text-2xl mb-4 font-bold">
           Education{" "}
-          <ModEducation adding={true}/>
+          {isMyProfile && <ModEducation adding={true}/>}
         </div>
         <div className="space-y-8">
           {(!allEducation ? education.slice(0, 1) : education).map(
             (edu, index) => (
               <div className="space-y-8" key={index}>
-                <EducationCard placeOfEducation={edu} />
+                <EducationCard placeOfEducation={edu} isMyProfile={isMyProfile} />
                 {index !== education.length - 1 && <hr />}
               </div>
             )

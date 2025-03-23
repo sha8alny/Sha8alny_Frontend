@@ -1,3 +1,4 @@
+import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 import { ExperienceCard } from "../presentation/Experience";
 
 /**
@@ -61,7 +62,8 @@ function calculateDate(from, to, isCurrent = false) {
 }
 
 export default function ExperienceCardContainer({job}) {
+    const { isMyProfile } = useIsMyProfile();
     const duration = calculateDate(job.startDate, job.endDate, job.isCurrent);
     job.endDate = job.isCurrent ? {month: "present", year: ""} : job.endDate;
-    return <ExperienceCard job={job} duration={duration} />;
+    return <ExperienceCard job={job} duration={duration} isMyProfile={isMyProfile}/>;
 }
