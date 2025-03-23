@@ -19,15 +19,15 @@ export function FlaggedJobsTableContainer() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
-  const [sortOrder, setSortOrder] = useState("asc"); // New state for sort order
+  const [sortOrder, setSortOrder] = useState("asc");
   const statusOptions = ["Pending", "Reviewing", "Approved", "Rejected"];
   const queryClient = useQueryClient();
   const showToast = useToast();
   
   const { data:reports, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["jobReports", page, sortOrder,selectedStatuses], // Include sortOrder in queryKey
+    queryKey: ["jobReports", page, sortOrder,selectedStatuses],
     queryFn: () =>
-      fetchReports({ pageParam: page , jobs:true,statuses:selectedStatuses, sortByTime:sortOrder }), // Pass sortOrder to fetchReports
+      fetchReports({ pageParam: page , jobs:true,statuses:selectedStatuses, sortByTime:sortOrder }),
     keepPreviousData: true,
   });
 
@@ -55,7 +55,6 @@ export function FlaggedJobsTableContainer() {
   });
 
  
-  // if (!reports?.data || reports.data.length === 0) return <div>No reports found.</div>;
 
   const handleViewDetails = (report) => {
     setSelectedReport(report);
@@ -101,7 +100,7 @@ export function FlaggedJobsTableContainer() {
 
   return (
     <FlaggedJobsTablePresentation
-    reports={reports?.data ? reports: []}  // Ensure it's always an array
+    reports={reports?.data ? reports: []}  
     isDialogOpen={isDialogOpen}
       selectedReport={selectedReport}
       handleViewDetails={handleViewDetails}
@@ -118,8 +117,8 @@ export function FlaggedJobsTableContainer() {
       toggleStatusFilter={toggleStatusFilter}
       selectedStatuses={selectedStatuses}
       getStatusColor={getStatusColor}
-      sortOrder={sortOrder} // Pass sortOrder to presentation component
-      setSortOrder={setSortOrder} // Pass setSortOrder to presentation component
+      sortOrder={sortOrder} 
+      setSortOrder={setSortOrder}
   
     />
   );
