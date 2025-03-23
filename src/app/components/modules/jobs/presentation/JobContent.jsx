@@ -2,12 +2,13 @@
  * Component to display job content.
  *
  * @param {Object} props - Component props.
- * @param {Object} props.job - Job details.
+ * @param {Object} props.job - Normalized job details.
  * @param {boolean} props.isLoading - Loading state.
  * @returns {JSX.Element} The rendered component.
  */
 export default function JobContent({ job, isLoading }) {
-  const hasDetails = job?.type || job?.salary || job?.time || job?.description;
+  const hasDetails =
+    job?.employmentType || job?.salary || job?.createdAt || job?.description;
   if (isLoading || !hasDetails) {
     return <LoadingState />;
   }
@@ -25,30 +26,54 @@ export default function JobContent({ job, isLoading }) {
  * Component to display job tags.
  *
  * @param {Object} props - Component props.
- * @param {Object} props.job - Job details.
+ * @param {Object} props.job - Normalized job details.
  * @returns {JSX.Element} The rendered component.
  */
-
 function JobTags({ job }) {
+  const tags = [
+    {
+      value: job.employmentType,
+      label: job.employmentType,
+      className:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+    },
+    {
+      value: job.workLocation,
+      label: job.workLocation,
+      className:
+        "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
+      title: "Work Location",
+      condition: job.workLocation && job.workLocation !== "unknown",
+    },
+    {
+      value: job.salary,
+      label: `$${job.salary}`,
+      className:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+      title: "Annual Salary",
+    },
+    {
+      value: job.createdAt,
+      label: `Posted: ${job.createdAt?.toLocaleDateString()}`,
+      className:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+    },
+  ];
+
   return (
-    <div className="mt-4 flex flex-wrap gap-3">
-      {job.employment_type && (
-        <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-          {job.employment_type}
-        </span>
-      )}
-      {job.salary && (
-        <span
-          className="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full"
-          title="Salary"
-        >
-          {job.salary}
-        </span>
-      )}
-      {job.time && (
-        <span className="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">
-          Posted: {new Date(job.time).toLocaleDateString()}
-        </span>
+    <div className="mt-4 flex flex-wrap gap-3" aria-label="Job details">
+      {tags.map(
+        (tag, index) =>
+          (tag.condition !== undefined ? tag.condition : tag.value) && (
+            <span
+              key={index}
+              className={`${tag.className} text-sm font-medium px-3 py-1 rounded-full flex items-center gap-1 transition-colors`}
+              title={tag.title}
+            >
+              <span className="text-xs">{tag?.icon}</span>
+              {tag.label}
+            </span>
+          )
       )}
     </div>
   );
@@ -58,7 +83,7 @@ function JobTags({ job }) {
  * Component to display job description.
  *
  * @param {Object} props - Component props.
- * @param {Object} props.job - Job details.
+ * @param {Object} props.job - Normalized job details.
  * @returns {JSX.Element} The rendered component.
  */
 function JobDescription({ job }) {
@@ -78,18 +103,19 @@ function JobDescription({ job }) {
  * Component to display job requirements.
  *
  * @param {Object} props - Component props.
- * @param {Object} props.job - Job details.
+ * @param {Object} props.job - Normalized job details.
  * @returns {JSX.Element} The rendered component.
  */
 function JobRequirements({ job }) {
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-300">Requirements</h2>
+      <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-300">
+        Requirements
+      </h2>
       <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-400">
-        {job?.experience || "0 years"} of experience
-        {job?.requirements?.map((requirement, index) => (
-          <li key={index}>{requirement}</li>
-        ))}
+        <li>Experience: {job?.experience || "Not specified"}</li>
+        <li>Industry: {job?.industry || "General"}</li>
+        <li>Location: {job?.location || "Unknown Location"}</li>
       </ul>
     </div>
   );
