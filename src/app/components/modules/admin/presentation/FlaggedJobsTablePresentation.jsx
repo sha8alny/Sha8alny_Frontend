@@ -101,7 +101,7 @@ export function FlaggedJobsTablePresentation({
             ) : isError ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-red-500">
-                  Failed to load jobs.
+                  Failed to load reports.
                 </TableCell>
               </TableRow>
             ) : (
