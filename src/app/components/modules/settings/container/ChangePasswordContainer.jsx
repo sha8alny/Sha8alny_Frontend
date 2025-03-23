@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { changePassword } from "../../../../services/userMangment";
 import ChangePasswordForm from "../presentation/ChangePasswordForm";
 import { useToast } from "@/app/context/ToastContext";
+import { useRouter } from "next/navigation";
 /**
  * ChangePasswordContainer component handles the logic for changing a user's password.
  * It manages form state, validation, and submission.
@@ -42,7 +43,7 @@ const ChangePasswordContainer = ({ toggleForm }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showTooltip]);
-
+  const router = useRouter();
   const showToast = useToast();
   const mutation = useMutation({
     mutationFn: changePassword,
@@ -93,6 +94,11 @@ const ChangePasswordContainer = ({ toggleForm }) => {
     });
   };
 
+
+  const handleForgetPassword = () => {
+    router.push("/forgot-password"); 
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
@@ -131,6 +137,7 @@ const ChangePasswordContainer = ({ toggleForm }) => {
       showTooltip={showTooltip}
       setShowTooltip={setShowTooltip}
       tooltipRef={tooltipRef}
+      handleForgetPassword={handleForgetPassword}
     />
   );
 };
