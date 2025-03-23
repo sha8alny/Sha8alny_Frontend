@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 /**
  * Renders a job tag component with a given label.
@@ -115,7 +114,6 @@ function JobsCard({ jobListings = [], handleJobClick = () => {} }) {
 
   return (
     <>
-      <h2 className="text-xl font-semibold mb-4 text-text px-2">Explore</h2>
       <div className="space-y-4">
         {jobListings.map((job, index) => (
           <JobCard key={job.id || index} job={job} onClick={handleJobClick} />
