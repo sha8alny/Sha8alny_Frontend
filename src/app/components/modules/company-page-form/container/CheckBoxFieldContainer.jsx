@@ -11,28 +11,13 @@ import CheckBoxField from "../presentation/CheckBoxField";
  */
 
 
-function CheckBoxFieldContainer({errors, setErrors}) {
-    const [isChecked, setIsChecked] = useState(false);
-    const [showerror, setShowError] = useState(false);
-    const checkBox =()=>{
-      if (isChecked){
-        setShowError(true);
-      }
-      else{
-        setShowError(false);
-      }
-      setIsChecked(!isChecked);
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        terms: !isChecked ? "" : "You must agree to the terms.",}));
-    };
-    return (
-      <div>
-        <CheckBoxField onChange={checkBox} checked={isChecked} showerror={showerror}/>
-        {setErrors && <p className="text-red-500 text-sm">{errors.terms}</p>}
-      </div>
-    );
+function CheckBoxFieldContainer({errors, setErrors,isChecked, onChange}) {
+  return (
+    <div>
+      <CheckBoxField onChange={onChange} checked={isChecked}/>
+      {setErrors && <p className="text-red-500 text-sm">{errors.terms}</p>}
+    </div>
+  );
 
-    
 }
 export default CheckBoxFieldContainer;
