@@ -41,6 +41,7 @@ function MyJobsPresentation({
 }) {
   // Filter jobs based on tab
   const filteredJobs = (tabValue) => {
+    if (!Array.isArray(jobs) || jobs.length === 0 || !jobs) return [];
     if (tabValue === "all") return jobs;
     return jobs.filter(job => job.status === tabValue);
   };
@@ -92,39 +93,30 @@ function MyJobsPresentation({
 
         {/* All Applications Tab */}
         <TabsContent value="all" className="space-y-4">
-          <JobsTable
-            jobs={filteredJobs("all")}
-            formatDate={formatDate}
-            formatTime={formatTime}
-            getStatusColor={getStatusColor}
-            onJobClick={onJobClick}
-          />
-          {hasMoreJobs && (
-            <div className="text-center mt-4">
-              <button
-                onClick={() => loadMoreJobs()}
-                disabled={isLoadingMore}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-800"
-              >
-                {isLoadingMore ? "Loading more..." : "Load more jobs"}
-              </button>
-            </div>
-          )}
-        </TabsContent>
-
-        {/* Saved Tab */}
-        <TabsContent value="saved">
-          {filteredJobs("saved").length > 0 ? (
-            <JobsTable
-              jobs={filteredJobs("saved")}
-              formatDate={formatDate}
-              formatTime={formatTime}
-              getStatusColor={getStatusColor}
-              onJobClick={onJobClick}
-            />
+          {filteredJobs("all").length > 0 ? (
+            <>
+              <JobsTable
+                jobs={filteredJobs("all")}
+                formatDate={formatDate}
+                formatTime={formatTime}
+                getStatusColor={getStatusColor}
+                onJobClick={onJobClick}
+              />
+              {hasMoreJobs && (
+                <div className="text-center mt-4">
+                  <button
+                    onClick={() => loadMoreJobs()}
+                    disabled={isLoadingMore}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-800"
+                  >
+                    {isLoadingMore ? "Loading more..." : "Load more jobs"}
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-8 text-gray-500">
-              You haven't saved any jobs yet
+              No job applications yet
             </div>
           )}
         </TabsContent>
@@ -141,7 +133,7 @@ function MyJobsPresentation({
             />
           ) : (
             <div className="text-center py-8 text-gray-500">
-              No accepted job applications yet
+             No accepted job applications yet 
             </div>
           )}
         </TabsContent>
