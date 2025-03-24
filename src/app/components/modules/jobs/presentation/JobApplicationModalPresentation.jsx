@@ -104,7 +104,7 @@ const JobApplicationModalPresenter = ({
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4" role="form">
               <TextField
                 margin="normal"
                 required
