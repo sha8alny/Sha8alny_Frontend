@@ -1,0 +1,16 @@
+export const changeCustomURL = async (data) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/custom-url`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to update custom URL");
+  }
+  return response.status;
+};

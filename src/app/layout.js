@@ -1,5 +1,6 @@
 import "./globals.css";
 import { ThemeProvider } from "./context/ThemeContext";
+
 import { ToastProvider } from "./context/ToastContext";
 import ReactQueryProvider from "./providers/ReactQueryProvider";
 import StripeProvider  from "./providers/StripeProvider";
