@@ -28,6 +28,8 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
     const [companyType, setCompanyType] = useState("");
     const [companyLocation, setCompanyLocation] = useState("");
     const [companyWebsite, setCompanyWebsite] = useState("");
+    const [isChecked, setIsChecked] = useState(false);
+    const [showerror, setShowError] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [errors, setErrors] = useState({});
@@ -38,12 +40,17 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
                         companyLocation.trim() !== "";
 
     const handleInputChange = (field, value) => {
-        setErrors((prevErrors) => ({
-            ...prevErrors,
-            [field]: "", // Clear error when user types
-        }));
+        setErrors((prevErrors) => ({...prevErrors,[field]: "", }));
     };
 
+    const checkBox =()=>{
+        setShowError(isChecked);
+        setIsChecked(!isChecked);
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            terms: !isChecked ? "" : "You must agree to the terms.",}));
+    };
+    
     const handleSubmit = async () => {
         let newErrors={};
         if (!companyName.trim()) newErrors.companyName = "Company name is required";
@@ -52,6 +59,7 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         if (!companyType.trim()) newErrors.companyType = "Company type is required";
         if (!companyLocation.trim()) newErrors.companyLocation = "Location is required";
         if (!companyURL.trim()) newErrors.companyURL = "URL is required";
+        if (!isChecked) newErrors.terms = "You must agree to the terms.";
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -61,14 +69,22 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         setLoading(true);
         setError(null);
         setErrors({}); 
+        let logoURL= null;
+
+        if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+            
+            logoURL = URL.createObjectURL(file);
+        }
 
         const companyData = {
             username: companyName.toLowerCase().replace(/\s+/g, "-"),
             name: companyName,
-            URL: companyURL, 
+            URL: companyWebsite, 
             orgSize: companySize,
             orgType: companyType, 
-            logo: file ? URL.createObjectURL(file) : null, 
+            logo: logoURL, 
             cover: null, 
             description: companyTagline,
             industry: companyIndustry,
@@ -76,9 +92,8 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         };
 
         try {
-           const response = await createCompany(companyData);
-            console.log("API Response:", response);
-            router.push(`/company-page-author/${companyData.username}`);
+           await createCompany(companyData);
+            router.push(`/company-page-author/${companyData.username}?logo=${encodeURIComponent(logoURL)}`);
         } catch (err) {
             setError(err.message || "Failed to create company");
         } finally {
@@ -97,7 +112,8 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         companyLocation={companyLocation} setCompanyLocation={(value)=>{setCompanyLocation(value);handleInputChange("companyLocation", value);}} 
         companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite}
         companyURL={companyURL} setCompanyURL={(value)=>{setCompanyURL(value);handleInputChange("companyURL", value);}} 
-        onCreateCompany={handleSubmit} loading={loading} isFormValid={isFormValid} errors={errors} setErrors={setErrors}/>
+        onCreateCompany={handleSubmit} loading={loading} isFormValid={isFormValid} errors={errors} setErrors={setErrors}
+        isChecked={isChecked} checkBox={checkBox} error={error}/>
     );
 
 }
