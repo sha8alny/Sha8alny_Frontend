@@ -27,16 +27,16 @@ function WritePost({text, setText,onImageUpload, onVideoUpload, preview, trigger
                         <ImageOutlinedIcon className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-white text-xs transition-opacity duration-200 "> Upload Image</span>
                     </div>
-                    <input id="upload-file" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={imageInputRef} onChange={onImageUpload}/>
+                    <input id="upload-file" data-testid="upload-file" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={imageInputRef} onChange={onImageUpload}/>
                 </div>
                 <div htmlFor="upload-video" className="relative group">
                     <div className="relative group" onClick={()=>triggerFileInput("video")}>
                         <SmartDisplayOutlinedIcon className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-white text-xs transition-opacity duration-200 "> Upload video</span>
                     </div>
-                    <input id="upload-video" type="file" className="hidden" accept="video/mp4, video/mov, video/avi" ref={videoInputRef} onChange={onVideoUpload}/>
+                    <input id="upload-video" data-testid="upload-video"  type="file" className="hidden" accept="video/mp4, video/mov, video/avi" ref={videoInputRef} onChange={onVideoUpload}/>
                 </div>
-                <div className="relative group" onClick={openArticleModal}>
+                <div className="relative group" onClick={openArticleModal} data-testid="write-post-modal">
                     <FeedOutlinedIcon className="cursor-pointer group"/>
                     <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-white text-xs transition-opacity duration-200 "> Write Article</span>
                 </div>
