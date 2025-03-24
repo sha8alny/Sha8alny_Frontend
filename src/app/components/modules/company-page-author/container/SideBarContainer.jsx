@@ -66,10 +66,7 @@ import { deleteCompany } from "@/app/services/companyManagment";
  * @type {Array<{name: string, href: string, icon: JSX.Element, action?: Function}>}
  */
 
-
-
 function SideBarContainer({username, logoPreview, logoInputRef, logoUpload}){
-    console.log("username in sidebar container", username);
     const pathname= usePathname();
     const [active, setActive] = useState(null);
     const [isModalOpen, setModalOpen] = useState(false); 
@@ -99,28 +96,28 @@ function SideBarContainer({username, logoPreview, logoInputRef, logoUpload}){
 
     const handleConfirmDeactivate = async() => {
         try {
-            setModalOpen(false); 
             await deleteCompany(username);
+            setModalOpen(false); 
         } catch (error) {
             console.error("Error deactivating company:", error);
         }
     };
 
     const menuItems =[
-        {name: "Dashborad", href:`/company-page-author/${username}`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
-        {name: "Page Posts", href:"/posts-page" , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Dashborad", href:`/company-page-author/${username}?logo=${encodeURIComponent(logoPreview || "")} `,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
+        {name: "Page Posts", href:`/posts-page/${username}?logo=${encodeURIComponent(logoPreview || "")}` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Analytics",href:"#", icon:<ShowChartOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Feed",href:"#", icon: <DynamicFeedOutlinedIcon style={{fontSize:"20px"}} />},
         {name: "Activity",href:"#", icon: <NotificationsOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
-        {name: "Edit Page", href:"/edit-page", icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Edit Page", href:`/edit-page/${username}?logo=${encodeURIComponent(logoPreview || "")}`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Jobs", href:"#",icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(
         <div>
             <SideBar menuItems={menuItems} pathname={pathname} setActive={setActive} isModalOpen={isModalOpen} setModalOpen={handleOpenModal} onChangeCover={coverUpload} onChangeLogo={logoUpload} coverpreview={coverPreview} logoPreview={logoPreview} triggerCoverInput={triggerCoverInput} triggerLogoInput={triggerLogoInput} coverInputRef={coverInputRef} logoInputRef={logoInputRef} fileusername={username}/>
-            <Modal open={isModalOpen} onClose={() => setModalOpen(false)} aria-labelledby="deactivate-modal">
+            <Modal open={isModalOpen} onClose={() => setModalOpen(false)} aria-labelledby="deactivate-modal" data-testid="deactivate-modal">
                 <Box sx={{
                     position: "absolute",
                     top: "50%",
@@ -133,13 +130,13 @@ function SideBarContainer({username, logoPreview, logoInputRef, logoUpload}){
                     borderRadius: 2,
                     textAlign: "left"
                 }}>
-                <div className="flex items-center justify-between border-b">
+                <div className="text-text flex items-center justify-between border-b">
                     <Typography variant="h6" className="text-lg font-semibold">{modalType==="deactivate" ?"Deactivate Page" :"Create Page"}</Typography>
                     <Button  className="cursor-pointer" onClick={() => setModalOpen(false)} ><CloseIcon className="text-white"/></Button>
                 </div>
                     {modalType==="deactivate" ?(
                     <>
-                        <div>
+                        <div className="text-text">
                             <Typography variant="body1" sx={{ mt:2}}>
                             <strong>We're sorry to see you go</strong>
                             </Typography>
@@ -160,10 +157,11 @@ function SideBarContainer({username, logoPreview, logoInputRef, logoUpload}){
                             </Button>
                         </div>
                     </>):(
+                        //Create Part
                         <>
-                        <div>
+                        <div className="text-text">
                             <ul className="flex flex-col space-y-3 p-2">
-                                <Link className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2" href="#"> 
+                                <Link className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2" href="/posts-page"> 
                                     <div className="flex items-center gap-2">
                                         <PostAddOutlinedIcon style={{fontSize:"20px"}}/>
                                         <span>Start a Post</span>
