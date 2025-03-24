@@ -16,7 +16,7 @@ import ProfileCard from "./components/layout/ProfileCard";
 import { Post } from "./components/modules/feed/Post";
 import UserSmallCard from "./components/layout/UserSmallCard";
 import Footer from "./components/layout/Footer";
-import Navbar from "./components/layout/Navbar";
+import Navbar from "./components/layout/NavBar";
 import { useState } from "react";
 import SuggestedUsers from "./components/layout/SuggestedUsers";
 import SuggestedUsersContainer from "./components/modules/profile/container/SuggestedUsersContainer";

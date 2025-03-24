@@ -1,4 +1,4 @@
-import Dialog from "@/app/components/ui/Dialog";
+import Dialog from "@/app/components/ui/DialogMod";
 import ModAboutPresentation from "../presentation/ModAboutPresentation";
 import { useState } from "react";
 import AddButton from "@/app/components/ui/AddButton";

@@ -1,6 +1,6 @@
 export const changeCustomURL = async (data) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/custom-url`,
+    `${process.env.NEXT_PUBLIC_API_URL}/profile/custom-url`,
     {
       method: "PATCH",
       headers: {

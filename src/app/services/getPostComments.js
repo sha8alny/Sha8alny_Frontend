@@ -16,7 +16,7 @@ export const getPostComments = async (
     const offset = (page - 1) * limit;
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/posts/${postId}/comments?offset=${offset}&limit=${limit}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/comments?offset=${offset}&limit=${limit}`,
       {
         method: "GET",
         headers: {

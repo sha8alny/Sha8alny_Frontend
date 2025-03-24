@@ -1,5 +1,5 @@
 export const reportUser = async (username, data) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_SERVER}/report/${username}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report/${username}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

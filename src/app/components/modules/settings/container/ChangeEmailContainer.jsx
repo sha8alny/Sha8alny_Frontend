@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import ChangeEmailForm from "../presentation/ChangeEmailFrom";
-import { updateEmail } from "../../../../services/userMangment";
+import { updateEmail } from "../../../../services/userManagement";
 import { useToast } from "@/app/context/ToastContext";
 
 /**

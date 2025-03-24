@@ -16,7 +16,7 @@ const determineStrength = (userProfile) => {
   const hasItems = (array) => Array.isArray(array) && array.length > 0;
   const hasContent = (text) => !!text?.trim();
   const strengthFactors = [
-    { condition: !!userProfile?.profilePictureUrl, weight: 10 },
+    { condition: !!userProfile?.profilePicture, weight: 10 },
     { condition: hasItems(userProfile?.experience), weight: 20 },
     { condition: hasItems(userProfile?.education), weight: 15 },
     { condition: hasItems(userProfile?.skills), weight: 15 },
@@ -112,7 +112,7 @@ function ProfileContent({ username }) {
     strength,
     label: getStrengthLabel(strength),
     color: getStrengthColor(strength),
-    hasProfile: !!userProfile?.profilePictureUrl && userProfile?.profilePictureUrl !== "",
+    hasProfile: !!userProfile?.profilePicture && userProfile?.profilePicture !== "",
     hasAbout: userProfile?.about != null && userProfile?.about !== "",
     hasEducation: userProfile?.education?.length > 0,
     hasExperience: userProfile?.experience?.length > 0, 

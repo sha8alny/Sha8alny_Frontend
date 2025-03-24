@@ -1,6 +1,6 @@
 export const savePost = async (data) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/post`,
+    `${process.env.NEXT_PUBLIC_API_URL}/post`,
     {
       method: "POST",
       headers: {

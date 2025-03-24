@@ -1,4 +1,4 @@
-import Dialog from "@/app/components/ui/Dialog";
+import Dialog from "@/app/components/ui/DialogMod";
 import ModSkillPresentation from "../presentation/ModSkillPresentation";
 import { useEffect, useState } from "react";
 import AddButton from "@/app/components/ui/AddButton";

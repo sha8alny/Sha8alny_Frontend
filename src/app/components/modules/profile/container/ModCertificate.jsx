@@ -1,5 +1,5 @@
 "use client";
-import Dialog from "@/app/components/ui/Dialog";
+import Dialog from "@/app/components/ui/DialogMod";
 import EditButton from "@/app/components/ui/EditButton";
 import ModCertificatePresentation from "../presentation/ModCertificatePresentation";
 import AddButton from "@/app/components/ui/AddButton";

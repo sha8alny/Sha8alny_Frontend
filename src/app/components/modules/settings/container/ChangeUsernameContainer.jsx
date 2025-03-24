@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { updateUsername } from "../../../../services/userMangment";
+import { updateUsername } from "../../../../services/userManagement";
 import ChangeUsernameForm from "../presentation/ChangeUsernameForm";
 import { useToast } from "@/app/context/ToastContext";
 /**
