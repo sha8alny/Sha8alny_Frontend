@@ -1,8 +1,17 @@
+const apiURL = process.env.NEXT_PUBLIC_API_URL;
+
+
 export const fetchUserProfile = async (username) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/${username}`);
+    const response = await fetch(`${apiURL}/profile/${username}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch user profile");
     }    
-    console.log("here");
     return response.json();
-};
+  };
+  
