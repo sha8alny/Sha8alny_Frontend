@@ -40,7 +40,7 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
                         </span>
                     </label>
                 </div>
-                <input id="upload-logo" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={logoInputRef} onChange={onChangeLogo} />
+                <input id="upload-logo" data-testid="upload-logo" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={logoInputRef} onChange={onChangeLogo} />
             </div>
             {/*Company name*/}
             <div>
