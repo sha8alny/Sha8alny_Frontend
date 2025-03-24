@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import JobsExploreContainer from '@/app/components/modules/jobs/container/JobsExploreContainer';
 import useJobListings from '@/hooks/useJobListings';
 import { useRouter } from 'next/navigation';
-// Removed unused import for normalizeJob
 
 // Mock the required hooks and utils
 jest.mock('../../hooks/useJobDetails');
