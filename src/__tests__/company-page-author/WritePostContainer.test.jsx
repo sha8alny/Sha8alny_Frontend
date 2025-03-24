@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import WritePostContainer from "@/app/components/modules/company-page-author/container/WritePostContainer";
 
@@ -55,6 +55,20 @@ describe("WritePostContainer",()=>{
         fireEvent.click(submitButton);
 
         expect(mockOnPostSubmit).toHaveBeenCalledWith({ text: "New Post Content",imageUrl:null,videoUrl:null});
+    });
+
+    test("submits an article when text is entered",()=>{
+        render(<WritePostContainer onPostSubmit={mockOnPostSubmit} logoPreview="" />);
+        const openModalButton = screen.getByTestId("write-post-modal"); // Adjust if needed
+        fireEvent.click(openModalButton);
+
+        const articleTextarea = screen.getByPlaceholderText("Start writing your article...");
+        fireEvent.change(articleTextarea, { target: { value: "My Article Content" } });
+
+        const publishButton = screen.getByText("Publish");
+        fireEvent.click(publishButton);
+
+        expect(mockOnPostSubmit).toHaveBeenCalledWith({text: "My Article Content",isArticle: true,});
     });
 
     test("opens and closes the article modal", () => {
