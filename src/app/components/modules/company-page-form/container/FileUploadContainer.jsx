@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useEffect } from "react";
 import FileUpload from "../presentation/FileUpload";
 
 /**
@@ -14,7 +15,13 @@ import FileUpload from "../presentation/FileUpload";
  */
 
 function FileUploadContainer({file, setFile}){
-    const [preview, setPreview]= useState(null)
+    const [preview, setPreview]= useState(null);
+
+    useEffect(() => {
+        if (!file) {
+            setPreview(null);
+        }
+    }, [file]);
     
     const fileUpload = (e) => {
         const selectedFile=e.target.files[0];
@@ -25,8 +32,7 @@ function FileUploadContainer({file, setFile}){
     };
 
     const removeFile = ()=>{
-        setPreview(null)
-        setFile(null)
+        setFile(null);
     }
 
     return (
