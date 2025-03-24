@@ -47,7 +47,8 @@ function MyJobsContainer() {
   const {
     data,
     isLoading,
-    error,
+    isError,
+    errorMessage,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
@@ -106,11 +107,10 @@ function MyJobsContainer() {
     return <div className="text-center py-8">Loading job listings...</div>;
   }
 
-  // Error state
-  if (error) {
+  if (isError) {
     return (
       <div className="text-center py-8 text-red-500">
-        Error loading job listings: {error.message}
+       <span>Error loading job listings: {errorMessage}</span> 
       </div>
     );
   }
