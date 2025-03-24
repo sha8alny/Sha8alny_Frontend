@@ -12,7 +12,7 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
 
 function JobDetailsContainer() {
   const { job, isLoading, isError, errorMessage } = useJobDetails();
-  const normalizedJob = normalizeJob(job);
+  const normalizedJob = job ? normalizeJob(job) : null;
   return (
     <JobDetailsPresentation
       job={normalizedJob}
