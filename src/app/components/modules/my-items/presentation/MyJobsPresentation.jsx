@@ -13,6 +13,21 @@ import {
   MoreHoriz as MoreHorizIcon,
 } from "@mui/icons-material";
 
+/**
+ * MyJobsPresentation component displays a tabbed interface for managing job applications.
+ * It allows users to filter jobs by their status and provides functionality to load more jobs.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array} props.jobs - List of job objects to display.
+ * @param {Function} props.formatDate - Function to format the job application date.
+ * @param {Function} props.formatTime - Function to format the job application time.
+ * @param {Function} props.getStatusColor - Function to get the color class for a job status.
+ * @param {Function} props.onJobClick - Callback function triggered when a job is clicked.
+ * @param {Function} props.onMoreJobsClick - Callback function triggered when the "Apply to Jobs" button is clicked.
+ * @param {boolean} props.hasMoreJobs - Indicates if there are more jobs to load.
+ * @param {Function} props.loadMoreJobs - Function to load more jobs.
+ * @param {boolean} props.isLoadingMore - Indicates if more jobs are currently being loaded.
+ */
 function MyJobsPresentation({
   jobs = [],
   formatDate,
