@@ -2,6 +2,7 @@
 import { useState } from "react";
 import EditPage from "../presentation/EditPage";
 import { updateCompany } from "@/app/services/companyManagment";
+import { useRouter } from "next/navigation";
 
 
 /**
@@ -26,7 +27,7 @@ import { updateCompany } from "@/app/services/companyManagment";
  */
 
 
-function EditPageContainer({logoPreview}){
+function EditPageContainer({username, logoPreview}){
     const [companyName, setCompanyName] = useState("");
     const [companyIndustry, setCompanyIndustry] = useState("");
     const [companyTagline, setCompanyTagline] = useState("");
@@ -37,6 +38,7 @@ function EditPageContainer({logoPreview}){
     const [companyWebsite, setCompanyWebsite] = useState("");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const router = useRouter(); 
 
     const handleDiscard = () => {
         setCompanyName("");
@@ -51,21 +53,8 @@ function EditPageContainer({logoPreview}){
 
     
     const handleSave = async()=>{
-        let newErrors = {};
-
-        if (!companyName.trim()) newErrors.companyName = "Company name is required.";
-        if (!companyIndustry.trim()) newErrors.companyIndustry = "Industry is required.";
-        if (!companySize || companySize === "Select size") newErrors.companySize = "Please select a company size.";
-        if (!companyType || companyType === "Select type") newErrors.companyType = "Please select a company type.";
-        if (!companyLocation.trim()) newErrors.companyLocation = "Location is required.";
-        if (!companyURL.trim()) newErrors.companyURL = "Company URL is required.";
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
         setLoading(true);
-        setErrors({}); 
+  
         const companyData = {
             name: companyName ,
             username :companyName.toLowerCase().replace(/\s+/g, "-") ,
@@ -77,18 +66,16 @@ function EditPageContainer({logoPreview}){
             logo: "", 
             location: companyLocation
         };
+        console.log("name: ", companyName);
+        console.log("type: ", companyType);
 
         try{
-            const username = companyName.toLowerCase().replace(/\s+/g, "-");
-            console.log("Generated username:", username);
-            console.log("Sending data to API:", companyData);
-            await updateCompany(username, companyData);
-            console.log("API call successful!");
-            setCompanyName(companyName)
+            const response = await updateCompany(username, companyData);
+            username = companyName;
             handleDiscard();
+            router.push(`/company-page-author/${username}?logo=${encodeURIComponent(logoURL)}`);
         } 
         catch (err) {
-            console.error("API Error:", err); // Debugging
             setErrors({ api: err.message || "Failed to update company" })
         }
         finally {
