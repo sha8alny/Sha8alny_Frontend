@@ -23,10 +23,14 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
   return (
     <>
       <button
-        className="fixed top-4 left-4 z-50 md:hidden p-2 border-2 rounded-full transition-all bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-background cursor-pointer"
+        className="fixed bottom-4 right-6 z-50 md:hidden p-2 border-2 rounded-full transition-all bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-background cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {isOpen ? <CloseIcon fontSize="small" /> : <MenuIcon fontSize="small" />}
+        {isOpen ? (
+          <CloseIcon fontSize="small" />
+        ) : (
+          <MenuIcon fontSize="small" />
+        )}
       </button>
 
       <div
@@ -34,8 +38,12 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex flex-col h-full">
-          <div className="p-4 border-b">
-            <h2 className="text-xl font-bold">Admin Panel</h2>
+          <div className="p-4 border-b flex gap-2 items-center justify-center">
+            <h2 className="text-xl font-bold flex-grow">
+              {" "}
+              SHA<p className="text-secondary inline">غ</p>LNY{" "}
+              <p className="text-secondary inline">ADMIN</p>
+            </h2>
           </div>
           <nav className="flex-1 p-4 space-y-1">
             {routes.map((route) => (
@@ -44,7 +52,11 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
                 href={route.path}
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center px-4 py-3 text-sm rounded-md transition-colors cursor-pointer
-                  ${pathname === route.path ? "bg-secondary text-background" : "hover:bg-secondary hover:text-background"}`}
+                  ${
+                    pathname === route.path
+                      ? "bg-secondary text-background"
+                      : "hover:bg-secondary hover:text-background"
+                  }`}
               >
                 <route.icon className="mr-3" fontSize="small" />
                 {route.name}
@@ -52,9 +64,7 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
             ))}
           </nav>
           <div className="p-4 border-t">
-            <button
-              className="flex flex-row items-center w-full justify-start p-2 border-2 rounded-md transition-all bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-background cursor-pointer"
-            >
+            <button className="flex flex-row items-center w-full justify-start p-2 border-2 rounded-md transition-all bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-background cursor-pointer">
               <LogoutIcon className="mr-2" fontSize="small" />
               Logout
             </button>

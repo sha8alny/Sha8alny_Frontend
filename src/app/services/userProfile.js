@@ -1,8 +1,8 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
 
 export const fetchUserProfile = async (username) => {
-    const response = await fetch(`${API_URL}/profile/${username}`, {
+    const response = await fetch(`${apiURL}/profile/${username}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
