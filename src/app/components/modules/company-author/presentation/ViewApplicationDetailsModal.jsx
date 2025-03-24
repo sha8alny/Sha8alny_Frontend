@@ -36,7 +36,7 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
         >
             <div className='w-full max-w-lg rounded-lg bg-foreground shadow-lg relative p-4'>
                 <div className="items-center p-2">
-                <Typography variant="h5" component="h2" gutterBottom>Application for {application.jobTitle}</Typography>
+                <Typography variant="h5" className='text-text' component="h2" gutterBottom>Application for {application.jobTitle}</Typography>
                 </div>
             <hr className="p-4 space-y-4"/>
             {isLoading ?(
@@ -44,7 +44,15 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                 ) : (<div>
                  <div className='flex flex-col gap-4'>   
                 <div className="flex flex-col md:flex-row gap-4">
-                        <TextField
+                        <TextField 
+                            sx={{
+                            "& label": { color: "var(--text)" }, 
+                            "& .MuiOutlinedInput-root": {
+                            color: "var(--text)", 
+                            "& fieldset": { borderColor: "var(--text)" }, 
+                            },
+                            "& .MuiFormHelperText-root": { color: "var(--text)" }, 
+                        }}
                             required
                             fullWidth
                             id="outlined-read-only-input"
@@ -53,7 +61,15 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                             slotProps={{
                                 input: {readOnly: true},
                             }}/>
-                        <TextField
+                        <TextField 
+                                sx={{
+                                "& label": { color: "var(--text)" }, 
+                                "& .MuiOutlinedInput-root": {
+                                color: "var(--text)", 
+                                "& fieldset": { borderColor: "var(--text)" }, 
+                                },
+                                "& .MuiFormHelperText-root": { color: "var(--text)" }, 
+                            }}
                             required
                             fullWidth
                             id="outlined-read-only-input"
@@ -63,7 +79,15 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                                 input: {readOnly: true},
                             }}/>
                 </div>
-                <TextField
+                <TextField 
+                    sx={{
+                    "& label": { color: "var(--text)" }, 
+                    "& .MuiOutlinedInput-root": {
+                      color: "var(--text)", 
+                      "& fieldset": { borderColor: "var(--text)" }, 
+                    },
+                    "& .MuiFormHelperText-root": { color: "var(--text)" }, 
+                  }}
                     required
                     fullWidth
                     id="outlined-read-only-input"
@@ -72,14 +96,22 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                     slotProps={{
                         input: {readOnly: true},
                     }}/>
-                <TextField
+                <TextField 
+                    sx={{
+                    "& label": { color: "var(--text)" }, 
+                    "& .MuiOutlinedInput-root": {
+                      color: "var(--text)", 
+                      "& fieldset": { borderColor: "var(--text)" }, 
+                    },
+                    "& .MuiFormHelperText-root": { color: "var(--text)" }, 
+                  }}
                     id="outlined-read-only-input"
                     label="Cover Letter"
                     defaultValue={application.coverLetter}
                     multiline
                     rows={5} />
                 <div>
-                    <Typography variant='subtittle1' gutterBottom>Resume/CV</Typography>
+                    <Typography variant='subtittle1'className='text-text' gutterBottom>Resume/CV</Typography>
                     <div className='mt-2 mb-2'>
                     <label htmlFor="resmue-upload">
                         <input
