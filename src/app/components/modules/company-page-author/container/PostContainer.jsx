@@ -119,6 +119,10 @@ function PostContainer({username,followers, posts, logoPreview}){
             console.error("Error liking comment:", error);
         }
     };
+    posts?.forEach((post, index) => {
+        console.log(`Post ${index + 1} Image URL:`, post.imageUrl);
+        console.log(`Post ${index + 1} Video URL:`, post.videoUrl);
+    });
 
 
     return(
@@ -131,6 +135,7 @@ function PostContainer({username,followers, posts, logoPreview}){
                         followers={followers}
                         text={post.text?.trim()}
                         imageUrl={post.imageUrl?.trim()||null}
+                        videoUrl={post.videoUrl?.trim()||null}
                         likes={likes[post.id]} liked={liked[post.id]} comments={comments[post.id]} onLike={()=>handleLike(post.id)} onComment={()=>handleOpenModal(post.id)}
                         logoPreview={logoPreview}
                     />
