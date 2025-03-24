@@ -1,4 +1,4 @@
-import useJobDetails from "@/hooks/useJobDetails";
+import useJobDetails from "@/app/hooks/useJobDetails";
 import JobDetailsPresentation from "../presentation/JobDetailsPrenestation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
 

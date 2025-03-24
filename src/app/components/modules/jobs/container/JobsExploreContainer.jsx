@@ -1,4 +1,4 @@
-import useJobListings from "@/hooks/useJobListings";
+import useJobListings from "@/app/hooks/useJobListings";
 import JobsExplorePresentation from "../presentation/JobsExplorePresentation";
 import { useRouter } from "next/navigation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
