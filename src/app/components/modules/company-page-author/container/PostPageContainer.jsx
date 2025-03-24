@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef} from "react";
 import { useEffect } from "react";
-import { useParams } from "next/navigation";
 import SideBarContainer from "./SideBarContainer";
 import PostContainer from "./PostContainer";
 import WritePostContainer from "./WritePostContainer";
@@ -25,26 +24,25 @@ import { createPost } from "@/app/services/post";
  */
 
 
-function PostPageContainer(){
-    const [logoPreview, setLogoPreview] = useState(null);
+function PostPageContainer({username, logo}){
+    const [logoPreview, setLogoPreview] = useState(logo || null);
     const logoInputRef = useRef(null);
-    const { username } = useParams();
     const [posts, setPosts] = useState([]); 
+
+    useEffect(() => {
+        if (logo) {
+            setLogoPreview(logo);
+        }
+    }, [logo]);
 
     const logoUpload = (e) => {
         const selectedFile=e.target.files[0];
         if (selectedFile){
-          setLogoPreview(prev => URL.createObjectURL(selectedFile));
-          console.log("Current logoPreview:", logoPreview);
-
+            const newLogoURL = URL.createObjectURL(selectedFile); 
+            setLogoPreview(newLogoURL);
         }
     };
-    useEffect(() => {
-        if (username) {
-            setResolvedUsername(username);
-        }
-    }, [username]);
-
+    
     const handlePostSubmit = async (newPost) => {
         try {
             const createdPost = await createPost(newPost);
