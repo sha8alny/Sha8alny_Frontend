@@ -21,7 +21,7 @@ export default function ProfileHeader({ userProfile }) {
           <div className="relative size-48 z-10 ml-6 bg-gray-500 rounded-full border-8 border-background mt-10">
             <Image
               src={
-                userProfile.profilePictureUrl ??
+                userProfile.profilePicture ??
                 "https://picsum.photos/id/11/600/400"
               }
               alt="User Avatar"
@@ -40,7 +40,7 @@ export default function ProfileHeader({ userProfile }) {
               {userProfile.relation ?? "1st"}
             </span>
           </div>
-          <h2 className="text-muted text-lg">{userProfile.subtitle}</h2>
+          <h2 className="text-muted font-semibold">{userProfile.headline}</h2>
           <div className="flex gap-2 items-center">
             <p className="text-muted text-sm">{userProfile.location}</p>
             <h6 className="text-muted">•</h6>

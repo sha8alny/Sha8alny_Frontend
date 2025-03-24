@@ -11,13 +11,13 @@ import {
   Settings,
   ChartNoAxesCombined,
 } from "lucide-react";
-import ProfileCard from "./components/layout/profilecard";
-import { Post } from "./components/modules/feed/post";
-import UserSmallCard from "./components/layout/usersmallcard";
+import ProfileCard from "./components/layout/ProfileCard";
+import { Post } from "./components/modules/feed/Post";
+import UserSmallCard from "./components/layout/UserSmallCard";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 import { useState } from "react";
-import SuggestedUsers from "./components/layout/suggestedusers";
+import SuggestedUsers from "./components/layout/SuggestedUsers";
 import SuggestedUsersContainer from "./components/modules/profile/container/SuggestedUsersContainer";
 
 const zhf = "/zhfman.jpg";

@@ -9,7 +9,7 @@ const EducationCard = ({ placeOfEducation, isMyProfile }) => {
     <div className="flex gap-2">
       <div className="relative size-12 bg-gray-700 rounded-full">
         <Image
-          src={placeOfEducation.schoolLogo ?? "https://picsum.photos/200"}
+          src={placeOfEducation.image ?? "https://picsum.photos/200"}
           fill
           alt="Company Logo"
           className="rounded-full"
