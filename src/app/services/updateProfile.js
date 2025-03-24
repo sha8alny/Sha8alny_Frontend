@@ -1,6 +1,6 @@
 export const updateProfile = async (url, data, method) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/${url}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/profile/${url}`,
     {
       method: method,
       headers: {

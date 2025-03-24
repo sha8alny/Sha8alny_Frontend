@@ -9,7 +9,7 @@ export const ExperienceCard = ({ job, duration, isMyProfile }) => {
     <div className="flex gap-2">
       <div className="relative size-12 bg-gray-700 rounded-full">
         <Image
-          src={job.companyLogo ?? "https://picsum.photos/200"}
+          src={job.image ?? "https://picsum.photos/200"}
           fill
           alt="Company Logo"
           className="rounded-full"

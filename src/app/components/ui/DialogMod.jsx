@@ -16,7 +16,7 @@ import { X } from "lucide-react";
 
 const CloseButton = () => {
   return (
-    <AlertDialogCancel className="font-bold text-foreground">
+    <AlertDialogCancel className="font-bold text-foreground cursor-pointer">
       <X className="size-6 text-primary" />
     </AlertDialogCancel>
   );

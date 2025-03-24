@@ -1,4 +1,4 @@
-import Navbar from "@/app/components/layout/Navbar";
+import Navbar from "@/app/components/layout/NavBar";
 import { ProfileContainer } from "@/app/components/modules/profile/container/ProfileContainer";
 import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
 

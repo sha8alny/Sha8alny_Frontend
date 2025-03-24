@@ -1,6 +1,6 @@
 export const createPost = async (data) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/posts`,
+    `${process.env.NEXT_PUBLIC_API_URL}/posts`,
     {
       method: "POST",
       headers: {

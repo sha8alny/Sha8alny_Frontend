@@ -1,5 +1,5 @@
 "use client";
-import Dialog from "@/app/components/ui/Dialog";
+import Dialog from "@/app/components/ui/DialogMod";
 import EditButton from "@/app/components/ui/EditButton";
 import ModExperiencePresentation from "../presentation/ModExperiencePresentation";
 import AddButton from "@/app/components/ui/AddButton";
@@ -60,11 +60,11 @@ export default function ModExperience({ experience, adding }) {
       location: experience?.location || "",
       startDate: {
         month: experience?.startDate?.month || "",
-        year: experience?.startDate?.year || "",
+        year: experience?.startDate?.year.toString() || "",
       },
-      endMonth: {
+      endDate: {
         month: experience?.endDate?.month || "",
-        year: experience?.endDate?.year || "",
+        year: experience?.endDate?.year.toString() || "",
       },
       isCurrent: experience?.isCurrent || false,
       description: experience?.description || "",

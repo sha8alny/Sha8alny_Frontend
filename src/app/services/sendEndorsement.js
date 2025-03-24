@@ -1,6 +1,6 @@
 export const sendEndorsement = async (username) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/profile/endorse-skill`,
+    `${process.env.NEXT_PUBLIC_API_URL}/profile/endorse-skill`,
     {
       method: "POST",
       headers: {

@@ -1,5 +1,5 @@
 import { Users } from "lucide-react";
-import UserSmallCard from "./usersmallcard";
+import UserSmallCard from "./UserSmallCard";
 import Container from "./Container";
 
 

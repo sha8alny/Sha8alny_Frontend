@@ -1,5 +1,5 @@
 
-const apiURL  = process.env.NEXT_PUBLIC_JOB_API_URL;
+const apiURL  = process.env.NEXT_PUBLIC_JOBS_API_URL;
 
 
 export const fetchJobListings = async ({ pageParam = 1 }) => {

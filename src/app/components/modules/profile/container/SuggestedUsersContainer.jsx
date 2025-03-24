@@ -1,5 +1,5 @@
 'use client';
-import SuggestedUsers from "@/app/components/layout/suggestedusers";
+import SuggestedUsers from "@/app/components/layout/SuggestedUsers";
 import { useRouter } from "next/navigation";
 
 export default function SuggestedUsersContainer({ title }) {

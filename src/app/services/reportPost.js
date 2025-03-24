@@ -1,6 +1,6 @@
 export const reportPost = async (postId, reason) => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_SERVER}/report-post`,
+    `${process.env.NEXT_PUBLIC_API_URL}/report-post`,
     {
       method: "POST",
       headers: {

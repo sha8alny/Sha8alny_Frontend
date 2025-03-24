@@ -1,5 +1,5 @@
 "use client";
-import Dialog from "@/app/components/ui/Dialog";
+import Dialog from "@/app/components/ui/DialogMod";
 import EditButton from "@/app/components/ui/EditButton";
 import ModEducationPresentation from "../presentation/ModEducationPresentation";
 import AddButton from "@/app/components/ui/AddButton";
@@ -56,9 +56,9 @@ export default function ModEducation({ education, adding }) {
       fieldOfStudy: education?.fieldOfStudy || "",
       grade: education?.grade || "",
       startMonth: education?.startDate?.month || "",
-      startYear: education?.startDate?.year || "",
+      startYear: education?.startDate?.year.toString() || "",
       endMonth: education?.endDate?.month || "",
-      endYear: education?.endDate?.year || "",
+      endYear: education?.endDate?.year.toString() || "",
       isCurrent: education?.isCurrent || false,
       activities: education?.activities || "",
       description: education?.description || "",
