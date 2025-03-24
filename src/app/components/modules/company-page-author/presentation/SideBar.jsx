@@ -8,9 +8,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
 
-function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, onChangeCover,  onChangeLogo, coverpreview, logoPreview, coverInputRef,  logoInputRef,username}){
+function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, onChangeCover,  onChangeLogo, coverpreview, logoPreview, coverInputRef,  logoInputRef,fileusername}){
     return (
-        <aside className="w-70px flex flex-col mt-5 mx-5 space-y-4 border border-[var(--secondary)] rounded-lg p-4">
+        <aside className="text-text w-70px flex flex-col mt-5 mx-5 space-y-4 border border-[var(--secondary)] rounded-lg p-4">
             {/*Logo and cover image for company*/}
             <div className="relative mb-0 min-h-[140px]">
                 <div className="w-[250px] h-[120px] bg-gray-700 rounded-lg flex justify-center items-center overflow-hidden  relative">
@@ -45,7 +45,7 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
             {/*Company name*/}
             <div>
                 <div className="mb-1 border-b border-[var(--secondary)] pb-2 w-full">
-                    <p className="text-lg font-semibold w-full">{username ? username.charAt(0).toUpperCase() + username.slice(1): "Company Name"}</p>
+                    <p className="text-lg font-semibold w-full">{fileusername ? fileusername.charAt(0).toUpperCase() + fileusername.slice(1): "Company Name"}</p>
                     <p className="text-xs text-gray-300"> 7,472,293 followers</p>
                 </div>
                 <div className="border-b border-[var(--secondary)] pb-2 flex flex-row justify-between items-center">
