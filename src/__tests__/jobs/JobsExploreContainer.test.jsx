@@ -5,7 +5,6 @@ import JobsExploreContainer from '@/app/components/modules/jobs/container/JobsEx
 import useJobListings from '@/hooks/useJobListings';
 import { useRouter } from 'next/navigation';
 
-// Mock the required hooks and utils
 jest.mock('../../hooks/useJobDetails');
 jest.mock('../../hooks/useJobListings', () => jest.fn());
 jest.mock('next/navigation', () => ({
@@ -14,20 +13,6 @@ jest.mock('next/navigation', () => ({
 jest.mock('../../app/utils/normalizeJob', () => ({
   normalizeJob: jest.fn(data => data),
 }));
-jest.mock('../../app/components/modules/jobs/presentation/JobsExplorePresentation', () => {
-  return function MockedPresentation(props) {
-    return (
-      <div data-testid="jobs-presentation">
-        <button data-testid="load-more" onClick={props.fetchNextPage}>Load More</button>
-        {props.data?.map(job => (
-          <div key={job.id} data-testid={`job-${job.id}`} onClick={() => props.handleJobClick(job)}>
-            {job.title}
-          </div>
-        ))}
-      </div>
-    );
-  };
-});
 
 describe('JobsExploreContainer', () => {
   const mockRouter = { push: jest.fn() };
@@ -59,17 +44,20 @@ describe('JobsExploreContainer', () => {
   });
 
   test('renders JobsExplorePresentation with correct props', () => {
+    // Render the container and verify that the presentation component is rendered with the correct heading
     render(<JobsExploreContainer />);
-    expect(screen.getByTestId('jobs-presentation')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /explore/i })).toBeInTheDocument();
   });
 
   test('passes job data to presentation component', () => {
+    // Render the container and verify that job data is displayed in the presentation component
     render(<JobsExploreContainer />);
-    expect(screen.getByTestId('job-1')).toBeInTheDocument();
-    expect(screen.getByTestId('job-2')).toBeInTheDocument();
+    expect(screen.getByText('Software Engineer')).toBeInTheDocument();
+    expect(screen.getByText('Product Manager')).toBeInTheDocument();
   });
 
   test('calls fetchNextPage when load more is clicked', () => {
+    // Mock the fetchNextPage function and verify it is called when the "Load More" button is clicked
     const mockFetchNextPage = jest.fn();
     useJobListings.mockReturnValue({
       data: mockJobData,
@@ -81,13 +69,14 @@ describe('JobsExploreContainer', () => {
     });
 
     render(<JobsExploreContainer />);
-    fireEvent.click(screen.getByTestId('load-more'));
+    fireEvent.click(screen.getByRole('button', { name: /load more/i }));
     expect(mockFetchNextPage).toHaveBeenCalledTimes(1);
   });
 
   test('navigates to job details page when a job is clicked', () => {
+    // Simulate clicking on a job and verify that the router navigates to the correct job details page
     render(<JobsExploreContainer />);
-    fireEvent.click(screen.getByTestId('job-1'));
+    fireEvent.click(screen.getByText('Software Engineer').closest('div'));
     
     expect(mockRouter.push).toHaveBeenCalledWith(
       '/jobs/1?title=Software%20Engineer&company=Tech%20Co'
@@ -95,6 +84,7 @@ describe('JobsExploreContainer', () => {
   });
 
   test('displays loading state', () => {
+    // Mock the loading state and verify that the loading message is displayed
     useJobListings.mockReturnValue({
       data: null,
       error: null,
@@ -105,10 +95,11 @@ describe('JobsExploreContainer', () => {
     });
     
     render(<JobsExploreContainer />);
-    expect(screen.getByTestId('jobs-presentation')).toBeInTheDocument();
+    expect(screen.getByText('Loading job listings...')).toBeInTheDocument();
   });
 
   test('handles errors correctly', () => {
+    // Mock an error state and verify that the error message is displayed
     useJobListings.mockReturnValue({
       data: null,
       error: new Error('Failed to fetch'),
@@ -119,6 +110,6 @@ describe('JobsExploreContainer', () => {
     });
     
     render(<JobsExploreContainer />);
-    expect(screen.getByTestId('jobs-presentation')).toBeInTheDocument();
+    expect(screen.getByText(/failed to fetch/i)).toBeInTheDocument();
   });
 });
