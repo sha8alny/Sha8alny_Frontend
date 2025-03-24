@@ -1,4 +1,3 @@
-// src/components/JobDetails/index.jsx
 "use client";
 
 import JobDetailsContainer from "@/app/components/modules/jobs/container/JobsDetailsContainer";

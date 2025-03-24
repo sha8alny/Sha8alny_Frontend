@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/app/context/ThemeContext";
+import { usePathname } from "next/navigation";
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import WorkIcon from '@mui/icons-material/Work';
@@ -9,14 +10,19 @@ import MessageIcon from '@mui/icons-material/Message';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-
 export default function Navbar() {
+  const pathname = usePathname();
   const [activeTab, setActiveTab] = useState("home");
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    setActiveTab(window.location.pathname.slice(1) || "home");
-  }, []);
+    // Extract the base path from pathname (first segment after /)
+    const path = pathname.split('/')[1] || "home";
+    // Map the base path to a corresponding nav item
+    const matchingItem = navItems.find(item => item.href === `/${path}`) || "none";
+    setActiveTab(matchingItem.id);
+  }, [pathname]);
+
 
   const navItems = [
     { id: "home", icon: "home", href: "/" },
