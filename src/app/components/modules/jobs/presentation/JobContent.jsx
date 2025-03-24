@@ -28,7 +28,7 @@ export default function JobContent({ job, isLoading }) {
  * @returns {boolean} Whether job has necessary details
  */
 function hasJobDetails(job) {
-  return job.employmentType || job.salary || job.createdAt || job.description;
+  return job.employmentType || job.salary || job.createdAt || job.description || job.experience || job.industry || job.location;
 }
 
 /**
