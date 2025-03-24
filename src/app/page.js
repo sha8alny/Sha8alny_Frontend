@@ -1,4 +1,5 @@
 "use client";
+
 // TODO: Implement Multiple Images Case
 import {
   Bookmark,
@@ -19,6 +20,8 @@ import Navbar from "./components/layout/Navbar";
 import { useState } from "react";
 import SuggestedUsers from "./components/layout/SuggestedUsers";
 import SuggestedUsersContainer from "./components/modules/profile/container/SuggestedUsersContainer";
+
+
 
 const zhf = "/zhfman.jpg";
 const Ezz = "/ease.jpg";
@@ -57,6 +60,7 @@ const QuickAccessIcons = [
 
 const TryPremium = () => {
   return (
+
     <div className="p-4 w-full bg-[#1b1f23] border border-[#111] flex items-center gap-1 rounded-3xl">
       <BadgeCheck className="size-5 text-yellow-500" />
       <button className="hover:underline text-sm font-semibold">
@@ -106,6 +110,8 @@ export default function Page() {
           <SuggestedUsersContainer title="People You May Know" users={PeopleYouMayKnow} />
           <Footer />
         </div>
+
+
       </div>
     </div>
   );
