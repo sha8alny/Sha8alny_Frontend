@@ -16,18 +16,20 @@ import JobActions from './JobActions';
  */
 
 function JobDetailsPresentation({ job, isLoading, isError, errorMessage }) {
+    // Handle case when job is null, undefined, or empty but not in error state
+    if (isError) {
+        return <JobError errorMessage={errorMessage || "An error occurred"} />;
+    }
+
+    if ((!job || Object.keys(job).length === 0) && !isLoading) {
+        return <JobError errorMessage="Job information not available" />;
+    }
+
     return (
         <>
-            <JobHeader job={job} isLoading={isLoading} />
-
-            {isError ? (
-                <JobError errorMessage={errorMessage} />
-            ) : (
-                <>
-                    <JobContent job={job} isLoading={isLoading} />
-                    {!isLoading && <JobActions job={job} />}
-                </>
-            )}
+            <JobHeader job={job || {}} isLoading={isLoading} />
+            <JobContent job={job || {}} isLoading={isLoading} />
+            {!isLoading && job && <JobActions job={job} />}
         </>
     );
 }
