@@ -8,9 +8,6 @@ jest.mock("../../app/context/IsMyProfileContext", () => ({
   useIsMyProfile: () => ({ isMyProfile: false })
 }));
 
-// Remove the mock for the presentation component
-// jest.mock('../../app/components/modules/profile/presentation/Experience', () => ({...}));
-
 // Extract the calculateDate function for direct testing
 const calculateDate = (from, to, isCurrent = false) => {
   try {

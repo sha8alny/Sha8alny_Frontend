@@ -64,7 +64,7 @@ export default function Education({
   isMyProfile,
 }) {
   return (
-    education.length > 0 && (
+    education?.length > 0 && (
       <Container className="border border-[#111] shadow-lg mt-4 p-8">
         <div className="flex justify-between text-2xl mb-4 font-bold">
           Education{" "}
@@ -80,7 +80,7 @@ export default function Education({
             )
           )}
 
-          {education.length > 1 && (
+          {education?.length > 2 && (
             <button
               onClick={toggleAllEducation}
               className="w-full text-center hover:cursor-pointer p-2 duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"
