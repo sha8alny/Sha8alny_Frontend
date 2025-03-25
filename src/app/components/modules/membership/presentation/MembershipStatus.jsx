@@ -26,14 +26,13 @@ const MembershipStatus = ({
   limits,
   renewalDate,
   isMissed,
+  freePlanDetails
 }) => {
   const isPremium = plan === "premium";
   const isExpiredPremium = isMissed;
   const goldText = "text-[#F0A24F]";
   const greenText = "text-green-500";
-  const maxConnections = 50,
-    maxMessages = 100,
-    maxApplications = 20;
+  
 
   return (
     <div className="mx-auto flex bg-foreground w-full max-w-[725px] p-4 rounded-2xl shadow-2xl">
@@ -67,7 +66,7 @@ const MembershipStatus = ({
               ) : (
                 <>
                   {limits.monthlyConnectionRequests + " "}/
-                  <span className={greenText}>{maxConnections}</span>
+                  <span className={greenText}>{freePlanDetails.features.maxConnections}</span>
                 </>
               )}
             </div>
@@ -79,7 +78,7 @@ const MembershipStatus = ({
               ) : (
                 <>
                   {limits.dailyMessageRequests + " "}/
-                  <span className={greenText}>{maxMessages}</span>
+                  <span className={greenText}>{freePlanDetails.features.dailyMessages}</span>
                 </>
               )}
             </div>
@@ -94,7 +93,7 @@ const MembershipStatus = ({
               ) : (
                 <>
                   {limits.dailyJobApplications + " "}/
-                  <span className={greenText}>{maxApplications}</span>
+                  <span className={greenText}>{freePlanDetails.features.jobApplications}</span>
                 </>
               )}
             </div>

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "@/app/services/userProfile";
+import { fetchUserProfile , fetchUsername} from "@/app/services/userProfile";
 import { useRouter } from "next/navigation";
 import SettingsNavbarPresentation from "../presentation/SettingsNavbarPresentation";
 /**
@@ -23,6 +23,14 @@ const SettingsNavbarContainer = () => {
     queryKey: ["userProfile"],
     queryFn: () => fetchUserProfile("john"),
   });
+  
+  const {
+    data,
+
+  } = useQuery({
+    queryKey: ["username"],
+    queryFn: fetchUsername,
+  });
 
   const profilePictureUrl = user?.profilePicture;
   const headline = user?.headline;
@@ -34,7 +42,7 @@ const SettingsNavbarContainer = () => {
   const profileButtonRef = useRef(null);
 
   const handleHomeNavigation = () => {
-    router.push("/");
+    router.push(`/`);
   };
 
   const handleProfileClick = () => {
@@ -42,7 +50,7 @@ const SettingsNavbarContainer = () => {
   };
 
   const handleViewProfile = () => {
-    router.push("/profile");
+    router.push(`${data.username}`);
   };
 
   const handleSignOut = () => {
