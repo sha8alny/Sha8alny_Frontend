@@ -18,14 +18,16 @@ export function FlaggedJobsTableContainer() {
   const [selectedReport, setSelectedReport] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
-
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const statusOptions = ["Pending", "Reviewing", "Approved", "Rejected"];
   const queryClient = useQueryClient();
   const showToast = useToast();
-
+  
   const { data:reports, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["jobReports", page],
+    queryKey: ["jobReports", page, sortOrder,selectedStatuses],
     queryFn: () =>
-      fetchReports({ reportType: "job", pageParam: page }),
+      fetchReports({ pageParam: page , jobs:true,statuses:selectedStatuses, sortByTime:sortOrder }),
     keepPreviousData: true,
   });
 
@@ -40,7 +42,6 @@ export function FlaggedJobsTableContainer() {
   const deleteJobMutation = useMutation({
     mutationFn: deleteJob,
     onSuccess: () => {
-      showToast("Job deleted successfully");
       queryClient.invalidateQueries(["jobReports"]);
     },
   });
@@ -53,12 +54,7 @@ export function FlaggedJobsTableContainer() {
     },
   });
 
-
-
-if (isLoading) return <div>Loading...</div>;
-if (isError) return <div>Error loading reports.</div>;
-if (!reports?.data || reports.data.length === 0) return <div>No reports found.</div>;
-
+ 
 
   const handleViewDetails = (report) => {
     setSelectedReport(report);
@@ -76,13 +72,36 @@ if (!reports?.data || reports.data.length === 0) return <div>No reports found.</
   const handleDeleteJob = (jobId) => {
     deleteJobMutation.mutate(jobId);
   };
+
   const handleUpdateReport = (reportId, status) => {
     updateReportMutation.mutate({ reportId, status });
   };
+
+  const toggleStatusFilter = (status) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    );
+  };
+ 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "text-yellow-600 border border-yellow-600";
+      case "reviewing":
+        return "text-blue-400 border-blue-400";
+      case "approved":
+        return "text-green-600 border-green-600";
+      case "rejected":
+        return "text-red-600 border-red-600";
+      default:
+        return "text-gray-600";
+    }
+  };
+
   return (
     <FlaggedJobsTablePresentation
-      reports={reports}
-      isDialogOpen={isDialogOpen}
+    reports={reports?.data ? reports: []}  
+    isDialogOpen={isDialogOpen}
       selectedReport={selectedReport}
       handleViewDetails={handleViewDetails}
       handleCloseDialog={handleCloseDialog}
@@ -94,7 +113,13 @@ if (!reports?.data || reports.data.length === 0) return <div>No reports found.</
       isFetching={isFetching}
       page={page}
       setPage={setPage}
-
+      statusOptions={statusOptions}
+      toggleStatusFilter={toggleStatusFilter}
+      selectedStatuses={selectedStatuses}
+      getStatusColor={getStatusColor}
+      sortOrder={sortOrder} 
+      setSortOrder={setSortOrder}
+  
     />
   );
 }

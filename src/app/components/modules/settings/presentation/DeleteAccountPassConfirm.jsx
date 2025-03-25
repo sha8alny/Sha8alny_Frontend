@@ -16,12 +16,11 @@ import Button from "./Button";
 const DeleteAccountPassConfirmation = ({
   handleDeleteAccountForm,
   deleteAccountMutation,
+  handleDeleteAccount,
+  setPassword,
+  password
 }) => {
-  const [password, setPassword] = useState("");
-
-  const handleDeleteAccount = async () => {
-    deleteAccountMutation.mutate(password);
-  };
+ 
 
   return (
     <div className="text-text flex flex-col gap-4 bg-foreground rounded-lg w-full max-w-[725px] mx-auto font-sans">
@@ -29,12 +28,13 @@ const DeleteAccountPassConfirmation = ({
       <h1 className="text-primary text-xl font-semibold">Delete account</h1>
       <p className="text-text text-lg">Enter your password to close this account</p>
       <form className="flex flex-col gap-1">
-        <label className="text-sm text-text">Password</label>
+        <label className="text-sm text-text flex flex-col gap-2">Password
         <input
           onChange={(e) => setPassword(e.target.value)}
-          className="bg-background rounded-lg p-1"
+          className="bg-background rounded-lg p-2"
           type="password"
         />
+        </label>
       </form>
       <Button content="Delete account" handler={handleDeleteAccount} disabled={!password.trim()} />
       </div>

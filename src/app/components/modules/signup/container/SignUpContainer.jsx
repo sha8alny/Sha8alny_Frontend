@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignUpForm from "../presentation/SignUpForm";
-import { handleSignup } from "../../../../services/userMangment";
+import { handleSignup } from "../../../../services/userManagement";
 import { RememberMe } from "@mui/icons-material";
 
 /**

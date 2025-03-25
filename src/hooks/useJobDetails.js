@@ -17,12 +17,12 @@ export default function useJobDetails() {
     queryFn: () => fetchJobDetails(jobId),
     enabled: !!jobId, // Only fetch if jobId exists
     initialData: jobId
-    ? {
-        job_id: jobId,
-        title: searchParams.get("title"),
-        company_data :{ name: searchParams.get("company")},
-      }
-    : undefined,
+      ? {
+          id: jobId,
+          title: searchParams.get("title"),
+          company: { name: searchParams.get("company") },
+        }
+      : undefined,
   });
 
   return {
