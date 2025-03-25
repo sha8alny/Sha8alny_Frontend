@@ -5,14 +5,14 @@ import { fetchSavedJobs } from "@/app/services/jobs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 /**
- * JobsCardContainer component fetches and displays job listings.
- * It supports pagination and can accept an override list of job listings.
- *
- * @param {Object} props - The component props.
- * @returns {JSX.Element} The rendered component.
+ * Container component for managing saved jobs.
+ * 
+ * Uses react-query to fetch saved jobs data with infinite scrolling capability.
+ * Normalizes job data and handles navigation to job details when a job is clicked.
+ * 
+ * @returns {JSX.Element} The SavedJobsPresentation component with appropriate props
+ * for displaying saved jobs, loading states, and handling user interactions.
  */
-
-
 function SavedJobsContainer() {
   const {
     data,

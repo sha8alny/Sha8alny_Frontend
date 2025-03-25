@@ -1,6 +1,6 @@
 "use client";
 //////////////////////////////PLACEHOLDER////////////////////////////////
-import MyItemsLayout from "@/app/components/layout/MyItemsLayout";
+import MyItemsLayout from "@/app/components/modules/my-items/layout/MyItemsLayout";
 
 export default function SavedPostsPage() {
   return (

@@ -1,4 +1,4 @@
-import useJobDetails from "@/hooks/useJobDetails";
+import useJobDetails from "@/app/hooks/useJobDetails";
 import JobDetailsPresentation from "../presentation/JobDetailsPrenestation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
 
@@ -12,7 +12,7 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
 
 function JobDetailsContainer() {
   const { job, isLoading, isError, errorMessage } = useJobDetails();
-  const normalizedJob = normalizeJob(job);
+  const normalizedJob = job ? normalizeJob(job) : null;
   return (
     <JobDetailsPresentation
       job={normalizedJob}

@@ -7,6 +7,9 @@ export default function useJobDetails() {
   const searchParams = useSearchParams();
   const jobId = params.id;
 
+  const title = searchParams.get("title");
+  const companyName = searchParams.get("company");
+  
   const {
     data: job,
     isLoading,
@@ -15,15 +18,12 @@ export default function useJobDetails() {
   } = useQuery({
     queryKey: ["jobDetails", jobId],
     queryFn: () => fetchJobDetails(jobId),
-    enabled: !!jobId, // Only fetch if jobId exists
-    initialData: jobId
-      ? {
-          id: jobId,
-          title: searchParams.get("title"),
-          company: { name: searchParams.get("company") },
-        }
+    enabled: !!jobId,
+    initialData: jobId && title && companyName
+      ? { id: jobId, title, company: { name: companyName } }
       : undefined,
   });
+  
 
   return {
     job,
