@@ -50,7 +50,7 @@ const SettingsNavbarContainer = () => {
   };
 
   const handleViewProfile = () => {
-    router.push(`${data.username}`);
+    router.push(`/u/${data?.username}`);
   };
 
   const handleSignOut = () => {

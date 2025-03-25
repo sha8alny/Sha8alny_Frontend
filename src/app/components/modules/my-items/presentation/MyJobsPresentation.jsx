@@ -57,7 +57,7 @@ function MyJobsPresentation({
 
       <Tabs defaultValue="all" className="w-full">
         <div className="flex flex-col justify-between items-center mb-6 md:flex-row gap-4">
-          <TabsList className="border-b order-last md:order-first dark:bg-background">
+          <TabsList className="border-b order-last md:order-first bg-background dark:bg-background">
             <TabsTrigger
               value="all"
               className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"

@@ -22,7 +22,7 @@ export const fetchUserProfile = async (username) => {
   
 
 export const fetchUsername = async () => {
-  const response = await fetch(`${API_URL}/username`, {
+  const response = await fetch(`${apiURL}/username`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

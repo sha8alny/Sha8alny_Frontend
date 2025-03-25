@@ -107,7 +107,7 @@ export default function ModEducation({ education, adding }) {
         ? null
         : { month: data.endMonth, year: data.endYear },
     };
-    handleUserUpdate({
+    handleUserUpdate.mutate({
       api: adding ? "add-education" : "edit",
       method: adding ? "POST" : "PATCH",
       data: { education: [formattedData] },
