@@ -65,6 +65,7 @@ describe("ChangePasswordContainer", () => {
     fireEvent.change(screen.getByLabelText(/Retype the password/i), { target: { value: "password321" } });
 
     fireEvent.click(screen.getByText(/Save Password/i));
+    expect(screen.getByText(/Passwords do not match./i)).toBeInTheDocument();
 
   });
 
@@ -128,34 +129,7 @@ describe("ChangePasswordContainer", () => {
 
   });
 
-  test("shows success message on successful password change", async () => {
-    mutationMock.onSuccess = () => {
-      showToastMock("Password updated successfully");
-      toggleFormMock();
-    };
-
-    render(<ChangePasswordContainer toggleForm={toggleFormMock} />);
-    
-    mutationMock.onSuccess();
-
-    
-      expect(showToastMock).toHaveBeenCalledWith("Password updated successfully");
-      expect(toggleFormMock).toHaveBeenCalled();
-
-  });
-
-  test("shows error message on failed password change", async () => {
-    mutationMock.onError = () => {
-      showToastMock("Failed to update password", false);
-    };
-
-    render(<ChangePasswordContainer toggleForm={toggleFormMock} />);
-    
-    mutationMock.onError();
-
-      expect(showToastMock).toHaveBeenCalledWith("Failed to update password", false);
-   
-  });
+ 
 
 
 });

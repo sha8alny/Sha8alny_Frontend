@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -33,6 +34,35 @@ import {
 } from "@/app/components/ui/Select";
 
 import TableSkeleton from "./TableSkeleton";
+
+/**
+ * FlaggedJobsTablePresentation Component
+ *
+ * This component renders a table displaying flagged job reports with various actions and filters.
+ * It includes functionality for sorting, filtering by status, pagination, and handling actions
+ * such as viewing details, approving, rejecting, or setting the status of a report.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array} props.reports - The list of flagged job reports to display.
+ * @param {boolean} props.isDialogOpen - Indicates whether the details dialog is open.
+ * @param {Object} props.selectedReport - The currently selected report for viewing details.
+ * @param {Function} props.handleViewDetails - Function to handle viewing details of a report.
+ * @param {Function} props.handleCloseDialog - Function to handle closing the details dialog.
+ * @param {Function} props.handleDeleteReport - Function to handle deleting a report.
+ * @param {Function} props.handleDeleteJob - Function to handle deleting a job.
+ * @param {Function} props.handleUpdateReport - Function to handle updating the status of a report.
+ * @param {number} props.page - The current page number for pagination.
+ * @param {Function} props.setPage - Function to set the current page number.
+ * @param {boolean} props.isFetching - Indicates whether data is being fetched.
+ * @param {Array} props.statusOptions - The list of available status options for filtering.
+ * @param {Function} props.toggleStatusFilter - Function to toggle the selected status filter.
+ * @param {Array} props.selectedStatuses - The list of currently selected statuses for filtering.
+ * @param {Function} props.getStatusColor - Function to get the color class for a status badge.
+ * @param {string} props.sortOrder - The current sort order ("asc" or "des").
+ * @param {Function} props.setSortOrder - Function to set the sort order.
+ * @param {boolean} props.isLoading - Indicates whether the data is loading.
+ * @param {boolean} props.isError - Indicates whether there was an error loading the data.
+ */
 
 export function FlaggedJobsTablePresentation({
   reports,

@@ -32,11 +32,11 @@ describe("ChangeUsernameContainer", () => {
     expect(screen.getByText(/Save user name/i)).toBeInTheDocument();
   });
 
-test("shows error if username is empty and button is disabled", () => {
+  test("shows error if username is empty and button is disabled", () => {
     render(<ChangeUsernameContainer handleUsernameForm={handleUsernameFormMock} />);
     fireEvent.change(screen.getByLabelText(/New user name/i), { target: { value: "" } });
     expect(screen.getByText(/Save user name/i)).toBeDisabled();
-});
+  });
 
   test("shows error if username contains numbers", () => {
     render(<ChangeUsernameContainer handleUsernameForm={handleUsernameFormMock} />);

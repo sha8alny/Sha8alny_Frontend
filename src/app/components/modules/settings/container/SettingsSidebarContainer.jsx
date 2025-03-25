@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import SettingsSidebarPresentation from "../presentation/SettingsSidebarPresentation";
 import PersonIcon from "@mui/icons-material/Person";
 import SecurityIcon from "@mui/icons-material/Security";
-
+import { useSearchParams, useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserProfile } from "@/app/services/userProfile";
 /**
  * SettingsSidebarContainer component manages the state and logic for the settings sidebar.
  *
@@ -14,9 +15,16 @@ import SecurityIcon from "@mui/icons-material/Security";
  * @param {function} props.setActiveSetting - Function to set the active setting.
  * @returns {JSX.Element} The rendered component.
  */
-export default function SettingsSidebarContainer({ profilePictureUrl, setActiveSetting }) {
+export default function SettingsSidebarContainer({setActiveSetting }) {
   const searchParams = useSearchParams();
   const [highlight, setHighlight] = useState(0);
+  const router = useRouter();
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: () => fetchUserProfile("john"),
+  });
+
+  const profilePictureUrl = user?.profilePicture; 
 
   const settings = [
     { name: "Account Preferences", id: 0, icon: <PersonIcon /> },
@@ -32,10 +40,15 @@ export default function SettingsSidebarContainer({ profilePictureUrl, setActiveS
       }
     }
   }, [searchParams]);
+  
+  const handleSetActiveSetting = (setting) => {
+    setActiveSetting(setting);
+    router.push(`/settings?section=${encodeURIComponent(setting)}`);
+  };
 
   const handleChangeSetting = (id, name) => {
     setHighlight(id);
-    setActiveSetting(name);
+    handleSetActiveSetting(name);
   };
 
   return (
