@@ -76,7 +76,7 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
   const handleWebsiteChange=(e)=>{
     const website= e.target.value;
     setCompanyWebsite(website);
-    const websiteRegex = /^(https?:\/\/ |http:\/\/ |www\.)[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+(\/\S*)?$/;
+    const websiteRegex = /^(https?:\/\/|www\.)[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+(\/\S*)?$/;
     if(!websiteRegex.test(website)){
       setErrors((prev) => ({ ...prev, companyWebsite: "Please enter a valid website" }));
     }
