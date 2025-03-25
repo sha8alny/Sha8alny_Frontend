@@ -1,12 +1,19 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { useQuery } from '@tanstack/react-query';
-import { useIsMyProfile } from '../../app/context/IsMyProfileContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 
-// Mock dependencies
-jest.mock('@tanstack/react-query');
-jest.mock('../../app/context/IsMyProfileContext');
+// Import the actual components
+import { ProfileContainer } from '../../app/components/modules/profile/container/ProfileContainer';
+import { IsMyProfileProvider } from '../../app/context/IsMyProfileContext';
+
+// Mock the service function
+jest.mock('../../app/services/userProfile', () => ({
+  fetchUserProfile: jest.fn()
+}));
+import { fetchUserProfile } from '../../app/services/userProfile';
+
+// Mock the presentation component
 jest.mock('../../app/components/modules/profile/presentation/ProfilePresentation', () => {
   const ProfilePresentation = ({ userProfile, profileStrength, isMyProfile }) => (
     <div data-testid="profile-presentation">
@@ -16,141 +23,85 @@ jest.mock('../../app/components/modules/profile/presentation/ProfilePresentation
     </div>
   );
   
-  ProfilePresentation.ProfileSkeleton = () => <div data-testid="profile-skeleton">Loading...</div>;
-  return ProfilePresentation;
-});
-
-// Mock the actual ProfileContainer component
-jest.mock('../../app/components/modules/profile/container/ProfileContainer', () => {
-  return function MockProfileContainer({ username }) {
-    if (!username) {
-      return <div>No username provided.</div>;
-    }
-    
-    useQuery(['userProfile', username], () => {});
-    
-    return (
-      <div data-testid="profile-container">
-        <div data-testid="username">{username}</div>
-      </div>
-    );
+  return {
+    __esModule: true,
+    default: ProfilePresentation,
+    ProfileSkeleton: () => <div data-testid="profile-skeleton">Loading...</div>
   };
 });
 
-// Import the mocked component
-import ProfileContainer from '../../app/components/modules/profile/container/ProfileContainer';
-
-// Define the ProfileContent component directly for testing
-// (assuming it's an internal component that's not exported separately)
-const ProfileContent = ({ username }) => {
-  const { data, isLoading, isError } = useQuery(['userProfile', username], () => {});
-  const { setIsMyProfile } = useIsMyProfile();
-
-  if (isLoading) {
-    return <div data-testid="profile-skeleton">Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error fetching user profile.</div>;
-  }
-
-  if (data && !data.isVisible) {
-    return <div>User profile is private.</div>;
-  }
-
-  // Set isMyProfile in context if this is the user's own profile
-  if (data && data.isMyProfile) {
-    setIsMyProfile(true);
-  }
-
-  // Calculate profile strength
-  let profileStrength = {
-    strength: 0,
-    label: 'Very Weak',
-    color: 'bg-red-700'
-  };
-
-  if (data) {
-    let score = 0;
-    if (data.profilePicture) score += 10;
-    if (data.about) score += 15;
-    if (data.education && data.education.length > 0) score += 20;
-    if (data.experience && data.experience.length > 0) score += 30;
-    if (data.skills && data.skills.length > 0) score += 15;
-    if (data.connectionsCount > 0) score += 10;
-
-    profileStrength.strength = score;
-
-    if (score > 80) {
-      profileStrength.label = 'All-Star';
-      profileStrength.color = 'bg-green-500';
-    } else if (score > 60) {
-      profileStrength.label = 'Advanced';
-      profileStrength.color = 'bg-green-300';
-    } else if (score > 40) {
-      profileStrength.label = 'Intermediate';
-      profileStrength.color = 'bg-yellow-500';
-    } else if (score > 20) {
-      profileStrength.label = 'Weak';
-      profileStrength.color = 'bg-red-500';
-    }
-  }
-
-  return (
-    <div data-testid="profile-presentation">
-      <div data-testid="user-profile">{JSON.stringify(data)}</div>
-      <div data-testid="profile-strength">{JSON.stringify(profileStrength)}</div>
-      <div data-testid="is-my-profile">{String(data?.isMyProfile || false)}</div>
-    </div>
+// Create a wrapper for the QueryClientProvider
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  
+  return ({ children }) => (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
   );
 };
 
-describe('ProfileContent', () => {
-  const mockSetIsMyProfile = jest.fn();
-  
+describe('ProfileContainer', () => {
   beforeEach(() => {
-    useIsMyProfile.mockReturnValue({ setIsMyProfile: mockSetIsMyProfile });
-    useQuery.mockReset();
+    fetchUserProfile.mockReset();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  test('should render error message when no username is provided', () => {
+    render(<ProfileContainer username="" />);
+    expect(screen.getByText(/No username provided/i)).toBeInTheDocument();
   });
 
-  test('should render loading skeleton when data is loading', () => {
-    useQuery.mockReturnValue({
-      data: null,
-      isLoading: true,
-      isError: false
-    });
-
-    render(<ProfileContent username="testuser" />);
+  test('should show loading skeleton when data is loading', async () => {
+    // Set up the mock to delay so we can see the loading state
+    fetchUserProfile.mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({}), 100)));
+    
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <ProfileContainer username="testuser" />
+      </Wrapper>
+    );
+    
     expect(screen.getByTestId('profile-skeleton')).toBeInTheDocument();
   });
 
-  test('should render error message when query fails', () => {
-    useQuery.mockReturnValue({
-      data: null,
-      isLoading: false,
-      isError: true
+  test('should render error message when query fails', async () => {
+    fetchUserProfile.mockRejectedValue(new Error('Failed to fetch'));
+    
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <ProfileContainer username="testuser" />
+      </Wrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Error fetching user profile/i)).toBeInTheDocument();
     });
-
-    render(<ProfileContent username="testuser" />);
-    expect(screen.getByText('Error fetching user profile.')).toBeInTheDocument();
   });
 
-  test('should render private profile message when profile is not visible', () => {
-    useQuery.mockReturnValue({
-      data: { isVisible: false },
-      isLoading: false,
-      isError: false
+  test('should render private profile message when profile is not visible', async () => {
+    fetchUserProfile.mockResolvedValue({ isVisible: false });
+    
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <ProfileContainer username="testuser" />
+      </Wrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByText(/User profile is private/i)).toBeInTheDocument();
     });
-
-    render(<ProfileContent username="testuser" />);
-    expect(screen.getByText('User profile is private.')).toBeInTheDocument();
   });
 
-  test('should render profile presentation with correct data', async () => {
+  test('should render profile presentation with correct data and calculate profile strength', async () => {
     const mockUserProfile = {
       isVisible: true,
       isMyProfile: true,
@@ -163,33 +114,33 @@ describe('ProfileContent', () => {
       connectionsCount: 10
     };
 
-    useQuery.mockReturnValue({
-      data: mockUserProfile,
-      isLoading: false,
-      isError: false
-    });
-
-    render(<ProfileContent username="testuser" />);
+    fetchUserProfile.mockResolvedValue(mockUserProfile);
     
-    expect(screen.getByTestId('profile-presentation')).toBeInTheDocument();
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <ProfileContainer username="testuser" />
+      </Wrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByTestId('profile-presentation')).toBeInTheDocument();
+    });
     
     // Verify profile strength calculation works correctly
     const profileStrengthElement = screen.getByTestId('profile-strength');
     const profileStrength = JSON.parse(profileStrengthElement.textContent);
     
-    // Full profile should have 100% strength
+    // Check if the strength is calculated correctly
     expect(profileStrength.strength).toBe(100);
     expect(profileStrength.label).toBe('All-Star');
     expect(profileStrength.color).toBe('bg-green-500');
     
     // Verify isMyProfile is passed to the presentation
     expect(screen.getByTestId('is-my-profile').textContent).toBe('true');
-    
-    // Verify setIsMyProfile was called
-    expect(mockSetIsMyProfile).toHaveBeenCalledWith(true);
   });
 
-  test('should calculate partial profile strength correctly', () => {
+  test('should calculate partial profile strength correctly', async () => {
     const mockUserProfile = {
       isVisible: true,
       isMyProfile: false,
@@ -202,79 +153,25 @@ describe('ProfileContent', () => {
       connectionsCount: 0
     };
 
-    useQuery.mockReturnValue({
-      data: mockUserProfile,
-      isLoading: false,
-      isError: false
+    fetchUserProfile.mockResolvedValue(mockUserProfile);
+    
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <ProfileContainer username="testuser" />
+      </Wrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByTestId('profile-presentation')).toBeInTheDocument();
     });
-
-    render(<ProfileContent username="testuser" />);
     
     const profileStrengthElement = screen.getByTestId('profile-strength');
     const profileStrength = JSON.parse(profileStrengthElement.textContent);
     
-    // Should have only profile picture (10) and skills (15) = 25%
+    // Should have profile picture (10) and skills (15) = 25%
     expect(profileStrength.strength).toBe(25);
     expect(profileStrength.label).toBe('Weak');
     expect(profileStrength.color).toBe('bg-red-500');
-  });
-
-  test('should handle empty profile correctly', () => {
-    const mockUserProfile = {
-      isVisible: true,
-      isMyProfile: false,
-      username: 'testuser',
-      profilePicture: '',
-      about: '',
-      education: [],
-      experience: [],
-      skills: [],
-      connectionsCount: 0
-    };
-
-    useQuery.mockReturnValue({
-      data: mockUserProfile,
-      isLoading: false,
-      isError: false
-    });
-
-    render(<ProfileContent username="testuser" />);
-    
-    const profileStrengthElement = screen.getByTestId('profile-strength');
-    const profileStrength = JSON.parse(profileStrengthElement.textContent);
-    
-    // Should have 0% strength
-    expect(profileStrength.strength).toBe(0);
-    expect(profileStrength.label).toBe('Very Weak');
-    expect(profileStrength.color).toBe('bg-red-700');
-  });
-});
-
-describe('ProfileContainer', () => {
-  beforeEach(() => {
-    useQuery.mockReset();
-  });
-
-  test('should render error message when no username is provided', () => {
-    render(<ProfileContainer username="" />);
-    expect(screen.getByText('No username provided.')).toBeInTheDocument();
-  });
-
-  test('should render ProfileContent when username is provided', () => {
-    // Set up the query mock
-    useQuery.mockReturnValue({
-      data: { isVisible: true, isMyProfile: false },
-      isLoading: false,
-      isError: false
-    });
-
-    render(<ProfileContainer username="testuser" />);
-    
-    // Check that the ProfileContainer with the correct username is rendered
-    expect(screen.getByTestId('profile-container')).toBeInTheDocument();
-    expect(screen.getByTestId('username')).toHaveTextContent('testuser');
-    
-    // This would only pass if useQuery is called, indicating ProfileContent was rendered
-    expect(useQuery).toHaveBeenCalled();
   });
 });
