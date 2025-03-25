@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import DeleteAccountPresentation from "../presentation/DeleteAccountPresentation";
-import { getName, deleteAccount } from "../../../../services/userMangment";
+import { getName, deleteAccount } from "../../../../services/userManagement";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/app/context/ToastContext";
 import { useState } from "react";

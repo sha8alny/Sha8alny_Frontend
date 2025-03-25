@@ -33,6 +33,7 @@ const PostNewJobContainer = ({ onBack }) => {
 
     const [errors, setErrors] = useState({});
     const [alert, setAlert] = useState(null);
+    const companyUsername ="companyUsername";
 
     /**
      * Handles input changes and updates the new job state.
@@ -97,7 +98,7 @@ const PostNewJobContainer = ({ onBack }) => {
             return;
         }
         setAlert(null);
-        JobSubmit(newJob);
+        JobSubmit(newJob, companyUsername);
     };
 
     return (

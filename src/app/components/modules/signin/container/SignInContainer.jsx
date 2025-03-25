@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignInForm from "../presentation/SignInForm";
-import { handleSignIn } from "../../../../services/userMangment";
+import { handleSignIn } from "../../../../services/userManagement";
 
 /**
  * SignInContainer component handles the user login process.

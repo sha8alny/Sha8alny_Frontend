@@ -51,24 +51,24 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants}) => {
         <form
             key={job.job_id || index}
           className=" bg-foreground flex-grow p-10 w-full rounded-lg border border-secondary  mt-8  ">
-          <div>
-            <div className="grid grid-cols-2 mb-4">
+          <div > 
+            <div className="flex flex-col md:flex-row justify-between mb-6">
           <h1 className="text-secondary text-2xl text-semibold">{job.title}</h1>
           <button
             type="button"
             onClick={()=>
                 {console.log("Job ID:", job.job_id); 
                 onShowApplicants(job.job_id)}}
-           className=" border border-secondary text-lg text-secondary rounded-full  hover:bg-background transition duration-300 ">Show Applicants</button>
+           className="mt-2 md:mt-0 border border-secondary text-md  text-secondary rounded-full  hover:bg-background transition duration-300 px-4 py-1 ">Show Applicants</button>
           </div>
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
             <p className="text-text">{job.location}</p>
             <p className="text-text">{job.industry}</p>
             <p className="text-secondary">{job.employmentType}</p>
             <p className="text-secondary font-bold">${job.salary}</p>
             </div>
-            <div className="relative ml-8 flex items-center justify-center h-20"> 
+            <div className="hidden lg:flex relative ml-8 flex items-center justify-center h-20"> 
             <div className="w-[4px] h-17 bg-text"></div>
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-text w-3 h-3 rounded-full"></div>
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-text w-3 h-3 rounded-full"></div>
@@ -79,7 +79,8 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants}) => {
                 <p className="text-secondary font-bold">{new Date(job.time).toLocaleDateString()}</p>
             </div>
           </div>
-          <div className="mt-2 grid grid-cols-2 gap-100">
+          <hr className="p-3 space-y-4 "/>
+          <div className="mt-2 grid grid-cols-2 sm:grid-cols-2 gap-8">
              <div className="relative flex flex-col items-center group cursor-pointer">
                     <RemoveRedEyeOutlined className="text-secondary" />
                     <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-secondary text-sm"> views:<p className="text-text text-semibold text-sm text-center font-bold">{job.numViews} </p>

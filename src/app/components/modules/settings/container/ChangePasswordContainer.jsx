@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { changePassword } from "../../../../services/userMangment";
+import { changePassword } from "../../../../services/userManagement";
 import ChangePasswordForm from "../presentation/ChangePasswordForm";
 import { useToast } from "@/app/context/ToastContext";
 import { useRouter } from "next/navigation";

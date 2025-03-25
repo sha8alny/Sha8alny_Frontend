@@ -24,6 +24,7 @@ const JobsFormContainer = () => {
     const [showPostJobForm, setShowPostJobForm] = useState(false);
     const [showJobApplicants, setShowJobApplicants] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
+    const companyUsername = "companyUsername"; 
 
     const { mutate: getJobs, isPending:isLoading } = useMutation(
         {
@@ -38,7 +39,7 @@ const JobsFormContainer = () => {
         }); 
 
         useEffect(() => {
-            getJobs();
+            getJobs(companyUsername);
         }, []);
     
 
