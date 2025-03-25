@@ -56,7 +56,5 @@ describe("SideBarContainer", ()=>{
     
         await waitFor(() => expect(deleteCompany).toHaveBeenCalledWith(mockProps.username));
     });
-
-
 });
 
