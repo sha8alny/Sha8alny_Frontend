@@ -17,7 +17,7 @@ export function normalizeJob(job) {
       name: job.companyData?.name || "",
       username: job.companyData?.username || "",
       logo: job.companyData?.logo || "",
-      location: job.companyData?.location || "",
+      location: job.companyData?.location || null
     },
     title: job.title || "",
     location: job.location || "",
@@ -26,7 +26,9 @@ export function normalizeJob(job) {
     description: job.description || "",
     industry: job.industry || "",
     experience: job.experience || "Not specified",
-    salary: typeof job.salary === "number" ? job.salary : null,
+    salary: (typeof job.salary === "number" || typeof job.salary === "string") 
+           ? job.salary 
+           : null,
     isSavedByUser: !!job.isSavedByUser,
     createdAt: job.createdAt ? new Date(job.createdAt) : null,
     updatedAt: job.updatedAt ? new Date(job.updatedAt) : null,

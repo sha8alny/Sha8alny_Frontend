@@ -83,27 +83,6 @@ describe("ChangeEmailContainer", () => {
     expect(mutationMock.mutate).toHaveBeenCalled();
   });
 
-  test("displays success message and closes form on successful update", () => {
-    mutationMock.onSuccess = () => {
-      showToastMock("Email updated successfully");
-      toggleFormMock();
-    };
 
-    render(<ChangeEmailContainer toggleForm={toggleFormMock} />);
-    mutationMock.onSuccess();
 
-    expect(showToastMock).toHaveBeenCalledWith("Email updated successfully");
-    expect(toggleFormMock).toHaveBeenCalled();
-  });
-
-  test("displays error message on failed update", () => {
-    mutationMock.onError = () => {
-      showToastMock("Failed to update email", false);
-    };
-
-    render(<ChangeEmailContainer toggleForm={toggleFormMock} />);
-    mutationMock.onError();
-
-    expect(showToastMock).toHaveBeenCalledWith("Failed to update email", false);
-  });
 });

@@ -1,6 +1,22 @@
 import React from "react";
 import JobsCard from "../../jobs/presentation/JobsCard";
 
+/**
+ * Component for displaying saved jobs with options to browse more jobs or load additional saved jobs.
+ *
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {Array} [props.savedJobs=[]] - Array of saved job objects to display.
+ * @param {Object|null} [props.error=null] - Error object if there is an error loading saved jobs.
+ * @param {boolean} [props.isLoading=false] - Flag indicating if the saved jobs are currently being loaded.
+ * @param {Function} props.fetchNextPage - Function to fetch the next page of saved jobs.
+ * @param {boolean} [props.hasNextPage=false] - Flag indicating if there are more pages of saved jobs to load.
+ * @param {boolean} [props.isFetchingNextPage=false] - Flag indicating if the next page of saved jobs is currently being fetched.
+ * @param {Function} props.handleJobClick - Function to handle clicking on a job card.
+ * @param {Function} props.handleMoreJobsClick - Function to handle clicking the "Browse More Jobs" button.
+ *
+ * @returns {JSX.Element} The rendered SavedJobsPresentation component.
+ */
 function SavedJobsPresentation({
   savedJobs = [],
   error = null,

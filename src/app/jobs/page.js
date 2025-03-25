@@ -1,7 +1,7 @@
 "use client";
 import Head from "next/head";
 import Navbar from "@/app/components/layout/NavBar";
-import JobsCardContainer from "@/app/components/modules/jobs/container/JobsExploreContainer";
+import JobsExploreContainer from "@/app/components/modules/jobs/container/JobsExploreContainer";
 
 export default function Home() {
 
@@ -56,7 +56,7 @@ export default function Home() {
 
             {/* Explore Jobs Section */}
             <div className="bg-foreground rounded-3xl p-6 shadow-xl">
-              <JobsCardContainer />
+              <JobsExploreContainer />
             </div>
           </div>
           {/* Right Sidebar */}

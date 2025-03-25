@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Navbar from "./NavBar";
+import Navbar from "../../../layout/NavBar";
 import {
   Work as JobsIcon,
   Bookmark as SavedIcon,

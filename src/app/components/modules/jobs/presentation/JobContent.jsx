@@ -7,9 +7,8 @@
  * @returns {JSX.Element} The rendered component.
  */
 export default function JobContent({ job, isLoading }) {
-  const hasDetails =
-    job?.employmentType || job?.salary || job?.createdAt || job?.description;
-  if (isLoading || !hasDetails) {
+  // Check if job is null/undefined or has required details
+  if (isLoading || !hasJobDetails(job)) {
     return <LoadingState />;
   }
 
@@ -23,13 +22,23 @@ export default function JobContent({ job, isLoading }) {
 }
 
 /**
+ * Helper function to check if job has meaningful details
+ * 
+ * @param {Object} job - Job object to check
+ * @returns {boolean} Whether job has necessary details
+ */
+function hasJobDetails(job) {
+  return job.employmentType || job.salary || job.createdAt || job.description || job.experience || job.industry || job.location;
+}
+
+/**
  * Component to display job tags.
  *
  * @param {Object} props - Component props.
  * @param {Object} props.job - Normalized job details.
  * @returns {JSX.Element} The rendered component.
  */
-function JobTags({ job }) {
+function JobTags({ job = {} }) {
   const tags = [
     {
       value: job.employmentType,
@@ -86,7 +95,11 @@ function JobTags({ job }) {
  * @param {Object} props.job - Normalized job details.
  * @returns {JSX.Element} The rendered component.
  */
-function JobDescription({ job }) {
+function JobDescription({ job = {} }) {
+  if (!job.description) {
+    return null;
+  }
+  
   return (
     <div className="mb-6 mt-6">
       <h2 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-300">
@@ -106,7 +119,7 @@ function JobDescription({ job }) {
  * @param {Object} props.job - Normalized job details.
  * @returns {JSX.Element} The rendered component.
  */
-function JobRequirements({ job }) {
+function JobRequirements({ job = {} }) {
   return (
     <div className="mb-6">
       <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-300">
@@ -156,3 +169,4 @@ function LoadingState() {
     </>
   );
 }
+

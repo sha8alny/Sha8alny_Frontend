@@ -1,19 +1,28 @@
-// JobsContainer.jsx
 import React from "react";
 import { useRouter } from "next/navigation";
 
 import MyJobsPresentation from "../presentation/MyJobsPresentation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAppliedJobs } from "@/app/services/jobs";
-import { data } from "autoprefixer";
 
+
+/**
+ * Custom hook to fetch job applications data.
+ * 
+ * @function
+ * @returns {Object} Object containing job applications data and query states
+ * @property {Array} data - The job applications data
+ * @property {boolean} isLoading - Loading state of the query
+ * @property {boolean} isError - Error state of the query
+ * @property {string|null} errorMessage - Error message if query failed, null otherwise
+*/
 const useJobApplications = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["jobApplications"],
     queryFn: () => fetchAppliedJobs(),
     enabled: true,
   });
-
+  
   return {
     data,
     isLoading,
@@ -22,13 +31,24 @@ const useJobApplications = () => {
   };
 };
 
+/**
+ * MyJobsContainer component that fetches and manages the user's job applications.
+ * 
+ * This component serves as a container that fetches job application data using react-query,
+ * provides utility functions for formatting and styling, and handles navigation events.
+ * It passes all necessary props to the presentational component.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered component that displays user's job applications or loading/error states
+ */
 function MyJobsContainer() {
   const router = useRouter();
 
   const {
     data,
     isLoading,
-    error,
+    isError,
+    errorMessage,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
@@ -87,11 +107,10 @@ function MyJobsContainer() {
     return <div className="text-center py-8">Loading job listings...</div>;
   }
 
-  // Error state
-  if (error) {
+  if (isError) {
     return (
       <div className="text-center py-8 text-red-500">
-        Error loading job listings: {error.message}
+       <span>Error loading job listings: {errorMessage}</span> 
       </div>
     );
   }

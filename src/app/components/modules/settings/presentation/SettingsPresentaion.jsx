@@ -13,18 +13,14 @@ import SettingsNavbarContainer from "../container/SettingsNavbarContainer";
  * @returns {JSX.Element} The rendered component.
  */
 export default function SettingsPresentation({
-  profilePictureUrl,
   activeSetting,
-  handleSetActiveSetting,
+  setActiveSetting,
 }) {
   return (
     <div className="flex flex-col h-screen w-screen bg-background overflow-x-hidden overflow-y-scroll">
       <SettingsNavbarContainer />
       <div className="flex flex-col md:flex-row h-full">
-        <SettingsSidebarContainer
-          profilePictureUrl={profilePictureUrl}
-          setActiveSetting={handleSetActiveSetting}
-        />
+        <SettingsSidebarContainer setActiveSetting={setActiveSetting} />
         <div className="flex flex-col gap-4 p-8 rounded-lg h-full w-full">
           {activeSetting === "Account Preferences" && (
             <SettingsAccountPrefsContainer />

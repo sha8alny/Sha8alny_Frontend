@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { updateUsername } from "../../../../services/userMangment";
+import { updateUsername } from "../../../../services/userManagement";
 import ChangeUsernameForm from "../presentation/ChangeUsernameForm";
 import { useToast } from "@/app/context/ToastContext";
 /**
@@ -33,9 +33,7 @@ const ChangeUsernameContainer = ({ handleUsernameForm }) => {
     const newValue = e.target.value;
     setUsername(newValue);
 
-    if (newValue.length === 0) {
-      setError("Username is required.");
-    } else if (/\d/.test(newValue)) {
+    if (/\d/.test(newValue)) {
       setError("Username cannot contain numeric values.");
     } else {
       setError("");

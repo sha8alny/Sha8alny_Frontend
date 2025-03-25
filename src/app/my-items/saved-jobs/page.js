@@ -1,6 +1,6 @@
 "use client";
 
-import MyItemsLayout from "@/app/components/layout/MyItemsLayout";
+import MyItemsLayout from "@/app/components/modules/my-items/layout/MyItemsLayout";
 import SavedJobsContainer from "@/app/components/modules/my-items/container/SavedJobsContainer";
 
 

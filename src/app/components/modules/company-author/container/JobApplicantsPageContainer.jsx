@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import JobApplicantsPage from "../presentation/JobApplicantsPage";
 import { JobApplicants } from "../../../../services/companyManagment";
+import Analytics from "../../company-page-author/presentation/Analytics";
+import SideBarContainer from "../../company-page-author/container/SideBarContainer";
+import { useRef } from "react";
 
 /**
  * JobApplicantsPageContainer component
@@ -19,25 +22,48 @@ import { JobApplicants } from "../../../../services/companyManagment";
  *   <JobApplicantsPageContainer jobId={jobId} onBack={handleBack} />
  * )
  */
-const JobApplicantsPageContainer = ({jobId,onBack}) => {
+const JobApplicantsPageContainer = ({jobId,onBack, username, logo}) => {
+const [logoPreview, setLogoPreview] = useState(logo ||null);
+const logoInputRef = useRef(null);
+const logoUpload = (e) => {
+    const selectedFile=e.target.files[0];
+    if (selectedFile){
+        setLogoPreview(prev => URL.createObjectURL(selectedFile));
+        console.log("Current logoPreview:", logoPreview);
+    }
+};
 const [applicants, setApplicants] = useState([]);
 const [isLoading, setIsLoading] = useState(false);
 const [page, setPage] = useState(1);
 const [hasMore, setHasMore] = useState(true);
 const [pageData, setPageData] = useState([]);
 const [selectedApplicant, setSelectedApplicant] = useState(null);
+useEffect(() => {
+    if (!jobId) return;
+    resetState();
+    getApplicants(1);
 
-   
-    const getApplicants = async (pageNumber) => {
+ }, [jobId]);
+   // Helper function to reset state when jobId changes
+   const resetState = () => {
+    setApplicants([]);
+    setPage(1);
+    setHasMore(true);
+    setPageData({});
+    setSelectedApplicant(null);
+  };
+
+
+const getApplicants = async (pageNumber) => {
         console.log("fetching page",pageNumber);
-        if (isLoading || pageData[pageNumber]) return;
+        if (isLoading || pageData[pageNumber]|| !jobId) return;
         setIsLoading(true);
         try {
             const applicantsData = await JobApplicants(jobId,pageNumber);
             console.log("applicantsData",applicantsData);
             setPageData((prev) => ({ ...prev, [pageNumber]: applicantsData }));
             setApplicants(applicantsData);
-            if(applicantsData.length === 0){
+            if(applicantsData.length === 0 || !applicantsData){
                 setHasMore(false);
             }
         }catch (error) {
@@ -46,18 +72,7 @@ const [selectedApplicant, setSelectedApplicant] = useState(null);
             setIsLoading(false);
         }
       };
-      useEffect(() => {
-       if (!jobId) return;
-        setApplicants([]);
-        setPage(1);
-        setHasMore(true);
-        setPageData([]);
-        getApplicants(1);
-    
-        return () => {
-            setIsLoading(false);
-             };
-    }, [jobId]);
+
 
     /**
  * Handles the next page button click.
@@ -109,6 +124,13 @@ const closeApplicationDetails = () => {
 };
 
 return (
+    <div className="flex w-full">
+    <SideBarContainer
+    username={username}
+    logoPreview={logoPreview}
+    logoInputRef={logoInputRef}
+    logoUpload={logoUpload}
+    />
     <JobApplicantsPage 
     Applicants={applicants || []}
      isLoading={isLoading} 
@@ -122,6 +144,8 @@ return (
      selectedApplicant={selectedApplicant}
     onCloseApplicationDetails={closeApplicationDetails}
      />
+     <Analytics />
+    </div>
 );
 
 };

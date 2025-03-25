@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignUpForm from "../presentation/SignUpForm";
-import { handleSignup } from "../../../../services/userMangment";
+import { handleSignup } from "../../../../services/userManagement";
 import { RememberMe } from "@mui/icons-material";
 
 /**
@@ -35,13 +35,6 @@ const SignUpContainer = () => {
     
     const signupMutation = useMutation({
         mutationFn: handleSignup,
-        onSuccess: () => {
-            alert("Registration Successful & Auto-Login Successful!");
-            router.push("/Home");
-        },
-        onError: (error) => {
-            alert(error.message);
-        }
     });
 
     const validateField = (name,value) => {
@@ -72,13 +65,24 @@ const SignUpContainer = () => {
      */
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(!formData.recaptcha){
+        
+
+        if(!formData.recaptcha || typeof formData.recaptcha !== "string"){
             alert("Please verify that you are not a robot");
+            console.log("🚫 Recaptcha not verified");
             return;
         }
         if(validateForm()){
-            const {username, email, password, isAdmin, recapcha, rememberMe}=formData;
-            signupMutation.mutate({username,email,password, isAdmin, recapcha, rememberMe });
+            const {username, email, password, isAdmin, recaptcha, rememberMe}=formData;
+            console.log("🚀 Calling Mutation with:", { username, email, password, isAdmin, recaptcha, rememberMe });
+
+            signupMutation.mutate({username,email,password, isAdmin, recaptcha, rememberMe }, 
+                {onSuccess: () =>
+                  {alert("Registration Successful & Auto-Login Successful!");
+                    router.push('/Home')},
+                 onError: (error) => {
+                        alert(error.message);
+                },});
         }
 
     };
@@ -91,6 +95,10 @@ const SignUpContainer = () => {
         }));
         validateField(name,value);
     };
+    const handleRecaptchaChange = (token) => {
+        setFormData((prev) => ({ ...prev, recaptcha: token }));
+    }
+
     return(
         <div className="flex flex-col h-screen bg-background overflow-x-hidden overflow-y-scroll">
                 <SignUpForm 
@@ -99,8 +107,7 @@ const SignUpContainer = () => {
                 error={error}
                 handleSubmit={handleSubmit} 
                 isSubmitting={signupMutation.isPending}
-                onRecaptchaChange={(value) => setFormData((prev)=>({ ...prev, recaptcha: value }))}
-                />
+                onRecaptchaChange={handleRecaptchaChange}                />
            </div>
     );
 };

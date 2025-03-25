@@ -1,6 +1,6 @@
 "use client";
 import ProfileCard from "../../../ui/ProfileCard";
-import { ArrowBack} from "@mui/icons-material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ViewApplicationDetailsContainer from "../container/ViewApplicationDetailsContainer";
 import { ArrowForwardIos,ArrowBackIos } from "@mui/icons-material";
 
@@ -56,9 +56,14 @@ const JobApplicantsPage = ({
 }) => {
    console.log("Applicants",Applicants);
     return (
-        <div className="bg-transparent flex-grow p-6 rounded-lg border border-secondary max-w-4xl m-18 relative grid grid-cols-1 gap-6">
+        <div className="bg-transparent flex-grow p-6 rounded-lg border border-secondary max-w-4xl m-5 relative grid grid-cols-1 gap-6">
         <div className="flex justify-end">
-        <ArrowBack onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 "></ArrowBack>
+        <ArrowBackIcon onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 text-text "
+        sx={{
+        color: "text", // Replace with your desired color (e.g., red-orange)
+        }}
+        role="button" aria-label="ArrowBack"
+        />
         </div>
         <div className="grid grid-cols-3 gap-4">
         {isLoading ?( <p className="text-text text-xl text-semibold">Loading...</p> ) : ( Applicants.length === 0 ? (
@@ -81,11 +86,15 @@ const JobApplicantsPage = ({
         <div className="flex flex justify-between mt-2">
             {currentPage > 1 && (
                 <ArrowBackIos
+                role="button"
+                aria-label="ArrowBackIos"
                 onClick={onPrev}
                 className="text-secondary"/>
             )}
         {hasMore && !isLoading &&(
             <ArrowForwardIos
+            role="button"
+            aria-label="ArrowForwardIos"
             onClick={onNext}
             className=" text-secondary "/>
 

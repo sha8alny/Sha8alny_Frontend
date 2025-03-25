@@ -3,9 +3,9 @@ import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
 
-export const postJob = async (jobData) => {
+export const postJob = async (jobData, companyUsername) => {
     try{
-        const postJobResponse = await fetchWithAuth(`${apiURL}/company/job`, {
+        const postJobResponse = await fetchWithAuth(`${apiURL}/company/${companyUsername}/job`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(jobData),
@@ -21,9 +21,9 @@ export const postJob = async (jobData) => {
     }
 };
 
-export const postedJobs = async () => {
+export const postedJobs = async (companyUsername) => {
     try{
-        const postedJobsResponse = await fetchWithAuth(`${apiURL}/company/job`,{
+        const postedJobsResponse = await fetchWithAuth(`${apiURL}/company/${companyUsername}/job`,{
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
