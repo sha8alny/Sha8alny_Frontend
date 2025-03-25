@@ -57,7 +57,7 @@ export default function Experience({
   isMyProfile,
 }) {
   return (
-    experience.length > 0 && (
+    experience?.length > 0 && (
       <Container className="border border-[#111] shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Experience{" "}
@@ -73,7 +73,7 @@ export default function Experience({
             )
           )}
 
-          {experience.length > 3 && (
+          {experience?.length > 3 && (
             <button
               onClick={toggleAllExperience}
               className="w-full text-center p-2 hover:cursor-pointer duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"

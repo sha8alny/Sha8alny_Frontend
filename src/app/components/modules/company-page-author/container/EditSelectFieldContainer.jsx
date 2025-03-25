@@ -1,4 +1,17 @@
 import SelectField from "../../company-page-form/presentation/SelectField"
+
+/**
+ * EditSelectFieldContainer component handles select dropdowns for company size and type.
+ *
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.companySize - The selected company size option.
+ * @param {Function} props.setCompanySize - Function to update the selected company size.
+ * @param {string} props.companyType - The selected company type option.
+ * @param {Function} props.setCompanyType - Function to update the selected company type.
+ * @returns {JSX.Element} The EditSelectFieldContainer component.
+ */
+
 function EditSelectFieldContainer({companySize, setCompanySize, companyType, setCompanyType}){
     return(
         <div>

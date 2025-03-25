@@ -2,97 +2,124 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ExperienceContainer from '../../app/components/modules/profile/container/ExperienceContainer';
 import "@testing-library/jest-dom";
-import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
+import { IsMyProfileProvider } from '../../app/context/IsMyProfileContext';
 
-// Mock dependencies
-jest.mock("../../app/context/IsMyProfileContext", () => ({
-  useIsMyProfile: jest.fn()
-}));
+// We'll need some sample experience data to test with
+const mockExperience = [
+  { 
+    id: 1, 
+    title: 'Software Engineer', 
+    company: 'Tech Co',
+    employmentType: 'Full-time',
+    location: 'New York',
+    description: 'Developing web applications',
+    skills: ['React', 'JavaScript'],
+    image: null,
+    startDate: { month: 'Jan', year: '2020' },
+    endDate: { month: 'Dec', year: '2022' }
+  },
+  { 
+    id: 2, 
+    title: 'Senior Developer', 
+    company: 'Code Inc',
+    employmentType: 'Contract',
+    location: 'Remote',
+    description: 'Leading development team',
+    skills: ['Node.js', 'TypeScript'],
+    image: null,
+    startDate: { month: 'Feb', year: '2023' },
+    endDate: { month: 'Present', year: '' }
+  }
+];
 
-jest.mock("../../app/components/modules/profile/presentation/Experience", () => {
-  return function MockExperience({ experience, allExperience, toggleAllExperience, isMyProfile }) {
-    return (
-      <div data-testid="experience-presentation">
-        <div data-testid="experience-data">{JSON.stringify(experience)}</div>
-        <div data-testid="all-experience">{allExperience.toString()}</div>
-        <div data-testid="is-my-profile">{isMyProfile.toString()}</div>
-        <button 
-          data-testid="toggle-button" 
-          onClick={toggleAllExperience}
-        >
-          Toggle Experience
-        </button>
-      </div>
-    );
-  };
-});
+// Wrapper component to provide context
+const renderWithContext = (ui, { isMyProfile = false } = {}) => {
+  return render(
+    <IsMyProfileProvider value={{ isMyProfile, setIsMyProfile: jest.fn() }}>
+      {ui}
+    </IsMyProfileProvider>
+  );
+};
 
 describe('ExperienceContainer', () => {
-  const mockExperience = [
-    { id: 1, title: 'Software Engineer', company: 'Tech Co' },
-    { id: 2, title: 'Senior Developer', company: 'Code Inc' }
-  ];
-
-  beforeEach(() => {
-    useIsMyProfile.mockReturnValue({ isMyProfile: false });
+  test('should render Experience component with experience data', () => {
+    renderWithContext(<ExperienceContainer experience={mockExperience} />);
+    
+    // Check for Experience component rendering
+    expect(screen.getByText('Experience')).toBeInTheDocument();
+    
+    // Check if experience data is displayed
+    expect(screen.getByText('Software Engineer')).toBeInTheDocument();
+    expect(screen.getByText('Tech Co')).toBeInTheDocument();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  test('should render Experience component with correct props', () => {
-    render(<ExperienceContainer experience={mockExperience} />);
+  test('should toggle between showing all experiences and limited experiences', () => {
+    // Create more than 3 experiences to test toggling
+    const manyExperiences = [
+      ...mockExperience,
+      { 
+        id: 3, 
+        title: 'Junior Developer', 
+        company: 'Startup Inc',
+        employmentType: 'Full-time',
+        location: 'San Francisco',
+        description: 'Frontend development',
+        skills: ['HTML', 'CSS'],
+        image: null,
+        startDate: { month: 'May', year: '2018' },
+        endDate: { month: 'Dec', year: '2019' }
+      },
+      { 
+        id: 4, 
+        title: 'Intern', 
+        company: 'Tech Giant',
+        employmentType: 'Internship',
+        location: 'Seattle',
+        description: 'Learning the ropes',
+        skills: ['Java', 'Spring'],
+        image: null,
+        startDate: { month: 'Jun', year: '2017' },
+        endDate: { month: 'Sep', year: '2017' }
+      }
+    ];
     
-    expect(screen.getByTestId('experience-presentation')).toBeInTheDocument();
-    expect(screen.getByTestId('experience-data')).toHaveTextContent(JSON.stringify(mockExperience));
-    expect(screen.getByTestId('all-experience')).toHaveTextContent('false');
-  });
-
-  test('should pass isMyProfile value from context to Experience component', () => {
-    useIsMyProfile.mockReturnValue({ isMyProfile: true });
+    renderWithContext(<ExperienceContainer experience={manyExperiences} />);
     
-    render(<ExperienceContainer experience={mockExperience} />);
+    // Initially only 3 experiences should be visible
+    expect(screen.getByText('Software Engineer')).toBeInTheDocument();
+    expect(screen.getByText('Senior Developer')).toBeInTheDocument();
+    expect(screen.getByText('Junior Developer')).toBeInTheDocument();
+    expect(screen.queryByText('Intern')).not.toBeInTheDocument();
     
-    expect(screen.getByTestId('is-my-profile')).toHaveTextContent('true');
-  });
-
-  test('should toggle allExperience state when toggleAllExperience is called', () => {
-    render(<ExperienceContainer experience={mockExperience} />);
+    // Show all experiences
+    const showMoreButton = screen.getByText(/Show all 4 experiences/i);
+    fireEvent.click(showMoreButton);
     
-    // Initially false
-    expect(screen.getByTestId('all-experience')).toHaveTextContent('false');
+    // All experiences should now be visible
+    expect(screen.getByText('Software Engineer')).toBeInTheDocument();
+    expect(screen.getByText('Senior Developer')).toBeInTheDocument();
+    expect(screen.getByText('Junior Developer')).toBeInTheDocument();
+    expect(screen.getByText('Intern')).toBeInTheDocument();
     
-    // Click to toggle
-    fireEvent.click(screen.getByTestId('toggle-button'));
+    // Show less
+    const showLessButton = screen.getByText('Show less');
+    fireEvent.click(showLessButton);
     
-    // Should now be true
-    expect(screen.getByTestId('all-experience')).toHaveTextContent('true');
-    
-    // Click to toggle again
-    fireEvent.click(screen.getByTestId('toggle-button'));
-    
-    // Should be back to false
-    expect(screen.getByTestId('all-experience')).toHaveTextContent('false');
+    // Fourth experience should not be visible again
+    expect(screen.queryByText('Intern')).not.toBeInTheDocument();
   });
 
   test('should handle empty experience array', () => {
-    render(<ExperienceContainer experience={[]} />);
+    renderWithContext(<ExperienceContainer experience={[]} />);
     
-    expect(screen.getByTestId('experience-presentation')).toBeInTheDocument();
-    expect(screen.getByTestId('experience-data')).toHaveTextContent('[]');
+    // The Experience component shouldn't render when experience is empty
+    expect(screen.queryByText('Experience')).not.toBeInTheDocument();
   });
 
   test('should handle undefined experience prop', () => {
-    render(<ExperienceContainer />);
+    renderWithContext(<ExperienceContainer />);
     
-    expect(screen.getByTestId('experience-presentation')).toBeInTheDocument();
-    
-    // Instead of asserting specific content, check what's actually being rendered
-    const actualContent = screen.getByTestId('experience-data').textContent;
-    console.log('Actual content in experience-data:', actualContent);
-    
-    // Then make our assertion based on the actual content
-    expect(screen.getByTestId('experience-data')).toHaveTextContent(actualContent);
+    // The Experience component shouldn't render when experience is undefined
+    expect(screen.queryByText('Experience')).not.toBeInTheDocument();
   });
 });

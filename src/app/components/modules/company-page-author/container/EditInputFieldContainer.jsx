@@ -1,4 +1,26 @@
 import InputField from "../../company-page-form/presentation/InputField";
+
+/**
+ * EditInputFieldContainer component handles input fields for editing company details.
+ *
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.companyName - The company's name.
+ * @param {Function} props.setCompanyName - Function to update the company's name.
+ * @param {string} props.companyIndustry - The industry the company belongs to.
+ * @param {Function} props.setCompanyIndustry - Function to update the company's industry.
+ * @param {string} props.companyLocation - The company's location.
+ * @param {Function} props.setCompanyLocation - Function to update the company's location.
+ * @param {string} props.companyURL - The company's unique URL slug.
+ * @param {Function} props.setCompanyURL - Function to update the company's URL.
+ * @param {string} props.companyWebsite - The company's website.
+ * @param {Function} props.setCompanyWebsite - Function to update the company's website.
+ * @param {Object} [props.errors={}] - Validation errors for the input fields.
+ * @param {Function} props.setErrors - Function to update error messages.
+ * @returns {JSX.Element} The EditInputFieldContainer component.
+ */
+
+
 function EditInputFieldContainer({companyName,setCompanyName, companyIndustry,setCompanyIndustry, companyLocation, setCompanyLocation, companyURL,setCompanyURL, companyWebsite, setCompanyWebsite,errors={}, setErrors}){
     const handleNameError = (e) =>{
         const name = e.target.value.trim();
@@ -35,7 +57,7 @@ function EditInputFieldContainer({companyName,setCompanyName, companyIndustry,se
     const handleWebsiteChange=(e)=>{
         const website= e.target.value.trim();
         setCompanyWebsite(website);
-        const websiteRegex = /^(https?:\/\/ |http:\/\/ |www\.)[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+(\/\S*)?$/;
+        const websiteRegex = /^(https?:\/\/|www\.)[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+(\/\S*)?$/;
         if(!websiteRegex.test(website)){
             setErrors((prev) => ({ ...prev, companyWebsite: "Please enter a valid website" }));
         }

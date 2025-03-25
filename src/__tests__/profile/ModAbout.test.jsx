@@ -1,177 +1,186 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ModAbout from '../../app/components/modules/profile/container/ModAbout';
 import "@testing-library/jest-dom";
-import useUpdateProfile from '../../app/hooks/useUpdateProfile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// Mock dependencies
-jest.mock('../../app/components/ui/Dialog', () => ({ useRegularButton, buttonData, AlertContent }) => (
-  <div data-testid="dialog-mock">
-    <div data-testid="button-data">{buttonData}</div>
-    <div data-testid="alert-content">{AlertContent}</div>
-  </div>
-));
+// Create a global variable for the mock implementation
+let mockUpdateProfileImplementation = jest.fn(() => Promise.resolve({ success: true }));
 
-// Mock with a more realistic implementation
-jest.mock('../../app/components/ui/DialogMod', () => ({ useRegularButton, buttonData, AlertContent }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+// Mock the external service using the absolute path with @ symbol
+jest.mock('../../app/services/updateProfile', () => ({
+  updateProfile: (...args) => mockUpdateProfileImplementation(...args)
+}));
+
+// Create a wrapper that provides the QueryClient
+const renderWithQueryClient = (ui) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+      mutations: {
+        retry: false,
+      }
+    },
+  });
   
-  return (
-    <div data-testid="dialog-mock">
-      <button 
-        data-testid="dialog-trigger" 
-        onClick={() => setIsOpen(true)}
-      >
-        {buttonData}
-      </button>
-      {isOpen && (
-        <div data-testid="dialog-content">
-          {AlertContent}
-        </div>
-      )}
-    </div>
+  return render(
+    <QueryClientProvider client={queryClient}>
+      {ui}
+    </QueryClientProvider>
   );
-});
-
-jest.mock('../../app/components/modules/profile/presentation/ModAboutPresentation', () => {
-  return function MockModAboutPresentation({ handleSubmit, handleAbout, error, about, isLoading }) {
-    return (
-      <div data-testid="about-presentation-mock">
-        <textarea 
-          data-testid="about-textarea" 
-          value={about || ""} 
-          onChange={(e) => handleAbout(e.target.value)}
-        />
-        {error && <div data-testid="error-message">{error}</div>}
-        <button 
-          data-testid="submit-btn" 
-          onClick={() => handleSubmit(about)}
-          disabled={isLoading}
-        >
-          Submit
-        </button>
-        {isLoading && <div data-testid="loading-indicator">Loading...</div>}
-      </div>
-    );
-  };
-});
-
-jest.mock('../../app/components/ui/AddButton', () => () => <span data-testid="add-button">Add</span>);
-jest.mock('../../app/components/ui/EditButton', () => () => <span data-testid="edit-button">Edit</span>);
-
-// Mock useUpdateProfile hook
-jest.mock('../../app/hooks/useUpdateProfile');
-
-// Mock window.alert
-const originalAlert = window.alert;
-window.alert = jest.fn();
+};
 
 describe('ModAbout', () => {
-  let mutateMock;
+  // Save original alert before tests
+  const originalAlert = window.alert;
   
   beforeEach(() => {
-    mutateMock = jest.fn();
-    useUpdateProfile.mockReturnValue({
-      mutate: mutateMock,
-      isLoading: false,
-      isError: false,
-      isSuccess: false
-    });
+    // Mock window.alert to prevent it from showing during tests
+    window.alert = jest.fn();
+    
+    // Reset the mock implementation for each test
+    mockUpdateProfileImplementation = jest.fn(() => Promise.resolve({ success: true }));
   });
 
   afterEach(() => {
+    // Clear mocks between tests
     jest.clearAllMocks();
   });
 
   afterAll(() => {
+    // Restore original alert after all tests
     window.alert = originalAlert;
   });
 
-  test('should call updateProfileMutation.mutate with correct api based on adding prop', () => {
-    render(<ModAbout about="Initial about" adding={true} />);
+  test('should render add button when adding=true', async () => {
+    renderWithQueryClient(<ModAbout about="" adding={true} />);
     
-    // First open the dialog
-    const dialogTrigger = screen.getByTestId('dialog-trigger');
-    fireEvent.click(dialogTrigger);
+    // Look for Add button
+    const addButton = await screen.findByRole('button');
+    expect(addButton).toBeInTheDocument();
+  });
+
+  test('should render edit button when adding=false', async () => {
+    renderWithQueryClient(<ModAbout about="" adding={false} />);
     
-    // Now we can access the dialog content
-    const submitBtn = screen.getByTestId('submit-btn');
-    fireEvent.click(submitBtn);
+    // Look for Edit button
+    const editButton = await screen.findByRole('button');
+    expect(editButton).toBeInTheDocument();
+  });
+
+  test('should open dialog when button is clicked', async () => {
+    renderWithQueryClient(<ModAbout about="Initial about" adding={false} />);
     
-    expect(mutateMock).toHaveBeenCalledWith({
-      api: 'edit',  // Both adding=true and adding=false use the 'edit' API
-      method: 'PATCH',
-      data: { about: 'Initial about' }
+    // Find and click the button that opens the dialog
+    const button = await screen.findByRole('button');
+    fireEvent.click(button);
+    
+    // Check if dialog content is now visible
+    await waitFor(() => {
+      const aboutHeading = screen.getByText('About');
+      expect(aboutHeading).toBeInTheDocument();
     });
   });
 
-  test('should call updateProfileMutation.mutate with edit api when adding=false', () => {
-    render(<ModAbout about="Initial about" adding={false} />);
+  test('should handle text input in the textarea', async () => {
+    renderWithQueryClient(<ModAbout about="Initial about" adding={false} />);
     
-    // First open the dialog
-    const dialogTrigger = screen.getByTestId('dialog-trigger');
-    fireEvent.click(dialogTrigger);
+    // Open the dialog
+    const button = await screen.findByRole('button');
+    fireEvent.click(button);
     
-    // Now we can access the dialog content
-    const submitBtn = screen.getByTestId('submit-btn');
-    fireEvent.click(submitBtn);
+    // Find the textarea by its placeholder text
+    const textarea = await screen.findByPlaceholderText('Write about yourself.');
+    fireEvent.change(textarea, { target: { value: 'Updated about text' } });
     
-    expect(mutateMock).toHaveBeenCalledWith({
-      api: 'edit',
-      method: 'PATCH',
-      data: { about: 'Initial about' }
+    // Verify the textarea value changed
+    expect(textarea).toHaveValue('Updated about text');
+  });
+
+  test('should show character count', async () => {
+    renderWithQueryClient(<ModAbout about="Initial about" adding={false} />);
+    
+    // Open the dialog
+    const button = await screen.findByRole('button');
+    fireEvent.click(button);
+    
+    // Find the character count span
+    await waitFor(() => {
+      const countSpan = screen.getByText('13', { exact: true });
+      expect(countSpan).toBeInTheDocument();
+      expect(screen.getByText('/1000')).toBeInTheDocument();
+    });
+    
+    // Find the textarea and update its value
+    const textarea = screen.getByPlaceholderText('Write about yourself.');
+    fireEvent.change(textarea, { target: { value: 'New text' } });
+    
+    // Check that character count updated
+    await waitFor(() => {
+      const countSpan = screen.getByText('8', { exact: true });
+      expect(countSpan).toBeInTheDocument();
     });
   });
 
-  test('should handle valid input change', () => {
-    render(<ModAbout about="Initial about" adding={false} />);
+  test('should show error when text is too long', async () => {
+    renderWithQueryClient(<ModAbout about="" adding={false} />);
     
-    // First open the dialog
-    const dialogTrigger = screen.getByTestId('dialog-trigger');
-    fireEvent.click(dialogTrigger);
+    // Open the dialog
+    const button = await screen.findByRole('button');
+    fireEvent.click(button);
     
-    // Now we can access the dialog content
-    const textarea = screen.getByTestId('about-textarea');
+    // Create a string longer than 1000 characters
+    const longText = 'a'.repeat(1001);
     
-    // Change to valid new value
-    fireEvent.change(textarea, { target: { value: 'Updated about' } });
+    // Find the textarea and set a value that's too long
+    const textarea = await screen.findByPlaceholderText('Write about yourself.');
+    fireEvent.change(textarea, { target: { value: longText } });
     
-    // Submit should work
-    const submitBtn = screen.getByTestId('submit-btn');
-    fireEvent.click(submitBtn);
+    // Verify character count turns red
+    await waitFor(() => {
+      const countElement = screen.getByText('1001', { exact: true });
+      expect(countElement).toHaveClass('text-red-500');
+    });
     
-    expect(mutateMock).toHaveBeenCalledWith({
-      api: 'edit',
-      method: 'PATCH',
-      data: { about: 'Updated about' }
+    // Also verify the error message
+    await waitFor(() => {
+      expect(screen.getByText('About is too long.')).toBeInTheDocument();
     });
   });
 
-  test('should render add button when adding=true', () => {
-    render(<ModAbout about="" adding={true} />);
-    expect(screen.getByTestId('add-button')).toBeInTheDocument();
-  });
+  test('should submit about data when save button is clicked', async () => {
+    // Set up a resolved promise
+    mockUpdateProfileImplementation.mockImplementation(() => {
+      return Promise.resolve({ success: true });
+    });
 
-  test('should render edit button when adding=false', () => {
-    render(<ModAbout about="" adding={false} />);
-    expect(screen.getByTestId('edit-button')).toBeInTheDocument();
-  });
-
-  test('should show loading indicator when isLoading is true', () => {
-    useUpdateProfile.mockReturnValue({
-      mutate: mutateMock,
-      isLoading: true,
-      isError: false,
-      isSuccess: false
+    renderWithQueryClient(<ModAbout about="Initial about" adding={false} />);
+    
+    // Open the dialog
+    const button = await screen.findByRole('button');
+    fireEvent.click(button);
+    
+    // Update text
+    const textarea = await screen.findByPlaceholderText('Write about yourself.');
+    fireEvent.change(textarea, { target: { value: 'New about text' } });
+    
+    // Click save button
+    const saveButton = screen.getByText('Save');
+    fireEvent.click(saveButton);
+    
+    // Verify the service was called with the right parameters
+    await waitFor(() => {
+      expect(mockUpdateProfileImplementation).toHaveBeenCalledWith(
+        "edit", 
+        { about: "New about text" }, 
+        "PATCH"
+      );
     });
     
-    render(<ModAbout about="" adding={false} />);
-    
-    // First open the dialog
-    const dialogTrigger = screen.getByTestId('dialog-trigger');
-    fireEvent.click(dialogTrigger);
-    
-    // Now we can check for the loading indicator inside the open dialog
-    expect(screen.getByTestId('loading-indicator')).toBeInTheDocument();
+    // For now, just verify the mutation was called - we can't easily test component unmounting
+    // This test is passing if the mock was called correctly
+    expect(mockUpdateProfileImplementation).toHaveBeenCalledTimes(1);
   });
 });

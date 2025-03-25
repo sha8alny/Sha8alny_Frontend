@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent} from "@testing-library/react";
 import "@testing-library/jest-dom";
 import WritePostContainer from "@/app/components/modules/company-page-author/container/WritePostContainer";
 

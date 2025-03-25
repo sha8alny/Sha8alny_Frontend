@@ -1,7 +1,7 @@
 "use client";
 import { useTheme } from "@/app/context/ThemeContext";
 import { usePathname, useRouter } from "next/navigation";
-import NavbarPresentation from "./NavBarPresentation";
+import NavbarPresentation, { NavBarPresentationSkeleton } from "./NavBarPresentation";
 import { fetchUserProfile } from "@/app/services/userProfile";
 import { useQuery } from "@tanstack/react-query";
 
@@ -16,7 +16,6 @@ export default function Navbar() {
   const { data: userProfile, isLoading, isError } = useQuery({
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
-    staleTime: 300000, // 5 minutes
   });
 
   const handleNavigation = (path) => {
@@ -24,11 +23,21 @@ export default function Navbar() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <NavBarPresentationSkeleton
+    isLoading={true}
+    theme={theme}
+    toggleTheme={toggleTheme}
+    currentPath={pathName}
+    navigateTo={handleNavigation} />;
   }
 
   if (isError) {
-    return <div>Error loading profile</div>;
+    return <NavBarPresentationSkeleton
+    isLoading={false}
+    theme={theme}
+    toggleTheme={toggleTheme}
+    currentPath={pathName}
+    navigateTo={handleNavigation}/>;
   }
 
   return (
