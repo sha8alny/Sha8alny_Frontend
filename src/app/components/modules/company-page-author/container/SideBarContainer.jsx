@@ -104,14 +104,14 @@ function SideBarContainer({username, logoPreview, logoInputRef, logoUpload}){
     };
 
     const menuItems =[
-        {name: "Dashborad", href:`/company-page-author/${username}?logo=${encodeURIComponent(logoPreview || "")} `,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
+        {name: "Dashboard", href:`/company-page-author/${username}?logo=${encodeURIComponent(logoPreview || "")} `,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Page Posts", href:`/posts-page/${username}?logo=${encodeURIComponent(logoPreview || "")}` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Analytics",href:"#", icon:<ShowChartOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Feed",href:"#", icon: <DynamicFeedOutlinedIcon style={{fontSize:"20px"}} />},
         {name: "Activity",href:"#", icon: <NotificationsOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Edit Page", href:`/edit-page/${username}?logo=${encodeURIComponent(logoPreview || "")}`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Jobs", href:"#",icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Jobs", href:`/company-author/${username}?logo=${encodeURIComponent(logoPreview || "")} `,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(
