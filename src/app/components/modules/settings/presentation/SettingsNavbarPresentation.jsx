@@ -57,7 +57,7 @@ const SettingsNavbarPresentation = ({
               <div className="flex flex-row gap-2">
                 <img
                   src={profilePictureUrl}
-                  alt="profile"
+                  alt="profile-tooltip"
                   className="rounded-full h-12 w-12 mb-2"
                 />
                 <div>
