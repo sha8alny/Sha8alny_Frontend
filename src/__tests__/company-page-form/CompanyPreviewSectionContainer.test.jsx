@@ -2,7 +2,7 @@ import { render, screen , act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CompanyPreviewSectionContainer from "@/app/components/modules/company-page-form/container/CompanyPreviewSectionContainer";
 
-// Mock CompanyPreviewSection since it's a child component
+
 jest.mock("@/app/components/modules/company-page-form/presentation/CompanyPreviewSection",() => (props) => (
     <div data-testid="company-preview">
       <p>{props.companyName}</p>
