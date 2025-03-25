@@ -54,8 +54,9 @@ return(
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="mb-4">
-                <label className="block text-text text-sm font-semibold mb-2"> Email </label>
+                <label htmlFor="email" className="block text-text text-sm font-semibold mb-2"> Email </label>
                 <input
+                    id="email"
                     type="email"
                     placeholder="Enter your email"
                     value={email}
@@ -65,8 +66,9 @@ return(
                 />
                 </div>
                 <div className="mb-4">
-                <label className="block text-text text-sm font-semibold mb-2"> Password </label>
+                <label htmlFor="password" className="block text-text text-sm font-semibold mb-2"> Password </label>
                 <input
+                    id="password"
                     type="password"
                     placeholder="Password"
                     value={password}
@@ -77,6 +79,7 @@ return(
                 </div>
                 <div>
                 <input
+                    id="rememberMe" 
                     type="checkbox"
                     value={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}

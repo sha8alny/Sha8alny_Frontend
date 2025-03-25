@@ -25,13 +25,6 @@ const SignInContainer = () => {
 
     const loginMutation = useMutation({
         mutationFn: handleSignIn,
-        onSuccess: () => {
-            alert("Login Successful!");
-            router.push("/Home");
-        },
-        onError: (error) => {
-            alert(error.message);
-        },
     });
 
     /**
@@ -51,7 +44,7 @@ const SignInContainer = () => {
             return;
         }
 
-        loginMutation.mutate({ email, password, rememberMe });
+        loginMutation.mutate({ email, password, rememberMe }, {onSuccess: () =>{alert("Login Successful!");router.push('/Home')},onError: (error) => alert(error.message)});
     };
    
     return (
