@@ -45,15 +45,20 @@ const PostNewJobForm =({
         <div className="grid grid-cols-2">
         <h2 className="text-3xl text-secondary font-semibold mb-4">Post New Job</h2>
         <div className="flex justify-end">
-        <ArrowBack onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 "></ArrowBack>
+        <ArrowBack onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 "  role="button" aria-label="ArrowBack"></ArrowBack>
         </div>
             </div>
-            {alert && (<Alert severity={alert.type==="success"? "success":"error"}>{alert.message}</Alert>
-           )}
+            {alert && (
+              <Alert severity={alert?.type === "success" ? "success" : "error"}>
+                {alert?.message}
+              </Alert>
+            )}
+                      
          <form onSubmit={handleJobSubmit} className="space-y-4">
             <div className="flex flex-col gap-4">
                 
-                <TextField        
+                <TextField 
+                    data-testid="title" 
                     sx={{
                     "& label": { color: "var(--text)" }, 
                     "& .MuiOutlinedInput-root": {
@@ -65,7 +70,8 @@ const PostNewJobForm =({
                 
                 />
                 
-                <TextField                  
+                <TextField      
+                    data-testid="location"            
                  sx={{
                     "& label": { color: "var(--text)" }, 
                     "& .MuiOutlinedInput-root": {
@@ -75,7 +81,8 @@ const PostNewJobForm =({
                     "& .MuiFormHelperText-root": { color: "var(--text)" }, 
                   }} error={!!errors.location} id="location" name="location" label="Enter Job Location" variant="outlined" value={newJob.location} onChange={handleChange} className="w-full my-2 " helperText={errors.location}/>
                 
-                <TextField                   
+                <TextField    
+                    data-testid="description"               
                 sx={{
                     "& label": { color: "var(--text)" }, 
                     "& .MuiOutlinedInput-root": {
@@ -85,6 +92,7 @@ const PostNewJobForm =({
                     "& .MuiFormHelperText-root": { color: "var(--text)" }, 
                   }} error={!!errors.description} id="description" name="description" label="Enter Job Description" variant="outlined" value={newJob.description} onChange={handleChange} className="w-full my-2 " helperText={errors.description}/>
                 <TextField
+                data-testid="employmentType"
                 sx={{
                 "& label": { color: "var(--text)" }, 
                 "& .MuiOutlinedInput-root": {
@@ -110,6 +118,7 @@ const PostNewJobForm =({
                 <MenuItem value="Internship">Internship</MenuItem>
                 </TextField>
                 <TextField
+                data-testid="work"
                 sx={{
                 "& label": { color: "var(--text)" }, 
                 "& .MuiOutlinedInput-root": {
@@ -133,7 +142,8 @@ const PostNewJobForm =({
                 <MenuItem value="Onsite">Onsite</MenuItem>
                 <MenuItem value="Hybrid">Hybrid</MenuItem>
                 </TextField>
-                <TextField                   
+                <TextField 
+                    data-testid="industry"                  
                 sx={{
                     "& label": { color: "var(--text)" }, 
                     "& .MuiOutlinedInput-root": {
@@ -143,6 +153,7 @@ const PostNewJobForm =({
                     "& .MuiFormHelperText-root": { color: "var(--text)" }, 
                   }} error={!!errors.industry} id="industry" name="industry" label="Enter Industry" variant="outlined" value={newJob.industry} onChange={handleChange} className="w-full my-2 " helperText ={errors.industry} />
                 <TextField
+                data-testid="experience"
                 sx={{
                 "& label": { color: "var(--text)" }, 
                 "& .MuiOutlinedInput-root": {
@@ -166,7 +177,8 @@ const PostNewJobForm =({
                 <MenuItem value="Mid Level">Mid Level</MenuItem>
                 <MenuItem value="Senior Level">Senior Level</MenuItem>
                 </ TextField>
-                <TextField                   
+                <TextField         
+                    data-testid="salary"          
                 sx={{
                     "& label": { color: "var(--text)" }, 
                     "& .MuiOutlinedInput-root": {
@@ -178,6 +190,8 @@ const PostNewJobForm =({
             </div>
             <div className="flex justify-center">
             <button
+            type="submit"
+            aria-label="Post"
              className=" border border-secondary text-xl text-secondary rounded-full px-8 py-2 hover:bg-foreground transition duration-300"
             disabled={isLoading}
             >            {isLoading ? "Posting..." : "Post"}</button>

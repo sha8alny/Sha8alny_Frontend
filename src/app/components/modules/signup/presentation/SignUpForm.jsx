@@ -46,8 +46,9 @@ const SignUpForm = ({
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="mb-4">
-                <label className="block text-text text-sm font-semibold mb-2"> Username </label>
+                <label htmlFor="username" className="block text-text text-sm font-semibold mb-2"> Username </label>
                 <input
+                    id="username"
                     type="text"
                     name="username"
                     placeholder="Enter your username"
@@ -58,8 +59,9 @@ const SignUpForm = ({
                 />
                 </div>
                 <div className="mb-4">
-                <label className="block text-text text-sm font-semibold mb-2"> Email </label>
+                <label htmlFor="email" className="block text-text text-sm font-semibold mb-2"> Email </label>
                 <input
+                    id="email"
                     type="email"
                     name="email"
                     placeholder="Enter your email"
@@ -72,8 +74,9 @@ const SignUpForm = ({
                 
                 </div>
                 <div className="mb-4">
-                <label className="block text-text text-sm font-semibold mb-2"> Password </label>
+                <label htmlFor="password" className="block text-text text-sm font-semibold mb-2"> Password </label>
                 <input
+                    id="password"
                     type="password"
                     name="password"
                     placeholder="Enter your password"
@@ -89,29 +92,35 @@ const SignUpForm = ({
                 <div className="flex justify-between items-center">
                 <div className="w-1/3">
                 <input
+                    id="isAdmin"
                     type="checkbox"
                     name="isAdmin"
                     value={formData.isAdmin}
                     onChange={handleChange}
                     className=" w-3 h-3 accent-secondary"/>
-                <label className="ml-2 text-secondary font-semibold text-sm">I am an Admin</label>
+                <label htmlFor="isAdmin" className="ml-2 text-secondary font-semibold text-sm">Admin</label>
                 </div>
                 <div className="w-1/3">
                 <input
+                    id="rememberMe"
                     type="checkbox"
                     name="rememberMe"
                     value={formData.rememberMe}
                     onChange={handleChange}
                     className=" w-3 h-3 accent-secondary"/>
-                <label className="ml-2 text-secondary font-semibold text-sm">Remember Me</label>
+                <label htmlFor="rememberMe" className="ml-2 text-secondary font-semibold text-sm">Remember Me</label>
                 </div>
                 </div>
                 <ReCAPTCHA
+                    title="recaptcha"
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                    onChange={onRecaptchaChange}
+                    onChange={(token) => {
+                        onRecaptchaChange(token);
+                    }}
                     />
 
                 <button
+                    name="Register"
                     type="submit"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
                     disabled={isSubmitting}
