@@ -240,4 +240,126 @@ describe("InputFieldContainer",()=>{
         companyWebsite: "Please enter a valid website" 
       });
     });
+
+    test("clears website error for a valid website input", () => {
+        render(
+            <InputFieldContainer
+                companyName=""
+                setCompanyName={setCompanyName}
+                companyIndustry=""
+                setCompanyIndustry={setCompanyIndustry}
+                companyLocation=""
+                setCompanyLocation={setCompanyLocation}
+                companyWebsite=""
+                setCompanyWebsite={setCompanyWebsite}
+                companyURL=""
+                setCompanyURL={setCompanyURL}
+                errors={{}}
+                setErrors={setErrors}
+            />
+        );
+        const websiteInput = screen.getByLabelText("Website");
+        fireEvent.change(websiteInput, { target: { value: "http://example.com" } });
+    
+        expect(setErrors).toHaveBeenCalledWith(expect.any(Function));
+        const updateErrorsFunction = setErrors.mock.calls[0][0];
+    
+        expect(updateErrorsFunction({})).toEqual({ companyWebsite: "",});
+    });
+
+    test("clears url error for a valid url input", () => {
+        render(
+            <InputFieldContainer
+                companyName=""
+                setCompanyName={setCompanyName}
+                companyIndustry=""
+                setCompanyIndustry={setCompanyIndustry}
+                companyLocation=""
+                setCompanyLocation={setCompanyLocation}
+                companyWebsite=""
+                setCompanyWebsite={setCompanyWebsite}
+                companyURL=""
+                setCompanyURL={setCompanyURL}
+                errors={{}}
+                setErrors={setErrors}
+            />
+        );
+        const urlInput = screen.getByLabelText("shaغalny.com/company/");
+        fireEvent.change(urlInput, { target: { value: "Siemens-09" } });
+    
+        expect(setErrors).toHaveBeenCalledWith(expect.any(Function));
+        const updateErrorsFunction = setErrors.mock.calls[0][0];
+    
+        expect(updateErrorsFunction({})).toEqual({ companyURL: "",});
+    });
+
+    test("check for name error for an empty name input", () => {
+        render(
+            <InputFieldContainer
+                companyName=""
+                setCompanyName={setCompanyName}
+                companyIndustry=""
+                setCompanyIndustry={setCompanyIndustry}
+                companyLocation=""
+                setCompanyLocation={setCompanyLocation}
+                companyWebsite=""
+                setCompanyWebsite={setCompanyWebsite}
+                companyURL=""
+                setCompanyURL={setCompanyURL}
+                errors={{companyName: <span>Please enter the Company name</span>}}
+                setErrors={setErrors}
+            />
+        );
+        const nameInput = screen.getByLabelText("Name");
+        fireEvent.change(nameInput, { target: { value: "" } });
+    
+        expect(screen.getByText(/Please enter the Company name/i)).toBeInTheDocument();
+    });
+
+    test("check for location error for an empty location input", () => {
+        render(
+            <InputFieldContainer
+                companyName=""
+                setCompanyName={setCompanyName}
+                companyIndustry=""
+                setCompanyIndustry={setCompanyIndustry}
+                companyLocation=""
+                setCompanyLocation={setCompanyLocation}
+                companyWebsite=""
+                setCompanyWebsite={setCompanyWebsite}
+                companyURL=""
+                setCompanyURL={setCompanyURL}
+                errors={{companyName: <span>Please enter the Company Location</span>}}
+                setErrors={setErrors}
+            />
+        );
+        const locationInput = screen.getByLabelText("Location");
+        fireEvent.change(locationInput, { target: { value: "" } });
+    
+        expect(screen.getByText(/Please enter the Company Location/i)).toBeInTheDocument();
+    });
+
+    test("check for industry error for an empty industry input", () => {
+        render(
+            <InputFieldContainer
+                companyName=""
+                setCompanyName={setCompanyName}
+                companyIndustry=""
+                setCompanyIndustry={setCompanyIndustry}
+                companyLocation=""
+                setCompanyLocation={setCompanyLocation}
+                companyWebsite=""
+                setCompanyWebsite={setCompanyWebsite}
+                companyURL=""
+                setCompanyURL={setCompanyURL}
+                errors={{companyName: <span>Please enter the Company Industry</span>}}
+                setErrors={setErrors}
+            />
+        );
+        const industryInput = screen.getByLabelText("Industry");
+        fireEvent.change(industryInput, { target: { value: "" } });
+    
+        expect(screen.getByText(/Please enter the Company Industry/i)).toBeInTheDocument();
+    });
+ 
 });
