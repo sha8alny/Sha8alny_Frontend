@@ -33,4 +33,3 @@ export const fetchUsername = async () => {
   if (!response.ok) throw new Error("Failed to fetch user username");
   return response.json();
 }
-t

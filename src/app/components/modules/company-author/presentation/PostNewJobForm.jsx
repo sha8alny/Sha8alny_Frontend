@@ -1,4 +1,4 @@
-import { ArrowBack } from "@mui/icons-material";
+import  ArrowBackIcon  from "@mui/icons-material/ArrowBack";
 import { Alert } from "@mui/material";
 import { TextField, MenuItem } from "@mui/material";
 
@@ -41,11 +41,14 @@ const PostNewJobForm =({
     alert
 })=>{
     return(
-        <div className="bg-transparent flex-grow p-6 rounded-lg border border-secondary max-w-2xl m-18 relative grid grid-cols-1 gap-6">
+        <div className="bg-transparent flex-grow p-6 rounded-lg border border-secondary max-w-2xl m-5 relative grid grid-cols-1 gap-6">
         <div className="grid grid-cols-2">
         <h2 className="text-3xl text-secondary font-semibold mb-4">Post New Job</h2>
         <div className="flex justify-end">
-        <ArrowBack onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 "  role="button" aria-label="ArrowBack"></ArrowBack>
+        <ArrowBackIcon onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 text-text "
+        sx={{
+        color: "text", // Replace with your desired color (e.g., red-orange)
+        }}  role="button" aria-label="ArrowBack"></ArrowBackIcon>
         </div>
             </div>
             {alert && (

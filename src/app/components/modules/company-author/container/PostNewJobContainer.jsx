@@ -3,6 +3,9 @@ import { useState } from "react";
 import PostNewJobForm from "../presentation/PostNewJobForm";
 import { postJob } from "../../../../services/companyManagment";
 import { useMutation } from "@tanstack/react-query";
+import SideBarContainer from "../../company-page-author/container/SideBarContainer";
+import Analytics from "../../company-page-author/presentation/Analytics";
+import { useRef } from "react";
 
 /**
  * PostNewJobContainer component
@@ -19,7 +22,16 @@ import { useMutation } from "@tanstack/react-query";
  *   <PostNewJobContainer onBack={handleBack} />
  * )
  */
-const PostNewJobContainer = ({ onBack }) => {
+const PostNewJobContainer = ({ onBack,username,logo }) => {
+    const [logoPreview, setLogoPreview] = useState(logo ||null);
+    const logoInputRef = useRef(null);
+    const logoUpload = (e) => {
+        const selectedFile=e.target.files[0];
+        if (selectedFile){
+            setLogoPreview(prev => URL.createObjectURL(selectedFile));
+            console.log("Current logoPreview:", logoPreview);
+        }
+    };
     const [newJob, setNewJob] = useState({
         title: "",
         description: "",
@@ -104,7 +116,13 @@ const PostNewJobContainer = ({ onBack }) => {
     };
 
     return (
-
+      <div className="flex w-full">
+        <SideBarContainer
+        username={username}
+        logoPreview={logoPreview}
+        logoInputRef={logoInputRef}
+        logoUpload={logoUpload}
+        />
         <PostNewJobForm
             newJob={newJob}
             handleChange={handleChange}
@@ -114,6 +132,9 @@ const PostNewJobContainer = ({ onBack }) => {
             onBack={onBack}
             alert={alert}
         />  
+        <Analytics />
+
+        </div>
     );
 };
 
