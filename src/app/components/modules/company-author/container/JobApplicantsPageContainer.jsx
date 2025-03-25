@@ -37,7 +37,7 @@ const [selectedApplicant, setSelectedApplicant] = useState(null);
             console.log("applicantsData",applicantsData);
             setPageData((prev) => ({ ...prev, [pageNumber]: applicantsData }));
             setApplicants(applicantsData);
-            if(applicantsData.length === 0){
+            if(applicantsData.length === 0 || !applicantsData){
                 setHasMore(false);
             }
         }catch (error) {

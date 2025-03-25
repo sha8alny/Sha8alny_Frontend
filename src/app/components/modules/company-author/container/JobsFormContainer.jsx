@@ -29,17 +29,16 @@ const JobsFormContainer = () => {
     const { mutate: getJobs, isPending:isLoading } = useMutation(
         {
             mutationFn: postedJobs,
-            onSuccess: (jobsData) => {
-                console.log("Fetched jobs",jobsData);
-                setJobs(jobsData);
-            },
-            onError: (error) => {
-                console.error("Error fetching jobs:", error);
-            }
         }); 
 
         useEffect(() => {
-            getJobs(companyUsername);
+            getJobs(companyUsername,
+            {onSuccess: (jobsData) =>{
+            console.log("Fetched jobs",jobsData);
+            setJobs(jobsData);}
+            ,onError: (error) =>                 
+            console.error("Error fetching jobs:", error)
+        });
         }, []);
     
 
