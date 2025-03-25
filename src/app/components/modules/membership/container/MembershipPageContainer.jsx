@@ -77,7 +77,7 @@ const MembershipPageContainer = () => {
   const premiumPlanDetails = plansDetailsList.find(
     (plan) => plan.planId === "premium"
   );
-
+  console.log(limits)
   const freePlanDetails = plansDetailsList.find((plan) => plan.planId === "free");
   return (
     <MembershipPage

@@ -38,6 +38,7 @@ const MembershipPage = ({
           limits={limits}
           renewalDate={renewalDate}
           isMissed={isMissed}
+          freePlanDetails={freePlanDetails}
         />
 
         <div className="flex flex-col items-center  md:flex-row gap-6 justify-center mt-5">
