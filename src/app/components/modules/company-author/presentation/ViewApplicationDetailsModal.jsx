@@ -1,7 +1,7 @@
 "use client";
 import Dialog from '@mui/material/Dialog';
 import { Close, CloudUpload } from '@mui/icons-material';
-import { TextField,Button,Typography } from '@mui/material';
+import { TextField,Button,Typography, IconButton } from '@mui/material';
 /**
  * ViewApplicationDetailsModal component
  * 
@@ -36,8 +36,14 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
         >
             <div className='w-full max-w-lg rounded-lg bg-foreground shadow-lg relative p-4'>
                 <div className="items-center p-2">
+                    <div className='flex items-center gap-2'>
                 <Typography variant="h5" className='text-text' component="h2" gutterBottom>Application for {application.jobTitle}</Typography>
+                <IconButton role="button" aria-label="close" onClick={onClose} className=" left-6 bottom-4 text-secondary cursor-pointer">
+                    <Close className='text-secondary cursor-pointer' />
+                </IconButton>
                 </div>
+                </div>
+
             <hr className="p-4 space-y-4"/>
             {isLoading ?(
                     <p className="text-secondary text-2xl font-bold">Loading...</p>
@@ -45,6 +51,8 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                  <div className='flex flex-col gap-4'>   
                 <div className="flex flex-col md:flex-row gap-4">
                         <TextField 
+                            role="textbox"
+                            data-testid="fullName"
                             sx={{
                             "& label": { color: "var(--text)" }, 
                             "& .MuiOutlinedInput-root": {
@@ -62,6 +70,8 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                                 input: {readOnly: true},
                             }}/>
                         <TextField 
+                                role="textbox"
+                                data-testid="emailAddress"
                                 sx={{
                                 "& label": { color: "var(--text)" }, 
                                 "& .MuiOutlinedInput-root": {
@@ -80,6 +90,8 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                             }}/>
                 </div>
                 <TextField 
+                    role="textbox"
+                    data-testid="phoneNumber"
                     sx={{
                     "& label": { color: "var(--text)" }, 
                     "& .MuiOutlinedInput-root": {
@@ -97,6 +109,8 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                         input: {readOnly: true},
                     }}/>
                 <TextField 
+                    role="textbox"
+                    data-testid="coverLetter"
                     sx={{
                     "& label": { color: "var(--text)" }, 
                     "& .MuiOutlinedInput-root": {
@@ -152,7 +166,7 @@ const ViewApplicationDetailsModal = ({application,isLoading, onClose, open}) => 
                   </div>
             )}
               
-                <Close onClick={onClose} className="absolute top-2 right-2 text-secondary cursor-pointer"></Close>
+
             </div>
         </Dialog>
     );
