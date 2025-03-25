@@ -88,8 +88,8 @@ export const NavBarPresentationSkeleton = (
         ))}
       </section>
       <section className="flex gap-3 p-3 text-background dark:text-primary justify-end items-center w-full ml-auto">
-        <div className={`relative rounded-full bg-gray-400 ${isLoading ? animate-pulse : ""} size-9`}/>
-        <div className={`w-40 h-full bg-gray-400 rounded-2xl ${isLoading ? animate-pulse : ""}`}/>
+        <div className={`relative rounded-full bg-gray-400 ${isLoading ? "animate-pulse" : ""} size-9`}/>
+        <div className={`w-40 h-full bg-gray-400 rounded-2xl ${isLoading ? "animate-pulse" : ""}`}/>
         <button
           onClick={toggleTheme}
           title="Toggle Theme"

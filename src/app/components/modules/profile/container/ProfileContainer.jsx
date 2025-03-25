@@ -81,14 +81,16 @@ function ProfileContent({ username }) {
   } = useQuery({
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
+    staleTime: 1000 * 30, // 30 seconds
   });
-
+  
   useEffect(() => {
+    if (!userProfile) return;
     if (userProfile?.isMyProfile) {
       setIsMyProfile(userProfile.isMyProfile);
     }
   }, [userProfile, setIsMyProfile]);
-
+  
   if (isLoading) return <ProfileSkeleton />;
 
   if (isError) {
@@ -98,6 +100,8 @@ function ProfileContent({ username }) {
       </div>
     );
   }
+
+
 
   if (!userProfile.isVisible) {
     return (
