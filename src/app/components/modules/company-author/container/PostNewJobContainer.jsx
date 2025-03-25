@@ -69,25 +69,7 @@ const PostNewJobContainer = ({ onBack }) => {
      */
 
     const {mutate: JobSubmit, isPending: isLoading} = useMutation({
-        mutationFn: postJob,
-        onSuccess: () => {
-            setAlert({ type: "success", message: "Job posted successfully" });
-            setNewJob({
-                title: "",
-                description: "",
-                location: "",
-                workLocation: "",
-                employmentType: "",
-                industry: "",
-                experience: "",
-                salary: "",
-            });
-            setErrors({});
-        },
-        onError: (error) => {
-            setAlert({ type: "error", message: "Error posting job" });
-            console.log("Error Posting Job:",error);
-        }
+        mutationFn: postJob
     });
 
     const handleJobSubmit =(e) => {
@@ -95,10 +77,30 @@ const PostNewJobContainer = ({ onBack }) => {
         const validationErrors = validateForm();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
+            console.log("Validation Errors: ", validationErrors);
             return;
         }
         setAlert(null);
-        JobSubmit(newJob, companyUsername);
+        JobSubmit({newJob, companyUsername},
+             {onSuccess: () => {
+                setAlert({ type: "success", message: "Job posted successfully" });
+                setNewJob({
+                    title: "",
+                    description: "",
+                    location: "",
+                    workLocation: "",
+                    employmentType: "",
+                    industry: "",
+                    experience: "",
+                    salary: "",
+                });
+                setErrors({});
+            },
+            onError: (error) => {
+                setAlert({ type: "error", message: "Error posting job" });
+                console.log("Error Posting Job:",error);
+            }}
+        );
     };
 
     return (
