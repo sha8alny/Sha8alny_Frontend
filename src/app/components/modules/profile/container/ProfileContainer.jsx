@@ -56,7 +56,7 @@ const getStrengthColor = (strength) => {
 };
 
 export const ProfileContainer = ({ username }) => {
-  if (!username) {
+  if (!username || username === "") {
     return (
       <div className="w-full h-full flex justify-center items-center text-red-400">
         No username provided.

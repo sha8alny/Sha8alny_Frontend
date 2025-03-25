@@ -10,7 +10,7 @@ export default function ProfileHeader({ userProfile }) {
           <div className="absolute top-0 left-0 w-full h-40 bg-gray-700 rounded-t-xl">
             <Image
               src={
-                userProfile.coverPhotoUrl ??
+                userProfile.coverPhoto ??
                 "https://picsum.photos/id/11/600/400"
               }
               fill

@@ -1,20 +1,11 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import ExperienceCardContainer from '../../app/components/modules/profile/container/ExperienceCardContainer';
 import "@testing-library/jest-dom";
 
-// Mock the context and the presentation component
+// Only mock the context
 jest.mock("../../app/context/IsMyProfileContext", () => ({
   useIsMyProfile: () => ({ isMyProfile: false })
-}));
-
-jest.mock('../../app/components/modules/profile/presentation/Experience', () => ({
-  ExperienceCard: ({ job, duration }) => (
-    <div data-testid="experience-card">
-      <div data-testid="job-title">{job.title}</div>
-      <div data-testid="duration">{duration}</div>
-    </div>
-  )
 }));
 
 // Extract the calculateDate function for direct testing
@@ -125,24 +116,41 @@ describe('ExperienceCardContainer', () => {
     });
   });
 
-  test('should render ExperienceCard with correct props', () => {
+  test('should render ExperienceCard with correct job details', () => {
     const job = {
       title: 'Software Engineer',
       company: 'Tech Co',
       startDate: { month: 'January', year: '2020' },
       endDate: { month: 'December', year: '2022' },
-      isCurrent: false
+      isCurrent: false,
+      skills: ['React', 'Node.js']
     };
 
     render(<ExperienceCardContainer job={job} />);
     
-    expect(screen.getByTestId('job-title')).toHaveTextContent('Software Engineer');
-    // Note: The actual component may calculate '2 yrs, 11 mths' differently
-    // Adjust this expected value if needed after seeing the actual output
-    expect(screen.getByTestId('duration')).toHaveTextContent(/\d+ (yrs|mths)(, \d+ (yrs|mths))?/);
+    // Check for job title and company
+    expect(screen.getByText('Software Engineer')).toBeInTheDocument();
+    expect(screen.getByText('Tech Co')).toBeInTheDocument();
+    
+    // Find the element containing the date details by targeting the exact span that contains the date text
+    const dateElement = screen.getByText((content, element) => {
+      return content.includes('January') && 
+             content.includes('2020') && 
+             content.includes('December') &&
+             content.includes('2022') &&
+             element.tagName.toLowerCase() === 'span';
+    });
+    expect(dateElement).toBeInTheDocument();
+    
+    // Check for duration calculation - specify the exact element
+    expect(screen.getByText('2 yrs, 10 mths')).toBeInTheDocument();
+    
+    // Check for skills
+    expect(screen.getByText('React')).toBeInTheDocument();
+    expect(screen.getByText('Node.js')).toBeInTheDocument();
   });
 
-  test('should set endDate to "present" when job is current', () => {
+  test('should display current job correctly', () => {
     // Better way to mock Date for the component test
     const RealDate = global.Date;
     const mockDate = new Date(2023, 6, 1); // July 1, 2023
@@ -161,13 +169,31 @@ describe('ExperienceCardContainer', () => {
       company: 'Current Co',
       startDate: { month: 'January', year: '2022' },
       endDate: { month: 'December', year: '2022' }, // This will be overridden
-      isCurrent: true
+      isCurrent: true,
+      skills: ['React', 'Node.js']
     };
 
     render(<ExperienceCardContainer job={job} />);
     
-    // Make the assertion more flexible to accommodate different calculation methods
-    expect(screen.getByTestId('duration')).toHaveTextContent(/\d+ (yrs|mths)(, \d+ (yrs|mths))?/);
+    // Check for job title and company
+    expect(screen.getByText('Current Job')).toBeInTheDocument();
+    expect(screen.getByText('Current Co')).toBeInTheDocument();
+    
+    // Find the nested span element that contains exactly the date text we want
+    const dateElement = screen.getByText((content, element) => {
+      return content.includes('January') && 
+             content.includes('2022') && 
+             content.includes('present') &&
+             element.tagName.toLowerCase() === 'span';
+    });
+    expect(dateElement).toBeInTheDocument();
+    
+    // Check for duration calculation - more specific selector
+    expect(screen.getByText('1 yrs, 5 mths')).toBeInTheDocument();
+    
+    // Check for skills
+    expect(screen.getByText('React')).toBeInTheDocument();
+    expect(screen.getByText('Node.js')).toBeInTheDocument();
     
     global.Date = RealDate; // Restore original Date
   });
