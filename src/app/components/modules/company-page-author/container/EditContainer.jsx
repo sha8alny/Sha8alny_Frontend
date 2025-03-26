@@ -19,7 +19,6 @@ function EditContainer({username, logo}){
         const selectedFile=e.target.files[0];
         if (selectedFile){
             setLogoPreview(prev => URL.createObjectURL(selectedFile));
-            console.log("Current logoPreview:", logoPreview);
         }
     };
 

@@ -10,10 +10,8 @@ export default function CompanyPageAuthor()
   const searchParams = useSearchParams();
   const logo = searchParams.get("logo");
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row w-full">
       <SideBarContainer username={username} logoPreview={logo}/>
-      <main className="w-145">
-      </main>
       <Analytics className="justify-end"/>
     </div>
   );

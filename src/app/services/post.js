@@ -1,4 +1,4 @@
-const API_URL="http://localhost:3001";
+const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
 const getToken = () => {
     const token = localStorage.getItem("token") || "mock-token";
@@ -7,7 +7,7 @@ const getToken = () => {
 };
 
 export const getPosts = async (query = "") => {
-    const response = await fetch(`${API_URL}/posts?query=${query}`, {
+    const response = await fetch(`${apiURL}/posts?query=${query}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
@@ -16,7 +16,8 @@ export const getPosts = async (query = "") => {
 };
 
 export const createPost = async(postData)=>{
-    const response= await fetch(`${API_URL}/posts`,{
+    console.log("postData",postData);
+    const response= await fetch(`${apiURL}/posts`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -29,7 +30,7 @@ export const createPost = async(postData)=>{
 };
 
 export const getPost = async (postId)=>{
-    const response = await fetch (`${API_URL}/posts/${postId}`,{
+    const response = await fetch (`${apiURL}/posts/${postId}`,{
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
@@ -38,7 +39,7 @@ export const getPost = async (postId)=>{
 };
 
 export const savePost = async (postId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/save`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/save`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${getToken()}` },
     });
@@ -47,7 +48,7 @@ export const savePost = async (postId) => {
 };
 
 export const updatePost = async (postId, postData) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/edit`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/edit`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -60,7 +61,7 @@ export const updatePost = async (postId, postData) => {
 };
 
 export const deletePost = async (postId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/edit`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/edit`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${getToken()}` },
     });
@@ -69,7 +70,7 @@ export const deletePost = async (postId) => {
 };
 
 export const likePost = async (postId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/like`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/like`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${getToken()}` }
     });
@@ -78,7 +79,7 @@ export const likePost = async (postId) => {
 };
 
 export const unlikePost = async (postId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/like`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/like`, {
         method: "DELETE",
     });
     if (!response.ok) throw new Error("Failed to unlike post");
@@ -86,7 +87,7 @@ export const unlikePost = async (postId) => {
 };
 
 export const getLikes = async (postId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/like`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/like`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
@@ -95,7 +96,7 @@ export const getLikes = async (postId) => {
 };
 
 export const getComments = async (postId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/comment`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/comment`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
@@ -104,7 +105,7 @@ export const getComments = async (postId) => {
 };
 
 export const addComment = async (postId, text) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/comment`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/comment`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -117,7 +118,7 @@ export const addComment = async (postId, text) => {
 };
 
 export const deleteComment = async (postId, commentId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/comment`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/comment`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${getToken()}` },
     });
@@ -126,7 +127,7 @@ export const deleteComment = async (postId, commentId) => {
 };
 
 export const likeComment = async (postId, commentId) => {
-    const response = await fetch(`${API_URL}/posts/${postId}/comment/${commentId}/like`, {
+    const response = await fetch(`${apiURL}/posts/${postId}/comment/${commentId}/like`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${getToken()}` },
     });
@@ -135,7 +136,7 @@ export const likeComment = async (postId, commentId) => {
 };
 
 export const searchPosts = async (keyword) => {
-    const response = await fetch(`${API_URL}/posts/search/${keyword}`, {
+    const response = await fetch(`${apiURL}/posts/search/${keyword}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });

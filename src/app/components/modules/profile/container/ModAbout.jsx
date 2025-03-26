@@ -32,7 +32,7 @@ export default function ModAbout({ about, adding = false }) {
 
   return (
     <Dialog
-      className="min-w-max"
+      className="min-w-[60vh]"
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
       AlertContent={

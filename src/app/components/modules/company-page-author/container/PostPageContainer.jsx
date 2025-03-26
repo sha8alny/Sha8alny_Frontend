@@ -54,7 +54,7 @@ function PostPageContainer({username, logo}){
         }
     };
     return(
-        <div className="flex flex-row min-h-screen">
+        <div className="flex flex-row min-h-screen gap-x-24">
             <SideBarContainer username={username} logoPreview={logoPreview} logoInputRef={logoInputRef} logoUpload={logoUpload} />
             <main>
                 <div>

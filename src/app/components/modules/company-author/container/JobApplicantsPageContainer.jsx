@@ -29,7 +29,6 @@ const logoUpload = (e) => {
     const selectedFile=e.target.files[0];
     if (selectedFile){
         setLogoPreview(prev => URL.createObjectURL(selectedFile));
-        console.log("Current logoPreview:", logoPreview);
     }
 };
 const [applicants, setApplicants] = useState([]);
