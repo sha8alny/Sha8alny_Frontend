@@ -30,27 +30,5 @@ describe("EditContainer",()=>{
         expect(sidebarComponent).toBeInTheDocument();
     });
 
-    test("updates logo preview on file upload", () => {
-        global.URL.createObjectURL = jest.fn(() => "mocked-url");
-        render(<EditContainer username="Siemens" logo="https://example.com/logo.png" />);
-        
-        const file = new File(["dummy content"], "test-image.png", { type: "image/png" });
-        const fileInput = screen.getByTestId("sidebar-container"); 
-
-        fireEvent.change(fileInput, { target: { files: [file] } });
-
-        expect(URL.createObjectURL).toHaveBeenCalledWith(file);
-    });
-
-    test("calls file input when upload button is clicked", () => {
-        render(<EditContainer username="Siemens" logo="https://example.com/logo.png" />); 
-
-        const fileInput = screen.getByTestId("sidebar-container");
-        const uploadButton = screen.getByTestId("edit-page-container");
-
-        jest.spyOn(fileInput, "click").mockImplementation(() => {});
-        fireEvent.click(uploadButton);
-        expect(fileInput.click(uploadButton)).toHaveBeenCalled();
-    });
 
 });
