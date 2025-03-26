@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
 "use client";
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import SmartDisplayOutlinedIcon from '@mui/icons-material/SmartDisplayOutlined';

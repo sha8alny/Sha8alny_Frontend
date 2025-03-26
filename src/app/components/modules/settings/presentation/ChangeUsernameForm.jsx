@@ -2,6 +2,10 @@ import Button from "./Button";
 import BackButton from "./BackButton";
 import SettingsFormLayout from "./SettingsFormLayout";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * ChangeUsernameForm component allows users to change their username.
  *
  * @component

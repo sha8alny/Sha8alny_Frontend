@@ -7,6 +7,10 @@ import { fetchAppliedJobs } from "@/app/services/jobs";
 
 
 /**
+ * @namespace my-items
+ * @module my-items
+ */
+/**
  * Custom hook to fetch job applications data.
  * 
  * @function

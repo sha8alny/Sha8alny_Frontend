@@ -1,4 +1,8 @@
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * Button component renders a styled button with provided content.
  * @param {Object} props - The component props.
  * @param {string} props.content - The content to be displayed inside the button.

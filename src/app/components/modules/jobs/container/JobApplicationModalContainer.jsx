@@ -32,6 +32,10 @@ const jobApplicationSchema = z.object({
 
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobApplicationModalContainer component handles the logic for the job application modal.
  * It manages form state, validation, file upload, and submission using React Hook Form and React Query.
  *

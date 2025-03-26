@@ -2,6 +2,10 @@
 import MembershipCardPresentation from "../presentation/MembershipCardPresentation";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * MembershipCardContainer component manages the state and logic for the membership card.
  * @component
  * @param {Object} props - The component props.

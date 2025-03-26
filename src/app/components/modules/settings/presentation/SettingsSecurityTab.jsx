@@ -2,6 +2,10 @@ import ChangeEmailCard from "./ChangeEmailCard";
 import SettingsCard from "./SettingsCard";
 import ChangePasswordContainer from "../container/ChangePasswordContainer";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsSecurityTab component renders different settings forms based on the active form state.
  *
  * @component

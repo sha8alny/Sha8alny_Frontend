@@ -13,6 +13,10 @@ import { Form, FormField } from "@/app/components/ui/Form";
 import AddButton from "@/app/components/ui/AddButton";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A presentation component for displaying and managing certificate information in a form.
  * 
  * @param {Object} props - The component props

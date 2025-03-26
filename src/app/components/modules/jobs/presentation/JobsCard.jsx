@@ -1,6 +1,10 @@
 import Image from "next/image";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * Renders a job tag component with a given label.
  * @param {Object} props - The component props.
  * @param {string} props.tag - The tag text.

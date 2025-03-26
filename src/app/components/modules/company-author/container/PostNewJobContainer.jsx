@@ -8,6 +8,10 @@ import Analytics from "../../company-page-author/presentation/Analytics";
 import { useRef } from "react";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * PostNewJobContainer component
  * 
  * This component is responsible for handling the state and logic for posting a new job.

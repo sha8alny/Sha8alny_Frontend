@@ -2,6 +2,10 @@ import Container from "@/app/components/layout/Container";
 import { Pencil, User } from "lucide-react";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that displays the user's public profile URL with an edit button.
  * 
  * @component

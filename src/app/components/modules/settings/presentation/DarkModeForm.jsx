@@ -5,6 +5,10 @@ import Settings from "@/app/settings/page";
 import SettingsFormLayout from "./SettingsFormLayout";
 import BackButton from "./BackButton";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * DeleteAccountForm component renders a form to delete the user's account.
  * @param {Function} props.handleDarkModeForm - Function to toggle the form visibility.
  * @returns {JSX.Element} The rendered component.

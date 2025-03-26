@@ -3,6 +3,10 @@ import RemoveRedEyeOutlined from "@mui/icons-material/RemoveRedEyeOutlined";
 import ContactsOutlined from "@mui/icons-material/ContactsOutlined";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * JobsForm component
  * 
  * This component renders a list of jobs. It displays a loading indicator while the jobs are being fetched.

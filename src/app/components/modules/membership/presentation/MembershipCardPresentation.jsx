@@ -1,6 +1,10 @@
 import DoneIcon from "@mui/icons-material/Done";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * MembershipCardPresentation component renders the membership card.
  * @component
  * @param {Object} props - The component props.

@@ -7,6 +7,10 @@ import { handleSignup } from "../../../../services/userManagement";
 import { RememberMe } from "@mui/icons-material";
 
 /**
+ * @namespace signup
+ * @module signup
+ */
+/**
  * SignUpContainer component handles the user registration process.
  * It uses a mutation to call the signup service and handles the success and error responses.
  * On successful registration, it redirects the user to the Home page.

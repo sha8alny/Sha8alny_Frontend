@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
 "use client";
 import { useState } from "react";
 import CreateCompanySectionContainer from "./CreateCompanySectionContainer";

@@ -4,6 +4,10 @@ import JobError from './JobError';
 import JobContent from './JobContent';
 import JobActions from './JobActions';
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobDetailsPresentation component renders the details of a job.
  *
  * @param {Object} props - The component props.

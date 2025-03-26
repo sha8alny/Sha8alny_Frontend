@@ -6,6 +6,10 @@ import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * MembershipStatus component displays the current membership plan status of the user.
  *
  * @param {Object} props - The properties object.

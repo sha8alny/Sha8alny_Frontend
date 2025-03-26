@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
 "use client";
 import Link from 'next/link'
 import AddIcon from '@mui/icons-material/Add';

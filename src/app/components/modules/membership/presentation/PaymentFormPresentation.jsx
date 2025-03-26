@@ -10,6 +10,10 @@ import countries from "../../../../../../public/data/countries";
 import LoadingScreenPayment from "./LoadingScreenPayment";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * PaymentFormPresentation component renders a payment form with options for selecting a premium plan,
  * entering card details, and submitting the payment.
  * @component

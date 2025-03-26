@@ -5,6 +5,10 @@ import Container from "@/app/components/layout/Container";
 import ModSkill from "../container/ModSkill";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders a skill card component with endorsement functionality
  * @param {Object} props - Component props
  * @param {Object} props.skill - Skill object containing skill details

@@ -1,6 +1,10 @@
 import InputField from "../../company-page-form/presentation/InputField";
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * EditInputFieldContainer component handles input fields for editing company details.
  *
  * @component

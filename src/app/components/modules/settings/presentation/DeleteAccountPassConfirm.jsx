@@ -2,6 +2,10 @@ import { useState } from "react";
 import BackButton from "./BackButton";
 import Button from "./Button";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * DeleteAccountPassConfirmation component allows users to confirm their password before deleting their account.
  *
  * @component

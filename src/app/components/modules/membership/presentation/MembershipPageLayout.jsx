@@ -3,6 +3,10 @@
 import SettingsNavbarContainer from "../../settings/container/SettingsNavbarContainer";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * MembershipPageLayout component
  *
  * This component serves as a layout for the membership page. It includes a 

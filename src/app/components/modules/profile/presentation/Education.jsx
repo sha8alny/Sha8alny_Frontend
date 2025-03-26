@@ -5,6 +5,10 @@ import ModEducation from "../container/ModEducation";
 import AddButton from "@/app/components/ui/AddButton";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that renders an education card displaying educational details.
  * 
  * @component

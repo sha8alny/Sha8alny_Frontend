@@ -3,6 +3,10 @@ import MembershipCardContainer from "../container/MembershipCardContainer";
 import MembershipStatus from "./MembershipStatus";
 import MembershipPageLayout from "./MembershipPageLayout";
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * MembershipPage component displays the membership dashboard with current plan details and options to upgrade or cancel the subscription.
  * @component
  * @param {Object} props - The component props.

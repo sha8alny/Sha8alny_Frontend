@@ -22,6 +22,10 @@ import { deleteCompany } from "@/app/services/companyManagment";
 
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * SideBarContainer component provides navigation and company management functionalities,
  * including file uploads, modal handling, and page deactivation.
  *

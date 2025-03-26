@@ -45,6 +45,10 @@ const months = [
 ];
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * ModEducation component that handles the education modal functionality.
  * It provides form handling for adding or editing education information.
  * 
