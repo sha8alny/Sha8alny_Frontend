@@ -35,6 +35,19 @@ const determineWidth = (endorsements) => {
   return 100;
 };
 
+/**
+ * A container component for displaying and managing a skill item
+ * 
+ * @param {Object} props
+ * @param {Object} props.skill - The skill object containing skill details
+ * @param {number} props.skill.endorsements_count - Number of endorsements for the skill
+ * @param {string|number} props.skill.id - Unique identifier for the skill
+ * 
+ * @returns {JSX.Element} A SkillCard component with skill information and endorsement functionality
+ * 
+ * @example
+ * <SkillContainer skill={{ id: 1, endorsements_count: 5 }} />
+ */
 export default function SkillContainer({ skill }) {
   const { isMyProfile } = useIsMyProfile();
   const useUpdate = useUpdateProfile();

@@ -22,6 +22,23 @@ const CloseButton = () => {
   );
 };
 
+/**
+ * A reusable Dialog component that wraps AlertDialog functionality.
+ * @component
+ * @param {Object} props - The component props
+ * @param {boolean} [props.useRegularButton=false] - Whether to use a regular HTML button instead of Button component
+ * @param {string} [props.buttonClass=""] - Additional CSS classes for the trigger button
+ * @param {string} [props.className=""] - Additional CSS classes for the dialog content
+ * @param {React.ReactNode} props.buttonData - Content to be displayed inside the trigger button
+ * @param {React.ReactNode} [props.AlertTitle=<CloseButton />] - Content for the dialog title
+ * @param {React.ReactNode} props.AlertContent - Content to be displayed in the dialog body
+ * @param {string} [props.variant="default"] - Variant style for the trigger button
+ * @param {string} [props.size="default"] - Size of the trigger button
+ * @param {boolean} [props.disabled=false] - Whether the trigger button is disabled
+ * @param {boolean} props.open - Controls the open state of the dialog
+ * @param {Function} props.onOpenChange - Callback function when dialog open state changes
+ * @returns {React.ReactElement} A dialog component with customizable trigger and content
+ */
 const Dialog = ({
   useRegularButton = false,
   buttonClass = "",

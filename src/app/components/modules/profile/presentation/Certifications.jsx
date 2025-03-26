@@ -3,6 +3,23 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import ModCertificate from "../container/ModCertificate";
 
+/**
+ * A component that displays a certificate card with organization logo, certificate details, and associated skills
+ * @param {Object} props - The component props
+ * @param {Object} props.certificate - The certificate object containing details
+ * @param {string} props.certificate.name - Name of the certificate
+ * @param {string} props.certificate.issuingOrganisationLogo - URL of the issuing organization's logo
+ * @param {string} props.certificate.issuingOrganization - Name of the issuing organization
+ * @param {Object} props.certificate.issueDate - Issue date object
+ * @param {string} props.certificate.issueDate.month - Month of issue
+ * @param {number} props.certificate.issueDate.year - Year of issue
+ * @param {Object} props.certificate.expirationDate - Expiration date object
+ * @param {string} props.certificate.expirationDate.month - Month of expiration
+ * @param {number} props.certificate.expirationDate.year - Year of expiration
+ * @param {string[]} props.certificate.skills - Array of skills associated with the certificate
+ * @param {boolean} props.isMyProfile - Flag indicating if the certificate belongs to the current user's profile
+ * @returns {JSX.Element} Certificate card component
+ */
 const CertificateCard = ({ certificate, isMyProfile }) => {
   return (
     <div className="flex gap-2">
@@ -43,6 +60,14 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
   );
 };
 
+/**
+ * Renders a section displaying user certifications with show more/less functionality
+ * @param {Object[]} certifications - Array of certification objects to display
+ * @param {boolean} allCertificates - Toggle flag to show all or limited certificates
+ * @param {Function} toggleAllCertificates - Handler function to toggle showing all/less certificates
+ * @param {boolean} isMyProfile - Flag indicating if the profile belongs to current user
+ * @returns {JSX.Element|null} Returns the certificates section if there are certificates, null otherwise
+ */
 export default function Certifications({
   certifications,
   allCertificates,

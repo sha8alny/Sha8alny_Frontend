@@ -55,6 +55,11 @@ const getStrengthColor = (strength) => {
   return "bg-red-700"; // Dark Red
 };
 
+/**
+ * 
+ * @param {string} username - The username of the profile to display 
+ * @returns {JSX.Element} Returns the ProfileContainer component
+ */
 export const ProfileContainer = ({ username }) => {
   if (!username || username === "") {
     return (
@@ -71,6 +76,24 @@ export const ProfileContainer = ({ username }) => {
   );
 };
 
+/**
+ * Renders the content of a user's profile page.
+ * 
+ * @param {Object} props - The component props
+ * @param {string} props.username - The username of the profile to display
+ * 
+ * @returns {JSX.Element} Returns one of the following:
+ * - A loading skeleton while data is being fetched
+ * - An error message if fetching fails
+ * - A "private profile" message if the profile is not visible
+ * - The full profile presentation component with user data and profile strength metrics
+ *
+ * @component
+ * @example
+ * return (
+ *   <ProfileContent username="johnDoe" />
+ * )
+ */
 function ProfileContent({ username }) {
   const { setIsMyProfile } = useIsMyProfile();
   
@@ -90,7 +113,7 @@ function ProfileContent({ username }) {
       setIsMyProfile(userProfile.isMyProfile);
     }
   }, [userProfile, setIsMyProfile]);
-  
+
   if (isLoading) return <ProfileSkeleton />;
 
   if (isError) {

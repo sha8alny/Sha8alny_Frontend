@@ -1,6 +1,16 @@
 import AddButton from "@/app/components/ui/AddButton";
 import { Trash } from "lucide-react";
 
+/**
+ * Renders a skill modification presentation component with search and add functionality
+ * @param {Object} props - Component props
+ * @param {Array} props.skills - Array of skill objects
+ * @param {boolean} props.isLoading - Loading state indicator
+ * @param {Function} props.updateSkill - Function to update/remove skills
+ * @param {Function} props.setSearchTerm - Function to set the search term
+ * @param {string} props.searchTerm - Current search term value
+ * @returns {JSX.Element} Skill modification interface with search and grid display
+ */
 export default function ModSkillPresentation({
   skills,
   isLoading,
@@ -54,6 +64,17 @@ export default function ModSkillPresentation({
   );
 }
 
+/**
+ * A component that renders a skill card with delete functionality.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {Object} props.skill - The skill object containing skill information
+ * @param {string} props.skill.skill_name - The name of the skill
+ * @param {Function} props.removeSkill - Callback function to remove the skill
+ * @param {boolean} props.isLoading - Flag indicating if the remove operation is in progress
+ * @returns {JSX.Element} A card displaying the skill name with a delete button
+ */
 const ModSkillCard = ({ skill, removeSkill, isLoading }) => {
   return (
     <div>

@@ -61,6 +61,18 @@ function calculateDate(from, to, isCurrent = false) {
   }
 }
 
+/**
+ * Container component for displaying job experience cards.
+ * Calculates the duration of the job and passes it to the ExperienceCard component.
+ * Also determines if the current user is viewing their own profile.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.job - The job experience data to display
+ * @param {Object} props.job.startDate - The start date of the job
+ * @param {Object} props.job.endDate - The end date of the job, or null if current
+ * @param {boolean} props.job.isCurrent - Whether this is the user's current job
+ * @returns {JSX.Element} ExperienceCard component with job data, duration, and profile ownership status
+ */
 export default function ExperienceCardContainer({job}) {
     const { isMyProfile } = useIsMyProfile();
     const duration = calculateDate(job.startDate, job.endDate, job.isCurrent);

@@ -47,6 +47,27 @@ const months = [
   "December",
 ];
 
+/**
+ * A component that renders a dialog for modifying or adding work experience
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} [props.experience] - Experience data object to edit
+ * @param {string} [props.experience.title] - Job title
+ * @param {string} [props.experience.employmentType] - Type of employment
+ * @param {string} [props.experience.company] - Company name
+ * @param {string} [props.experience.location] - Job location
+ * @param {Object} [props.experience.startDate] - Start date object
+ * @param {string} [props.experience.startDate.month] - Start month
+ * @param {string} [props.experience.startDate.year] - Start year
+ * @param {Object} [props.experience.endDate] - End date object
+ * @param {string} [props.experience.endDate.month] - End month
+ * @param {string} [props.experience.endDate.year] - End year
+ * @param {boolean} [props.experience.isCurrent] - Whether this is current job
+ * @param {string} [props.experience.description] - Job description
+ * @param {string[]} [props.experience.skills] - Array of skills
+ * @param {boolean} props.adding - Whether adding new experience or editing existing
+ * @returns {JSX.Element} Dialog component for experience modification
+ */
 export default function ModExperience({ experience, adding }) {
   const [skillInput, setSkillInput] = useState("");
   const years = generateYears();

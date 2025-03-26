@@ -1,6 +1,23 @@
 import Container from "@/app/components/layout/Container";
 import { Shield } from "lucide-react";
 
+/**
+ * A component that displays a profile strength indicator with a progress bar and checklist.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {Object} props.profileStrength - Object containing profile strength information
+ * @param {string} props.profileStrength.color - CSS color class for the strength indicator
+ * @param {number} props.profileStrength.strength - Percentage value (0-100) of profile completion
+ * @param {string} props.profileStrength.label - Text label describing the profile strength level
+ * @param {boolean} props.profileStrength.hasProfile - Indicates if user has added a profile photo
+ * @param {boolean} props.profileStrength.hasAbout - Indicates if user has added an about section
+ * @param {boolean} props.profileStrength.hasSkills - Indicates if user has added skills
+ * @param {boolean} props.profileStrength.hasEducation - Indicates if user has added education
+ * @param {boolean} props.profileStrength.hasExperience - Indicates if user has added experience
+ * @param {boolean} props.profileStrength.hasConnections - Indicates if user has made connections
+ * @returns {JSX.Element} A profile strength component with progress bar and checklist
+ */
 export default function ProfileStrength({ profileStrength }) {
   return (
     <Container className="border border-[#111] shadow-lg p-4">

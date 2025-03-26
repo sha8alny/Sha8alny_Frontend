@@ -1,6 +1,14 @@
 import Container from "@/app/components/layout/Container";
 import { Pencil, User } from "lucide-react";
 
+/**
+ * A component that displays the user's public profile URL with an edit button.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {string} props.username - The username to be displayed in the URL
+ * @returns {JSX.Element} A container showing the public profile URL with edit capability
+ */
 export default function ChangeURL({ username }) {
   return (
     <Container className="border border-[#111] shadow-lg p-4">

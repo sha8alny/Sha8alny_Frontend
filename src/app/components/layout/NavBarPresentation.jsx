@@ -46,7 +46,22 @@ const navIcons = [
     icon: BriefcaseBusiness,
   },
 ];
-
+/**
+ * @component
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.userInfo - Information about the logged-in user
+ * @param {string} props.userInfo.name - User's display name
+ * @param {string} props.userInfo.headline - User's headline or title
+ * @param {string} props.userInfo.username - User's username for profile navigation
+ * @param {string} props.userInfo.profilePicture - URL to user's profile picture
+ * @param {string} props.theme - Current theme ('dark' or 'light')
+ * @param {Function} props.toggleTheme - Function to toggle between dark and light themes
+ * @param {string} props.currentPath - Current active route path
+ * @param {Function} props.navigateTo - Navigation function that accepts a route path
+ * 
+ * @returns {JSX.Element} Rendered navigation bar component
+ */
 export const NavBarPresentationSkeleton = (
   theme,
   isLoading,
@@ -106,6 +121,18 @@ export const NavBarPresentationSkeleton = (
   );
 };
 
+/**
+ * Renders a navigation icon component that changes style based on the current path.
+ * 
+ * @param {Object} props - The component props
+ * @param {Object} props.icon - The icon object containing icon component, name, and pathName
+ * @param {React.ComponentType} props.icon.icon - The icon component to render
+ * @param {string} props.icon.name - The display name of the icon
+ * @param {string} props.icon.pathName - The route path associated with this icon
+ * @param {string} props.currentPath - The current active path in the application
+ * @param {Function} props.navigateTo - Function to navigate to the specified path when icon is clicked
+ * @returns {JSX.Element} A clickable icon with conditional styling based on active state
+ */
 const Icon = ({ icon, currentPath, navigateTo }) => {
   return (
     <div
@@ -126,6 +153,20 @@ const Icon = ({ icon, currentPath, navigateTo }) => {
   );
 };
 
+/**
+ * A component that renders an icon with a badge.
+ * 
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.icon - The icon object.
+ * @param {Function} props.icon.icon - The icon component to render.
+ * @param {string} props.icon.name - The name of the icon for accessibility.
+ * @param {number|string} props.icon.badge - The badge content to display.
+ * @param {string} props.currentPath - The current path of the application.
+ * @param {Function} props.navigateTo - Function to navigate to a different route.
+ * @param {number|string} props.badge - Alternative badge content (not used in current implementation).
+ * @returns {JSX.Element} The rendered icon with badge component.
+ */
 const IconWithBadge = ({ icon, currentPath, navigateTo, badge }) => {
   return (
     <div className="relative hidden md:block">
@@ -144,6 +185,22 @@ const IconWithBadge = ({ icon, currentPath, navigateTo, badge }) => {
   );
 };
 
+/**
+ * Navigation bar component with responsive design that includes logo, search, navigation icons, 
+ * notifications, messages, user profile dropdown and theme toggle.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.userInfo - User information object containing profile details
+ * @param {string} props.userInfo.name - User's display name
+ * @param {string} props.userInfo.username - User's unique username
+ * @param {string} props.userInfo.headline - User's headline or short bio
+ * @param {string} props.userInfo.profilePicture - URL to user's profile picture
+ * @param {string} props.theme - Current theme ('light' or 'dark')
+ * @param {Function} props.toggleTheme - Function to toggle between light and dark themes
+ * @param {string} props.currentPath - Current active route path
+ * @param {Function} props.navigateTo - Navigation function that accepts route path as parameter
+ * @returns {JSX.Element} Rendered navigation bar component
+ */
 export default function NavbarPresentation({
   userInfo,
   theme,

@@ -1,6 +1,20 @@
 import { Plus, UserPlus } from "lucide-react";
 import Image from "next/image";
 
+/**
+ * A component that displays a small card with user information including profile image, name, relation, job title, and a connect button.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {Object} props.userInfo - The user information object
+ * @param {string} props.userInfo.image - URL to the user's profile image
+ * @param {string} props.userInfo.username - User's username
+ * @param {string} props.userInfo.name - User's display name
+ * @param {string} props.userInfo.relation - Relationship with the current user
+ * @param {string} props.userInfo.job - User's job title (will be truncated if longer than 30 characters)
+ * @param {Function} props.onClick - Callback function when the user name is clicked, receives username as parameter
+ * @returns {JSX.Element} A user card with profile image, name, job, and connect button
+ */
 export default function UserSmallCard({ userInfo, onClick }){
     return (
       <div className="flex gap-2 items-center">

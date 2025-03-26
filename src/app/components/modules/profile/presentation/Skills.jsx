@@ -4,6 +4,21 @@ import SkillContainer from "../container/SkillContainer";
 import Container from "@/app/components/layout/Container";
 import ModSkill from "../container/ModSkill";
 
+/**
+ * Renders a skill card component with endorsement functionality
+ * @param {Object} props - Component props
+ * @param {Object} props.skill - Skill object containing skill details
+ * @param {string} props.skill.skill_name - Name of the skill
+ * @param {number} props.skill.id - Unique identifier for the skill
+ * @param {number} props.skill.endorsements_count - Number of endorsements for the skill
+ * @param {boolean} props.skill.isEndorsed - Whether the current user has endorsed this skill
+ * @param {Object} props.level - Level object containing level details
+ * @param {string} props.level.level - Skill proficiency level text
+ * @param {number} props.level.width - Width percentage for the progress bar
+ * @param {boolean} props.isMyProfile - Flag indicating if the profile belongs to the current user
+ * @param {Function} props.handleEndorsement - Callback function to handle skill endorsement
+ * @returns {JSX.Element} A skill card component with name, level, progress bar and endorsement button
+ */
 export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
   return (
     <div className="space-y-2">
@@ -36,6 +51,14 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
   );
 };
 
+/**
+ * A component that displays a grid of skills with an optional modification button
+ * @component
+ * @param {Object} props - The component props
+ * @param {Array<Object>} props.skills - Array of skill objects to display
+ * @param {boolean} props.isMyProfile - Flag indicating if the profile belongs to the current user
+ * @returns {JSX.Element} A container with skills displayed in a responsive grid
+ */
 export default function Skills({ skills, isMyProfile }) {
   return (
     <Container className="border border-[#111] shadow-lg p-8 mt-4">
