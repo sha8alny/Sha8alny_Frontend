@@ -151,7 +151,7 @@ describe('SignUpContainer', () => {
   
     await waitFor(() => {
       expect(successMock).toHaveBeenCalledTimes(1);
-      expect(mockPush).toHaveBeenCalledWith('/Home');
+      expect(mockPush).toHaveBeenCalledWith('/');
     });
   });
   it('shows an alert if reCAPTCHA is not verified', async () => {

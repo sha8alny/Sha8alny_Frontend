@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import PostNewJobContainer from "../../app/components/modules/company-author/container/PostNewJobContainer";
 import { useMutation } from "@tanstack/react-query";
+import Sidebar from "../../app/components/modules/company-page-author/container/SideBarContainer";
 import "@testing-library/jest-dom";
 import { Import } from "lucide-react";
 import { postJob } from "../../app/services/companyManagment";
@@ -15,10 +16,15 @@ jest.mock("../../app/services/companyManagment", () => ({
 jest.mock("@tanstack/react-query", () => ({
   useMutation: jest.fn(),
 }));
+jest.mock("../../app/components/modules/company-page-author/container/SideBarContainer", () => () => (
+  <div data-testid="mock-sidebar" />
+));
 
 describe("PostNewJobContainer", () => {
   const mockOnBack = jest.fn();
   const mockMutate = jest.fn();
+  const mockUsername = "testCompany";
+  const mockLogo = "/test-logo.png";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -31,7 +37,7 @@ describe("PostNewJobContainer", () => {
   });
 
   const renderComponent = async () => {
-    render(<PostNewJobContainer onBack={mockOnBack} />);
+    render(<PostNewJobContainer onBack={mockOnBack} username={mockUsername} logo={mockLogo}  />);
   };
       // Helper function to fill all form fields
       const fillForm = async () => {
@@ -63,7 +69,10 @@ describe("PostNewJobContainer", () => {
         const option = await screen.findByRole("option", { name: "Full Time" });
         fireEvent.click(option);
       };
-      
+    test("does not render the actual Sidebar component", async () => {
+      renderComponent();
+      expect(screen.getByTestId("mock-sidebar")).toBeInTheDocument();
+    });
 
   // ✅ Test: Renders all form fields correctly
   test("renders form fields correctly", () => {
@@ -128,7 +137,7 @@ describe("PostNewJobContainer", () => {
       // Check the structure of the call argument
       expect(mockMutate).toHaveBeenCalledWith(
         expect.objectContaining({
-          companyUsername: "companyUsername",
+          username: mockUsername,
           newJob: expect.objectContaining({
             title: "Software Engineer",
             description: "Develop and maintain software.",

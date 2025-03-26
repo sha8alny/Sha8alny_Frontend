@@ -29,6 +29,7 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
         const selectedFile=e.target.files[0];
         if (selectedFile){
             setLogoPreview(prev => URL.createObjectURL(selectedFile));
+            console.log("Current logoPreview:", logoPreview);
         }
     };
     const [newJob, setNewJob] = useState({
@@ -80,7 +81,7 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
      */
 
     const {mutate: JobSubmit, isPending: isLoading} = useMutation({
-        mutationFn:  postJob
+        mutationFn: postJob
     });
 
     const handleJobSubmit =(e) => {

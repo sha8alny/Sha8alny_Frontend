@@ -79,7 +79,7 @@ const SignUpContainer = () => {
             signupMutation.mutate({username,email,password, isAdmin, recaptcha, rememberMe }, 
                 {onSuccess: () =>
                   {alert("Registration Successful & Auto-Login Successful!");
-                    router.push('/Home')},
+                    router.push('/')},
                  onError: (error) => {
                         alert(error.message);
                 },});
