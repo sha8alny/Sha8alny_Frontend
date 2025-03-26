@@ -5,6 +5,23 @@ import AddButton from "@/app/components/ui/AddButton";
 import EditButton from "@/app/components/ui/EditButton";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
+/**
+ * ModAbout component for editing or adding user profile's about section
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.about - The current about text of the user
+ * @param {boolean} [props.adding=false] - Flag indicating whether the component is in adding mode (true) or editing mode (false)
+ * 
+ * @returns {JSX.Element} A Dialog component containing the about section editor
+ * 
+ * @example
+ * // Edit existing about text
+ * <ModAbout about="Current about text" />
+ * 
+ * // Add new about text
+ * <ModAbout about="" adding={true} />
+ */
 export default function ModAbout({ about, adding = false }) {
   const [error, setError] = useState(null);
   const [userAbout, setAbout] = useState(about);

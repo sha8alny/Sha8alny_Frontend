@@ -2,6 +2,19 @@ import Container from "@/app/components/layout/Container";
 import Image from "next/image";
 import ModHeader from "../container/ModHeader";
 
+/**
+ * Renders the header section of a user's profile
+ * @param {Object} props - Component props
+ * @param {Object} props.userProfile - User profile information
+ * @param {string} props.userProfile.name - User's full name
+ * @param {string} props.userProfile.headline - User's headline/title
+ * @param {string} props.userProfile.location - User's location
+ * @param {number} props.userProfile.connectionsCount - Number of user's connections
+ * @param {string} [props.userProfile.relation] - Relationship to current user (e.g. "1st")
+ * @param {string} [props.userProfile.coverPhoto] - URL of user's cover photo
+ * @param {string} [props.userProfile.profilePicture] - URL of user's profile picture
+ * @returns {JSX.Element} Profile header component with user info and images
+ */
 export default function ProfileHeader({ userProfile }) {
   return (
     <Container className="border-[#111] border shadow-lg">

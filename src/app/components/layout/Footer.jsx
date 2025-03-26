@@ -1,3 +1,12 @@
+
+/**
+ * Footer component that renders the site's footer section.
+ * 
+ * Displays navigation links for About, Terms, Privacy Policy, and Cookie Policy,
+ * along with a copyright notice.
+ * 
+ * @returns {JSX.Element} A footer element with navigation links and copyright information
+ */
 export default function Footer() {
   return (
     <footer className="bg-background border border-[#111] rounded-2xl p-4 mt-2">

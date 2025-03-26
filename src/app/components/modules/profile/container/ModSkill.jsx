@@ -4,6 +4,24 @@ import { useEffect, useState } from "react";
 import AddButton from "@/app/components/ui/AddButton";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
+/**
+ * A component that manages and modifies user skills through a dialog interface.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {Array} props.skills - Array of skill objects containing skill information
+ * 
+ * @returns {JSX.Element} A Dialog component containing skill modification interface
+ * 
+ * @example
+ * // Each skill object in the skills array should have this structure:
+ * const skill = {
+ *   skill_name: "JavaScript"
+ * }
+ * 
+ * // Usage
+ * <ModSkill skills={userSkills} />
+ */
 export default function ModSkill({ skills }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredSkills, setFilteredSkills] = useState(skills || []);

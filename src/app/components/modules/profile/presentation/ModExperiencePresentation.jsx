@@ -14,6 +14,29 @@ import { Form, FormField } from "@/app/components/ui/Form";
 import AddButton from "@/app/components/ui/AddButton";
 import { Controller } from "react-hook-form";
 
+/**
+ * A presentation component for displaying and managing experience information in a form.
+ * 
+ * @param {Object} props - The component props
+ * @param {Object} props.form - The form object containing form controls and state
+ * @param {Function} props.handleFormSubmit - Handler function for form submission
+ * @param {Function} props.addSkill - Function to add a new skill
+ * @param {Function} props.removeSkill - Function to remove a skill
+ * @param {Function} props.handleSubmit - Form submission handler from react-hook-form
+ * @param {boolean} props.isCurrent - Flag indicating if this is a current position
+ * @param {boolean} props.isValid - Flag indicating if the form is valid
+ * @param {string[]} props.months - Array of month options
+ * @param {string[]} props.years - Array of year options
+ * @param {Object} props.errors - Form validation errors object
+ * @param {Function} props.setValue - Function to set form field values
+ * @param {string} props.skillInput - Current value of the skill input field
+ * @param {Function} props.setSkillInput - Function to update skill input value
+ * @param {Function} props.handleIsCurrent - Handler for current position checkbox
+ * @param {string[]} props.skills - Array of added skills
+ * @param {Function} props.watch - Function to watch form field values
+ * @param {boolean} [props.adding=false] - Flag indicating if this is a new experience entry
+ * @returns {JSX.Element} A form for managing experience information
+ */
 export default function ModExperiencePresentation({
   form,
   handleFormSubmit,

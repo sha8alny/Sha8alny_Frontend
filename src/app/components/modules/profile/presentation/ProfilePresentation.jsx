@@ -11,6 +11,20 @@ import CertificationsContainer from "../container/CertificationsContainer";
 
 export function ProfileSkeleton() {}
 
+/**
+ * Renders the profile page presentation component
+ * @param {Object} props - The component props
+ * @param {Object} props.userProfile - The user profile data object containing user information
+ * @param {string} props.userProfile.username - The username of the profile
+ * @param {string} props.userProfile.about - The about section text
+ * @param {Array} props.userProfile.experience - Array of user's experience entries
+ * @param {Array} props.userProfile.education - Array of user's education entries
+ * @param {Array} props.userProfile.skills - Array of user's skills
+ * @param {Array} props.userProfile.certifications - Array of user's certifications
+ * @param {number} props.profileStrength - The profile completion strength percentage
+ * @param {boolean} props.isMyProfile - Flag indicating if the profile belongs to the current user
+ * @returns {JSX.Element} Profile presentation component with user information sections
+ */
 export default function ProfilePresentation({
   userProfile,
   profileStrength,

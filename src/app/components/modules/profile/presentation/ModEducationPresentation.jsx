@@ -14,6 +14,31 @@ import { Form, FormField } from "@/app/components/ui/Form";
 import AddButton from "@/app/components/ui/AddButton";
 import { Controller } from "react-hook-form";
 
+/**
+ * Education form presentation component.
+ * Displays a form for users to add or edit education information in their profile.
+ * 
+ * @component
+ * @param {Object} props - Component properties
+ * @param {Object} props.form - Form object containing control methods and state
+ * @param {Function} props.handleFormSubmit - Handler function for form submission
+ * @param {Function} props.addSkill - Function to add a skill to the skills list
+ * @param {Function} props.removeSkill - Function to remove a skill from the skills list
+ * @param {Function} props.handleSubmit - Form submission handler from react-hook-form
+ * @param {boolean} props.isCurrent - Flag indicating if the education is current/ongoing
+ * @param {boolean} props.isValid - Flag indicating if the form is valid
+ * @param {Array<string>} props.months - List of months for dropdown selection
+ * @param {Array<string>} props.years - List of years for dropdown selection
+ * @param {Object} props.errors - Form validation errors
+ * @param {Function} props.setValue - Function to set form field values
+ * @param {string} props.skillInput - Current value of the skill input field
+ * @param {Function} props.setSkillInput - Function to update the skill input value
+ * @param {Array<string>} props.skills - List of skills associated with this education
+ * @param {Function} props.watch - Function to observe form field values
+ * @param {Function} props.handleIsCurrent - Handler for the "Currently Studying" checkbox
+ * @param {boolean} [props.adding=false] - Flag indicating if this is a new education entry
+ * @returns {JSX.Element} The education form component
+ */
 export default function ModEducationPresentation({
   form,
   handleFormSubmit,

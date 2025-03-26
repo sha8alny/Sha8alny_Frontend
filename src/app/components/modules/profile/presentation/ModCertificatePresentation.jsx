@@ -12,6 +12,29 @@ import {
 import { Form, FormField } from "@/app/components/ui/Form";
 import AddButton from "@/app/components/ui/AddButton";
 
+/**
+ * A presentation component for displaying and managing certificate information in a form.
+ * 
+ * @param {Object} props - The component props
+ * @param {Object} props.form - The form object containing form controls and state
+ * @param {Function} props.handleFormSubmit - Handler function for form submission
+ * @param {Function} props.addSkill - Function to add a new skill to the certificate
+ * @param {Function} props.removeSkill - Function to remove a skill from the certificate
+ * @param {Function} props.handleNeverExpires - Handler for toggling certificate expiration
+ * @param {Function} props.handleSubmit - Form submission handler from react-hook-form
+ * @param {boolean} props.neverExpires - Flag indicating if the certificate never expires
+ * @param {boolean} props.isValid - Flag indicating if the form is valid
+ * @param {string[]} props.months - Array of month options
+ * @param {string[]} props.years - Array of year options
+ * @param {Object} props.errors - Form validation errors object
+ * @param {Function} props.setValue - Function to set form field values
+ * @param {string} props.skillInput - Current value of the skill input field
+ * @param {Function} props.setSkillInput - Function to update skill input value
+ * @param {string[]} props.skills - Array of skills associated with the certificate
+ * @param {Function} props.watch - Form field watcher function
+ * @param {boolean} [props.adding=false] - Flag indicating if this is a new certificate entry
+ * @returns {JSX.Element} A form for managing certificate information
+ */
 export default function ModCertificatePresentation({
   form,
   handleFormSubmit,

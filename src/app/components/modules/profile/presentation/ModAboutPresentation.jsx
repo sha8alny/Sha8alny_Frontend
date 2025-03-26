@@ -1,5 +1,14 @@
 import { Textarea } from "@/app/components/ui/Textarea";
 
+/**
+ * A presentation component for displaying and editing 'About' section in profile module
+ * @param {Object} props - The component props
+ * @param {string} props.about - The about text content
+ * @param {string|null} props.error - Error message to display, if any
+ * @param {Function} props.handleAbout - Callback function to handle changes in about text
+ * @param {Function} props.handleSubmit - Callback function to handle form submission
+ * @returns {JSX.Element} A form with textarea and submit button for editing about section
+ */
 export default function ModAboutPresentation({
   about,
   error,

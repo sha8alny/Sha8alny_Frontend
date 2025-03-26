@@ -4,6 +4,30 @@ import Image from "next/image";
 import ModEducation from "../container/ModEducation";
 import AddButton from "@/app/components/ui/AddButton";
 
+/**
+ * A component that renders an education card displaying educational details.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {Object} props.placeOfEducation - The education details object
+ * @param {string} props.placeOfEducation.image - URL of the institution's logo image
+ * @param {string} props.placeOfEducation.school - Name of the educational institution
+ * @param {string} props.placeOfEducation.degree - Type of degree obtained
+ * @param {string} props.placeOfEducation.fieldOfStudy - Field or major of study
+ * @param {Object} props.placeOfEducation.startDate - Start date of education
+ * @param {string} props.placeOfEducation.startDate.month - Start month
+ * @param {string} props.placeOfEducation.startDate.year - Start year
+ * @param {Object} props.placeOfEducation.endDate - End date of education
+ * @param {string} props.placeOfEducation.endDate.month - End month
+ * @param {string} props.placeOfEducation.endDate.year - End year
+ * @param {string} [props.placeOfEducation.grade] - Grade achieved (optional)
+ * @param {string} props.placeOfEducation.location - Location of the institution
+ * @param {string} props.placeOfEducation.description - Description of the education
+ * @param {string} [props.placeOfEducation.activities] - Activities and societies involved in (optional)
+ * @param {string[]} props.placeOfEducation.skills - Array of skills acquired
+ * @param {boolean} props.isMyProfile - Flag indicating if the card is being viewed on user's own profile
+ * @returns {JSX.Element} A card component displaying education information
+ */
 const EducationCard = ({ placeOfEducation, isMyProfile }) => {
   return (
     <div className="flex gap-2">
@@ -57,6 +81,26 @@ const EducationCard = ({ placeOfEducation, isMyProfile }) => {
   );
 };
 
+/**
+ * Education component displays a list of educational institutions/places.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {Array} props.education - Array of education entries to display
+ * @param {boolean} props.allEducation - Flag to show all education entries or just the first one
+ * @param {Function} props.toggleAllEducation - Function to toggle between showing all/less education entries
+ * @param {boolean} props.isMyProfile - Flag indicating if the profile belongs to current user
+ * 
+ * @returns {JSX.Element|null} Returns education section if education array is not empty, null otherwise
+ * 
+ * @example
+ * <Education 
+ *   education={educationData}
+ *   allEducation={showAll}
+ *   toggleAllEducation={handleToggle}
+ *   isMyProfile={true}
+ * />
+ */
 export default function Education({
   education,
   allEducation,

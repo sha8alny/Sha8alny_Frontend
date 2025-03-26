@@ -4,6 +4,27 @@ import ExperienceCardContainer from "../container/ExperienceCardContainer";
 import Container from "@/app/components/layout/Container";
 import ModExperience from "../container/ModExperience";
 
+/**
+ * Renders a card displaying professional experience information
+ * @param {Object} props - The component props
+ * @param {Object} props.job - The job information object
+ * @param {string} props.job.image - URL of the company logo image
+ * @param {string} props.job.title - Job title
+ * @param {string} props.job.company - Company name
+ * @param {string} props.job.employmentType - Type of employment
+ * @param {Object} props.job.startDate - Start date of employment
+ * @param {string} props.job.startDate.month - Start month
+ * @param {number} props.job.startDate.year - Start year
+ * @param {Object} props.job.endDate - End date of employment
+ * @param {string} props.job.endDate.month - End month
+ * @param {number} props.job.endDate.year - End year
+ * @param {string} props.job.location - Job location
+ * @param {string} props.job.description - Job description
+ * @param {string[]} props.job.skills - Array of skills associated with the job
+ * @param {string} props.duration - Formatted duration of employment
+ * @param {boolean} props.isMyProfile - Flag indicating if the experience belongs to the current user's profile
+ * @returns {JSX.Element} Experience card component
+ */
 export const ExperienceCard = ({ job, duration, isMyProfile }) => {
   return (
     <div className="flex gap-2">
@@ -50,6 +71,14 @@ export const ExperienceCard = ({ job, duration, isMyProfile }) => {
   );
 };
 
+/**
+ * Experience component that displays a list of professional experiences
+ * @param {Object[]} experience - Array of experience objects to display
+ * @param {boolean} allExperience - Flag to show all experiences or just first 3
+ * @param {Function} toggleAllExperience - Function to toggle between showing all/less experiences
+ * @param {boolean} isMyProfile - Flag to determine if viewing user's own profile
+ * @returns {JSX.Element|null} Returns Experience container component if experiences exist, null otherwise
+ */
 export default function Experience({
   experience,
   allExperience,

@@ -9,6 +9,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
+/**
+ * Zod schema for certificate form validation.
+ * @typedef {Object} CertificateFormSchema
+ * @property {string} name - Certificate name (required)
+ * @property {string} issuingOrganization - Organization that issued the certificate (required)
+ * @property {Object} issueDate - Date when certificate was issued
+ * @property {string} issueDate.month - Month when certificate was issued (required)
+ * @property {string} issueDate.year - Year when certificate was issued (required)
+ * @property {Object} expirationDate - Date when certificate expires (required if neverExpires is false)
+ * @property {string} expirationDate.month - Month when certificate expires
+ * @property {string} expirationDate.year - Year when certificate expires
+ * @property {boolean} neverExpires - Flag indicating if the certificate has no expiration date (default: false)
+ * @property {Array<string>} skills - List of skills associated with this certificate (default: [])
+ * 
+ * Includes refinement to ensure expirationDate is provided when neverExpires is false.
+ */
 const formSchema = z
   .object({
     name: z.string().nonempty("Certificate name is required."),
@@ -44,6 +60,11 @@ const formSchema = z
     }
   );
 
+/**
+ * Generates an array of years starting from 50 years in the past up to 10 years in the future.
+ *
+ * @returns {string[]} An array of years as strings, sorted in descending order.
+ */
 const generateYears = () => {
   const currentYear = new Date().getFullYear();
   const futureYears = 10;
@@ -67,6 +88,23 @@ const months = [
   "December",
 ];
 
+/**
+ * Certificate management component for adding, editing certification details in profile.
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} [props.certificate] - Certificate data object for editing, undefined when adding new
+ * @param {boolean} props.adding - Flag indicating if this is an add operation (true) or edit operation (false)
+ * 
+ * @returns {JSX.Element} Dialog component with certificate form
+ * 
+ * @example
+ * // For adding a new certificate
+ * <ModCertificate adding={true} />
+ * 
+ * // For editing an existing certificate
+ * <ModCertificate certificate={certificateData} adding={false} />
+ */
 export default function ModCertificate({ certificate, adding }) {
   const [skillInput, setSkillInput] = useState("");
   const years = generateYears();

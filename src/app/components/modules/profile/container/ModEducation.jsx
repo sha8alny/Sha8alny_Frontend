@@ -44,6 +44,15 @@ const months = [
   "December",
 ];
 
+/**
+ * ModEducation component that handles the education modal functionality.
+ * It provides form handling for adding or editing education information.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} [props.education] - The education object to edit, if editing
+ * @param {boolean} props.adding - Flag indicating whether adding new education or editing existing one
+ * @returns {JSX.Element} Dialog component with education form
+ */
 export default function ModEducation({ education, adding }) {
   const [skillInput, setSkillInput] = useState("");
   const years = generateYears();
