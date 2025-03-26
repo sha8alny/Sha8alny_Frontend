@@ -2,14 +2,14 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SettingsSecurityContainer from "../../app/components/modules/settings/container/SettingsSecurityContainer";
 import { useQuery } from "@tanstack/react-query";
-import { getEmail } from "../../app/services/userMangment";
+import { getEmail } from "../../app/services/userManagement";
 import { useRouter } from "next/navigation";
 
 jest.mock("@tanstack/react-query", () => ({
   useQuery: jest.fn(),
 }));
 
-jest.mock("../../app/services/userMangment", () => ({
+jest.mock("../../app/services/userManagement", () => ({
   getEmail: jest.fn(),
 }));
 jest.mock("next/navigation", () => ({

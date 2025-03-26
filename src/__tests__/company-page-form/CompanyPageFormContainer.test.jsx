@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import CompanyPageFormContainer from "@/app/components/modules/company-page-form/container/CompanyPageFormContainer";
+import CompanyPageFormContainer from "../../app/components/modules/company-page-form/container/CompanyPageFormContainer";
 
-jest.mock("@/app/components/modules/company-page-form/container/CreateCompanySectionContainer", () => (props) => (
+jest.mock("../../app/components/modules/company-page-form/container/CreateCompanySectionContainer", () => (props) => (
 <div data-testid="create-company-section">
     <input
     data-testid="company-name-input"
@@ -27,7 +27,7 @@ jest.mock("@/app/components/modules/company-page-form/container/CreateCompanySec
 </div>
 ));
 
-jest.mock("@/app/components/modules/company-page-form/container/CompanyPreviewSectionContainer", () => (props) => (
+jest.mock("../../app/components/modules/company-page-form/container/CompanyPreviewSectionContainer", () => (props) => (
 <div data-testid="company-preview">
     <p>{props.companyName}</p>
     <p>{props.companyIndustry}</p>

@@ -1,12 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import EditContainer from "@/app/components/modules/company-page-author/container/EditContainer";
+import EditContainer from "../../app/components/modules/company-page-author/container/EditContainer";
 
-jest.mock("@/app/components/modules/company-page-author/container/SideBarContainer", () => () => 
+jest.mock("../../app/components/modules/company-page-author/container/SideBarContainer", () => () => 
     <div data-testid="sidebar-container" />);
-jest.mock("@/app/components/modules/company-page-author/container/EditPageContainer", () => () => 
+jest.mock("../../app/components/modules/company-page-author/container/EditPageContainer", () => () => 
     <div data-testid="edit-page-container" />);
-jest.mock("@/app/components/modules/company-page-author/presentation/Analytics", () => () => 
+jest.mock("../../app/components/modules/company-page-author/presentation/Analytics", () => () => 
     <div data-testid="analytics" />);
 
 

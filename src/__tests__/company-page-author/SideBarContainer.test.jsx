@@ -1,13 +1,13 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import SideBarContainer from "@/app/components/modules/company-page-author/container/SideBarContainer";
-import { deleteCompany } from "@/app/services/companyManagment";
+import SideBarContainer from "../../app/components/modules/company-page-author/container/SideBarContainer";
+import { deleteCompany } from "../../app/services/companyManagment";
 
-jest.mock("@/app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagment", () => ({
     deleteCompany: jest.fn(),
 }));
 
-jest.mock("@/app/components/modules/company-page-author/presentation/SideBar", () => ({ menuItems }) => (
+jest.mock("../../app/components/modules/company-page-author/presentation/SideBar", () => ({ menuItems }) => (
     <nav>
       {menuItems.map((item) => (
         <button key={item.name} onClick={item.action} data-testid={item.name}>
@@ -26,7 +26,7 @@ describe("SideBarContainer", ()=>{
     
     test("renders sidebar menu items", () => {
         render(<SideBarContainer {...mockProps} />);
-        expect(screen.getByTestId("Dashborad")).toBeInTheDocument();
+        expect(screen.getByTestId("Dashboard")).toBeInTheDocument();
         expect(screen.getByTestId("Page Posts")).toBeInTheDocument();
         expect(screen.getByTestId("Deactivate Page")).toBeInTheDocument();
     });

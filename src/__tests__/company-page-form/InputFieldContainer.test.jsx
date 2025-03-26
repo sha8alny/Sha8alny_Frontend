@@ -1,9 +1,9 @@
 
 import { render, screen, fireEvent} from "@testing-library/react";
 import "@testing-library/jest-dom";
-import InputFieldContainer from "@/app/components/modules/company-page-form/container/InputFieldContainer";
+import InputFieldContainer from "../../app/components/modules/company-page-form/container/InputFieldContainer";
 
-jest.mock("@/app/components/modules/company-page-form/presentation/InputField", () => ({ label, name, onChange, selectedname }) => (
+jest.mock("../../app/components/modules/company-page-form/presentation/InputField", () => ({ label, name, onChange, selectedname }) => (
     <input aria-label={label} name={name} value={selectedname} onChange={onChange} />
 ));
 

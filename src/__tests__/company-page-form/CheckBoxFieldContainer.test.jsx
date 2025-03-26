@@ -1,9 +1,9 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import CheckBoxFieldContainer from "@/app/components/modules/company-page-form/container/CheckBoxFieldContainer";
+import CheckBoxFieldContainer from "../../app/components/modules/company-page-form/container/CheckBoxFieldContainer";
 
 
-jest.mock("@/app/components/modules/company-page-form/presentation/CheckBoxField",()=>(props)=>(
+jest.mock("../../app/components/modules/company-page-form/presentation/CheckBoxField",()=>(props)=>(
     <input type="checkbox" id="company-terms" checked={props.checked} onChange={props.onChange}/>
 ));
 describe("CheckBoxFieldContainer",()=>{

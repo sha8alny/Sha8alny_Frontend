@@ -1,9 +1,9 @@
 import { render, screen , fireEvent, waitFor} from "@testing-library/react";
 import "@testing-library/jest-dom";
-import FileUploadContainer from "@/app/components/modules/company-page-form/container/FileUploadContainer";
+import FileUploadContainer from "../../app/components/modules/company-page-form/container/FileUploadContainer";
 
 
-jest.mock("@/app/components/modules/company-page-form/presentation/FileUpload", () => 
+jest.mock("../../app/components/modules/company-page-form/presentation/FileUpload", () => 
     function MockFileUpload(props) {
       return (
         <div>

@@ -1,9 +1,9 @@
 import { render, screen , fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import PostPageContainer from "@/app/components/modules/company-page-author/container/PostPageContainer";
-import { createPost } from "@/app/services/post";
+import PostPageContainer from "../../app/components/modules/company-page-author/container/PostPageContainer";
+import { createPost } from "../../app/services/post";
 
-jest.mock("@/app/services/post", ()=>({
+jest.mock("../../app/services/post", ()=>({
     createPost: jest.fn(),
 }));
 describe("PostPageContainer",()=>{
