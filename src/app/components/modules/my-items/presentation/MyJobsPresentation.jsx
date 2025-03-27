@@ -14,6 +14,10 @@ import {
 } from "@mui/icons-material";
 
 /**
+ * @namespace my-items
+ * @module my-items
+ */
+/**
  * MyJobsPresentation component displays a tabbed interface for managing job applications.
  * It allows users to filter jobs by their status and provides functionality to load more jobs.
  *

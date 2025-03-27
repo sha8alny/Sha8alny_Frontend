@@ -1,5 +1,9 @@
 import { ArrowBack } from "@mui/icons-material";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * BackButton component renders a button that triggers a handler function when clicked.
  * @param {Object} props - The component props.
  * @param {function} props.handler - Function to handle the button click event.

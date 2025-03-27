@@ -2,6 +2,10 @@ import AddButton from "@/app/components/ui/AddButton";
 import { Trash } from "lucide-react";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders a skill modification presentation component with search and add functionality
  * @param {Object} props - Component props
  * @param {Array} props.skills - Array of skill objects

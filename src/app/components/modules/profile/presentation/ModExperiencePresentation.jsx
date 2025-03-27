@@ -15,6 +15,10 @@ import AddButton from "@/app/components/ui/AddButton";
 import { Controller } from "react-hook-form";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A presentation component for displaying and managing experience information in a form.
  * 
  * @param {Object} props - The component props

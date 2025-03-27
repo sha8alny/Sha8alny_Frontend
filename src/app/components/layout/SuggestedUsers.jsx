@@ -2,7 +2,10 @@ import { Users } from "lucide-react";
 import UserSmallCard from "./UserSmallCard";
 import Container from "./Container";
 
-
+/**
+ * @namespace layout
+ * @module layout
+ */
 /**
  * Renders a container with suggested users.
  * 

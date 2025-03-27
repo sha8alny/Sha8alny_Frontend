@@ -5,6 +5,10 @@ import { fetchUserProfile , fetchUsername} from "@/app/services/userProfile";
 import { useRouter } from "next/navigation";
 import SettingsNavbarPresentation from "../presentation/SettingsNavbarPresentation";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsNavbarContainer component.
  *
  * This component is responsible for managing the state and logic for the settings navbar.

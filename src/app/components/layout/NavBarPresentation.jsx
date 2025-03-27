@@ -46,8 +46,10 @@ const navIcons = [
     icon: BriefcaseBusiness,
   },
 ];
-
-
+/**
+ * @namespace layout
+ * @module layout
+ */
 /**
  * Renders a navigation icon component that changes style based on the current path.
  * 

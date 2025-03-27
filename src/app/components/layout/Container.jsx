@@ -1,4 +1,7 @@
-
+/**
+ * @namespace layout
+ * @module layout
+ */
 /**
  * A wrapper component that applies background color, text color, and rounded corners styling.
  *
@@ -8,10 +11,11 @@
  * @param {React.ReactNode} props.children - The content to be rendered inside the container
  * @returns {JSX.Element} A styled div container with the provided children
  */
-export default function Container({ className, children }) {
+function Container({ className, children }) {
   return (
     <div className={`bg-background text-primary rounded-2xl ${className}`}>
       {children}
     </div>
   );
 }
+export default Container;

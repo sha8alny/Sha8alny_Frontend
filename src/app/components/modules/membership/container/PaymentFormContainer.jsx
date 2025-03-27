@@ -11,6 +11,10 @@ import SuccessPaymentPresentation from "../presentation/SuccessPaymentPresentati
 import { useToast } from "@/app/context/ToastContext";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * PaymentFormContainer component handles the payment form logic and submission.
  * It integrates with Stripe for payment processing and displays either the payment form or success message based on the payment status.
  *

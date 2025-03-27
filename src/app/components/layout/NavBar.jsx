@@ -6,7 +6,10 @@ import NavbarPresentation, {
 } from "./NavBarPresentation";
 import { fetchUserProfile } from "@/app/services/userProfile";
 import { useQuery } from "@tanstack/react-query";
-
+/**
+ * @namespace layout
+ * @module layout
+ */
 /**
  * Navbar component that handles the application's navigation bar functionality.
  * This component fetches user profile data, handles theme toggling, and navigation.
@@ -16,7 +19,7 @@ import { useQuery } from "@tanstack/react-query";
  * @returns {JSX.Element} The rendered NavBar component, showing either the full NavbarPresentation
  * or the NavBarPresentationSkeleton based on the loading/error state of data fetching
  */
-export default function Navbar() {
+ function Navbar() {
   const pathName = usePathname();
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
@@ -71,3 +74,5 @@ export default function Navbar() {
     />
   );
 }
+
+export default Navbar;

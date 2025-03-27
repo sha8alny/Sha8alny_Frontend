@@ -12,6 +12,10 @@ import { Close, CloudUpload, Send, Cancel } from "@mui/icons-material";
 import { useTheme } from "@/app/context/ThemeContext";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobApplicationModalPresenter is a React component that renders a modal for job applications.
  * It includes a form for users to input their details, upload a resume, and submit their application.
  *

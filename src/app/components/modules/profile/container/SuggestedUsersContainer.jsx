@@ -1,3 +1,7 @@
+/**
+ * @namespace profile
+ * @module profile
+ */
 'use client';
 import SuggestedUsers from "@/app/components/layout/SuggestedUsers";
 import { useRouter } from "next/navigation";

@@ -8,6 +8,10 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "@/app/services/userProfile";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsSidebarContainer component manages the state and logic for the settings sidebar.
  *
  * @param {Object} props - The component props.

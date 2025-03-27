@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';

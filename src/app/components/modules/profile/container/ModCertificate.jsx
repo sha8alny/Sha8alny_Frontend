@@ -10,6 +10,10 @@ import { useState } from "react";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Zod schema for certificate form validation.
  * @typedef {Object} CertificateFormSchema
  * @property {string} name - Certificate name (required)

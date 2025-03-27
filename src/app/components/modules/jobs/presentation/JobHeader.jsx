@@ -1,4 +1,8 @@
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobHeader component displays the header section of a job listing.
  *
  * @param {Object} props - The component props.

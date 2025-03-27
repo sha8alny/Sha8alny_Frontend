@@ -36,6 +36,10 @@ import {
 import TableSkeleton from "./TableSkeleton";
 
 /**
+ * @namespace admin
+ * @module admin
+ */
+/**
  * FlaggedJobsTablePresentation Component
  *
  * This component renders a table displaying flagged job reports with various actions and filters.

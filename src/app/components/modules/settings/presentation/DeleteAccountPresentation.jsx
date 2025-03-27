@@ -3,6 +3,10 @@ import BackButton from "./BackButton";
 import Button from "./Button";
 import DeleteAccountPassConfirmation from "./DeleteAccountPassConfirm";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * DeleteAccountPresentation component renders a form for deleting a user account.
  * It displays a confirmation message and a button to proceed with the deletion process.
  * 

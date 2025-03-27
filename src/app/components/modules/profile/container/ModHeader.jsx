@@ -1,3 +1,7 @@
+/**
+ * @namespace profile
+ * @module profile
+ */
 import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 import ModHeaderPresentation from "../presentation/ModHeaderPresentation";
 import { connectUser } from "@/app/services/connectUser";

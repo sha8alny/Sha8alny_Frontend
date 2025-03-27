@@ -7,6 +7,10 @@ import SideBarContainer from "../../company-page-author/container/SideBarContain
 import { useRef } from "react";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * JobApplicantsPageContainer component
  * 
  * This component is responsible for fetching and displaying the list of job applicants for a specific job.

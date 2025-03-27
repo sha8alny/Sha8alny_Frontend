@@ -7,6 +7,10 @@ import { useEffect } from "react";
 
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Calculates the profile strength percentage based on profile completeness
  * @param {Object} userProfile - The user profile object
  * @returns {number} - Profile strength score from 0 to 100

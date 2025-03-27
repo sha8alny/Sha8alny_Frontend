@@ -5,6 +5,10 @@ import Container from "@/app/components/layout/Container";
 import ModExperience from "../container/ModExperience";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders a card displaying professional experience information
  * @param {Object} props - The component props
  * @param {Object} props.job - The job information object

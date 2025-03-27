@@ -1,4 +1,8 @@
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsFormLayout component is a layout component to apply a settings form layout.
  * @returns {JSX.Element} The rendered component.
  */

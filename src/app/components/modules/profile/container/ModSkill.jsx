@@ -5,6 +5,10 @@ import AddButton from "@/app/components/ui/AddButton";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that manages and modifies user skills through a dialog interface.
  * 
  * @component

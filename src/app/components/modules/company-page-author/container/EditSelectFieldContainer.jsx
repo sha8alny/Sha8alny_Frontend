@@ -1,6 +1,10 @@
 import SelectField from "../../company-page-form/presentation/SelectField"
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * EditSelectFieldContainer component handles select dropdowns for company size and type.
  *
  * @component

@@ -2,6 +2,10 @@ import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 import { ExperienceCard } from "../presentation/Experience";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Calculate the duration between two dates
  * @param {object} from - The start date
  * @param {object} to - The end date

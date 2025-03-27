@@ -4,6 +4,10 @@ import { useState } from "react";
 import JobApplicationModalContainer from "../container/JobApplicationModalContainer";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobActions component renders action buttons for a job listing.
  *
  * @component

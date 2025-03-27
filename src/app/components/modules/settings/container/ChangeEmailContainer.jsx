@@ -5,6 +5,10 @@ import { updateEmail } from "../../../../services/userManagement";
 import { useToast } from "@/app/context/ToastContext";
 
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * ChangeEmailContainer component handles the logic for changing the user's email.
  * It includes form validation, mutation for updating the email, and displaying toast notifications.
  *

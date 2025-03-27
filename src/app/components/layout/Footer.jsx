@@ -1,4 +1,7 @@
-
+/**
+ * @namespace layout
+ * @module layout
+ */
 /**
  * Footer component that renders the site's footer section.
  * 

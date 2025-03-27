@@ -6,6 +6,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * A container component for handling post creation, including text input and image upload.
  *
  * @component

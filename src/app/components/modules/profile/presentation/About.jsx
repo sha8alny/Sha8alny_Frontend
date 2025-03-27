@@ -4,6 +4,10 @@ import { Edit } from "lucide-react";
 import ModAbout from "../container/ModAbout";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders the About section of a profile
  * @param {Object} props - The component props
  * @param {string} props.about - The about text content to display

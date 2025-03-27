@@ -5,6 +5,10 @@ import ViewApplicationDetailsContainer from "../container/ViewApplicationDetails
 import { ArrowForwardIos,ArrowBackIos } from "@mui/icons-material";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * JobApplicantsPage component
  * 
  * This component renders a page displaying the list of job applicants. It includes navigation buttons

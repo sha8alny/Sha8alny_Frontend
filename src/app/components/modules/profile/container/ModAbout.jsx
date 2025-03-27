@@ -6,6 +6,10 @@ import EditButton from "@/app/components/ui/EditButton";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * ModAbout component for editing or adding user profile's about section
  * 
  * @component

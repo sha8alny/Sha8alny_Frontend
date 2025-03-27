@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobsExploreContainer component fetches and displays job listings.
  * It supports pagination and handles navigation to job details.
  *

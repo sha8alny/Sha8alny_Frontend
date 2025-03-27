@@ -4,6 +4,10 @@ import SettingsFormLayout from "./SettingsFormLayout";
 import ChangeEmailContainer from "../container/ChangeEmailContainer";
 import { useState } from "react";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * ChangeEmailCard component allows users to change their email address.
  * It displays the current email and provides a form to update it.
  *
