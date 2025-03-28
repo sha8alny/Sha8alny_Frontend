@@ -6,6 +6,7 @@ import NavbarPresentation, {
 } from "./NavBarPresentation";
 import { fetchUserProfile } from "@/app/services/userProfile";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 /**
  * Navbar component that handles the application's navigation bar functionality.
@@ -19,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 export default function Navbar() {
   const pathName = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const [open, setOpen] = useState(false);
   const router = useRouter();
 
   // TODO: Replace with actual username from auth context
@@ -57,6 +59,8 @@ export default function Navbar() {
         toggleTheme={toggleTheme}
         currentPath={pathName}
         navigateTo={handleNavigation}
+        open={open}
+        setOpen={setOpen}
       />
     );
   }
@@ -68,6 +72,8 @@ export default function Navbar() {
       toggleTheme={toggleTheme}
       currentPath={pathName}
       navigateTo={handleNavigation}
+      open={open}
+      setOpen={setOpen}
     />
   );
 }
