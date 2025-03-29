@@ -210,7 +210,7 @@ describe('Navbar Component', () => {
         render(<Navbar />);
         
         expect(useQuery).toHaveBeenCalledWith({
-            queryKey: ['userProfile', 'ziadhesham'],
+            queryKey: ['sidebarInfo'],
             queryFn: expect.any(Function),
         });
     });

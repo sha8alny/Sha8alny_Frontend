@@ -13,7 +13,7 @@
  */
 function Container({ className, children }) {
   return (
-    <div className={`bg-background text-primary rounded-2xl ${className}`}>
+    <div className={`bg-foreground text-primary rounded-2xl ${className}`}>
       {children}
     </div>
   );
