@@ -49,14 +49,14 @@ const EducationCard = ({ placeOfEducation, isMyProfile }) => {
           {isMyProfile && <ModEducation education={placeOfEducation}/>}
         </div>
         <p className="flex items-center">
-          {placeOfEducation.degree}
+          {placeOfEducation?.degree}
           <span className="text-xs ml-2">•</span>
-          <span className="ml-2">{placeOfEducation.fieldOfStudy}</span>
+          <span className="ml-2">{placeOfEducation?.fieldOfStudy}</span>
         </p>
         <p className="text-muted flex">
           <span>
-            {placeOfEducation.startDate.month} {placeOfEducation.startDate.year}{" "}
-            - {placeOfEducation.endDate.month} {placeOfEducation.endDate.year}
+            {placeOfEducation?.startDate?.month} {placeOfEducation?.startDate?.year}{" "}
+            - {placeOfEducation?.endDate?.month} {placeOfEducation?.endDate?.year}
           </span>
         </p>
         <p className="text-muted">

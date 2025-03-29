@@ -35,7 +35,7 @@ export default function ProfileHeader({ userProfile }) {
               className="rounded-t-xl object-cover"
             />
           </div>
-          <div className="relative size-48 z-10 ml-6 bg-gray-500 rounded-full border-8 border-background mt-10">
+          <div className="relative size-48 z-10 ml-6 bg-gray-500 rounded-full border-8 border-foreground mt-10">
             <Image
               src={
                 userProfile.profilePicture ??

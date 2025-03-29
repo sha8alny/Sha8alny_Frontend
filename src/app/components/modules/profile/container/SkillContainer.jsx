@@ -2,6 +2,7 @@ import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 import { SkillCard } from "../presentation/Skills";
 import { use } from "react";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
+import { useParams } from 'next/navigation';
 
 /**
  * @namespace profile
@@ -44,26 +45,28 @@ const determineWidth = (endorsements) => {
  * 
  * @param {Object} props
  * @param {Object} props.skill - The skill object containing skill details
- * @param {number} props.skill.endorsements_count - Number of endorsements for the skill
- * @param {string|number} props.skill.id - Unique identifier for the skill
+ * @param {number} props.skill.endorsementsCount - Number of endorsements for the skill
+ * @param {string} props.skill.skillName - Unique identifier for the skill
  * 
  * @returns {JSX.Element} A SkillCard component with skill information and endorsement functionality
  * 
  * @example
- * <SkillContainer skill={{ id: 1, endorsements_count: 5 }} />
+ * <SkillContainer skill={{ id: 1, endorsementsCount: 5 }} />
  */
 export default function SkillContainer({ skill }) {
   const { isMyProfile } = useIsMyProfile();
   const useUpdate = useUpdateProfile();
   const level = {
-    level: determineLevel(skill.endorsements_count),
-    width: determineWidth(skill.endorsements_count),
+    level: determineLevel(skill.endorsementsCount),
+    width: determineWidth(skill.endorsementsCount),
   };
-  const handleEndorsement = (skillId) => {
+  const params = useParams();
+  const user = params?.username;
+  const handleEndorsement = (skillName, username = user) => {
     useUpdate.mutate({
       api: "endorse-skill",
       method: "POST",
-      data: { skill_id: skillId },
+      data: { username: username, skill: skillName },
     });
   };
   return (

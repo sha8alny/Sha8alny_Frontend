@@ -85,11 +85,11 @@ export default function ModExperience({ experience, adding }) {
       location: experience?.location || "",
       startDate: {
         month: experience?.startDate?.month || "",
-        year: experience?.startDate?.year.toString() || "",
+        year: experience?.startDate?.year ? experience.startDate.year.toString() : "",
       },
       endDate: {
         month: experience?.endDate?.month || "",
-        year: experience?.endDate?.year.toString() || "",
+        year: experience?.endDate?.year ? experience.endDate.year.toString() : "",
       },
       isCurrent: experience?.isCurrent || false,
       description: experience?.description || "",
@@ -121,8 +121,8 @@ export default function ModExperience({ experience, adding }) {
     e.preventDefault();
     if (skillInput && !skills.includes(skillInput)) {
       setValue("skills", [...skills, skillInput]);
-      setSkillInput("");
     }
+    setSkillInput("");
   };
 
   const removeSkill = (skill) => {
@@ -133,10 +133,11 @@ export default function ModExperience({ experience, adding }) {
   };
 
   const handleFormSubmit = (data) => {
+    const updatedData = {...data, _id: experience?._id};
     handleUserUpdate.mutate({
       api: adding ? "add-experience" : "edit",
       method: adding ? "POST" : "PATCH",
-      data: { experience: [data] },
+      data: { ...updatedData },
     });
   };
 
