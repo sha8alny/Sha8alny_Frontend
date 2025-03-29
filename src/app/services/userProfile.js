@@ -7,7 +7,7 @@ const getToken = () => {
 };
 
 export const fetchUserProfile = async (username) => {
-    const response = await fetch(`${apiURL}/user/${username}`, {
+    const response = await fetch(`${apiURL}/profile/${username}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
