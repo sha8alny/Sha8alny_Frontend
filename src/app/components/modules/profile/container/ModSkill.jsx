@@ -20,7 +20,7 @@ import useUpdateProfile from "@/app/hooks/useUpdateProfile";
  * @example
  * // Each skill object in the skills array should have this structure:
  * const skill = {
- *   skill_name: "JavaScript"
+ *   skill: "JavaScript"
  * }
  * 
  * // Usage

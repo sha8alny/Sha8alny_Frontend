@@ -27,7 +27,7 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold">{skill?.skill}</h3>
+        <h3 className="font-semibold truncate">{skill?.skill}</h3>
         <span className="text-xs font-medium text-background bg-secondary px-2 py-0.5 rounded-full">
           {level.level}
         </span>
