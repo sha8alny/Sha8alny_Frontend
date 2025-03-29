@@ -1,4 +1,5 @@
 
+import { fetchWithAuth } from "@/app/services/userAuthentication";
 const apiURL  = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -9,7 +10,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
     );
     url.searchParams.append("limit", itemsPerPage);
     //console.log(url.toString());
-    const response = await fetch(url.toString());
+    const response = await fetchWithAuth(url.toString());
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -21,7 +22,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
   };
 
   export const fetchAppliedJobs = async () => {
-    const response = await fetch(`${apiURL}/jobs/applied`);
+    const response = await fetchWithAuth(`${apiURL}/jobs/applied`);
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -37,7 +38,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
     );
     url.searchParams.append("limit", itemsPerPage);
     //console.log(url.toString());
-    const response = await fetch(url.toString());
+    const response = await fetchWithAuth(url.toString());
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -49,7 +50,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
   };
   
   export const fetchJobDetails = async (id) => {
-    const response = await fetch(`${apiURL}/jobs/${id}`);
+    const response = await fetchWithAuth(`${apiURL}/jobs/${id}`);
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -69,7 +70,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
       formData.append("resume", resume);
     }
   
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${apiURL}/jobs/${jobId}/apply`,
       {
         method: "POST",
@@ -92,7 +93,7 @@ export const fetchJobListingsPageNumber = async ({ pageParam = 1 }) => {
   );
 
 
-  const response = await fetch(url.toString());
+  const response = await fetchWithAuth(url.toString());
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
   }
