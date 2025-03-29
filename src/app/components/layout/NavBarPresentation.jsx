@@ -1,5 +1,6 @@
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import {
+  Login as LoginIcon,
   Notifications as Bell,
   Work as Briefcase,
   BusinessCenter as BriefcaseBusiness,
@@ -103,7 +104,7 @@ const Icon = ({ icon, currentPath, navigateTo }) => {
  * @param {number|string} props.badge - Alternative badge content (not used in current implementation).
  * @returns {JSX.Element} The rendered icon with badge component.
  */
-const IconWithBadge = ({ icon, currentPath, navigateTo, badge }) => {
+const IconWithBadge = ({ icon, currentPath, navigateTo }) => {
   return (
     <div className="relative hidden md:block">
       <Button
@@ -115,7 +116,7 @@ const IconWithBadge = ({ icon, currentPath, navigateTo, badge }) => {
         <icon.icon className="text-muted-foreground" sx={{ fontSize: 20 }} />
       </Button>
       <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-secondary text-[10px]">
-        {icon.badge}
+        {icon.number > 99 ? "99+" : icon.number}
       </Badge>
     </div>
   );
@@ -220,7 +221,7 @@ export default function NavbarPresentation({
               >
                 <MessageCircle sx={{ fontSize: 20 }} />
                 <span>Messages</span>
-                <Badge className="ml-auto bg-secondary">3</Badge>
+                <Badge className="ml-auto bg-secondary">{userInfo?.messagesReceived > 99 ? "99+" : userInfo?.messagesReceived}</Badge>
               </Button>
 
               <Button
@@ -233,7 +234,7 @@ export default function NavbarPresentation({
               >
                 <Bell sx={{ fontSize: 20 }} />
                 <span>Notifications</span>
-                <Badge className="ml-auto bg-secondary">10</Badge>
+                <Badge className="ml-auto bg-secondary">{userInfo?.notificationsReceived > 99 ? "99+" : userInfo?.notificationsReceived}</Badge>
               </Button>
 
               {/* Settings & Logout for Mobile */}
@@ -266,7 +267,7 @@ export default function NavbarPresentation({
       </div>
 
       {/* Logo Section - Visible on all screens */}
-      <section className="flex mr-auto items-center p-2">
+      <section className="flex mr-auto items-center p-2 w-full">
         <div
           onClick={() => navigateTo("/")}
           className="flex items-center gap-2 group hover:scale-110 cursor-pointer ease-in-out duration-300"
@@ -305,8 +306,8 @@ export default function NavbarPresentation({
         {/* Notification Icons - Hidden on mobile */}
         <div className="hidden md:flex gap-3">
           {[
-            { name: "Messages", icon: MessageCircle, badge: 3 },
-            { name: "Notifications", icon: Bell, badge: 10 },
+            { name: "Messages", icon: MessageCircle, number: userInfo?.messagesReceived },
+            { name: "Notifications", icon: Bell, number: userInfo?.notificationsReceived },
           ].map((icon, index) => (
             <IconWithBadge key={index} icon={icon} />
           ))}
@@ -357,7 +358,7 @@ export default function NavbarPresentation({
         <button
           onClick={toggleTheme}
           title="Toggle Theme"
-          className="ml-4 p-2 cursor-pointer rounded-lg hover:bg-foreground/20 dark:hover:bg-foreground"
+          className="ml-4 p-2 cursor-pointer rounded-lg hover:bg-primary/10"
         >
           {theme === "dark" ? (
             <Sun sx={{ fontSize: 20 }} />
@@ -471,7 +472,7 @@ export const NavBarPresentationSkeleton = ({
       </div>
       
       {/* Logo Section - Visible on all screens */}
-      <section className="flex mr-auto items-center p-2">
+      <section className="flex w-full mr-auto items-center p-2">
         <div
           onClick={() => navigateTo("/")}
           className="flex items-center gap-2 group hover:scale-110 cursor-pointer ease-in-out duration-300"
@@ -509,6 +510,7 @@ export const NavBarPresentationSkeleton = ({
       {/* User Profile Section */}
       <section className="flex gap-3 p-3 text-primary justify-end items-center w-full ml-auto">
         {/* Notification Icons Skeleton - Hidden on mobile */}
+        {isLoading && (
         <div className="hidden md:flex gap-3">
           {[
             { name: "Messages", icon: MessageCircle },
@@ -528,8 +530,10 @@ export const NavBarPresentationSkeleton = ({
             </div>
           ))}
         </div>
+        )}
 
         {/* User Avatar Skeleton */}
+        {isLoading && (
         <div className="flex items-center ml-4 space-x-2">
           <div className={`relative rounded-full bg-gray-400 ${isLoading ? "animate-pulse" : ""} size-9`} />
           <div className="hidden md:block space-y-1">
@@ -537,12 +541,22 @@ export const NavBarPresentationSkeleton = ({
             <div className={`h-3 w-32 bg-gray-400 rounded-md ${isLoading ? "animate-pulse" : ""}`} />
           </div>
         </div>
+        )}
+
+        {!isLoading && (
+          <button className="flex gap-2 items-center rounded-2xl bg-secondary/80 px-6 py-2 text-sm font-semibold text-background cursor-pointer duration-300 hover:bg-secondary/60 "
+            onClick={() => navigateTo("/signin")}
+          >
+            <LoginIcon sx={{ fontSize: 20}} />
+            Login
+            </button>
+        )}
 
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
           title="Toggle Theme"
-          className="ml-4 p-2 cursor-pointer rounded-lg hover:bg-foreground/20 dark:hover:bg-foreground"
+          className="ml-4 p-2 cursor-pointer rounded-lg hover:bg-primary/10"
         >
           {theme === "dark" ? (
             <Sun sx={{ fontSize: 20 }} />

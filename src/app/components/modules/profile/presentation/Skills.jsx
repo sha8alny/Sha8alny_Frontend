@@ -8,9 +8,9 @@ import ModSkill from "../container/ModSkill";
  * Renders a skill card component with endorsement functionality
  * @param {Object} props - Component props
  * @param {Object} props.skill - Skill object containing skill details
- * @param {string} props.skill.skill_name - Name of the skill
+ * @param {string} props.skill.skillName - Name of the skill
  * @param {number} props.skill.id - Unique identifier for the skill
- * @param {number} props.skill.endorsements_count - Number of endorsements for the skill
+ * @param {number} props.skill.endorsementsCount - Number of endorsements for the skill
  * @param {boolean} props.skill.isEndorsed - Whether the current user has endorsed this skill
  * @param {Object} props.level - Level object containing level details
  * @param {string} props.level.level - Skill proficiency level text
@@ -23,7 +23,7 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold">{skill.skill_name}</h3>
+        <h3 className="font-semibold">{skill.skillName}</h3>
         <span className="text-xs font-medium text-background bg-secondary px-2 py-0.5 rounded-full">
           {level.level}
         </span>
@@ -35,12 +35,12 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
         />
       </div>
       <div className="flex items-center justify-between text-xs text-muted">
-        <span>{skill.endorsements_count} endorsements</span>
+        <span>{skill.endorsementsCount} endorsements</span>
         <Button
           variant="ghost"
           size="sm"
           disabled={isMyProfile || skill.isEndorsed}
-          onClick={() => handleEndorsement(skill.id)}
+          onClick={() => handleEndorsement(skill.skillName)}
           className={`h-7 px-2 hover:bg-foreground hover:cursor-pointer ${skill.isEndorsed ? "text-secondary font-bold" : "text-primary"}`}
         >
           <ThumbsUp className="w-3 h-3 mr-1" />
