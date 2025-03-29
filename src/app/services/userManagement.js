@@ -96,12 +96,34 @@ export const updateUsername = async ({ newUsername }) => {
 };
 
 
-export const handleSignup = async ({ username,email,password, isAdmin, captcha, rememberMe }) => {
+export const handleSignup = async ({ username,email,password, isAdmin, recaptcha, rememberMe }) => {
   try{
+    const type = isAdmin ? "Admin" : "User";
     const signupResponse = await fetch(`${apiURL}/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({username,email,password, isAdmin, captcha}),
+      body: JSON.stringify({username,email,password, type, recaptcha}),
+    });
+
+    if (!signupResponse.ok) throw new Error("Failed to signup");
+
+
+    const loginResponse = await handleSignIn({email,password, rememberMe});
+    if (!loginResponse) throw new Error("Failed to login");
+    return {success:true};
+
+  }catch(error){
+    throw new Error(error.message);
+  }
+};
+
+export const handleSignupCross = async ({ username,email,password, isAdmin, recaptcha, rememberMe }) => {
+  try{
+    const type = isAdmin ? "Admin" : "User";
+    const signupResponse = await fetch(`${apiURL}/signup_cross`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({username,email,password, type}),
     });
 
     if (!signupResponse.ok) throw new Error("Failed to signup");
