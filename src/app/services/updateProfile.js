@@ -1,5 +1,7 @@
+import { fetchWithAuth } from "./userAuthentication";
+
 export const updateProfile = async (url, data, method) => {
-  const response = await fetch(
+  const response = await fetchWithAuth(
     `${process.env.NEXT_PUBLIC_API_URL}/profile/${url}`,
     {
       method: method,

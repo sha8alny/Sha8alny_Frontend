@@ -101,18 +101,34 @@ export default function ModExperiencePresentation({
                     onValueChange={(value) => setValue("employmentType", value)}
                   >
                     <SelectTrigger id="employmentType">
-                      <SelectValue value={field.value} placeholder="Type"/>
+                      <SelectValue placeholder="Type">
+                        {field.value
+                          ? [
+                              { value: "fullTime", label: "Full-time" },
+                              { value: "partTime", label: "Part-time" },
+                              { value: "contract", label: "Contract" },
+                              { value: "freelance", label: "Freelance" },
+                              { value: "selfEmployed", label: "Self-employed" },
+                              { value: "internship", label: "Internship" },
+                              { value: "apprenticeship", label: "Apprenticeship" },
+                              { value: "seasonal", label: "Seasonal" },
+                            ].find((type) => type.value === field.value)?.label
+                          : "Type"}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {[
-                        "Full-time",
-                        "Part-time",
-                        "Contract",
-                        "Freelance",
-                        "Internship",
+                        { value: "fullTime", label: "Full-time" },
+                        { value: "partTime", label: "Part-time" },
+                        { value: "contract", label: "Contract" },
+                        { value: "freelance", label: "Freelance" },
+                        { value: "selfEmployed", label: "Self-employed" },
+                        { value: "internship", label: "Internship" },
+                        { value: "apprenticeship", label: "Apprenticeship" },
+                        { value: "seasonal", label: "Seasonal" },
                       ].map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
                         </SelectItem>
                       ))}
                     </SelectContent>

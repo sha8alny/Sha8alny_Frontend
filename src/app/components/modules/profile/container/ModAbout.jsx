@@ -33,7 +33,7 @@ export default function ModAbout({ about, adding = false }) {
 
   const handleAbout = (value) => {
     setAbout(value);
-    if (value.length > 1000) {
+    if (value?.length > 1000) {
       setError("About is too long.");
       return;
     }

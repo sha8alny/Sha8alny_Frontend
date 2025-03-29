@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useState } from "react";
 import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
+import { fetchUserProfile } from "@/app/services/userProfile";
 
 
 /**
@@ -36,7 +37,7 @@ import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
     isError,
   } = useQuery({
     queryKey: ["sidebarInfo"],
-    queryFn: () => fetchSidebarInfo(),
+    queryFn: () => fetchUserProfile("ziadhesham"),
     staleTime: 1000 * 30, // 30 seconds
   });
 
