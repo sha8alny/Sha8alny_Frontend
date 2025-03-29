@@ -25,6 +25,12 @@ function calculateDate(from, to, isCurrent = false) {
         return new Date();
       }
 
+      // Return current date if date object is missing required properties
+      if (!date?.month || !date?.year) {
+        console.warn("Invalid date format:", date);
+        return new Date();
+      }
+
       const months = {
         jan: 0,
         feb: 1,
@@ -40,8 +46,9 @@ function calculateDate(from, to, isCurrent = false) {
         dec: 11,
       };
 
-      const month = months[date.month.toLowerCase().substring(0, 3)];
-      const year = parseInt(date.year);
+      const monthStr = date.month.toLowerCase().substring(0, 3);
+      const month = months[monthStr] ?? 0; // Default to January if invalid month
+      const year = parseInt(date.year || new Date().getFullYear()); // Default to current year if missing
       return new Date(year, month, 1);
     };
 
@@ -54,6 +61,12 @@ function calculateDate(from, to, isCurrent = false) {
       (duration % (1000 * 60 * 60 * 24 * 365.25)) /
         (1000 * 60 * 60 * 24 * 30.44)
     );
+
+    // Handle negative duration (if dates are incorrect)
+    if (duration < 0) {
+      console.warn("Negative duration detected:", { from, to });
+      return "Invalid date range";
+    }
 
     if (years === 0) return `${months} mths`;
     if (months === 0) return `${years} yrs`;
@@ -79,7 +92,34 @@ function calculateDate(from, to, isCurrent = false) {
  */
 export default function ExperienceCardContainer({job}) {
     const { isMyProfile } = useIsMyProfile();
-    const duration = calculateDate(job.startDate, job.endDate, job.isCurrent);
-    job.endDate = job.isCurrent ? {month: "present", year: ""} : job.endDate;
-    return <ExperienceCard job={job} duration={duration} isMyProfile={isMyProfile}/>;
+
+    const jobTypes = {
+        fullTime: "Full-time",
+        partTime: "Part-time",
+        internship: "Internship",
+        freelance: "Freelance",
+        contract: "Contract",
+        volunteer: "Volunteer",
+        selfEmployed: "Self-employed",
+        apprenticeship: "Apprenticeship",
+        seasonal: "Seasonal",
+    };
+    
+    const employmentType = jobTypes[job?.employmentType] || "Unknown";
+    
+    // Calculate the duration between start and end dates
+    const duration = calculateDate(
+        job?.startDate,
+        job?.isCurrent ? null : job?.endDate,
+        job?.isCurrent
+    );
+    
+    // Create a new object with all the required properties
+    const updatedJob = {
+        ...job,
+        employmentType: employmentType,
+        endDate: job?.isCurrent ? {month: "present", year: ""} : job?.endDate
+    };
+    
+    return <ExperienceCard job={updatedJob} duration={duration} isMyProfile={isMyProfile} />;
 }

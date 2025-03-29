@@ -57,7 +57,7 @@ export default function ModSkillPresentation({
         ) : (
           skills.map((skill) => (
             <ModSkillCard
-              key={skill.skill_name}
+              key={skill.skill}
               skill={skill}
               removeSkill={updateSkill}
             />
@@ -83,9 +83,9 @@ const ModSkillCard = ({ skill, removeSkill, isLoading }) => {
   return (
     <div>
       <div className="flex justify-between items-center p-3 border border-[#111] bg-foreground rounded-md">
-        <h3 className="font-semibold text-primary">{skill.skill_name}</h3>
+        <h3 className="font-semibold text-primary">{skill.skill}</h3>
         <button
-          onClick={() => removeSkill(2, skill.skill_name)}
+          onClick={() => removeSkill(2, skill.skill)}
           className="text-primary font-semibold p-1 rounded-md hover:bg-foreground cursor-pointer duration-250"
           disabled={isLoading}
         >

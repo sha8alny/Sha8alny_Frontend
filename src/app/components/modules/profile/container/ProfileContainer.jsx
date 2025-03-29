@@ -105,6 +105,7 @@ function ProfileContent({ username }) {
     data: userProfile,
     isLoading,
     isError,
+    error
   } = useQuery({
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
@@ -121,23 +122,53 @@ function ProfileContent({ username }) {
   if (isLoading) return <ProfileSkeleton />;
 
   if (isError) {
+    let errorMessage = "Error fetching user profile.";
+    // Get the actual error object using the error property
+    console.log("Error details:", error);
+    
+    // Check if the error has response data with a status code
+    if (error?.response?.status) {
+      const status = error.response.status;
+      switch (status) {
+        case 404:
+          errorMessage = "User profile not found.";
+          break;
+        case 403:
+          errorMessage = "You don't have permission to view this profile.";
+          break;
+        case 401:
+          errorMessage = "Authentication required to access this profile.";
+          break;
+        case 500:
+          errorMessage = "Server error. Please try again later.";
+          break;
+        default:
+          errorMessage = `Error fetching profile: ${status}`;
+      }
+    }
     return (
       <div className="w-full h-full flex items-center justify-center bg-background text-red-400">
-        Error fetching user profile.
+        {errorMessage}
       </div>
     );
   }
 
+  if (!userProfile) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-background text-red-400">
+        Profile data is unavailable.
+      </div>
+    );
+  }
 
-
-  if (!userProfile.isVisible) {
+  if (!userProfile.isVisible && !userProfile.isMyProfile && false) {
     return (
       <div className="size-full flex items-center justify-center bg-black text-red-400">
         User profile is private.
       </div>
     );
   }
-
+  console.log("userProfile", userProfile);
   const strength = determineStrength(userProfile);
   const profileStrength = {
     strength,
@@ -155,7 +186,7 @@ function ProfileContent({ username }) {
     <ProfilePresentation
       userProfile={userProfile}
       profileStrength={profileStrength}
-      isMyProfile={userProfile.isMyProfile}
+      isMyProfile={userProfile?.isMyProfile || false}
     />
   );
 }

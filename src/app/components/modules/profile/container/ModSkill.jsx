@@ -38,7 +38,7 @@ export default function ModSkill({ skills }) {
       setFilteredSkills(skills);
     } else {
       const filtered = skills.filter((skill) =>
-        skill.skill_name.toLowerCase().includes(searchTerm.toLowerCase())
+        skill.skill.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredSkills(filtered);
     }
@@ -52,13 +52,13 @@ export default function ModSkill({ skills }) {
     }
     if (
       filteredSkills.find(
-        (s) => s.skill_name.toLowerCase() === skillName.toLowerCase()
+        (s) => s.skill.toLowerCase() === skillName.toLowerCase()
       ) &&
       type == 0
     ) {
       return;
     }
-    const skillOperation = { skill_name: skillName.trim() };
+    const skillOperation = { skill: skillName.trim() };
     const operation = {
       api: type == 0 ? "add-skill" : type === 1 ? "edit" : "delete-skill",
       method: type == 0 ? "POST" : type === 1 ? "PATCH" : "DELETE",
