@@ -73,17 +73,17 @@ const PaymentFormPresentation = ({
         <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 text-text">
           <div
             className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-              premiumType === "premiumMonthly"
+              premiumType === "monthlyPremium"
                 ? "border-secondary bg-secondary bg-opacity-10"
                 : "border-gray-400"
             }`}
-            onClick={() => setPremiumType("premiumMonthly")}
+            onClick={() => setPremiumType("monthlyPremium")}
           >
             <div className="flex justify-between items-start">
               <div>
                 <div
                   className={`font-bold text-text ${
-                    premiumType === "premiumMonthly"
+                    premiumType === "monthlyPremium"
                       ? "dark:text-text text-white"
                       : ""
                   }`}
@@ -92,7 +92,7 @@ const PaymentFormPresentation = ({
                 </div>
                 <div
                   className={`text-sm text-gray-400 ${
-                    premiumType === "premiumMonthly"
+                    premiumType === "monthlyPremium"
                       ? "dark:text-gray-500 text-white "
                       : ""
                   }`}
@@ -103,7 +103,7 @@ const PaymentFormPresentation = ({
               <div className="text-right">
                 <div
                   className={`font-bold text-text ${
-                    premiumType === "premiumMonthly"
+                    premiumType === "monthlyPremium"
                       ? "dark:text-text text-white"
                       : ""
                   }`}
@@ -112,7 +112,7 @@ const PaymentFormPresentation = ({
                 </div>
                 <div
                   className={`text-sm text-gray-400 ${
-                    premiumType === "premiumMonthly"
+                    premiumType === "monthlyPremium"
                       ? "dark:text-gray-500 text-white "
                       : ""
                   }`}
@@ -125,59 +125,59 @@ const PaymentFormPresentation = ({
 
           <div
             className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-              premiumType === "premiumAnnual"
+              premiumType === "oneTimePremium"
                 ? "border-secondary bg-secondary bg-opacity-10"
                 : "border-gray-400"
             }`}
-            onClick={() => setPremiumType("premiumAnnual")}
+            onClick={() => setPremiumType("oneTimePremium")}
           >
             <div className="flex justify-between items-start">
               <div>
                 <div
                   className={`font-bold text-text ${
-                    premiumType === "premiumAnnual"
+                    premiumType === "oneTimePremium"
                       ? "dark:text-text text-white"
                       : ""
                   }`}
                 >
-                  Annual
+                  One time Payment
                 </div>
                 <div
                   className={`text-sm text-gray-400 ${
-                    premiumType === "premiumAnnual"
+                    premiumType === "oneTimePremium"
                       ? "dark:text-gray-500 text-white"
                       : ""
                   }`}
                 >
-                  Billed annually
+                  Billed Once
                 </div>
               </div>
               <div className="text-right">
                 <div
                    className={`font-bold text-text ${
-                    premiumType === "premiumAnnual"
+                    premiumType === "oneTimePremium"
                       ? "dark:text-text text-white"
                       : ""
                   }`}
                 >
-                  ${annualCost}
+                  ${monthlyCost}
                 </div>
-                <div
+                {/* <div
                   className={`text-sm text-gray-400 ${
-                    premiumType === "premiumAnnual"
+                    premiumType === "oneTimePremium"
                       ? "dark:text-gray-500 text-white"
                       : ""
                   }`}
                 >
                   ${monthlyCostIfPaidAnnually.toFixed(2)}/mo
-                </div>
+                </div> */}
               </div>
             </div>
-            {savingsPercentage > 0 && (
+            {/* {savingsPercentage > 0 && (
               <div className="mt-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-medium px-2 py-1 rounded inline-block">
                 Save {savingsPercentage}%
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -275,9 +275,9 @@ const PaymentFormPresentation = ({
             </>
           ) : (
             `Pay ${
-              premiumType === "premiumMonthly"
+              premiumType === "monthlyPremium"
                 ? `$${monthlyCost}/month`
-                : `$${annualCost}/year`
+                : `$${monthlyCost}`
             }`
           )}
         </button>

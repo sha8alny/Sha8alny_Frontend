@@ -4,8 +4,13 @@ import {
   useStripe,
   useElements,
   CardNumberElement,
+  CardCvcElement,
+  CardExpiryElement,
 } from "@stripe/react-stripe-js";
-import { processPayment } from "@/app/services/payment";
+import {
+  processPaymentMonthly,
+  processPaymentOneTime,
+} from "@/app/services/payment";
 import PaymentFormPresentation from "../presentation/PaymentFormPresentation";
 import SuccessPaymentPresentation from "../presentation/SuccessPaymentPresentation";
 import { useToast } from "@/app/context/ToastContext";
@@ -49,9 +54,9 @@ const PaymentFormContainer = () => {
   const [textColor, setTextColor] = useState("#191919");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [premiumType, setPremiumType] = useState("premiumMonthly");
+  const [premiumType, setPremiumType] = useState("monthlyPremium");
   const [success, setSuccess] = useState(false);
-  
+
   // price calculations logic
   const prices = { monthly: 9.99, annual: 99.99 };
   const monthlyCost = prices.monthly;
@@ -102,8 +107,7 @@ const PaymentFormContainer = () => {
     }
 
     const { token, error } = await stripe.createToken(
-      elements.getElement(CardNumberElement),
-      { name, addressCountry: country }
+      elements.getElement(CardNumberElement)
     );
     setLoading(true);
 
@@ -119,9 +123,15 @@ const PaymentFormContainer = () => {
         const paymentData = {
           planId: premiumType,
           paymentMethod: "card",
-          stripeToken: token.id,
+          StripeToken: token.id,
         };
-        const response = await processPayment(paymentData);
+        if(premiumType == "monthlyPremium"){
+
+          const response = await processPaymentMonthly(paymentData);
+        }
+        else{
+          const response = await processPaymentOneTime(paymentData);
+        }
         setSuccess(true);
       } catch (error) {
         setCardError(error.message);

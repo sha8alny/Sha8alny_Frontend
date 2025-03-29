@@ -5,6 +5,9 @@ import {
   fetchSubscription,
   cancelSubscription,
   fetchPlansDetails,
+  processPaymentMonthly,
+  processPaymentOneTime
+
 } from "@/app/services/payment";
 import MembershipPage from "../presentation/MembershipPage";
 import { useToast } from "@/app/context/ToastContext";
@@ -28,17 +31,41 @@ const MembershipPageContainer = () => {
   const router = useRouter();
   const { data, isLoading, error } = useQuery({
     queryKey: ["membershipStatus"],
-    queryFn: fetchSubscription,
+    queryFn: ()=>"",
   });
   
-  const {
-    data: plansDetails,
-    isLoading: isPlansLoading,
-    error: plansError,
-  } = useQuery({
-    queryKey: ["plansDetails"],
-    queryFn: fetchPlansDetails,
-  });
+  // const {
+  //   data: plansDetails,
+  //   isLoading: isPlansLoading,
+  //   error: plansError,
+  // } = useQuery({
+  //   queryKey: ["plansDetails"],
+  //   queryFn: fetchPlansDetails,
+  // });
+  
+  const isPlansLoading = false;
+  const plansError = null;
+  const sub = {
+    _id: "67e7370936ea56d6f82b70ca",
+    planId: "free",
+    status: "active",
+    renewalDate: null,
+    canceledAt: null,
+    stripeCustomerId: null,
+    stripeSubscriptionId: null,
+    createdAt: "2025-03-28T23:55:53.906Z",
+    updatedAt: "2025-03-28T23:55:53.906Z",
+    __v: 0,
+    limits: {
+        createProfile: true,
+        maxConnections: 50,
+        jobApplications: 5,
+        dailyMessages: 5
+    }
+};
+
+
+
 
   const cancelMutation = useMutation({
     mutationFn: cancelSubscription,
@@ -69,14 +96,41 @@ const MembershipPageContainer = () => {
       </p>
     );
 
-  const { maxConnections, jobApplications, dailyMessages } = data?.limits;
+  const { maxConnections, jobApplications, dailyMessages } = sub?.limits;
   const limits = {
     dailyJobApplications: jobApplications,
     dailyMessageRequests: dailyMessages,
     monthlyConnectionRequests: maxConnections,
   };
 
-  const plansDetailsList = plansDetails;
+  const plansDetailsList = [
+    {
+      "planId": "premium",
+      "name": "Premium Plan",
+      "description": "Full access with unlimited features",
+      "price": 9.99,
+      "currency": "USD",
+      "features": {
+        "createProfile": true,
+        "maxConnections": 500,
+        "jobApplications": null,
+        "dailyMessages": null
+      }
+    },
+    {
+      "planId": "free",
+      "name": "Basic Plan",
+      "description": "get a job",
+      "price": 0,
+      "currency": "USD",
+      "features": {
+        "createProfile": true,
+        "maxConnections": 50,
+        "jobApplications": 5,
+        "dailyMessages": 5
+      }
+    }
+  ];
 
   const premiumPlanDetails = plansDetailsList.find(
     (plan) => plan.planId === "premium"
@@ -84,12 +138,12 @@ const MembershipPageContainer = () => {
   const freePlanDetails = plansDetailsList.find((plan) => plan.planId === "free");
   return (
     <MembershipPage
-      currentPlan={data?.status}
+      currentPlan={sub?.planId}
       limits={limits}
       premiumPlanDetails={premiumPlanDetails}
       freePlanDetails={freePlanDetails}
-      renewalDate={data?.renewalDate}
-      isMissed={data?.isMissed}
+      renewalDate={sub?.renewalDate}
+      isMissed={sub?.isMissed}
       handleCancelSubscription={handleCancelSubscription}
       isCancelling={cancelMutation.isPending}
       handleUpgrade={handleUpgrade}
