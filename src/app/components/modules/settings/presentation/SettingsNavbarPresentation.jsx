@@ -1,5 +1,9 @@
 "use client";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsNavbarPresentation component renders the navigation bar for the settings page.
  * 
  * @param {Object} props - The component props.

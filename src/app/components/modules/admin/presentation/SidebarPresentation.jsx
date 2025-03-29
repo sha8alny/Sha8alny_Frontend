@@ -6,6 +6,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 /**
+ * @namespace admin
+ * @module admin
+ */
+/**
  * SidebarPresentation component renders a sidebar with navigation links and a logout button.
  * It includes a toggle button to open/close the sidebar on smaller screens.
  *

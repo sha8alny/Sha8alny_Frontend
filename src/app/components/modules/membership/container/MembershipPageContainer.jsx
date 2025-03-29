@@ -11,6 +11,10 @@ import { useToast } from "@/app/context/ToastContext";
 import { useRouter } from "next/navigation";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * MembershipPageContainer component manages the state and logic for the membership page.
  * It handles fetching the subscription status, cancelling the subscription, and navigating to the upgrade page.
  *

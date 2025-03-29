@@ -8,6 +8,10 @@ import Analytics from "../presentation/Analytics";
 import { createPost } from "@/app/services/post";
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * PostPageContainer Component
  * 
  * This component serves as the main container for the post page, integrating 

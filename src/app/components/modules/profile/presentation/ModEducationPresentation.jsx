@@ -15,6 +15,10 @@ import AddButton from "@/app/components/ui/AddButton";
 import { Controller } from "react-hook-form";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Education form presentation component.
  * Displays a form for users to add or edit education information in their profile.
  * 

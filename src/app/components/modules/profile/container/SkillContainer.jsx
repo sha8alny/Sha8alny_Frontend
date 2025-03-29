@@ -4,6 +4,10 @@ import { use } from "react";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Determine the level of the skill
  * @param {number} endorsements  - The number of endorsements
  * @returns {string} - The level of the skill

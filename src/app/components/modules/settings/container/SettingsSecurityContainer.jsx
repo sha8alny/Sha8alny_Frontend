@@ -3,6 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getEmail } from "../../../../services/userManagement";
 import SettingsSecurityTab from "../presentation/SettingsSecurityTab";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsSecurityContainer component is responsible for managing the state and data fetching
  * for the SettingsSecurityTab component.
  *

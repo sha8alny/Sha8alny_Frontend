@@ -13,6 +13,10 @@ import { addComment, deleteComment, likeComment, getComments } from "@/app/servi
 
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * PostContainer Component
  * @component
  * @param {Object} props - Component props

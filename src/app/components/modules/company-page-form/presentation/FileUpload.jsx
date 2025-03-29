@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 

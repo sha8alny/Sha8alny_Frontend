@@ -5,8 +5,15 @@ import NavbarPresentation, {
   NavBarPresentationSkeleton,
 } from "./NavBarPresentation";
 import { useQuery } from "@tanstack/react-query";
+
 import { useState } from "react";
 import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
+
+
+/**
+ * @namespace layout
+ * @module layout
+ */
 
 /**
  * Navbar component that handles the application's navigation bar functionality.
@@ -17,7 +24,7 @@ import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
  * @returns {JSX.Element} The rendered NavBar component, showing either the full NavbarPresentation
  * or the NavBarPresentationSkeleton based on the loading/error state of data fetching
  */
-export default function Navbar() {
+ function Navbar() {
   const pathName = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
@@ -75,3 +82,5 @@ export default function Navbar() {
     />
   );
 }
+
+export default Navbar;

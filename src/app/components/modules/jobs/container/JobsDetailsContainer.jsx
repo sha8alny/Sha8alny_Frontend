@@ -3,6 +3,10 @@ import JobDetailsPresentation from "../presentation/JobDetailsPrenestation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobDetailsContainer component fetches job details using the useJobDetails hook
  * and passes the data to the JobDetailsPresentation component.
  *

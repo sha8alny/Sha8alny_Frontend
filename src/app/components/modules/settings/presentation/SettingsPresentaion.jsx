@@ -4,6 +4,10 @@ import SettingsSidebarContainer from "../container/SettingsSidebarContainer";
 import SettingsNavbarContainer from "../container/SettingsNavbarContainer";
 
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsPresentation component renders the main settings page layout.
  *
  * @param {Object} props - The component props.

@@ -4,6 +4,10 @@ import Image from "next/image";
 import ModCertificate from "../container/ModCertificate";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that displays a certificate card with organization logo, certificate details, and associated skills
  * @param {Object} props - The component props
  * @param {Object} props.certificate - The certificate object containing details

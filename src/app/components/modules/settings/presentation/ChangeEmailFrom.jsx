@@ -1,6 +1,10 @@
 import BackButton from "./BackButton";
 import Button from "./Button";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * ChangeEmailForm component allows users to change their email address by providing a new email and their password.
  *
  * @param {Object} props - The properties object.

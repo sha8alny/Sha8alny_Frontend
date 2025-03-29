@@ -5,6 +5,10 @@ import { fetchSavedJobs } from "@/app/services/jobs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 /**
+ * @namespace my-items
+ * @module my-items
+ */
+/**
  * Container component for managing saved jobs.
  * 
  * Uses react-query to fetch saved jobs data with infinite scrolling capability.

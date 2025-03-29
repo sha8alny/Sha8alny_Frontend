@@ -3,6 +3,10 @@ import Dialog from '@mui/material/Dialog';
 import { Close, CloudUpload } from '@mui/icons-material';
 import { TextField,Button,Typography, IconButton } from '@mui/material';
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * ViewApplicationDetailsModal component
  * 
  * This component renders a modal dialog to display the details of a job application.

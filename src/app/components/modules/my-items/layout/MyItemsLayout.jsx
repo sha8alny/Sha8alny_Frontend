@@ -9,6 +9,10 @@ import {
 } from "@mui/icons-material";
 
 /**
+ * @namespace my-items
+ * @module my-items
+ */
+/**
  * MyItemsLayout component renders a layout with a sidebar and main content area.
  *
  * @param {Object} props - Component props.

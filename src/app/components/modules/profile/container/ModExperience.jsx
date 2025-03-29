@@ -48,6 +48,10 @@ const months = [
 ];
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that renders a dialog for modifying or adding work experience
  * @component
  * @param {Object} props - Component props

@@ -12,6 +12,10 @@ import CertificationsContainer from "../container/CertificationsContainer";
 export function ProfileSkeleton() {}
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders the profile page presentation component
  * @param {Object} props - The component props
  * @param {Object} props.userProfile - The user profile data object containing user information

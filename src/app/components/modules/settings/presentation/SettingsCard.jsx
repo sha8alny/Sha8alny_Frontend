@@ -1,5 +1,9 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * A reusable settings card component that displays a list of settings items.
  *
  * @component

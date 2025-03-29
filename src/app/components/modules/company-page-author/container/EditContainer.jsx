@@ -5,6 +5,10 @@ import SideBarContainer from "./SideBarContainer";
 import Analytics from "../presentation/Analytics";
 import EditPageContainer from "./EditPageContainer";
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * EditContainer manages the layout and functionality for editing a company's profile.
  * It includes a sidebar, an edit form, and analytics. The component also handles logo uploads.
  *

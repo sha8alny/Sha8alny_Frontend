@@ -2,6 +2,10 @@
 import TagLine from "../presentation/TagLine";
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * TagLineContainer manages the state for the company tagline input.
  * It provides a controlled component for handling user input for the company's tagline.
  *

@@ -58,6 +58,11 @@ const navIcons = [
 ];
 
 /**
+ * @namespace layout
+ * @module layout
+ */
+
+/**
  * Renders a navigation icon component that changes style based on the current path.
  *
  * @param {Object} props - The component props

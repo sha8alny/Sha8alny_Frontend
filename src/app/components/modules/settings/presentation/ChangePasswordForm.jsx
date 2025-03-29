@@ -4,6 +4,10 @@ import SettingsFormLayout from "./SettingsFormLayout";
 import BackButton from "./BackButton";
 import Button from "./Button";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * ChangePasswordForm component allows users to change their password.
  *
  * @component

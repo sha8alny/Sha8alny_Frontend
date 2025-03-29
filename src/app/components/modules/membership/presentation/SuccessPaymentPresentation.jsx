@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import DoneIcon from "@mui/icons-material/Done";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * SuccessPaymentPresentation component displays a success message after a payment is made.
  * It shows a confirmation message and redirects the user to the membership page after 5 seconds.
  * 

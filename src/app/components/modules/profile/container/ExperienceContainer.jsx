@@ -4,6 +4,10 @@ import Experience from "../presentation/Experience";
 import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Container component for managing the Experience section in a user's profile.
  * Handles the state for toggling between showing all experiences or a limited view.
  * 

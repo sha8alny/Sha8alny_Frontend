@@ -1,6 +1,10 @@
 import { Textarea } from "@/app/components/ui/Textarea";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A presentation component for displaying and editing 'About' section in profile module
  * @param {Object} props - The component props
  * @param {string} props.about - The about text content

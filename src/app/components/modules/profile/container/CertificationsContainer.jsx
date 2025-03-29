@@ -3,6 +3,10 @@ import Certifications from "../presentation/Certifications";
 import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A container component for the Certifications component.
  * Manages state for showing all certificates and passes props to the Certifications component.
  * 

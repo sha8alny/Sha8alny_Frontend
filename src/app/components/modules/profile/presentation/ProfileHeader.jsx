@@ -3,6 +3,10 @@ import Image from "next/image";
 import ModHeader from "../container/ModHeader";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders the header section of a user's profile
  * @param {Object} props - Component props
  * @param {Object} props.userProfile - User profile information
