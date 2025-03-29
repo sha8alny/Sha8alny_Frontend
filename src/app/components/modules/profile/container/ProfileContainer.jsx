@@ -122,7 +122,7 @@ function ProfileContent({ username }) {
 
   if (isError) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-black text-red-400">
+      <div className="w-full h-full flex items-center justify-center bg-background text-red-400">
         Error fetching user profile.
       </div>
     );

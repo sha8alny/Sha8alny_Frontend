@@ -4,12 +4,17 @@ import { usePathname, useRouter } from "next/navigation";
 import NavbarPresentation, {
   NavBarPresentationSkeleton,
 } from "./NavBarPresentation";
-import { fetchUserProfile } from "@/app/services/userProfile";
 import { useQuery } from "@tanstack/react-query";
+
+import { useState } from "react";
+import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
+
+
 /**
  * @namespace layout
  * @module layout
  */
+
 /**
  * Navbar component that handles the application's navigation bar functionality.
  * This component fetches user profile data, handles theme toggling, and navigation.
@@ -22,18 +27,17 @@ import { useQuery } from "@tanstack/react-query";
  function Navbar() {
   const pathName = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const [open, setOpen] = useState(false);
   const router = useRouter();
-
-  // TODO: Replace with actual username from auth context
-  const username = "ziadhesham";
 
   const {
     data: userProfile,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["userProfile", username],
-    queryFn: () => fetchUserProfile(username),
+    queryKey: ["sidebarInfo"],
+    queryFn: () => fetchSidebarInfo(),
+    staleTime: 1000 * 30, // 30 seconds
   });
 
   const handleNavigation = (path) => {
@@ -60,10 +64,12 @@ import { useQuery } from "@tanstack/react-query";
         toggleTheme={toggleTheme}
         currentPath={pathName}
         navigateTo={handleNavigation}
+        open={open}
+        setOpen={setOpen}
       />
     );
   }
-
+  console.log("userProfile", userProfile);
   return (
     <NavbarPresentation
       userInfo={userProfile}
@@ -71,6 +77,8 @@ import { useQuery } from "@tanstack/react-query";
       toggleTheme={toggleTheme}
       currentPath={pathName}
       navigateTo={handleNavigation}
+      open={open}
+      setOpen={setOpen}
     />
   );
 }
