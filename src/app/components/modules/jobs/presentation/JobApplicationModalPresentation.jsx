@@ -56,10 +56,14 @@ const JobApplicationModalPresenter = ({
   const textFieldSx = {
     "& .MuiOutlinedInput-root": {
       "& fieldset": {
-        borderColor: isDarkMode ? "rgba(255, 255, 255, 0.23)" : "rgba(0, 0, 0, 0.23)",
+        borderColor: isDarkMode
+          ? "rgba(255, 255, 255, 0.23)"
+          : "rgba(0, 0, 0, 0.23)",
       },
       "&:hover fieldset": {
-        borderColor: isDarkMode ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
+        borderColor: isDarkMode
+          ? "rgba(255, 255, 255, 0.5)"
+          : "rgba(0, 0, 0, 0.5)",
       },
     },
     "& .MuiInputLabel-root": {
@@ -71,9 +75,9 @@ const JobApplicationModalPresenter = ({
   };
 
   return (
-    <Modal 
-      open={show} 
-      onClose={handleClose} 
+    <Modal
+      open={show}
+      onClose={handleClose}
       closeAfterTransition
       aria-labelledby="job-application-modal"
     >
@@ -108,7 +112,12 @@ const JobApplicationModalPresenter = ({
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} noValidate className="space-y-4" role="form">
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className="space-y-4"
+              role="form"
+            >
               <TextField
                 margin="normal"
                 required
@@ -119,6 +128,16 @@ const JobApplicationModalPresenter = ({
                 error={!!errors.phone}
                 helperText={errors.phone?.message}
                 sx={textFieldSx}
+                type="tel"
+                onKeyDown={(e) => {
+                  if (
+                    !/[0-9]/.test(e.key) &&
+                    e.key !== "Backspace" &&
+                    e.key !== "Delete"
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
               />
 
               <TextField
@@ -159,7 +178,7 @@ const JobApplicationModalPresenter = ({
                       Upload Resume *
                     </Button>
                   </label>
-                  
+
                   {resume?.name ? (
                     <Typography variant="body2" className="mt-2 text-text">
                       Selected: {resume.name}
@@ -169,14 +188,21 @@ const JobApplicationModalPresenter = ({
                       No file selected
                     </Typography>
                   )}
-                  
+
                   {errors.resume && (
-                    <Typography variant="caption" color="error" className="block mt-1">
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      className="block mt-1"
+                    >
                       {errors.resume.message}
                     </Typography>
                   )}
-                  
-                  <Typography variant="caption" className="block mt-1 text-text/60">
+
+                  <Typography
+                    variant="caption"
+                    className="block mt-1 text-text/60"
+                  >
                     Accepted formats: PDF, DOC, DOCX (Max size: 5MB)
                   </Typography>
                 </div>
@@ -195,7 +221,9 @@ const JobApplicationModalPresenter = ({
                   variant="contained"
                   type="submit"
                   disabled={isSubmitting}
-                  startIcon={isSubmitting ? <CircularProgress size={16} /> : <Send />}
+                  startIcon={
+                    isSubmitting ? <CircularProgress size={16} /> : <Send />
+                  }
                   className="normal-case bg-primary text-white hover:bg-primary/90 disabled:bg-primary/70"
                 >
                   {isSubmitting ? "Submitting..." : "Submit Application"}
