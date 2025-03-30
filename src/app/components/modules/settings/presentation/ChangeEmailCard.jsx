@@ -1,5 +1,5 @@
 import BackButton from "./BackButton";
-import Button from "./Button";
+import { Button } from "@/app/components/ui/Button";
 import SettingsFormLayout from "./SettingsFormLayout";
 import ChangeEmailContainer from "../container/ChangeEmailContainer";
 import { useState } from "react";
@@ -24,7 +24,7 @@ const ChangeEmailCard = ({ toggleForm, email }) => {
   return (
     <SettingsFormLayout>
       {currentFormPage == 1 ? (
-        <ChangeEmailContainer toggleForm={toggleForm}/>
+        <ChangeEmailContainer toggleForm={toggleForm} />
       ) : (
         <>
           <BackButton handler={toggleForm} />
@@ -33,10 +33,15 @@ const ChangeEmailCard = ({ toggleForm, email }) => {
             <p className="text-text text-lg ">Emails you've added</p>
             <p>{email}</p>
           </div>
-        <div className="-ml-2">
-
-          <Button content="Update email address" handler={handleContinueForm} />
-        </div>
+          <div className="-ml-2">
+            <Button
+              type="submit"
+              className="ml-2 w-25 text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+              onClick={handleContinueForm}
+            >
+              {"Update email"}
+            </Button>{" "}
+          </div>
         </>
       )}
     </SettingsFormLayout>

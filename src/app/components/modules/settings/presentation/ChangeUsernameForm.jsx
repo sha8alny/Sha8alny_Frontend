@@ -1,4 +1,6 @@
-import Button from "./Button";
+import { Input } from "@/app/components/ui/Input";
+import { Label } from "@/app/components/ui/Label";
+import { Button } from "@/app/components/ui/Button";
 import BackButton from "./BackButton";
 import SettingsFormLayout from "./SettingsFormLayout";
 /**
@@ -19,28 +21,46 @@ import SettingsFormLayout from "./SettingsFormLayout";
  * @returns {JSX.Element} The rendered ChangeUsernameForm component.
  */
 
-const ChangeUsernameForm = ({ username, error, handleChange, handleSubmit, toggleForm, isLoading }) => {
+
+
+const ChangeUsernameForm = ({ 
+  username, 
+  error, 
+  handleChange, 
+  handleSubmit, 
+  toggleForm, 
+  isLoading 
+}) => {
   return (
     <SettingsFormLayout>
       <BackButton handler={toggleForm} />
-      <div className="flex flex-col gap-1">
-        <h1 className="text-text text-xl font-semibold">Change user name</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
-          <label className="text-sm text-text flex" htmlFor="username">
-            New user name <span className="ml-1 text-red-500">*</span>
-          </label>
-          <input
-            className="bg-background rounded-lg p-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary"
-            type="text"
-            id="username"
-            name="username"
-            value={username}
-            onChange={handleChange}
-            required
-          />
-          {error && <p className="text-red-500">{error}</p>}
+      <div className="flex flex-col gap-4">
+        <h1 className="text-xl font-semibold">Change user name</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="username" className="flex items-center">
+              New user name <span className=" text-destructive">*</span>
+            </Label>
+            <Input
+              id="username"
+              name="username"
+              value={username}
+              onChange={handleChange}
+              required
+              className={`${error ? "border-destructive" : ""}`}
+            />
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
+            )}
+          </div>
 
-          <Button content="Save user name" handler={handleSubmit} disabled={isLoading | !username} />
+          <Button 
+            type="submit" 
+            disabled={isLoading || !username}
+            className="w-full text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+          >
+            {isLoading ? "Saving..." : "Save user name"}
+          </Button>
         </form>
       </div>
     </SettingsFormLayout>

@@ -1,5 +1,7 @@
 import BackButton from "./BackButton";
-import Button from "./Button";
+import { Input } from "@/app/components/ui/Input";
+import { Label } from "@/app/components/ui/Label";
+import { Button } from "@/app/components/ui/Button";
 /**
  * @namespace settings
  * @module settings
@@ -31,45 +33,51 @@ const ChangeEmailForm = ({
   isLoading,
 }) => {
   return (
-    <div className="text-text flex flex-col gap-4 bg-foreground rounded-lg w-full max-w-[725px] mx-auto font-sans">
+    <div className="flex flex-col gap-6 w-full max-w-[725px] mx-auto">
       <BackButton handler={toggleForm} />
-      <h1 className="text-text text-xl font-semibold">Add email address</h1>
-      <form className="flex flex-col gap-1" onSubmit={handleSubmit}>
-        <label className="text-sm text-text flex">
-          Enter new email address <span className="ml-1 text-red-500"> *</span>
-        </label>
-        <input
-          className={`bg-background rounded-lg p-1 ${
-            errors.email ? "border border-red-500" : ""
-          }`}
-          type="email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+      <h1 className="text-xl font-semibold">Add email address</h1>
+      
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="space-y-2">
+          <Label className="flex items-center">
+            Enter new email address <span className="text-destructive ml-1">*</span>
+          </Label>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className={errors.email ? "border-destructive" : ""}
+          />
+          {errors.email && (
+            <p className="text-sm text-destructive">{errors.email}</p>
+          )}
+        </div>
 
-        <label className="text-sm text-text flex">
-          Enter your password <span className="ml-1 text-red-500"> *</span>
-        </label>
-        <input
-          className={`bg-background rounded-lg p-1 ${
-            errors.password ? "border border-red-500" : ""
-          }`}
-          type="password"
-          value={password}
-          required
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password}</p>
-        )}
+        <div className="space-y-2">
+          <Label className="flex items-center">
+            Enter your password <span className="text-destructive ml-1">*</span>
+          </Label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className={errors.password ? "border-destructive" : ""}
+          />
+          {errors.password && (
+            <p className="text-sm text-destructive">{errors.password}</p>
+          )}
+        </div>
+
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-secondary text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+        >
+          {isLoading ? "Updating..." : "Add Email"}
+        </Button>
       </form>
-      <Button
-        content={isLoading ? "Updating..." : "Add Email"}
-        handler={handleSubmit}
-        disabled={isLoading}
-      />
     </div>
   );
 };
