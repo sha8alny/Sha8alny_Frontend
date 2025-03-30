@@ -61,7 +61,7 @@ const MembershipCardPresentation = ({
           isCurrentPlan
             ? "bg-gray-400 cursor-not-allowed"
             : isCancelling
-            ? "bg-yellow-500 cursor-wait"
+            ? "bg-secondary cursor-wait"
             : isDowngrade
             ? "bg-gray-500 cursor-pointer"
             : "bg-black hover:bg-gray-900 cursor-pointer"

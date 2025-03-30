@@ -31,8 +31,12 @@ const MembershipPage = ({
   handleCancelSubscription,
   isCancelling,
   handleUpgrade,
+  statusIsLoading,
+  statusError,
 }) => {
+
   return (
+    
     <MembershipPageLayout>
       <div className="flex p-4 flex-col gap-4">
         <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -43,6 +47,8 @@ const MembershipPage = ({
           renewalDate={renewalDate}
           isMissed={isMissed}
           freePlanDetails={freePlanDetails}
+          statusIsLoading={statusIsLoading}
+          statusError={statusError}
         />
 
         <div className="flex flex-col items-center  md:flex-row gap-6 justify-center mt-5">
