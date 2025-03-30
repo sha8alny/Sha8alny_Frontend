@@ -54,9 +54,9 @@ const PaymentFormPresentation = ({
 }) => {
  
 
-  if (loading) {
-    return <LoadingScreenPayment />;
-  }
+  // if (loading) {
+  //   return <LoadingScreenPayment />;
+  // }
 
   return (
     <form
