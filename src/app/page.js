@@ -89,7 +89,6 @@ const QuickAccess = () => {
 export default function Page() {
   return (
     <div className="space-y-8 bg-black text-white">
-      <Navbar />
       <div className="gap-4 px-32 flex">
         <div className="flex-1 rounded-lg flex flex-col gap-2 items-center">
           <ProfileCard userInfo={userInfo} />

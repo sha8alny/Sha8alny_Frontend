@@ -56,7 +56,7 @@ const ChangePasswordContainer = ({ toggleForm }) => {
       toggleForm();
     },
     onError: (error) => {
-      showToast("Failed to update password", false);
+      showToast(`${error}`, false);
     },
   });
 

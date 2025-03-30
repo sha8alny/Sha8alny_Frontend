@@ -6,7 +6,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import SecurityIcon from "@mui/icons-material/Security";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "@/app/services/userProfile";
+import { fetchUserProfile,fetchUsername } from "@/app/services/userProfile";
 /**
  * @namespace settings
  * @module settings
@@ -25,10 +25,18 @@ export default function SettingsSidebarContainer({setActiveSetting }) {
   const router = useRouter();
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["userProfile"],
-    queryFn: () => fetchUserProfile("john"),
+    queryFn: () => fetchUserProfile(data.username),
   });
-
-  const profilePictureUrl = user?.profilePicture; 
+  
+  const {
+      data,
+  
+    } = useQuery({
+      queryKey: ["username"],
+      queryFn: fetchUsername,
+    });
+  
+    const profilePictureUrl = user?.profilePicture; 
 
   const settings = [
     { name: "Account Preferences", id: 0, icon: <PersonIcon /> },

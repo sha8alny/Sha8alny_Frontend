@@ -53,9 +53,9 @@ const MembershipPageContainer = () => {
     ...sub?.subscription,
     limits: {
       createProfile: true,
-      maxConnections: 50,
-      jobApplications: 5,
-      dailyMessages: 5,
+      maxConnections:sub?.connectionCount,
+      jobApplications: sub?.jobsApplied,
+      dailyMessages: sub?.messagesSent,
     },
   };
   //   const sub = {
@@ -155,7 +155,6 @@ const MembershipPageContainer = () => {
   const freePlanDetails = plansDetailsList.find(
     (plan) => plan.planId === "free"
   );
-  
   return (
     <MembershipPage
       currentPlan={sub?.planId}
