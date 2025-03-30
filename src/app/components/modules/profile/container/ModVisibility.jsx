@@ -4,6 +4,8 @@ import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Pencil } from "lucide-react";
+import { updateUsername } from "@/app/services/userManagement";
+import { useMutation } from "@tanstack/react-query";
 
 /**
  * @namespace profile
@@ -21,6 +23,21 @@ export default function ModVisibility({ userInfo }) {
 
   const useUpdate = useUpdateProfile();
   const router = useRouter();
+  
+  // Add TanStack mutation for username update
+  const updateUsernameMutation = useMutation({
+    mutationFn: updateUsername,
+    onSuccess: () => {
+      setCurrentStage(2);
+      setTimeout(() => {
+        router.push(`/u/${username}`);
+      }, 2000);
+    },
+    onError: (error) => {
+      setError(error?.message || "Failed to update username.");
+      setCurrentStage(3);
+    }
+  });
 
   const usernameCopy = username;
 
@@ -52,41 +69,23 @@ export default function ModVisibility({ userInfo }) {
         return;
       }
       setCurrentStage(1);
-      // TO BE REPLACED WITH API CALL
-      useUpdate.mutate(
-        {
-          api: "",
-          method: "PATCH",
-          data: { username },
-        },
-        {
-          onSuccess: () => {
-            setCurrentStage(2);
-            setTimeout(() => {
-              router.push(`/u/${username}`);
-            }, 2000);
-          },
-          onError: (error) => {
-            setError(error?.message || "Failed to update username.");
-            setCurrentStage(3);
-          },
-        }
-      );
+      updateUsernameMutation.mutate({ newUsername: username });
     } else {
       setUsernameError("Please modify your username.");
     }
   };
 
-  const modifyVisibility = () => {
+  const modifyVisibility = (value) => {
     setModifyingVisibility(true);
     useUpdate.mutate(
       {
         api: "settings/update-visibility",
         method: "PUT",
-        data: { visibility },
+        data: { visibility: value }, // Use the passed value directly
       },
       {
         onSuccess: () => {
+          setVisibility(value); // Set visibility after successful update
           setModifyingVisibility(false);
         },
         onError: (error) => {
@@ -101,6 +100,7 @@ export default function ModVisibility({ userInfo }) {
       }
     );
   };
+  
   return (
     <Dialog
       useRegularButton
@@ -126,6 +126,7 @@ export default function ModVisibility({ userInfo }) {
           setUserModified={setUserModified}
           userModified={userModified}
           setUsername={setUsername}
+          isUpdatingUsername={updateUsernameMutation.isPending}
         />
       }
     />

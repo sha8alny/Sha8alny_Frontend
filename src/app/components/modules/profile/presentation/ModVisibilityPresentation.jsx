@@ -1,5 +1,7 @@
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/app/components/ui/Button";
+
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
   Select,
   SelectContent,
@@ -15,18 +17,18 @@ import { Cancel } from "@mui/icons-material";
  * @module profile
  */
 export default function ModVisibilityPresentation({
-    currentStage,
-    visibility,
-    setVisibility,
-    username,
-    error,
-    usernameError,
-    handleChange,
-    modifyingVisibility,
-    modifyVisibility,
-    handleSave,
-    setOpen
- }) {
+  currentStage,
+  visibility,
+  setVisibility,
+  username,
+  error,
+  usernameError,
+  handleChange,
+  modifyingVisibility,
+  modifyVisibility,
+  handleSave,
+  setOpen,
+}) {
   return (
     <>
       {currentStage === 0 && (
@@ -40,12 +42,9 @@ export default function ModVisibilityPresentation({
             </p>
             <div className="flex items-center gap-2">
               <Select
-                onValueChange={(value) => {
-                  setVisibility(value);
-                  modifyVisibility();
-                }}
+                onValueChange={(value) => modifyVisibility(value)}
                 value={visibility}
-                >
+              >
                 <SelectTrigger className="w-full mt-2 text-primary">
                   <SelectValue
                     value={visibility}
@@ -53,9 +52,15 @@ export default function ModVisibilityPresentation({
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Public">Public</SelectItem>
-                  <SelectItem value="Connections Only">Connections Only</SelectItem>
-                  <SelectItem value="Private">Private</SelectItem>
+                  <SelectItem key="Public" value="Public">
+                    Public
+                  </SelectItem>
+                  <SelectItem key="Connections Only" value="Connections Only">
+                    Connections Only
+                  </SelectItem>
+                  <SelectItem key="Private" value="Private">
+                    Private
+                  </SelectItem>
                 </SelectContent>
               </Select>
               {modifyingVisibility && (
@@ -81,7 +86,9 @@ export default function ModVisibilityPresentation({
               />
             </div>
             {usernameError && (
-              <p className="text-red-500 text-end text-xs mt-1">{usernameError}</p>
+              <p className="text-red-500 text-end text-xs mt-1">
+                {usernameError}
+              </p>
             )}
           </div>
         </div>
