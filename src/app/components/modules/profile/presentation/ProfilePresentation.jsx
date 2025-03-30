@@ -50,7 +50,7 @@ export default function ProfilePresentation({
         <section className="flex-1 hidden md:block rounded-3xl space-y-2">
           {isMyProfile && (
             <>
-              <ChangeURL username={userProfile.username} />
+              <ChangeURL userInfo={userProfile} />
               <ProfileStrength profileStrength={profileStrength} />
             </>
           )}

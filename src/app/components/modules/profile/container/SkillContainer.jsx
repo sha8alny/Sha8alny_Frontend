@@ -30,7 +30,9 @@ const determineLevel = (endorsements) => {
  * @returns {number} - The width of the progress bar
  */
 const determineWidth = (endorsements) => {
-  if (endorsements < 10) {
+  if (endorsements === 0) {
+    return 0;
+  } else if (endorsements < 10) {
     return 25;
   } else if (endorsements < 20) {
     return 50;
@@ -64,7 +66,7 @@ export default function SkillContainer({ skill }) {
   const user = params?.username;
   const handleEndorsement = (skillName, username = user) => {
     useUpdate.mutate({
-      api: "endorse-skill",
+      api: "profile/endorse-skill",
       method: "POST",
       data: { username: username, skill: skillName },
     });

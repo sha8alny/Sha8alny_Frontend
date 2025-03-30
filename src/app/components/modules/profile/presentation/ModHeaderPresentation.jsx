@@ -55,7 +55,7 @@ export default function ModHeaderPresentation({
                 ? "Awaiting Response"
                 : "Connect"
             }
-            onClick={handleConnect}
+            onClick={() => handleConnect(userInfo.username)}
           />
         </div>
       )}
@@ -92,6 +92,9 @@ export const ModifyProfilePresentation = ({
   handleFileChange,
   removeFile,
   onSubmit,
+  nameError,
+  locationError,
+  headlineError,
 }) => {
   return (
     <>
@@ -196,6 +199,9 @@ export const ModifyProfilePresentation = ({
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
                 />
+                {nameError && (
+                  <p className="text-red-500 text-sm">{nameError}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -206,6 +212,9 @@ export const ModifyProfilePresentation = ({
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Your location"
                 />
+                {locationError && (
+                  <p className="text-red-500 text-sm">{locationError}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -216,6 +225,9 @@ export const ModifyProfilePresentation = ({
                   onChange={(e) => setHeadline(e.target.value)}
                   placeholder="Your professional headline"
                 />
+                {headlineError && (
+                  <p className="text-red-500 text-sm">{headlineError}</p>
+                )}
               </div>
 
               <div className="space-y-2">

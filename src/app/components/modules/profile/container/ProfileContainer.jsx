@@ -168,7 +168,7 @@ function ProfileContent({ username }) {
       </div>
     );
   }
-  console.log("userProfile", userProfile);
+
   const strength = determineStrength(userProfile);
   const profileStrength = {
     strength,

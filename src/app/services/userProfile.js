@@ -8,7 +8,7 @@ const getToken = () => {
 };
 
 export const fetchUserProfile = async (username) => {
-    const response = await fetchWithAuth(`${apiURL}/profile/${username}`, {
+    const response = await fetchWithAuth(`${apiURL}/profile/user/${username}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

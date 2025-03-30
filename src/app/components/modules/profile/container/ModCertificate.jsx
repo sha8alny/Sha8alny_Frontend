@@ -164,7 +164,7 @@ export default function ModCertificate({ certificate, adding }) {
 
   const handleFormSubmit = (data) => {
     updateProfileMutation.mutate({
-      api: adding ? "add-certification" : "edit",
+      api: adding ? "profile/add-certification" : "profile/edit",
       method: adding ? "POST" : "PATCH",
       data: { certificate: data },
     });
