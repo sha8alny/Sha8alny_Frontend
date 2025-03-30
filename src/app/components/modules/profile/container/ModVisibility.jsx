@@ -24,7 +24,6 @@ export default function ModVisibility({ userInfo }) {
   const useUpdate = useUpdateProfile();
   const router = useRouter();
   
-  // Add TanStack mutation for username update
   const updateUsernameMutation = useMutation({
     mutationFn: updateUsername,
     onSuccess: () => {
@@ -51,7 +50,6 @@ export default function ModVisibility({ userInfo }) {
       setUserModified(false);
     }
 
-    // Validate the username
     if (value.length < 3 || value.length > 20) {
       setUsernameError("Username must be between 3 and 20 characters.");
     } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
@@ -81,11 +79,11 @@ export default function ModVisibility({ userInfo }) {
       {
         api: "settings/update-visibility",
         method: "PUT",
-        data: { visibility: value }, // Use the passed value directly
+        data: { visibility: value },
       },
       {
         onSuccess: () => {
-          setVisibility(value); // Set visibility after successful update
+          setVisibility(value);
           setModifyingVisibility(false);
         },
         onError: (error) => {

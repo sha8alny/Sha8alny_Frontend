@@ -123,10 +123,8 @@ function ProfileContent({ username }) {
 
   if (isError) {
     let errorMessage = "Error fetching user profile.";
-    // Get the actual error object using the error property
     console.log("Error details:", error);
     
-    // Check if the error has response data with a status code
     if (error?.response?.status) {
       const status = error.response.status;
       switch (status) {

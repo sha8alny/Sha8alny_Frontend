@@ -90,6 +90,7 @@ const months = [
 export default function ModExperience({ experience, adding }) {
   const [skillInput, setSkillInput] = useState("");
   const [currentStage, setCurrentStage] = useState(1);
+  const [open, setOpen] = useState(false);
   const [stageValidation, setStageValidation] = useState({
     1: false,
     2: false,
@@ -98,6 +99,17 @@ export default function ModExperience({ experience, adding }) {
   const [submitError, setSubmitError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const years = generateYears();
+
+  const jobTypes = {
+    "Full-time": "fullTime",
+    "Part-time": "partTime",
+    "Internship": "internship",
+    "Freelance": "freelance",
+    "Contract": "contract",
+    "Apprenticeship": "apprenticeship",
+    "Seasonal": "seasonal",
+    "Self-employed": "selfEmployed",
+  };
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -202,12 +214,10 @@ export default function ModExperience({ experience, adding }) {
   };
 
   const handleFormSubmit = (data) => {
-    // Reset any previous states
     setSubmitError(null);
     setShowSuccess(false);
-
-    const updatedData = { ...data, _id: experience?._id };
-
+    const updatedData = { ...data , _id: experience?._id };
+    console.log("updatedData", updatedData);
     handleUserUpdate.mutate(
       {
         api: adding ? "profile/add-experience" : "profile/edit",
@@ -217,9 +227,15 @@ export default function ModExperience({ experience, adding }) {
       {
         onSuccess: () => {
           setShowSuccess(true);
-          // Optionally auto-hide success message after a few seconds
           setTimeout(() => {
             setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
           }, 3000);
         },
         onError: (error) => {
@@ -235,6 +251,8 @@ export default function ModExperience({ experience, adding }) {
   return (
     <Dialog
       className="min-w-max"
+      open={open}
+      onOpenChange={setOpen}
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
       AlertContent={
@@ -263,6 +281,7 @@ export default function ModExperience({ experience, adding }) {
           currentStage={currentStage}
           validateStageAndProceed={validateStageAndProceed}
           stageValidation={stageValidation}
+          setCurrentStage={setCurrentStage}
         />
       }
     />
