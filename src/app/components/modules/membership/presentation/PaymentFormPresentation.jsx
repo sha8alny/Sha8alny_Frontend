@@ -65,16 +65,17 @@ const PaymentFormPresentation = ({
   annualCost,
   monthlyCostIfPaidAnnually,
   savingsPercentage,
+  textColor
 }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-    <h1 className="flex items-center justify-center font-bold text-3xl mb-4 w-full">
-      <span className="text-primary font-sans">SHA</span>
-      <span className="text-secondary">غ</span>
-      <span className="text-primary font-sans">LNY </span>
-      <span className="text-secondary ml-2"> Premium</span>
-    </h1>
-     
+      <h1 className="flex items-center justify-center font-bold text-3xl mb-4 w-full">
+        <span className="text-primary font-sans">SHA</span>
+        <span className="text-secondary">غ</span>
+        <span className="text-primary font-sans">LNY </span>
+        <span className="text-secondary ml-2"> Premium</span>
+      </h1>
+
       <Card className="w-full max-w-lg mx-auto bg-background font-sans">
         <CardHeader>
           <CardTitle className="text-center">Payment Details</CardTitle>
@@ -147,19 +148,21 @@ const PaymentFormPresentation = ({
 
             <div className="space-y-2">
               <Label>Credit Card Number</Label>
-              <div className="flex items-center border rounded-lg px-3 py-2">
+              <div className="">
+                <div className="border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg px-1 py-[0.16rem] ">
                 <CreditCard className="text-muted-foreground text-2xl mr-2" />
-                <CardNumberElement
-                  className="w-full px-3 py-2 focus:outline-none bg-transparent"
-                  options={{ style: stripeStyle }}
-                />
+                  <CardNumberElement
+                    className="w-full px-3 py-2 focus:outline-none bg-transparent"
+                    options={{ style: stripeStyle }}
+                  />
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Expiration Date</Label>
-                <div className="border rounded-lg px-3 py-2">
+                <div className="p-2 border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg ">
                   <CardExpiryElement
                     className="w-full focus:outline-none bg-transparent"
                     options={{ style: stripeStyle }}
@@ -167,9 +170,9 @@ const PaymentFormPresentation = ({
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 ">
                 <Label>CVC</Label>
-                <div className="border rounded-lg px-3 py-2">
+                <div className="p-2 border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg  text-text">
                   <CardCvcElement
                     className="w-full focus:outline-none bg-transparent"
                     options={{ style: stripeStyle }}
