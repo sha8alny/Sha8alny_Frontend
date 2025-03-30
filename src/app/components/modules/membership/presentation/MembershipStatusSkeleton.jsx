@@ -6,6 +6,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import MembershipPageLayout from "./MembershipPageLayout";
+
 /**
  * @namespace membership
  * @module membership
@@ -31,7 +32,7 @@ const MembershipStatusSkeleton = () => {
       <div className="w-full">
         <h1 className="flex items-center gap-2 text-primary text-xl font-semibold text-center md:text-left">
           Your current plan:{" "}
-          <span className="bg-gray-600 rounded w-100 h-6 inline-block"></span>
+          <span className="bg-gray-600 rounded w-100 h-6 mt-2 inline-block"></span>
         </h1>
 
         <div className="flex flex-col md:flex-row justify-between mt-2 text-lg">
