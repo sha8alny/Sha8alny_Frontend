@@ -1,18 +1,43 @@
 import { fetchWithAuth } from "./userAuthentication";
+const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const updateProfile = async (url, data, method) => {
-  const response = await fetchWithAuth(
-    `${process.env.NEXT_PUBLIC_API_URL}/profile/${url}`,
-    {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-  );
-  if (!response.ok) {
-    throw new Error("Failed to update user profile");
+/**
+ * Update profile data or upload media files
+ * @param {string} api - API endpoint suffix
+ * @param {Object|FormData} data - Data to send (object for JSON or FormData for files)
+ * @param {string} method - HTTP method (GET, POST, PUT, DELETE, PATCH)
+ * @param {boolean} isFormData - Flag to indicate if data is FormData
+ * @returns {Promise} - API response
+ */
+export const updateProfile = async (api, data, method = "PATCH", isFormData = false) => {
+  const options = {
+    method,
+    headers: !isFormData ? { "Content-Type": "application/json" } : {},
+    body: isFormData ? data : JSON.stringify(data),
+  };
+
+  // For GET and DELETE requests, remove the body
+  if (method === "GET" || (method === "DELETE" && !data)) {
+    delete options.body;
   }
-  return response.status;
+
+  const response = await fetchWithAuth(`${apiURL}/${api}`, options);
+
+  if (!response.ok) {
+    const error = new Error(`Failed to ${method.toLowerCase()} ${api}`);
+    error.status = response.status;
+    throw error;
+  }
+
+  // For DELETE operations or others that might not return JSON
+  if (method === "DELETE" || response.headers.get("content-length") === "0") {
+    return { success: true };
+  }
+
+  try {
+    return await response.json();
+  } catch (e) {
+    // If there's no JSON response but the request was successful
+    return { success: true };
+  }
 };

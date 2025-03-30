@@ -22,8 +22,8 @@ export default function About({ about, isMyProfile }) {
         About
         {isMyProfile && <ModAbout about={about} />}
       </h3>
-      <p className="text-muted">{about ?? ""}</p>
-      {(about?.length === 0 && isMyProfile) && (
+      <p className="text-muted break-all">{about ?? ""}</p>
+      {((!about || about?.length === 0) && isMyProfile) && (
         <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
           <p>
             Add a short description about yourself to let others know more about

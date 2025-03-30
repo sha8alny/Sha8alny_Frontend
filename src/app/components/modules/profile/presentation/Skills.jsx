@@ -27,7 +27,7 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold truncate">{skill?.skill}</h3>
+        <h3 className="font-semibold truncate">{skill?.skillName}</h3>
         <span className="text-xs font-medium text-background bg-secondary px-2 py-0.5 rounded-full">
           {level.level}
         </span>
@@ -45,10 +45,12 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
           size="sm"
           disabled={isMyProfile || skill.isEndorsed}
           onClick={() => handleEndorsement(skill.skill)}
-          className={`h-7 px-2 hover:bg-foreground hover:cursor-pointer ${skill.isEndorsed ? "text-secondary font-bold" : "text-primary"}`}
+          className={`h-7 px-2 hover:bg-foreground hover:cursor-pointer ${
+            skill.isEndorsed ? "text-secondary font-bold" : "text-primary"
+          }`}
         >
           <ThumbsUp className="w-3 h-3 mr-1" />
-          Endorse{skill.isEndorsed && 'd'}
+          Endorse{skill.isEndorsed && "d"}
         </Button>
       </div>
     </div>
@@ -65,16 +67,25 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
  */
 export default function Skills({ skills, isMyProfile }) {
   return (
+    skills?.length > 0 && (
     <Container className="border border-[#111] shadow-lg p-8 mt-4">
       <h3 className="flex justify-between text-2xl mb-4 font-bold">
         Skills
-       {isMyProfile && <ModSkill skills={skills} />}
+        {isMyProfile && <ModSkill skills={skills} />}
       </h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {skills.map((skill, index) => (
-          <SkillContainer key={index} skill={skill} />
-        ))}
-      </div>
+      {(isMyProfile || skills?.length > 0) && (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {skills.map((skill, index) => (
+            <SkillContainer key={index} skill={skill} />
+          ))}
+        </div>
+      )}
+      {skills?.length === 0 && isMyProfile && (
+        <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
+          <p>Add a skill to let others know more about your expertise.</p>
+        </div>
+      )}
     </Container>
+    )
   );
 }

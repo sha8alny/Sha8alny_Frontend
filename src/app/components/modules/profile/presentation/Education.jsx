@@ -112,7 +112,7 @@ export default function Education({
   isMyProfile,
 }) {
   return (
-    education?.length > 0 && (
+    (isMyProfile || education?.length > 0) && (
       <Container className="border border-[#111] shadow-lg mt-4 p-8">
         <div className="flex justify-between text-2xl mb-4 font-bold">
           Education{" "}
@@ -126,6 +126,13 @@ export default function Education({
                 {index !== education.length - 1 && <hr />}
               </div>
             )
+          )}
+          {education?.length === 0 && isMyProfile && (
+            <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
+              <p>
+                Add your education to let others know more about you.{" "}
+              </p>
+            </div>
           )}
 
           {education?.length > 2 && (

@@ -45,7 +45,7 @@ export default function ModAbout({ about, adding = false }) {
   };
   const handleSubmit = (data) => {
       updateProfileMutation.mutate({
-        api: "edit",
+        api: "profile/edit",
         method: "PATCH",
         data: { about: data },
       });

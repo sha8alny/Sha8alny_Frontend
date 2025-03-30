@@ -37,7 +37,7 @@ import { fetchUserProfile } from "@/app/services/userProfile";
     isError,
   } = useQuery({
     queryKey: ["sidebarInfo"],
-    queryFn: () => fetchUserProfile("ziadhesham"),
+    queryFn: () => fetchSidebarInfo(),
     staleTime: 1000 * 30, // 30 seconds
   });
 
