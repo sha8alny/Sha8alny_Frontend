@@ -35,12 +35,15 @@ const MembershipCardContainer = ({
   const isPremium = plan.toLowerCase() === "premium";
 
   // user's current plan related logic
+  if (currentPlan === "monthlyPremium" || currentPlan === "oneTimePremium") {
+    currentPlan = "premium";
+  }
   let isCurrentPlan = currentPlan === plan.toLowerCase();
   if (currentPlan === "free" && plan.toLowerCase() === "basic") {
     isCurrentPlan = true;
   }
 
-  const isDowngrade = currentPlan === "premium" && plan === "Basic";
+  const isDowngrade = currentPlan === "monthlyPremium" || "oneTimePremium" && plan === "Basic";
   const hasPremiumExpired = isMissed;
 
   return (
