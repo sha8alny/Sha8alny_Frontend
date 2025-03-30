@@ -34,12 +34,14 @@ const MembershipStatus = ({
   statusIsLoading,
   statusError,
 }) => {
-  const isPremium = plan === "monthlyPremium" || "oneTimePremium";
+  console.log("current plan", plan);
+  const isPremium = plan === "monthlyPremium" || plan === "oneTimePremium";
+  console.log("isPremium", isPremium);
   const isExpiredPremium = isMissed;
   const goldText = "text-[#F0A24F]";
   const greenText = "text-green-500";
-  renewalDate = new Date(renewalDate).toLocaleDateString()
- 
+  renewalDate = new Date(renewalDate).toLocaleDateString();
+
   return (
     <div className="mx-auto flex bg-foreground w-full max-w-[725px] p-4 rounded-2xl shadow-2xl">
       <div className="w-full">
@@ -112,7 +114,7 @@ const MembershipStatus = ({
               )}
             </div>
 
-            {isPremium && !isExpiredPremium &&  (plan === "monthlyPremium") && (
+            {isPremium && !isExpiredPremium && plan === "monthlyPremium" && (
               <div className="flex gap-2">
                 <CalendarMonthIcon />
                 Plan ends on: {renewalDate}

@@ -155,7 +155,6 @@ const MembershipPageContainer = () => {
   const freePlanDetails = plansDetailsList.find(
     (plan) => plan.planId === "free"
   );
-  
   return (
     <MembershipPage
       currentPlan={sub?.planId}
