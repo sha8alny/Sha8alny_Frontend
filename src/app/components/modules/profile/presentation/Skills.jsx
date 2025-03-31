@@ -32,7 +32,7 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
           {level.level}
         </span>
       </div>
-      <div className="h-2 bg-gray-100 rounded-full dark:bg-gray-800">
+      <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-800">
         <div
           className="h-2 bg-secondary rounded-full"
           style={{ width: `${level.width}%` }}
@@ -75,7 +75,7 @@ export default function Skills({ skills, isMyProfile }) {
         {isMyProfile && <ModSkill skills={skills} />}
       </h3>
       {(isMyProfile || skills?.length > 0) && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {skills.map((skill, index) => (
             <SkillContainer key={index} skill={skill} />
           ))}

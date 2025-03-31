@@ -22,10 +22,13 @@ const stage2Schema = z.object({
     month: z.string().nonempty("Start month is required."),
     year: z.string().nonempty("Start year is required."),
   }),
-  endDate: z.object({
-    month: z.string().nonempty("End month is required."),
-    year: z.string().nonempty("End year is required."),
-  }),
+  endDate: z.union([
+    z.null(),
+    z.object({
+      month: z.string().nonempty("End month is required."),
+      year: z.string().nonempty("End year is required."),
+    }),
+  ]),
   isCurrent: z.boolean().default(false),
 });
 
@@ -103,11 +106,11 @@ export default function ModExperience({ experience, adding }) {
   const jobTypes = {
     "Full-time": "fullTime",
     "Part-time": "partTime",
-    "Internship": "internship",
-    "Freelance": "freelance",
-    "Contract": "contract",
-    "Apprenticeship": "apprenticeship",
-    "Seasonal": "seasonal",
+    Internship: "internship",
+    Freelance: "freelance",
+    Contract: "contract",
+    Apprenticeship: "apprenticeship",
+    Seasonal: "seasonal",
     "Self-employed": "selfEmployed",
   };
 
@@ -124,12 +127,12 @@ export default function ModExperience({ experience, adding }) {
           ? experience.startDate.year.toString()
           : "",
       },
-      endDate: {
-        month: experience?.endDate?.month || "",
-        year: experience?.endDate?.year
-          ? experience.endDate.year.toString()
-          : "",
-      },
+      endDate: experience?.endDate
+        ? {
+            month: experience?.endDate?.month,
+            year: experience?.endDate?.year.toString(),
+          }
+        : { month: "", year: "" },
       isCurrent: experience?.isCurrent || false,
       description: experience?.description || "",
       skills: experience?.skills || [],
@@ -146,14 +149,10 @@ export default function ModExperience({ experience, adding }) {
 
   const handleIsCurrent = (value) => {
     setValue("isCurrent", value, { shouldValidate: true });
-    if (!value) {
-      setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
+    if (value) {
+      setValue("endDate", null, { shouldValidate: true });
     } else {
-      setValue(
-        "endDate",
-        { month: "January", year: "1900" },
-        { shouldValidate: true }
-      );
+      setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
     }
   };
 
@@ -172,7 +171,6 @@ export default function ModExperience({ experience, adding }) {
     );
   };
 
-  // Validate current stage and move to next or previous
   const validateStageAndProceed = async (direction) => {
     if (direction === "next") {
       let isValid = false;
@@ -216,11 +214,11 @@ export default function ModExperience({ experience, adding }) {
   const handleFormSubmit = (data) => {
     setSubmitError(null);
     setShowSuccess(false);
-    const updatedData = { ...data , _id: experience?._id };
+    const updatedData = { ...data, _id: experience?._id };
     console.log("updatedData", updatedData);
     handleUserUpdate.mutate(
       {
-        api: adding ? "profile/add-experience" : "profile/edit",
+        api: adding ? "profile/add-experience" : "profile/edit-experience",
         method: adding ? "POST" : "PATCH",
         data: { ...updatedData },
       },
@@ -228,6 +226,7 @@ export default function ModExperience({ experience, adding }) {
         onSuccess: () => {
           setShowSuccess(true);
           setTimeout(() => {
+            setSkillInput("");
             setShowSuccess(false);
             setOpen(false);
             setStageValidation({
@@ -248,6 +247,55 @@ export default function ModExperience({ experience, adding }) {
     );
   };
 
+  const handleDeleteExperience = () => {
+    handleUserUpdate.mutate(
+      {
+        api: "profile/delete-experience",
+        method: "DELETE",
+        data: { experienceId: experience?._id },
+      },
+      {
+        onSuccess: () => {
+          setShowSuccess(true);
+          setTimeout(() => {
+            // Reset the form to the schema default values
+            form.reset(
+              formSchema.parse({
+                title: "",
+                employmentType: "",
+                company: "",
+                location: "",
+                startDate: {
+                  month: "",
+                  year: "",
+                },
+                endDate: { month: "", year: "" },
+                isCurrent: false,
+                description: "",
+                skills: [],
+              })
+            );
+            setSkillInput("");
+            setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
+          }, 3000);
+        },
+        onError: (error) => {
+          setSubmitError(
+            error?.message ||
+              "Failed to delete experience information. Please try again."
+          );
+        },
+      }
+    );
+  };
+
   return (
     <Dialog
       className="min-w-max"
@@ -259,7 +307,9 @@ export default function ModExperience({ experience, adding }) {
         <ModExperiencePresentation
           form={form}
           isCurrent={isCurrent}
-          isValid={stageValidation[1] && stageValidation[2] && stageValidation[3]}
+          isValid={
+            stageValidation[1] && stageValidation[2] && stageValidation[3]
+          }
           months={months}
           years={years}
           errors={errors}
@@ -282,6 +332,7 @@ export default function ModExperience({ experience, adding }) {
           validateStageAndProceed={validateStageAndProceed}
           stageValidation={stageValidation}
           setCurrentStage={setCurrentStage}
+          handleDeleteExperience={handleDeleteExperience}
         />
       }
     />

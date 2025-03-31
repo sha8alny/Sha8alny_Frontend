@@ -12,7 +12,7 @@ import { useMutation } from "@tanstack/react-query";
  * @module profile
  */
 export default function ModVisibility({ userInfo }) {
-  const [visibility, setVisibility] = useState("Public");
+  const [visibility, setVisibility] = useState(userInfo?.visibility || "Public");
   const [userModified, setUserModified] = useState(false);
   const [username, setUsername] = useState(userInfo?.username || "");
   const [error, setError] = useState(null);
@@ -35,6 +35,13 @@ export default function ModVisibility({ userInfo }) {
     onError: (error) => {
       setError(error?.message || "Failed to update username.");
       setCurrentStage(3);
+      setTimeout(() => {
+        setUsername(userInfo?.username || "");
+        setUsernameError(null);
+        setUserModified(false);
+        setError(null);
+        setCurrentStage(0);
+      }, 2000);
     }
   });
 
@@ -52,7 +59,7 @@ export default function ModVisibility({ userInfo }) {
 
     if (value.length < 3 || value.length > 20) {
       setUsernameError("Username must be between 3 and 20 characters.");
-    } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+    } else if (!/^[a-zA-Z0-9_\-]+$/.test(value)) {
       setUsernameError(
         "Username can only contain letters, numbers, and underscores."
       );

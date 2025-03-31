@@ -109,7 +109,7 @@ function ProfileContent({ username }) {
   } = useQuery({
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
-    staleTime: 1000 * 30, // 30 seconds
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
   useEffect(() => {

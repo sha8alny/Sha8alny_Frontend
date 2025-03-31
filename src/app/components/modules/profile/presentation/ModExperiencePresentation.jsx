@@ -74,8 +74,8 @@ export default function ModExperiencePresentation({
   showSuccess,
   setSubmitError,
   adding = false,
+  handleDeleteExperience,
 }) {
-  // Stage titles for the progress indicator
   const stageTitles = [
     "Basic Information",
     "Time Period",
@@ -83,7 +83,6 @@ export default function ModExperiencePresentation({
     "Review"
   ];
 
-  // Employment types constant
   const employmentTypes = [
     { value: "fullTime", label: "Full-time" },
     { value: "partTime", label: "Part-time" },
@@ -590,7 +589,7 @@ export default function ModExperiencePresentation({
                   <button 
                     type="button"
                     disabled={isLoading}
-                    onClick={() => deleteEducation && deleteEducation(educationId)}
+                    onClick={() => handleDeleteExperience()}
                     className="hover:cursor-pointer p-2 text-sm font-semibold bg-red-500 dark:bg-red-800 text-background rounded-md disabled:opacity-50"
                   >
                     Delete

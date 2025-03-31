@@ -52,7 +52,7 @@ export const ExperienceCard = ({ job, duration, isMyProfile }) => {
         </p>
         <p className="text-muted flex">
           <span>
-            {job?.startDate?.month} {job?.startDate?.year} - {job?.endDate?.month}{" "}
+            {job?.startDate?.month.substring(0,3) + "."} {job?.startDate?.year} - {job?.isCurrent ? `${job?.endDate?.month}` : `${job?.endDate?.month.substring(0,3) + "."}`}{" "}
             {job?.endDate?.year}
           </span>
           <span className="ml-2">•</span>

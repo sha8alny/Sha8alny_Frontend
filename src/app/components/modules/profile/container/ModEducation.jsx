@@ -195,7 +195,7 @@ export default function ModEducation({ education, adding }) {
     };
     
     handleUserUpdate.mutate({
-      api: adding ? "profile/add-education" : "profile/edit",
+      api: adding ? "profile/add-education" : "profile/edit-education",
       method: adding ? "POST" : "PATCH",
       data: { ...formattedData },
     }, {

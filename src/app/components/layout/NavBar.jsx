@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useState } from "react";
 import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
-import { fetchUserProfile } from "@/app/services/userProfile";
 
 
 /**
