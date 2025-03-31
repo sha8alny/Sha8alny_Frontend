@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import MembershipCardPresentation from "../presentation/MembershipCardPresentation";
 
 /**
@@ -32,15 +32,25 @@ const MembershipCardContainer = ({
   isCancelling,
 }) => {
   // card's display logic
+  // card's display logic
   const isPremium = plan.toLowerCase() === "premium";
-
+  let isCurrentPlan = false;
   // user's current plan related logic
-  let isCurrentPlan = currentPlan === plan.toLowerCase();
+  if (
+    currentPlan === "monthlyPremium" ||
+    (currentPlan === "oneTimePremium" && plan.toLowerCase() === "premium")
+  ) {
+    isCurrentPlan = true;
+  }
+  // let isCurrentPlan = currentPlan === plan.toLowerCase();
   if (currentPlan === "free" && plan.toLowerCase() === "basic") {
     isCurrentPlan = true;
   }
 
-  const isDowngrade = currentPlan === "premium" && plan === "Basic";
+  const isDowngrade =
+    (currentPlan === "monthlyPremium" || currentPlan === "oneTimePremium") &&
+    plan === "Basic";
+  console.log(isDowngrade);
   const hasPremiumExpired = isMissed;
 
   return (
@@ -54,6 +64,7 @@ const MembershipCardContainer = ({
       hasPremiumExpired={hasPremiumExpired}
       handler={isDowngrade ? handleCancel : handleUpgrade}
       isCancelling={isCancelling}
+      currentPlan={currentPlan}
     />
   );
 };

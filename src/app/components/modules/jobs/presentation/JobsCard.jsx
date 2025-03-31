@@ -63,6 +63,15 @@ function JobCard({ job, onClick }) {
     }
   };
 
+  const formatSalary = (salary) => {
+    if (!salary) return "Salary: undisclosed";
+    return `Salary: ${new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+    }).format(salary)}`;
+  };
+
   return (
     <div
       className="flex space-x-4 p-4 rounded-lg hover:bg-hover transition-colors duration-200 cursor-pointer"
@@ -88,11 +97,11 @@ function JobCard({ job, onClick }) {
           employmentType={job.employmentType}
           workLocation={job.workLocation}
         />
-        <p className="text-sm text-gray-300 line-clamp-2">{job.description}</p>
+        <p className="text-sm dark:text-gray-300 text-gray-500 line-clamp-2">{job.description}</p>
         <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
           <span>Posted {getRelativeTimeString(job.createdAt)}</span>
           <span className="font-medium">
-            {job.salary ? `Salary: ${job.salary} $` : "Salary: undisclosed"}
+            {formatSalary(job.salary)}
           </span>
         </div>
       </div>

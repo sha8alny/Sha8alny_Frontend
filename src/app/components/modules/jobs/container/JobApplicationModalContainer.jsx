@@ -18,7 +18,10 @@ const ACCEPTED_FILE_TYPES = [
 // Define readable extensions for user-friendly error messages
 const READABLE_EXTENSIONS = ".pdf, .doc, .docx";
 const jobApplicationSchema = z.object({
-  phone: z.string().min(11, "Phone number must be at least 11 digits"),
+  phone: z.string()
+    .min(11, "Phone number must be at least 11 digits")
+    .max(11, "Phone number must be at most 11 digits")
+    .regex(/^01[0125][0-9]{8}$/, "Invalid phone number"),
   coverLetter: z.string().optional(),
   resume: z.any()
     .refine(file => !!file, "Resume is required")

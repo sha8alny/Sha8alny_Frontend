@@ -1,8 +1,8 @@
-import React from 'react';
-import JobHeader from './JobHeader';
-import JobError from './JobError';
-import JobContent from './JobContent';
-import JobActions from './JobActions';
+import React from "react";
+import JobHeader from "./JobHeader";
+import JobError from "./JobError";
+import JobContent from "./JobContent";
+import JobActions from "./JobActions";
 /**
  * @namespace jobs
  * @module jobs
@@ -19,23 +19,29 @@ import JobActions from './JobActions';
  * @returns {JSX.Element} The rendered component.
  */
 
-function JobDetailsPresentation({ job, isLoading, isError, errorMessage }) {
-    // Handle case when job is null, undefined, or empty but not in error state
-    if (isError) {
-        return <JobError errorMessage={errorMessage || "An error occurred"} />;
-    }
+function JobDetailsPresentation({
+  job,
+  isLoading,
+  isError,
+  errorMessage,
+  handleSaveJob,
+}) {
+  // Handle case when job is null, undefined, or empty but not in error state
+  if (isError) {
+    return <JobError errorMessage={errorMessage || "An error occurred"} />;
+  }
 
-    if ((!job || Object.keys(job).length === 0) && !isLoading) {
-        return <JobError errorMessage="Job information not available" />;
-    }
+  if ((!job || Object.keys(job).length === 0) && !isLoading) {
+    return <JobError errorMessage="Job information not available" />;
+  }
 
-    return (
-        <>
-            <JobHeader job={job || {}} isLoading={isLoading} />
-            <JobContent job={job || {}} isLoading={isLoading} />
-            {!isLoading && job && <JobActions job={job} />}
-        </>
-    );
+  return (
+    <>
+      <JobHeader job={job || {}} isLoading={isLoading} />
+      <JobContent job={job || {}} isLoading={isLoading} />
+      {!isLoading && job && <JobActions job={job} handleSaveJob={handleSaveJob} />}
+    </>
+  );
 }
 
 export default JobDetailsPresentation;

@@ -7,8 +7,22 @@ import {
   CardCvcElement,
 } from "@stripe/react-stripe-js";
 import countries from "../../../../../../public/data/countries";
-import LoadingScreenPayment from "./LoadingScreenPayment";
-
+import { Input } from "@/app/components/ui/Input";
+import { Label } from "@/app/components/ui/Label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/components/ui/Select";
+import { Button } from "@/app/components/ui/Button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/Card";
 /**
  * @namespace membership
  * @module membership
@@ -50,243 +64,176 @@ const PaymentFormPresentation = ({
   monthlyCost,
   annualCost,
   monthlyCostIfPaidAnnually,
-  savingsPercentage
+  savingsPercentage,
+  textColor
 }) => {
- 
-
-  if (loading) {
-    return <LoadingScreenPayment />;
-  }
-
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-foreground p-6 rounded-2xl shadow-lg max-w-lg mx-auto space-y-6 transition-all font-sans"
-    >
-      <h2 className="text-xl font-semibold text-text text-center">
-        Payment Details
-      </h2>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <h1 className="flex items-center justify-center font-bold text-3xl mb-4 w-full">
+        <span className="text-primary font-sans">SHA</span>
+        <span className="text-secondary">غ</span>
+        <span className="text-primary font-sans">LNY </span>
+        <span className="text-secondary ml-2"> Premium</span>
+      </h1>
 
-      <div className="bg-background rounded-xl p-4 mb-4">
-        <h3 className="text-md font-medium text-text mb-3">Choose your plan</h3>
+      <Card className="w-full max-w-lg mx-auto bg-background font-sans">
+        <CardHeader>
+          <CardTitle className="text-center">Payment Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-3">
+              <Label>Choose your plan</Label>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div
+                  className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                    premiumType === "monthlyPremium"
+                      ? "border-primary bg-primary/10"
+                      : "border-muted"
+                  }`}
+                  onClick={() => setPremiumType("monthlyPremium")}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-bold">Monthly</div>
+                      <div className="text-sm text-muted-foreground">
+                        Billed monthly
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold">${monthlyCost}</div>
+                      <div className="text-sm text-muted-foreground">
+                        per month
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-        <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 text-text">
-          <div
-            className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-              premiumType === "monthlyPremium"
-                ? "border-secondary bg-secondary bg-opacity-10"
-                : "border-gray-400"
-            }`}
-            onClick={() => setPremiumType("monthlyPremium")}
-          >
-            <div className="flex justify-between items-start">
-              <div>
                 <div
-                  className={`font-bold text-text ${
-                    premiumType === "monthlyPremium"
-                      ? "dark:text-text text-white"
-                      : ""
+                  className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                    premiumType === "oneTimePremium"
+                      ? "border-primary bg-primary/10"
+                      : "border-muted"
                   }`}
+                  onClick={() => setPremiumType("oneTimePremium")}
                 >
-                  Monthly
-                </div>
-                <div
-                  className={`text-sm text-gray-400 ${
-                    premiumType === "monthlyPremium"
-                      ? "dark:text-gray-500 text-white "
-                      : ""
-                  }`}
-                >
-                  Billed monthly
-                </div>
-              </div>
-              <div className="text-right">
-                <div
-                  className={`font-bold text-text ${
-                    premiumType === "monthlyPremium"
-                      ? "dark:text-text text-white"
-                      : ""
-                  }`}
-                >
-                  ${monthlyCost}
-                </div>
-                <div
-                  className={`text-sm text-gray-400 ${
-                    premiumType === "monthlyPremium"
-                      ? "dark:text-gray-500 text-white "
-                      : ""
-                  }`}
-                >
-                  per month
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-bold">One time Payment</div>
+                      <div className="text-sm text-muted-foreground">
+                        Billed Once
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold">${monthlyCost}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div
-            className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-              premiumType === "oneTimePremium"
-                ? "border-secondary bg-secondary bg-opacity-10"
-                : "border-gray-400"
-            }`}
-            onClick={() => setPremiumType("oneTimePremium")}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <div
-                  className={`font-bold text-text ${
-                    premiumType === "oneTimePremium"
-                      ? "dark:text-text text-white"
-                      : ""
-                  }`}
-                >
-                  One time Payment
+            <div className="space-y-2">
+              <Label htmlFor="name">Cardholder Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                className={errors.name ? "border-destructive" : ""}
+              />
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Credit Card Number</Label>
+              <div className="">
+                <div className="border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg px-1 py-[0.16rem] ">
+                <CreditCard className="text-muted-foreground text-2xl mr-2" />
+                  <CardNumberElement
+                    className="w-full px-3 py-2 focus:outline-none bg-transparent"
+                    options={{ style: stripeStyle }}
+                  />
                 </div>
-                <div
-                  className={`text-sm text-gray-400 ${
-                    premiumType === "oneTimePremium"
-                      ? "dark:text-gray-500 text-white"
-                      : ""
-                  }`}
-                >
-                  Billed Once
-                </div>
-              </div>
-              <div className="text-right">
-                <div
-                   className={`font-bold text-text ${
-                    premiumType === "oneTimePremium"
-                      ? "dark:text-text text-white"
-                      : ""
-                  }`}
-                >
-                  ${monthlyCost}
-                </div>
-                {/* <div
-                  className={`text-sm text-gray-400 ${
-                    premiumType === "oneTimePremium"
-                      ? "dark:text-gray-500 text-white"
-                      : ""
-                  }`}
-                >
-                  ${monthlyCostIfPaidAnnually.toFixed(2)}/mo
-                </div> */}
               </div>
             </div>
-            {/* {savingsPercentage > 0 && (
-              <div className="mt-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-medium px-2 py-1 rounded inline-block">
-                Save {savingsPercentage}%
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Expiration Date</Label>
+                <div className="p-2 border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg ">
+                  <CardExpiryElement
+                    className="w-full focus:outline-none bg-transparent"
+                    options={{ style: stripeStyle }}
+                  />
+                </div>
               </div>
-            )} */}
-          </div>
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="name" className="text-sm font-medium text-text">
-          Cardholder Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={`w-full px-4 py-2 border ${
-            errors.name ? "border-red-500" : "border-gray-600"
-          } rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary transition placeholder:text-[#a0a0a0]`}
-          placeholder="John Doe"
-        />
-        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-      </div>
+              <div className="space-y-2 ">
+                <Label>CVC</Label>
+                <div className="p-2 border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg  text-text">
+                  <CardCvcElement
+                    className="w-full focus:outline-none bg-transparent"
+                    options={{ style: stripeStyle }}
+                  />
+                </div>
+              </div>
+            </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-text">
-          Credit Card Number
-        </label>
-        <div className="flex items-center border-gray-600 border rounded-lg px-3 py-2">
-          <CreditCard className="text-gray-500 dark:text-gray-400 text-2xl" />
-          <CardNumberElement
-            className="w-full px-3 py-2 focus:outline-none bg-transparent"
-            options={{ style: stripeStyle }}
-          />
-        </div>
-      </div>
+            <div className="space-y-2 w-full">
+              <Label htmlFor="country">Country</Label>
+              <Select
+                value={country}
+                onValueChange={setCountry}
+                className="w-full"
+              >
+                <SelectTrigger
+                  className={
+                    errors.country ? "border-destructive w-full" : "w-full"
+                  }
+                >
+                  <SelectValue placeholder="Select Country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map(({ code, name }) => (
+                    <SelectItem key={code} value={code}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.country && (
+                <p className="text-sm text-destructive">{errors.country}</p>
+              )}
+            </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-text">
-            Expiration Date
-          </label>
-          <div className="border-gray-600 border rounded-lg px-3 py-2">
-            <CardExpiryElement
-              className="w-full focus:outline-none bg-transparent"
-              options={{ style: stripeStyle }}
-            />
-          </div>
-        </div>
+            <Button
+              type="submit"
+              className="w-full bg-secondary cursor-pointer hover:bg-secondary/80 text-white"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="inline-block h-4 w-4 border-2  border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                  Processing...
+                </>
+              ) : (
+                `Pay ${
+                  premiumType === "monthlyPremium"
+                    ? `$${monthlyCost}/month`
+                    : `$${monthlyCost}`
+                }`
+              )}
+            </Button>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-text">CVC</label>
-          <div className="border-gray-600 border rounded-lg px-3 py-2">
-            <CardCvcElement
-              className="w-full focus:outline-none bg-transparent"
-              options={{ style: stripeStyle }}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label htmlFor="country" className="text-sm font-medium text-text">
-          Country
-        </label>
-        <select
-          id="country"
-          name="country"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          className={`w-full px-4 py-2 border bg-foreground ${
-            errors.country ? "border-red-500" : "border-gray-600"
-          } rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary transition`}
-        >
-          <option value="">Select Country</option>
-          {countries.map(({ code, name }) => (
-            <option key={code} value={code}>
-              {name}
-            </option>
-          ))}
-        </select>
-        {errors.country && (
-          <p className="text-red-500 text-sm">{errors.country}</p>
-        )}
-      </div>
-
-      <div className="pt-2">
-        <button
-          type="submit"
-          className="w-full bg-secondary cursor-pointer text-white font-semibold py-3 rounded-lg shadow-md hover:bg-opacity-90 transition-all disabled:opacity-50 flex items-center justify-center"
-          disabled={loading }
-        >
-          {loading  ? (
-            <>
-              <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-              Processing...
-            </>
-          ) : (
-            `Pay ${
-              premiumType === "monthlyPremium"
-                ? `$${monthlyCost}/month`
-                : `$${monthlyCost}`
-            }`
-          )}
-        </button>
-      </div>
-
-      <div className="text-center text-xs text-gray-500 dark:text-gray-400 mt-4">
-        Your payment is secure and encrypted
-      </div>
-    </form>
+            <p className="text-center text-sm text-muted-foreground">
+              Your payment is secure and encrypted
+            </p>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

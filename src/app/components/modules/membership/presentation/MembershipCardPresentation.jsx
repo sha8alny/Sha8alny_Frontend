@@ -29,7 +29,32 @@ const MembershipCardPresentation = ({
   hasPremiumExpired,
   handler,
   isCancelling,
+  currentPlan,
 }) => {
+  const buttonTextMap = {
+    oneTimePremium: "Upgrade to monthly plan",
+    cancelling: "Pending...",
+    expired: "Renew Plan",
+    downgrade: "Downgrade Plan",
+    currentPlan: "Current Plan",
+    default: "Upgrade Plan",
+  };
+
+  const buttonText =
+    currentPlan === "oneTimePremium" && isPremium
+      ? buttonTextMap.oneTimePremium
+      : currentPlan === "monthlyPremium" && isPremium
+      ? buttonTextMap.currentPlan
+      : currentPlan === "free" && !isPremium
+      ? buttonTextMap.currentPlan
+      : isCancelling
+      ? buttonTextMap.cancelling
+      : hasPremiumExpired
+      ? buttonTextMap.expired
+      : isDowngrade
+      ? buttonTextMap.downgrade
+      : buttonTextMap.default;
+
   return (
     <div
       className={`flex flex-col gap-2 w-full max-w-[400px] rounded-xl p-4 shadow-2xl bg-foreground relative ${
@@ -58,26 +83,21 @@ const MembershipCardPresentation = ({
 
       <button
         className={`mt-16 rounded-full p-4 w-11/12 mx-auto transition text-white ${
-          isCurrentPlan
+          (currentPlan === "monthlyPremium" && isPremium) ||
+          (currentPlan === "free" && !isPremium)
             ? "bg-gray-400 cursor-not-allowed"
-            : isCancelling
-            ? "bg-yellow-500 cursor-wait"
+            : isCancelling && isPremium == false
+            ? "bg-secondary cursor-wait"
             : isDowngrade
             ? "bg-gray-500 cursor-pointer"
             : "bg-black hover:bg-gray-900 cursor-pointer"
         }`}
-        disabled={isCurrentPlan || isCancelling}
+        disabled={
+          (currentPlan === "monthlyPremium" && isPremium) || isCancelling
+        }
         onClick={() => handler()}
       >
-        {isCurrentPlan
-          ? "Current Plan"
-          : isCancelling
-          ? "Pending..."
-          : hasPremiumExpired
-          ? "Renew Plan"
-          : isDowngrade
-          ? "Downgrade Plan"
-          : "Upgrade Plan"}
+        {buttonText}
       </button>
     </div>
   );
