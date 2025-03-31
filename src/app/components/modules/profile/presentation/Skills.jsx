@@ -32,7 +32,7 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
           {level.level}
         </span>
       </div>
-      <div className="h-2 bg-gray-100 rounded-full dark:bg-gray-800">
+      <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-800">
         <div
           className="h-2 bg-secondary rounded-full"
           style={{ width: `${level.width}%` }}
@@ -44,10 +44,11 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
           variant="ghost"
           size="sm"
           disabled={isMyProfile || skill.isEndorsed}
-          onClick={() => handleEndorsement(skill.skill)}
+          onClick={() => handleEndorsement(skill.skillName)}
           className={`h-7 px-2 hover:bg-foreground hover:cursor-pointer ${
-            skill.isEndorsed ? "text-secondary font-bold" : "text-primary"
-          }`}
+            skill.isEndorsed ? "text-secondary font-bold" : "text-primary"}
+            ${isMyProfile ? "cursor-not-allowed" : ""}
+          `}
         >
           <ThumbsUp className="w-3 h-3 mr-1" />
           Endorse{skill.isEndorsed && "d"}
@@ -67,14 +68,14 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
  */
 export default function Skills({ skills, isMyProfile }) {
   return (
-    skills?.length > 0 && (
+    (skills?.length > 0 || isMyProfile) && (
     <Container className="border border-[#111] shadow-lg p-8 mt-4">
       <h3 className="flex justify-between text-2xl mb-4 font-bold">
         Skills
         {isMyProfile && <ModSkill skills={skills} />}
       </h3>
       {(isMyProfile || skills?.length > 0) && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {skills.map((skill, index) => (
             <SkillContainer key={index} skill={skill} />
           ))}

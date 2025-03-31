@@ -22,10 +22,13 @@ const stage2Schema = z.object({
     month: z.string().nonempty("Start month is required."),
     year: z.string().nonempty("Start year is required."),
   }),
-  endDate: z.object({
-    month: z.string().nonempty("End month is required."),
-    year: z.string().nonempty("End year is required."),
-  }),
+  endDate: z.union([
+    z.null(),
+    z.object({
+      month: z.string().nonempty("End month is required."),
+      year: z.string().nonempty("End year is required."),
+    }),
+  ]),
   isCurrent: z.boolean().default(false),
 });
 
@@ -90,6 +93,7 @@ const months = [
 export default function ModExperience({ experience, adding }) {
   const [skillInput, setSkillInput] = useState("");
   const [currentStage, setCurrentStage] = useState(1);
+  const [open, setOpen] = useState(false);
   const [stageValidation, setStageValidation] = useState({
     1: false,
     2: false,
@@ -98,6 +102,17 @@ export default function ModExperience({ experience, adding }) {
   const [submitError, setSubmitError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const years = generateYears();
+
+  const jobTypes = {
+    "Full-time": "fullTime",
+    "Part-time": "partTime",
+    Internship: "internship",
+    Freelance: "freelance",
+    Contract: "contract",
+    Apprenticeship: "apprenticeship",
+    Seasonal: "seasonal",
+    "Self-employed": "selfEmployed",
+  };
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -112,12 +127,12 @@ export default function ModExperience({ experience, adding }) {
           ? experience.startDate.year.toString()
           : "",
       },
-      endDate: {
-        month: experience?.endDate?.month || "",
-        year: experience?.endDate?.year
-          ? experience.endDate.year.toString()
-          : "",
-      },
+      endDate: experience?.endDate
+        ? {
+            month: experience?.endDate?.month,
+            year: experience?.endDate?.year.toString(),
+          }
+        : { month: "", year: "" },
       isCurrent: experience?.isCurrent || false,
       description: experience?.description || "",
       skills: experience?.skills || [],
@@ -134,14 +149,10 @@ export default function ModExperience({ experience, adding }) {
 
   const handleIsCurrent = (value) => {
     setValue("isCurrent", value, { shouldValidate: true });
-    if (!value) {
-      setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
+    if (value) {
+      setValue("endDate", null, { shouldValidate: true });
     } else {
-      setValue(
-        "endDate",
-        { month: "January", year: "1900" },
-        { shouldValidate: true }
-      );
+      setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
     }
   };
 
@@ -160,7 +171,6 @@ export default function ModExperience({ experience, adding }) {
     );
   };
 
-  // Validate current stage and move to next or previous
   const validateStageAndProceed = async (direction) => {
     if (direction === "next") {
       let isValid = false;
@@ -202,24 +212,29 @@ export default function ModExperience({ experience, adding }) {
   };
 
   const handleFormSubmit = (data) => {
-    // Reset any previous states
     setSubmitError(null);
     setShowSuccess(false);
-
     const updatedData = { ...data, _id: experience?._id };
-
+    console.log("updatedData", updatedData);
     handleUserUpdate.mutate(
       {
-        api: adding ? "profile/add-experience" : "profile/edit",
+        api: adding ? "profile/add-experience" : "profile/edit-experience",
         method: adding ? "POST" : "PATCH",
         data: { ...updatedData },
       },
       {
         onSuccess: () => {
           setShowSuccess(true);
-          // Optionally auto-hide success message after a few seconds
           setTimeout(() => {
+            setSkillInput("");
             setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
           }, 3000);
         },
         onError: (error) => {
@@ -232,16 +247,69 @@ export default function ModExperience({ experience, adding }) {
     );
   };
 
+  const handleDeleteExperience = () => {
+    handleUserUpdate.mutate(
+      {
+        api: "profile/delete-experience",
+        method: "DELETE",
+        data: { experienceId: experience?._id },
+      },
+      {
+        onSuccess: () => {
+          setShowSuccess(true);
+          setTimeout(() => {
+            // Reset the form to the schema default values
+            form.reset(
+              formSchema.parse({
+                title: "",
+                employmentType: "",
+                company: "",
+                location: "",
+                startDate: {
+                  month: "",
+                  year: "",
+                },
+                endDate: { month: "", year: "" },
+                isCurrent: false,
+                description: "",
+                skills: [],
+              })
+            );
+            setSkillInput("");
+            setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
+          }, 3000);
+        },
+        onError: (error) => {
+          setSubmitError(
+            error?.message ||
+              "Failed to delete experience information. Please try again."
+          );
+        },
+      }
+    );
+  };
+
   return (
     <Dialog
       className="min-w-max"
+      open={open}
+      onOpenChange={setOpen}
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
       AlertContent={
         <ModExperiencePresentation
           form={form}
           isCurrent={isCurrent}
-          isValid={stageValidation[1] && stageValidation[2] && stageValidation[3]}
+          isValid={
+            stageValidation[1] && stageValidation[2] && stageValidation[3]
+          }
           months={months}
           years={years}
           errors={errors}
@@ -263,6 +331,8 @@ export default function ModExperience({ experience, adding }) {
           currentStage={currentStage}
           validateStageAndProceed={validateStageAndProceed}
           stageValidation={stageValidation}
+          setCurrentStage={setCurrentStage}
+          handleDeleteExperience={handleDeleteExperience}
         />
       }
     />

@@ -13,38 +13,27 @@ import useUpdateProfile from "@/app/hooks/useUpdateProfile";
  * @namespace profile
  * @module profile
  */
-/**
- * Zod schema for certificate form validation.
- * @typedef {Object} CertificateFormSchema
- * @property {string} name - Certificate name (required)
- * @property {string} issuingOrganization - Organization that issued the certificate (required)
- * @property {Object} issueDate - Date when certificate was issued
- * @property {string} issueDate.month - Month when certificate was issued (required)
- * @property {string} issueDate.year - Year when certificate was issued (required)
- * @property {Object} expirationDate - Date when certificate expires (required if neverExpires is false)
- * @property {string} expirationDate.month - Month when certificate expires
- * @property {string} expirationDate.year - Year when certificate expires
- * @property {boolean} neverExpires - Flag indicating if the certificate has no expiration date (default: false)
- * @property {Array<string>} skills - List of skills associated with this certificate (default: [])
- * 
- * Includes refinement to ensure expirationDate is provided when neverExpires is false.
- */
-const formSchema = z
+
+// Form schemas for each stage
+const stage1Schema = z.object({
+  name: z.string().nonempty("Certificate name is required."),
+  issuingOrganization: z.string().nonempty("Issuing organization is required."),
+});
+
+const stage2Schema = z
   .object({
-    name: z.string().nonempty("Certificate name is required."),
-    issuingOrganization: z
-      .string()
-      .nonempty("Issuing organization is required."),
     issueDate: z.object({
       month: z.string().nonempty("Issue month is required."),
       year: z.string().nonempty("Issue year is required."),
     }),
-    expirationDate: z.object({
-      month: z.string().nonempty("Expiration month is required."),
-      year: z.string().nonempty("Expiration year is required."),
-    }),
+    expirationDate: z.union([
+      z.null(),
+      z.object({
+        month: z.string().nonempty("Expiration month is required."),
+        year: z.string().nonempty("Expiration year is required."),
+      }),
+    ]),
     neverExpires: z.boolean().default(false),
-    skills: z.array(z.string()).default([]),
   })
   .refine(
     (data) => {
@@ -63,6 +52,17 @@ const formSchema = z
       path: ["expirationDate"],
     }
   );
+
+const stage3Schema = z.object({
+  skills: z.array(z.string()).default([]),
+});
+
+// Combined schema for the complete form
+const formSchema = z.object({
+  ...stage1Schema.shape,
+  ...stage2Schema.shape,
+  ...stage3Schema.shape,
+});
 
 /**
  * Generates an array of years starting from 50 years in the past up to 10 years in the future.
@@ -94,23 +94,32 @@ const months = [
 
 /**
  * Certificate management component for adding, editing certification details in profile.
- * 
+ *
  * @component
  * @param {Object} props - Component props
  * @param {Object} [props.certificate] - Certificate data object for editing, undefined when adding new
  * @param {boolean} props.adding - Flag indicating if this is an add operation (true) or edit operation (false)
- * 
- * @returns {JSX.Element} Dialog component with certificate form
- * 
+ *
+ * @returns {JSX.Element} Dialog component with multi-stage certificate form
+ *
  * @example
  * // For adding a new certificate
  * <ModCertificate adding={true} />
- * 
+ *
  * // For editing an existing certificate
  * <ModCertificate certificate={certificateData} adding={false} />
  */
 export default function ModCertificate({ certificate, adding }) {
   const [skillInput, setSkillInput] = useState("");
+  const [currentStage, setCurrentStage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [stageValidation, setStageValidation] = useState({
+    1: false,
+    2: false,
+    3: false,
+  });
+  const [submitError, setSubmitError] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   const years = generateYears();
   const updateProfileMutation = useUpdateProfile();
 
@@ -121,29 +130,34 @@ export default function ModCertificate({ certificate, adding }) {
       issuingOrganization: certificate?.issuingOrganization || "",
       issueDate: {
         month: certificate?.issueDate?.month || "",
-        year: certificate?.issueDate?.year.toString() || "",
+        year: certificate?.issueDate?.year?.toString() || "",
       },
       expirationDate: {
         month: certificate?.expirationDate?.month || "",
-        year: certificate?.expirationDate?.year.toString() || "",
+        year: certificate?.expirationDate?.year?.toString() || "",
       },
-      neverExpires: certificate?.neverExpires || false,
+      neverExpires: certificate?.expirationDate === null ? true : false,
       skills: certificate?.skills || [],
     },
     mode: "onChange",
   });
 
-  const { handleSubmit, setValue, watch, formState } = form;
-  const { errors, isValid } = formState;
+  const { handleSubmit, setValue, watch, formState, trigger } = form;
+  const { errors } = formState;
   const skills = watch("skills");
   const neverExpires = watch("neverExpires");
+  const isLoading = updateProfileMutation.isPending;
 
   const handleNeverExpires = (value) => {
     setValue("neverExpires", value, { shouldValidate: true });
-    if (!value) {
-      setValue("expirationDate", { month: "", year: "" }, { shouldValidate: true });
+    if (value) {
+      setValue("expirationDate", null, { shouldValidate: true });
     } else {
-      setValue("expirationDate", { month: "January", year: "1900" }, { shouldValidate: true });
+      setValue(
+        "expirationDate",
+        { month: "", year: "" },
+        { shouldValidate: true }
+      );
     }
   };
 
@@ -162,24 +176,127 @@ export default function ModCertificate({ certificate, adding }) {
     );
   };
 
+  // Validate current stage and move to next or previous
+  const validateStageAndProceed = async (direction) => {
+    if (direction === "next") {
+      let isValid = false;
+
+      if (currentStage === 1) {
+        isValid = await trigger(["name", "issuingOrganization"]);
+        if (isValid) {
+          setStageValidation((prev) => ({ ...prev, 1: true }));
+          setCurrentStage(2);
+        }
+      } else if (currentStage === 2) {
+        const fieldsToValidate = ["issueDate.month", "issueDate.year"];
+        if (!neverExpires) {
+          fieldsToValidate.push("expirationDate.month", "expirationDate.year");
+        }
+
+        isValid = await trigger(fieldsToValidate);
+        if (isValid) {
+          setStageValidation((prev) => ({ ...prev, 2: true }));
+          setCurrentStage(3);
+        }
+      } else if (currentStage === 3) {
+        // Skills are optional, so we can just mark this stage as valid
+        setStageValidation((prev) => ({ ...prev, 3: true }));
+        setCurrentStage(4);
+      }
+    } else if (direction === "prev") {
+      if (currentStage > 1) {
+        setCurrentStage(currentStage - 1);
+      }
+    }
+  };
+
   const handleFormSubmit = (data) => {
-    updateProfileMutation.mutate({
-      api: adding ? "profile/add-certification" : "profile/edit",
-      method: adding ? "POST" : "PATCH",
-      data: { certificate: data },
-    });
+    setSubmitError(null);
+    setShowSuccess(false);
+    const updatedData = {
+      ...data,
+      issueDate: watch("issueDate"),
+      expirationDate: watch("expirationDate"),
+      _id: certificate?._id,
+    }
+    updateProfileMutation.mutate(
+      {
+        api: adding
+          ? "profile/add-certification"
+          : "profile/edit-certification",
+        method: adding ? "POST" : "PATCH",
+        data: updatedData,
+      },
+      {
+        onSuccess: () => {
+          setShowSuccess(true);
+          setTimeout(() => {
+            setSkillInput("");
+            setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
+          }, 3000);
+        },
+        onError: (error) => {
+          setSubmitError(
+            error?.message ||
+              "Failed to save certificate information. Please try again."
+          );
+        },
+      }
+    );
+  };
+
+  const handleDeleteCertificate = () => {
+    updateProfileMutation.mutate(
+      {
+        api: "profile/delete-certification",
+        method: "DELETE",
+        data: { certificationId: certificate?._id },
+      },
+      {
+        onSuccess: () => {
+          setShowSuccess(true);
+          setTimeout(() => {
+            setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
+          }, 3000);
+        },
+        onError: (error) => {
+          setSubmitError(
+            error?.message ||
+              "Failed to delete certificate information. Please try again."
+          );
+        },
+      }
+    );
   };
 
   return (
     <Dialog
+      className="min-w-max"
+      open={open}
+      onOpenChange={setOpen}
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
-      className="min-w-max"
       AlertContent={
         <ModCertificatePresentation
           form={form}
           neverExpires={neverExpires}
-          isValid={isValid}
+          isValid={
+            stageValidation[1] && stageValidation[2] && stageValidation[3]
+          }
           months={months}
           years={years}
           errors={errors}
@@ -194,6 +311,15 @@ export default function ModCertificate({ certificate, adding }) {
           setValue={setValue}
           skills={skills}
           handleNeverExpires={handleNeverExpires}
+          isLoading={isLoading}
+          submitError={submitError}
+          showSuccess={showSuccess}
+          setSubmitError={setSubmitError}
+          currentStage={currentStage}
+          validateStageAndProceed={validateStageAndProceed}
+          stageValidation={stageValidation}
+          setCurrentStage={setCurrentStage}
+          handleDeleteCertificate={handleDeleteCertificate}
         />
       }
     />
