@@ -1,15 +1,16 @@
-import { Bookmark, Settings } from "@mui/icons-material";
+import { Bookmark, Insights, Settings } from "@mui/icons-material";
 import { ChartNoAxesCombined } from "lucide-react";
+import Container from "./Container";
 
 const QuickAccessIcons = [
   {
     icon: Bookmark,
-    className: "text-blue-500",
-    title: "Saved Items",
-    path: "/saved",
+    className: "text-secondary",
+    title: "My Items",
+    path: "/my-items",
   },
   {
-    icon: ChartNoAxesCombined,
+    icon: Insights,
     title: "Analytics",
     path: "/analytics",
   },
@@ -22,10 +23,10 @@ const QuickAccessIcons = [
 
 const QuickAccess = ({ navigateTo }) => {
   return (
-    <div className="p-4 bg-[#1b1f23] w-full rounded-3xl border-[#111] border shadow-lg flex flex-col gap-2">
+    <Container className="p-4 w-full border-[#111] border shadow-lg flex flex-col gap-2">
       {QuickAccessIcons.map((icon, index) => (
         <div key={index} className="flex gap-2 items-center">
-          <icon.icon className={`size-4 ${icon.className ?? ""}`} />
+          <icon.icon sx={{fontSize: 20}} className={icon.className}/>
           <button
             onClick={() => navigateTo(icon.path)}
             className="hover:underline text-sm font-semibold cursor-pointer"
@@ -34,7 +35,7 @@ const QuickAccess = ({ navigateTo }) => {
           </button>
         </div>
       ))}
-    </div>
+    </Container>
   );
 };
 

@@ -120,7 +120,7 @@ const IconWithBadge = ({ icon, currentPath, navigateTo }) => {
       >
         <icon.icon className="text-muted-foreground" sx={{ fontSize: 20 }} />
       </Button>
-      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-secondary text-[10px]">
+      <Badge className="absolute -top-1 -right-1 h-5 font-semibold w-5 flex items-center justify-center bg-secondary text-[10px]">
         {icon.number > 99 ? "99+" : icon.number}
       </Badge>
     </div>

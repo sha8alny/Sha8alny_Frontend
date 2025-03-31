@@ -159,14 +159,6 @@ function ProfileContent({ username }) {
     );
   }
 
-  if (!userProfile.isVisible && !userProfile.isMyProfile && false) {
-    return (
-      <div className="size-full flex items-center justify-center bg-black text-red-400">
-        User profile is private.
-      </div>
-    );
-  }
-
   const strength = determineStrength(userProfile);
   const profileStrength = {
     strength,
