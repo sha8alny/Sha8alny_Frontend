@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * EditPageContainer manages the state and logic for editing company details.
  * It provides input fields for company attributes and handles saving and discarding changes.
  *
@@ -27,7 +31,7 @@ import { useRouter } from "next/navigation";
  */
 
 
-function EditPageContainer({username, logoPreview}){
+function EditPageContainer({username}){
     const [companyName, setCompanyName] = useState("");
     const [companyIndustry, setCompanyIndustry] = useState("");
     const [companyTagline, setCompanyTagline] = useState("");
@@ -66,14 +70,12 @@ function EditPageContainer({username, logoPreview}){
             logo: "", 
             location: companyLocation
         };
-        console.log("name: ", companyName);
-        console.log("type: ", companyType);
 
         try{
             const response = await updateCompany(username, companyData);
             username = companyName;
             handleDiscard();
-            router.push(`/company-page-author/${username}?logo=${encodeURIComponent(logoURL)}`);
+            router.push(`/company-admin/${username}/company-page-author/?logo=${encodeURIComponent(logoURL)}`);
         } 
         catch (err) {
             setErrors({ api: err.message || "Failed to update company" })
@@ -85,7 +87,16 @@ function EditPageContainer({username, logoPreview}){
 
     return(
         <div>
-            <EditPage companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyTagline={companyTagline} setCompanyTagline={setCompanyTagline} companySize={companySize} setCompanySize={setCompanySize} companyType={companyType} setCompanyType={setCompanyType} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation}companyURL={companyURL} setCompanyURL={setCompanyURL} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} onSave={handleSave} onDiscard={handleDiscard} loading={loading} logoPreview={logoPreview} errors={errors} setErrors={setErrors} />
+            <EditPage 
+            companyName={companyName} setCompanyName={setCompanyName} 
+            companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} 
+            companyTagline={companyTagline} setCompanyTagline={setCompanyTagline} 
+            companySize={companySize} setCompanySize={setCompanySize} 
+            companyType={companyType} setCompanyType={setCompanyType} 
+            companyLocation={companyLocation} setCompanyLocation={setCompanyLocation}
+            companyURL={companyURL} setCompanyURL={setCompanyURL} 
+            companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
+            onSave={handleSave} onDiscard={handleDiscard} loading={loading} errors={errors} setErrors={setErrors} />
         </div>
     );
 }
