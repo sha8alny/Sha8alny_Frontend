@@ -6,6 +6,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * A container component for handling post creation, including text input and image upload.
  *
  * @component
@@ -68,22 +72,40 @@ function WritePostContainer({onPostSubmit, logoPreview}){
     const handleSubmit = () => {
         if (!text?.trim() && !file) return; 
         const newPost = {
-            text: text ||"",
-            imageUrl:preview,
-            videoUrl:preview,
+            id: Date.now(), 
+            description: text.trim(),
+            media:preview,
+            media:preview,
+            likes: 0,
+            reposts: 0,
+            views: 0,
+            comments: [],
+            timePosted: new Date().toISOString(),
         };
         onPostSubmit(newPost); 
         setText("");
         setPreview(null);
         setFile(null);
     };
-
-    const handleArticle =()=>{
-        if (!articleText.trim()) return;
-        onPostSubmit({ text: articleText, isArticle: true });
-        setArticleText("");
-        setModalOpen(false);
-    }
+    const handleArticle = () => {
+        if (!articleText.trim()) return; 
+        
+        const newArticle = {
+            id: Date.now(), 
+            description: articleText,
+            likes: 0,
+            reposts: 0,
+            views: 0,
+            comments: [],
+            timePosted: new Date().toISOString(),
+            isArticle: true,
+        };
+    
+        onPostSubmit(newArticle); 
+        setArticleText(""); 
+        setModalOpen(false); 
+    };
+    
     return(
         <div>
             <WritePost text={text} setText={setText} onImageUpload={imageUpload} onVideoUpload={videoUpload} preview={preview} triggerFileInput={triggerFileInput}
