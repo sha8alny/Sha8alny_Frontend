@@ -114,3 +114,13 @@ export const deleteCompany = async (companyUsername) => {
     return "Company deleted successfully";
 };
 
+export const followCompany = async (companyUsername) => {
+    const response = await fetch(`http://localhost:5000/company/${companyUsername}/follow`, {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok) throw new Error("Failed to follow company");
+    return await response.json();
+}
