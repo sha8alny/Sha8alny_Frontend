@@ -1,6 +1,8 @@
 import { useState } from "react";
 import BackButton from "./BackButton";
-import Button from "./Button";
+import { Input } from "@/app/components/ui/Input";
+import { Label } from "@/app/components/ui/Label";
+import { Button } from "@/app/components/ui/Button";
 /**
  * @namespace settings
  * @module settings
@@ -19,29 +21,42 @@ import Button from "./Button";
 
 const DeleteAccountPassConfirmation = ({
   handleDeleteAccountForm,
-  deleteAccountMutation,
   handleDeleteAccount,
   setPassword,
   password
 }) => {
- 
-
   return (
-    <div className="text-text flex flex-col gap-4 bg-foreground rounded-lg w-full max-w-[725px] mx-auto font-sans">
+    <div className="flex flex-col gap-6 w-full max-w-[725px] mx-auto">
       <BackButton handler={handleDeleteAccountForm} />
-      <h1 className="text-primary text-xl font-semibold">Delete account</h1>
-      <p className="text-text text-lg">Enter your password to close this account</p>
-      <form className="flex flex-col gap-1">
-        <label className="text-sm text-text flex flex-col gap-2">Password
-        <input
-          onChange={(e) => setPassword(e.target.value)}
-          className="bg-background rounded-lg p-2"
-          type="password"
-        />
-        </label>
-      </form>
-      <Button content="Delete account" handler={handleDeleteAccount} disabled={!password.trim()} />
+      
+      <div className="space-y-2">
+        <h1 className="text-xl font-semibold text-destructive">Delete account</h1>
+        <p className="text-muted-foreground">Enter your password to close this account</p>
       </div>
+
+      <form className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="bg-background"
+          />
+        </div>
+
+        <Button
+          type="button"
+          variant="destructive"
+          onClick={handleDeleteAccount}
+          disabled={!password.trim()}
+          className="w-full cursor-pointer hover:bg-destructive/80 transition-colors duration-200"
+        >
+          Delete Account
+        </Button>
+      </form>
+    </div>
   );
 };
 

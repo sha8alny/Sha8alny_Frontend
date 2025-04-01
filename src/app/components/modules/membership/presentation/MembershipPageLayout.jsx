@@ -22,7 +22,7 @@ import SettingsNavbarContainer from "../../settings/container/SettingsNavbarCont
 const MembershipPageLayout = ({ children }) => {
   return (
     <div className="bg-background min-h-screen text-text font-sans">
-      <SettingsNavbarContainer />
+      {/* <SettingsNavbarContainer /> */}
       {children}
     </div>
   );

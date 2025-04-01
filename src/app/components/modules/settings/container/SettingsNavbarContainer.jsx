@@ -25,7 +25,7 @@ const SettingsNavbarContainer = () => {
     error,
   } = useQuery({
     queryKey: ["userProfile"],
-    queryFn: () => fetchUserProfile("john"),
+    queryFn: () => fetchUserProfile("exampleuser"),
   });
   
   const {

@@ -125,16 +125,27 @@ const PaymentFormContainer = () => {
           paymentMethod: "card",
           StripeToken: token.id,
         };
+        let response = "dummy"
         if(premiumType == "monthlyPremium"){
 
-          const response = await processPaymentMonthly(paymentData);
+           response = await processPaymentMonthly(paymentData);
         }
         else{
-          const response = await processPaymentOneTime(paymentData);
+           response = await processPaymentOneTime(paymentData);
         }
-        setSuccess(true);
+        if (response.error) {
+          showToast(response.error.message || "Payment failed", false);
+          setCardError(response.error.message);
+        }
+        else{
+          showToast("Payment successful", true);
+          setSuccess(true);
+        } 
       } catch (error) {
-        setCardError(error.message);
+        showToast(
+          error.message || "Payment failed",
+          false
+        );
       } finally {
         setLoading(false);
       }
