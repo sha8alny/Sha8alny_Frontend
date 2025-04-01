@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PostNewJobForm from "../presentation/PostNewJobForm";
 import { postJob } from "../../../../services/companyManagment";
 import { useMutation } from "@tanstack/react-query";
 import SideBarContainer from "../../company-page-author/container/SideBarContainer";
 import Analytics from "../../company-page-author/presentation/Analytics";
 import { useRef } from "react";
+import { useToast } from "@/app/context/ToastContext";
 
 /**
  * PostNewJobContainer component
@@ -34,18 +35,17 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
     };
     const [newJob, setNewJob] = useState({
         title: "",
-        description: "",
         location: "",
         workLocation: "",
         employmentType: "",
+        description: "",
         industry: "",
         experience: "",
         salary: "",
     });
 
     const [errors, setErrors] = useState({});
-    const [alert, setAlert] = useState(null);
-    const companyUsername ="companyUsername";
+    const toast = useToast();
 
     /**
      * Handles input changes and updates the new job state.
@@ -54,9 +54,13 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
      */
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setNewJob({ ...newJob, [name]: value });
+    
+        setNewJob((prevJob) => ({
+            ...prevJob,
+            [name]: name === "salary" ? (value === "" ? "" : Number(value)) : value, // Proper number conversion
+        }));
     };
-
+    
     /**
      * Validates the job form fields.
      * 
@@ -92,10 +96,11 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
             console.log("Validation Errors: ", validationErrors);
             return;
         }
-        setAlert(null);
-        JobSubmit({newJob, username},
+        console.log(typeof newJob.salary, newJob.salary);
+
+        JobSubmit({jobData:newJob,username: username},
              {onSuccess: () => {
-                setAlert({ type: "success", message: "Job posted successfully" });
+                toast("Job posted successfully!", "success");
                 setNewJob({
                     title: "",
                     description: "",
@@ -109,7 +114,7 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
                 setErrors({});
             },
             onError: (error) => {
-                setAlert({ type: "error", message: "Error posting job" });
+                toast("Error posting job",false);
                 console.log("Error Posting Job:",error);
             }}
         );
@@ -130,7 +135,6 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
             isLoading={isLoading}
             handleJobSubmit={handleJobSubmit}
             onBack={onBack}
-            alert={alert}
         />  
         <Analytics />
 
