@@ -6,10 +6,10 @@ import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 import ModHeaderPresentation, {
   ModifyProfilePresentation,
 } from "../presentation/ModHeaderPresentation";
-import { connectUser } from "@/app/services/connectUser";
 import { fetchUserProfile } from "@/app/services/userProfile";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 import { useEffect, useState } from "react";
+import { connectUser } from "@/app/services/connectionManagement";
 
 export default function ModHeader({ userInfo }) {
   const { isMyProfile } = useIsMyProfile();

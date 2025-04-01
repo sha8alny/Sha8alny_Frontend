@@ -1,37 +1,101 @@
 "use client";
-import { likeComment } from "@/app/services/post";
-import { useMutation } from "@tanstack/react-query";
+import {
+  reactToContent,
+  getCommentReplies,
+  addComment,
+} from "@/app/services/post";
+import {
+  useMutation,
+  useInfiniteQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import CommentPresentation from "../presentation/CommentPresentation";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Celebration,
+  CelebrationOutlined,
+  EmojiEmotions,
+  EmojiEmotionsOutlined,
+  Favorite,
+  FavoriteBorder,
+  ThumbUp,
+  ThumbUpOutlined,
+  TipsAndUpdates,
+  TipsAndUpdatesOutlined,
+} from "@mui/icons-material";
+import { followUser } from "@/app/services/connectionManagement";
+
+const Reactions = {
+  Like: {
+    unlikedIcon: ThumbUpOutlined,
+    likedIcon: ThumbUp,
+    likedClassName: "text-secondary",
+    label: "Like",
+  },
+  Celebrate: {
+    unlikedIcon: CelebrationOutlined,
+    likedIcon: Celebration,
+    likedClassName: "text-secondary",
+    label: "Celebrate",
+  },
+  Support: {
+    unlikedIcon: FavoriteBorder,
+    likedIcon: Favorite,
+    likedClassName: "text-secondary",
+    label: "Support",
+  },
+  Love: {
+    unlikedIcon: FavoriteBorder,
+    likedIcon: Favorite,
+    likedClassName: "text-red-500 dark:text-red-400",
+    label: "Love",
+  },
+  Funny: {
+    unlikedIcon: EmojiEmotionsOutlined,
+    likedIcon: EmojiEmotions,
+    likedClassName: "text-secondary",
+    label: "Funny",
+  },
+  Insightful: {
+    unlikedIcon: TipsAndUpdatesOutlined,
+    likedIcon: TipsAndUpdates,
+    likedClassName: "text-yellow-500 dark:text-yellow-400",
+    label: "Insightful",
+  },
+};
 
 export default function CommentContainer({ postId, comment }) {
-  const [isLiked, setIsLiked] = useState(comment?.isLiked || false);
-  const [showAllReplies, setShowAllReplies] = useState(false);
-  const repliesPerPage = 3;
-  const router = useRouter();
-
+  const [isLiked, setIsLiked] = useState(comment?.reaction !== null);
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
-  //   const handleReply = () => {
-  //     if (!replyText.trim()) return;
-  //     onReply(replyText);
-  //     setReplyText("");
-  //     setIsReplying(false);
-  //   };
+  // Use infinite query for proper pagination
+  const {
+    data,
+    isLoading: isLoadingReplies,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["commentReplies", postId, comment?.commentId],
+    queryFn: ({ pageParam = 1 }) =>
+      getCommentReplies(postId, comment?.commentId, pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage || lastPage.length === 0)
+        return undefined;
+      return allPages.length + 1;
+    },
+    enabled: !!comment?.commentId && !comment.isReply, // Only fetch if we have a commentId and it's not a reply itself
+  });
 
-  const hasMoreReplies =
-    comment?.replies && comment.replies.length > repliesPerPage;
+  // Flatten the pages array for display
+  const displayedReplies = data?.pages.flat() || [];
 
-  const displayedReplies = comment?.replies
-    ? showAllReplies
-      ? comment.replies
-      : comment.replies.slice(0, repliesPerPage)
-    : [];
-
-  const toggleReplies = () => {
-    setShowAllReplies(!showAllReplies);
+  const loadMoreReplies = () => {
+    fetchNextPage();
   };
 
   const navigateTo = (username) => {
@@ -67,59 +131,92 @@ export default function CommentContainer({ postId, comment }) {
     }
   };
 
-  const handleLikeMutate = useMutation({
-    mutationFn: likeComment,
+  const handleFollowMutation = useMutation({
+    mutationFn: followUser,
     onSuccess: () => {
-      setIsLiked((prev) => !prev);
+      queryClient.invalidateQueries(["comments", postId]);
     },
     onError: (error) => {
-      // TODO: Handle error appropriately
-      console.error("Error liking comment:", error);
+      console.error("Error following user:", error);
     },
   });
 
-  const replyToComment = false; // Placeholder for the reply function
-
-  // TODO: Reply should refresh the comment replies
-  const handleReplyMutate = useMutation({
-    mutationFn: replyToComment,
+  const handleReactMutation = useMutation({
+    mutationFn: reactToContent,
     onSuccess: () => {
-      // TODO: add refresh logic here
+      queryClient.invalidateQueries(["comments", postId]);
     },
-    onError: () => {
-      // TODO: Handle error appropriately
+    onError: (error) => {
+      console.error("Error reacting to comment:", error);
+    },
+  });
+
+  const handleCommentMutation = useMutation({
+    mutationFn: addComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries([
+        "commentReplies",
+        postId,
+        comment?.commentId,
+      ]);
+      setReplyText("");
+      setIsReplying(false);
+    },
+    onError: (error) => {
+      console.error("Error adding comment/reply:", error);
     },
   });
 
   const handleLike = () => {
-    handleLikeMutate.mutate(postId, comment?._id);
+    handleReactMutation.mutate({
+      postId,
+      commentId: comment?.commentId,
+      reaction: "Like", // TODO : Add dynamic reaction selection
+    });
   };
 
-  const handleReply = (reply) => {
-    handleReplyMutate.mutate(postId, comment?._id, reply);
+  const handleReply = () => {
+    if (!replyText.trim()) return;
+
+    handleCommentMutation.mutate({
+      postId,
+      commentId: comment?.commentId,
+      text: replyText,
+      tags: [],
+    });
   };
 
-  comment.createdAt = new Date(2025, 2, 28).toISOString(); // Placeholder for the comment creation date
-  comment.age = determineCommentAge(comment?.createdAt);
+  const handleFollow = (username) => {
+    handleFollowMutation.mutate(username);
+  };
+
+  const commentAge = determineCommentAge(comment?.time || new Date());
+  const hasRepliesSection =
+    !comment.isReply && (displayedReplies?.length > 0 || isLoadingReplies);
 
   return (
     <CommentPresentation
-      comment={comment}
+      comment={{
+        ...comment,
+        age: commentAge,
+      }}
       isLiked={isLiked}
       onLike={handleLike}
       onReply={handleReply}
       navigateTo={navigateTo}
       postId={postId}
-      showAllReplies={showAllReplies}
-      toggleReplies={toggleReplies}
-      hasMoreReplies={hasMoreReplies}
       displayedReplies={displayedReplies}
-      repliesPerPage={repliesPerPage}
+      isLoadingReplies={isLoadingReplies}
+      hasMoreReplies={hasNextPage}
+      isFetchingMoreReplies={isFetchingNextPage}
+      loadMoreReplies={loadMoreReplies}
       isReplying={isReplying}
       setIsReplying={setIsReplying}
       replyText={replyText}
       setReplyText={setReplyText}
-      handleReply={handleReply}
+      onFollow={handleFollow}
+      hasRepliesSection={hasRepliesSection}
+      userReactions={Reactions}
     />
   );
 }

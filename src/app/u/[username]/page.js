@@ -34,7 +34,7 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { username } = await params;
   return (
-    <div className="w-screen h-screen overflow-auto">
+    <div className="overflow-y-auto">
       <ReactQueryProvider>
         <ProfileContainer username={username}/>
       </ReactQueryProvider>

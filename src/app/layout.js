@@ -6,7 +6,7 @@ import ReactQueryProvider from "./providers/ReactQueryProvider";
 import StripeProvider from "./providers/StripeProvider";
 import Navbar from "./components/layout/NavBar";
 export const metadata = {
-  title: "Shaغlny",
+  title: "Shaغalny",
   description: "i need job",
 };
 
