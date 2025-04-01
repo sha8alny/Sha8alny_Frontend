@@ -5,6 +5,11 @@ import FileUploadContainer from "../container/FileUploadContainer";
 import CheckBoxFieldContainer from "../container/CheckBoxFieldContainer";
 import TagLineContainer from "../container/TagLineContainer";
 
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+
 function CreateCompanySection({companyName, setCompanyName,companyIndustry, setCompanyIndustry,companyTagline, setCompanyTagline, file, setFile, companySize,setCompanySize, companyType,setCompanyType,companyLocation, setCompanyLocation, companyWebsite, setCompanyWebsite, onCreateCompany, companyURL, setCompanyURL, loading, isFormValid, errors, setErrors, isChecked, checkBox, error})
 {
     return (
@@ -24,7 +29,7 @@ function CreateCompanySection({companyName, setCompanyName,companyIndustry, setC
             <div className="flex justify-end">
                 {error && <p role="alert" className="text-red-500">{error}</p>}
                 <button className={`bg-[var(--secondary)] text-[var(--background)] rounded-full cursor-pointer py-2 px-3  mt-2 ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
-                onClick={onCreateCompany} disabled={!isFormValid || loading || !isChecked}>
+                onClick={onCreateCompany} disabled={!isFormValid || loading}>
                 {loading ? "Creating..." : "Create Page"}</button>            
             </div>
         </div>
