@@ -29,6 +29,7 @@ import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
   const { theme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  if (pathName === "/signin" || pathName === "/signup") return null;
 
   const {
     data: userProfile,

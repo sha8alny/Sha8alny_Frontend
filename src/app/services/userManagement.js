@@ -2,18 +2,13 @@
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
 import { fetchWithAuth } from "./userAuthentication";
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) throw new Error("No token found");
-  return token;
-};
+
 
 export const getName = async () => {
   const response = await fetchWithAuth(`${apiURL}/settings/get-name`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -26,7 +21,7 @@ export const getEmail = async () => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
+ 
     },
   });
 
