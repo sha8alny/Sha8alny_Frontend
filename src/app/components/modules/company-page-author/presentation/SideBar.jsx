@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
 "use client";
 import Link from 'next/link'
 import AddIcon from '@mui/icons-material/Add';
@@ -8,14 +12,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
 
-function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, onChangeCover,  onChangeLogo, coverpreview, logoPreview, coverInputRef,  logoInputRef,fileusername}){
+function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, onChangeCover,  onChangeLogo, coverpreview, logo, coverInputRef,  logoInputRef,fileusername}){
     return (
-        <aside className="text-text w-70px flex flex-col mt-5 mx-5 space-y-4 border border-[var(--secondary)] rounded-lg p-4">
+        <aside className="bg-[var(--foreground)] text-text w-70px flex flex-col mt-5 mx-5 space-y-4 border rounded-lg p-4">
             {/*Logo and cover image for company*/}
-            <div className="relative mb-0 min-h-[140px]">
+            <div className="relative mb-0 max-h-[160px]">
                 <div className="w-[250px] h-[120px] bg-gray-700 rounded-lg flex justify-center items-center overflow-hidden  relative">
                     {coverpreview ? (
-                        <img src={coverpreview} alt="company-cover" className="w-full h-full object-cover" />
+                        <img src={coverpreview} alt="cover" className="w-full h-full object-cover" />
                     ) : (
                         <ImageOutlinedIcon style={{ width: "100%", height: "100px", color: "gray" }} />
                     )}
@@ -28,13 +32,13 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
                 </div>
                 <input id="upload-cover" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={coverInputRef} onChange={onChangeCover} />
                 <div className="absolute left-4 bottom-[50px] w-[80px] h-[80px] bg-gray-700 rounded-lg flex justify-center items-center overflow-hidden relative">
-                    {logoPreview ? (
-                        <img src={logoPreview} alt="company-logo" className="w-full h-full object-cover rounded-lg" />
+                    {logo ? (
+                        <img src={logo} alt="logo" className="w-full h-full object-cover rounded-lg" />
                     ) : (
                         <ImageOutlinedIcon style={{ fontSize: "70px", color: "gray" }} />
                     )}
-                    <label htmlFor="upload-logo" className="absolute bottom-[-6px] right-[-8px] cursor-pointer group p-1 bg-gray-800 rounded-full">
-                        <EditIcon style={{ fontSize: "20px" }} />
+                    <label htmlFor="upload-logo" className="absolute bottom-[-4px] right-[-4px] cursor-pointer group p-1 bg-gray-800 rounded-full z-10" >
+                        <EditIcon style={{ fontSize: "18px" }} />
                         <span className="absolute top-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
                             Edit logo
                         </span>
@@ -51,7 +55,7 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
                 <div className="border-b border-[var(--secondary)] pb-2 flex flex-row justify-between items-center">
                     <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all relative" onClick={()=>setModalOpen("create")}>
                         <AddIcon className="transition-transform duration-200 group-hover:scale-110"/>
-                        <span className="absolute left-full ml-2 bg-gray-800 text-white text-xs px-2 py-1  opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm">Create </span>
+                        <span className="absolute left-full ml-2 text-white text-xs px-2 py-1  opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm">Create </span>
                     </button>
                     <div className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all">
                         <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs">View as member</span>
@@ -60,9 +64,9 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
                 </div>
             </div>
             {/*List of items in dashboard*/}
-            <nav className="">
+            <nav>
                 {menuItems.map((item)=>(
-                    <Link key={item.name} href={item.href} className={`group hover:bg-[var(--foreground)] hover:rounded-lg flex items-center gap-2 p-2 ${pathname===item.href ? "bg-[var(--secondary)] rounded-lg" :"hover:bg-[var(--foreground)]"}`} onClick={item.action ? item.action :() => setActive(item.name)} >
+                    <Link key={item.name} href={item.href} className={`group hover:bg-[var(--foreground)] hover:rounded-lg flex items-center gap-2 p-2 ${pathname===item.href ? "bg-red rounded-lg bg-opacity-100" :"hover:bg-[var(--d)]"}`} onClick={item.action ? item.action :() => setActive(item.name)} >
                         {item.icon} {item.name}
                     </Link>))
                 }
