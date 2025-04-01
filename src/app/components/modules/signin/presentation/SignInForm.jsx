@@ -1,5 +1,4 @@
 "use client";
-import ReCAPTCHA from "react-google-recaptcha";
 
 /**
  * SignInForm component
@@ -15,7 +14,6 @@ import ReCAPTCHA from "react-google-recaptcha";
  * @param {Function} props.setPassword - The function to set the password state.
  * @param {boolean} props.rememberMe - The state indicating if the "Remember Me" checkbox is checked.
  * @param {Function} props.setRememberMe - The function to set the "Remember Me" state.
- * @param {Function} props.setRecaptcha - The function to set the reCAPTCHA value.
  * @param {Function} props.handleSubmit - The function to handle form submission.
  * @param {boolean} props.isSubmitting - The state indicating if the form is being submitted.
  * 
@@ -28,7 +26,6 @@ import ReCAPTCHA from "react-google-recaptcha";
  *     setPassword={setPassword}
  *     rememberMe={rememberMe}
  *     setRememberMe={setRememberMe}
- *     setRecaptcha={setRecaptcha}
  *     handleSubmit={handleSubmit}
  *     isSubmitting={isSubmitting}
  *   />
@@ -42,7 +39,6 @@ const SignInForm = ({
     setPassword,
     rememberMe,
     setRememberMe,
-    setRecaptcha,
     handleSubmit,
     isSubmitting}) => {
 
@@ -89,10 +85,6 @@ return(
                  Forget password?
                 </a>
                 </div>
-                <ReCAPTCHA
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                    onChange={(value) => setRecaptcha(value)}
-                    />
                 <button
                     type="submit"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
