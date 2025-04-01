@@ -1,4 +1,4 @@
-function Posts(){
+function PostsContainer(){
     const {
         data: posts,
         isLoading,
@@ -11,4 +11,4 @@ function Posts(){
       });
 }
 
-export default Posts;
+export default PostsContainer;
