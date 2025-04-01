@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -6,15 +10,15 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
-function Post({username, followers, text, imageUrl,videoUrl, likes, liked, comments=[], onLike, onComment, logoPreview}){
+function Post({username, followers, text, imageUrl,videoUrl, likes, liked, comments=[], onLike, onComment, logo}){
     return(
-        <div className="text-text w-145 mt-2">
+        <div className=" text-text mt-2">
             {/*Post Container*/}
-            <div className="mt-4 border border-[var(--secondary)] rounded-lg p-4">
+            <div className="bg-[var(--foreground)] mt-4 border rounded-lg p-4">
                 <div className="flex items-center gap-4 ">
-                    {logoPreview ? (
+                    {logo ? (
                             <img 
-                                src={logoPreview} 
+                                src={logo} 
                                 alt="company-logo" 
                                 className="rounded-full w-[40px] h-[40px] object-cover" 
                             />
@@ -40,11 +44,11 @@ function Post({username, followers, text, imageUrl,videoUrl, likes, liked, comme
                     ) : null}
                 </div>
                 <div className="flex flex-row justify-between items-center mt-2 border-t border-[var(--secondary)] pt-2 ">
-                    <button className="relative group" onClick={onLike}>
+                    <button data-testid="like-button" className="relative group" onClick={onLike}>
                         {liked ? <FavoriteIcon className="text-red-500 cursor-pointer" /> : <FavoriteBorderIcon className="cursor-pointer" />}
                         <span className="text-xs text-white ml-1">{likes}</span>
                     </button>
-                    <button className="relative group" onClick={onComment}>
+                    <button data-testid="comment-modal" className="relative group" onClick={onComment}>
                         <ChatBubbleOutlineIcon className="cursor-pointer"/>
                         <span className="text-xs text-white ml-1">{comments.length}</span>
                     </button>
