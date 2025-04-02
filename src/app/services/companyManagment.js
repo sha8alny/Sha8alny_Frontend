@@ -1,13 +1,22 @@
 
+import { use } from "react";
 import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
 
-export const postJob = async (jobData, companyUsername) => {
+export const postJob = async ({jobData, username}) => {
+    const token=sessionStorage.getItem("accessToken");
+    console.log("token:",token);
+    console.log("jobData:",jobData);
+    console.log("username:",username);
+    const companyUsername =username
     try{
         const postJobResponse = await fetchWithAuth(`${apiURL}/company/${companyUsername}/job`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json",
+            "Authorization": `Bearer ${token.trim()}`,
+          },
+          
           body: JSON.stringify(jobData),
         });
 
@@ -71,6 +80,20 @@ export const getApplication = async (jobId, applicantId) => {
     };
 };
 
+export const updateApplication = async (jobId,applicantId, data) => {
+    try {
+      const response = await fetchWithAuth(`${apiURL}/employers/${jobId}/${applicantId}/application`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) throw new Error("Failed to update application");
+    } catch (error) {
+      console.error("Error updating application:", error);
+    }
+  };
+  
 
 export const createCompany = async (companyData) => {
     const response =await fetch(`${apiURL}/company`,{
