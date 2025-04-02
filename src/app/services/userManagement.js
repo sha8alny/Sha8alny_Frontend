@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "./userAuthentication";
 
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
@@ -98,7 +99,7 @@ export const updateUsername = async ({ newUsername }) => {
 
 export const handleSignup = async ({ username,email,password, isAdmin, captcha, rememberMe }) => {
   try{
-    const signupResponse = await fetch(`${apiURL}/signup`, {
+    const signupResponse = await fetch(`${apiURL}/signup_cross`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({username,email,password, isAdmin, captcha}),
@@ -115,6 +116,37 @@ export const handleSignup = async ({ username,email,password, isAdmin, captcha, 
     throw new Error(error.message);
   }
 };
+
+export const completeProfile = async ({formData, profilePic, coverPic})=>{
+  try{
+    const profileResponse = await fetchWithAuth(`http://localhost:5000/profile/profile-picture`, {
+      method: "PUT",
+      body: profilePic,
+    });
+    if (!profileResponse.ok) throw new Error("Failed to upload profile picture");
+
+    const coverResponse = await fetchWithAuth(`http://localhost:5000/profile/cover-photo`, {
+      method: "PUT",
+      body: coverPic,
+    });
+    if (!coverResponse.ok) throw new Error("Failed to upload cover photo");
+
+    const data = await fetchWithAuth(`${apiURL}/profile/edit`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    if (!data.ok) throw new Error("Failed to complete profile");
+
+    return true;
+
+  }catch(error){
+    throw new Error(error.message);
+  }
+};
+
 
 export const handleSignIn = async ({email,password, rememberMe})=>{
 
