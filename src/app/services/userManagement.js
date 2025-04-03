@@ -119,15 +119,19 @@ export const handleSignup = async ({ username,email,password, isAdmin, captcha, 
 
 export const completeProfile = async ({formData, profilePic, coverPic})=>{
   try{
-    const profileResponse = await fetchWithAuth(`http://localhost:5000/profile/profile-picture`, {
+    const profileFormData = new FormData();
+    profileFormData.append("profilePicture", profilePic);
+    const profileResponse = await fetchWithAuth(`${apiURL}/profile/profile-picture`, {
       method: "PUT",
-      body: profilePic,
+      body: profileFormData,
     });
     if (!profileResponse.ok) throw new Error("Failed to upload profile picture");
 
-    const coverResponse = await fetchWithAuth(`http://localhost:5000/profile/cover-photo`, {
+    const coverFormData = new FormData();
+    coverFormData.append("coverPhoto", coverPic);
+    const coverResponse = await fetchWithAuth(`${apiURL}/profile/cover-photo`, {
       method: "PUT",
-      body: coverPic,
+      body: coverFormData,
     });
     if (!coverResponse.ok) throw new Error("Failed to upload cover photo");
 

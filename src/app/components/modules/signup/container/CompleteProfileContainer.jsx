@@ -5,6 +5,7 @@ import CompleteProfile from "../presentation/CompleteProfile";
 import { useMutation } from "@tanstack/react-query";
 import { completeProfile } from "../../../../services/userManagement";
 import { useRouter } from "next/navigation";
+import { set } from "date-fns";
 
 /** 
  * CompleteProfileContainer component
@@ -27,7 +28,9 @@ const CompleteProfileContainer = () => {
         location: "",
     });
     const [profilePicture, setProfilePicture] = useState(null);
+    const [saveProfilePic, setSaveProfilePic] = useState(null);
     const [coverPicture, setCoverPicture] = useState(null);
+    const [saveCoverPic, setSaveCoverPic] = useState(null);
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
@@ -50,19 +53,22 @@ const CompleteProfileContainer = () => {
         setFormData({ ...formData, [name]: value });
     }   
 
-    
-    const handleImageChange = (e, type) => {
+    const handleImageChange = (e,type) => {
         const file = e.target.files[0];
         if (file) {
-            if (type === "profile") {
-                setProfilePicture(file); // Save as File object
-            }
-            if (type === "cover") {
-                setCoverPicture(file); // Save as File object
-            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if(type === "profile"){
+                    setProfilePicture(reader.result);}
+                    setSaveProfilePic(file);
+                if (type === "cover"){
+                    setCoverPicture(reader.result);
+                    setSaveCoverPic(file);
+                }    
+            };
+            reader.readAsDataURL(file);
         }
     };
-    
 
     const handleLocationSelect = (location) => {
         setFormData({ ...formData, location });
@@ -76,8 +82,8 @@ const CompleteProfileContainer = () => {
         try {
             await handleCompleteProfile.mutateAsync({
                 ...formData,
-                profilePic:profilePicture,
-                coverPic:coverPicture
+                profilePic:saveProfilePic,
+                coverPic:saveCoverPic
             });
             console.log("✅ Profile updated successfully.");
             toast("Profile updated successfully");
