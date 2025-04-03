@@ -1,8 +1,4 @@
-import {
-  ExpandMore,
-  PersonAdd,
-  Send,
-} from "@mui/icons-material";
+import { ExpandMore, PersonAdd, Send } from "@mui/icons-material";
 
 import Image from "next/image";
 import CommentContainer from "../container/CommentContainer";
@@ -28,7 +24,7 @@ export default function CommentPresentation({
   setIsReplying,
   onFollow,
   hasRepliesSection,
-  userReactions
+  userReactions,
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
@@ -52,14 +48,14 @@ export default function CommentPresentation({
                   >
                     {comment?.fullName}
                   </button>
-                  <span className="text-xs text-muted"> • </span>
-                  <span className="text-xs text-muted">
-                    {comment?.relation ?? "2nd"}
-                  </span>
                   <button
                     disabled={comment?.isFollowed}
                     onClick={() => onFollow(comment?.username)}
-                    className={`rounded-2xl items-center flex gap-1 ml-2 px-2 py-1 text-xs ${comment.isFollowed ? "bg-secondary/80 text-background dark:text-primary cursor-default" : "bg-primary/10 hover:bg-primary/20 cursor-pointer"} transition-colors duration-200`}
+                    className={`rounded-2xl items-center flex gap-1 ml-2 px-2 py-1 text-xs ${
+                      comment.isFollowed
+                        ? "bg-secondary/80 text-background dark:text-primary cursor-default"
+                        : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
+                    } transition-colors duration-200`}
                   >
                     <PersonAdd sx={{ fontSize: 12 }} />
                     {comment?.isFollowed ? "Following" : "Follow"}
@@ -67,7 +63,9 @@ export default function CommentPresentation({
                 </div>
                 <span className="text-xs text-muted">{comment?.headline}</span>
               </div>
-              <span className="text-xs self-start text-muted">{comment.age}</span>
+              <span className="text-xs self-start text-muted">
+                {comment.age}
+              </span>
             </div>
             <p className="text-sm">{comment?.text}</p>
           </div>
@@ -79,12 +77,17 @@ export default function CommentPresentation({
               }`}
               onClick={onLike}
             >
-              {isLiked ? (
-                React.createElement((userReactions[comment?.reaction] || userReactions.Like).likedIcon, { sx: { fontSize: 16 }, className: (userReactions[comment?.reaction] || userReactions.Like).likedClassName })
-              ) : (
-                React.createElement((userReactions[comment?.reaction] || userReactions.Like).unlikedIcon, { sx: { fontSize: 16 } })
+              {React.createElement(
+                (userReactions[comment?.reaction] || userReactions.Like).icon,
+                {
+                  sx: { fontSize: "1rem" },
+                  className: isLiked
+                    ? (userReactions[comment?.reaction] || userReactions.Like)
+                        .className
+                    : "",
+                }
               )}
-              <span>{comment?.numReacts}</span>
+              <span className="text-muted">{comment?.numReacts}</span>
             </button>
             <button
               className="text-xs text-muted hover:underline duration-200 cursor-pointer transition-colors"
@@ -98,7 +101,7 @@ export default function CommentPresentation({
             <div className="flex items-end gap-2 mt-2">
               <Textarea
                 placeholder="Write a reply..."
-                className="min-h-[80px] flex-1"
+                className="min-h-[80px] flex-1 text-sm"
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
               />
@@ -108,7 +111,7 @@ export default function CommentPresentation({
                 disabled={!replyText.trim()}
                 className="cursor-pointer bg-secondary/80 dark:text-primary hover:bg-secondary/60 transition-colors duration-200"
               >
-                <Send sx={{fontSize:17}} />
+                <Send sx={{ fontSize: 17 }} />
               </Button>
             </div>
           )}
@@ -119,7 +122,7 @@ export default function CommentPresentation({
         <div className="ml-10 mt-2 border-l border-primary/20 pl-4 space-y-4">
           {isLoadingReplies && !isFetchingMoreReplies ? (
             <div className="flex justify-center p-4">
-              <div className="size-6 border-t-1 animate-spin border-secondary rounded-full mr-2" />
+              <div className="size-6 animate-spin border-2 border-t-transparent border-secondary rounded-full mr-2" />
             </div>
           ) : (
             <>
@@ -138,7 +141,7 @@ export default function CommentPresentation({
                   disabled={isFetchingMoreReplies}
                 >
                   {isFetchingMoreReplies ? (
-                    <div className="size-6 border-t-1 animate-spin border-secondary rounded-full mr-2" />
+                    <div className="size-6 border-2 border-t-transparent animate-spin border-secondary rounded-full mr-2" />
                   ) : (
                     <ExpandMore fontSize="small" className="mr-1" />
                   )}
@@ -178,5 +181,5 @@ export const CommentSkeleton = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

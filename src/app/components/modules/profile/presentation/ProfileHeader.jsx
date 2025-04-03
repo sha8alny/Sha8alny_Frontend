@@ -25,25 +25,24 @@ export default function ProfileHeader({ userProfile }) {
       <div className="w-full h-max rounded-xl">
         <div className="relative w-full flex">
           <div className="absolute top-0 left-0 w-full h-40 bg-gray-700 rounded-t-xl">
-            <Image
-              src={
-                userProfile.coverPhoto ?? "https://picsum.photos/id/11/600/400"
-              }
-              fill
-              alt="Cover Photo"
-              className="rounded-t-xl object-cover"
-            />
+            {userProfile?.coverPhoto && (
+              <Image
+                src={userProfile.coverPhoto}
+                fill
+                alt="Cover Photo"
+                className="rounded-t-xl object-cover"
+              />
+            )}
           </div>
           <div className="relative size-48 z-10 ml-6 bg-gray-500 rounded-full border-8 border-foreground mt-10">
-            <Image
-              src={
-                userProfile.profilePicture ??
-                "https://picsum.photos/id/11/600/400"
-              }
-              alt="User Avatar"
-              fill
-              className="rounded-full"
-            />
+            {userProfile?.profilePicture && (
+              <Image
+                src={userProfile.profilePicture}
+                alt="User Avatar"
+                fill
+                className="rounded-full"
+              />
+            )}
           </div>
         </div>
       </div>
@@ -51,8 +50,10 @@ export default function ProfileHeader({ userProfile }) {
         <div>
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">{userProfile.name}</h1>
-            {!(userProfile?.isMyProfile) && <h6 className="text-muted ml-2">•</h6>}
-            {!(userProfile?.isMyProfile) && (
+            {!userProfile?.isMyProfile && (
+              <h6 className="text-muted ml-2">•</h6>
+            )}
+            {!userProfile?.isMyProfile && (
               <span className="text-muted ml-2">{userProfile?.relation}</span>
             )}
           </div>

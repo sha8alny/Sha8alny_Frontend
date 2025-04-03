@@ -364,7 +364,7 @@ export const ModifyProfilePresentation = ({
       )}
       {currentStage === 1 && (
         <div className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center">
-          <div className="size-12 animate-spin border-t-1 rounded-full border-secondary" />
+          <div className="size-12 animate-spin border-2 border-t-transparent rounded-full border-secondary" />
           Modifying...
         </div>
       )}

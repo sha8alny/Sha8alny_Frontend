@@ -32,7 +32,7 @@ export const createPost = async (postData) => {
 };
 
 export const getPost = async (postId) => {
-  const response = await fetch(`${apiURL}/posts/${postId}`, {
+  const response = await fetchWithAuth(`${apiURL}/posts/${postId}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
@@ -323,4 +323,34 @@ export const searchPosts = async (keyword) => {
   });
   if (!response.ok) throw new Error("Failed to search posts");
   return await response.json();
+};
+
+
+export const determineAge = (createdAt) => {
+  const currentTime = new Date();
+  const commentTime = new Date(createdAt);
+  const timeDifference = currentTime - commentTime;
+  const seconds = Math.floor(timeDifference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (years > 0) {
+    return `${years}y`;
+  } else if (months > 0) {
+    return `${months}m`;
+  } else if (weeks > 0) {
+    return `${weeks}w`;
+  } else if (days > 0) {
+    return `${days}d`;
+  } else if (hours > 0) {
+    return `${hours}h`;
+  } else if (minutes > 0) {
+    return `${minutes}m`;
+  } else {
+    return `${seconds}s`;
+  }
 };
