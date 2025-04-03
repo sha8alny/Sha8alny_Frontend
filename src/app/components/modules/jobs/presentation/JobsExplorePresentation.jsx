@@ -1,6 +1,10 @@
 import JobsCard from "./JobsCard";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobsExplorePresentation component displays job listings with loading, error, and pagination states.
  *
  * @param {Object} props - The component props.

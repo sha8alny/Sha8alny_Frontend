@@ -5,6 +5,10 @@ import ChangePasswordForm from "../presentation/ChangePasswordForm";
 import { useToast } from "@/app/context/ToastContext";
 import { useRouter } from "next/navigation";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * ChangePasswordContainer component handles the logic for changing a user's password.
  * It manages form state, validation, and submission.
  *
@@ -52,7 +56,7 @@ const ChangePasswordContainer = ({ toggleForm }) => {
       toggleForm();
     },
     onError: (error) => {
-      showToast("Failed to update password", false);
+      showToast(`${error}`, false);
     },
   });
 

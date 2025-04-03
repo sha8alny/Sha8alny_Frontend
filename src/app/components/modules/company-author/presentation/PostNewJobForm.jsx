@@ -3,6 +3,10 @@ import { Alert } from "@mui/material";
 import { TextField, MenuItem } from "@mui/material";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * PostNewJobForm component
  * 
  * This component renders a form for posting a new job. It includes fields for job details,

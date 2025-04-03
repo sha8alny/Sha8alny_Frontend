@@ -6,6 +6,10 @@ import SignInForm from "../presentation/SignInForm";
 import { handleSignIn } from "../../../../services/userManagement";
 
 /**
+ * @namespace signin
+ * @module signin
+ */
+/**
  * SignInContainer component handles the user login process.
  * It uses a mutation to call the signin service and handles the success and error responses.
  * On successful login, it redirects the user to the Home page.

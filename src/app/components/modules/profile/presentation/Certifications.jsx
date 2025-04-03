@@ -4,6 +4,10 @@ import Image from "next/image";
 import ModCertificate from "../container/ModCertificate";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that displays a certificate card with organization logo, certificate details, and associated skills
  * @param {Object} props - The component props
  * @param {Object} props.certificate - The certificate object containing details
@@ -26,7 +30,7 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
       <div className="relative size-12 bg-gray-700 rounded-full">
         <Image
           src={
-            certificate.issuingOrganisationLogo ?? "https://picsum.photos/200"
+            certificate?.issuingOrganisationLogo ?? "https://picsum.photos/200"
           }
           fill
           alt="Company Logo"
@@ -35,18 +39,20 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
       </div>
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
-          {certificate.name}{" "}
+          {certificate?.name}{" "}
           {isMyProfile && <ModCertificate certificate={certificate} />}
         </h4>
-        <p>{certificate.issuingOrganization}</p>
+        <p>{certificate?.issuingOrganization}</p>
         <p className="text-muted flex">
           <span>
-            Issued {certificate.issueDate.month} {certificate.issueDate.year} -{" "}
-            Expires {certificate.expirationDate.month} {certificate.expirationDate.year}
+            Issued {certificate?.issueDate?.month?.substring(0,3) + "."}{" "}
+            {certificate?.issueDate?.year}
+            {certificate?.expirationDate &&
+              ` - Expires ${certificate?.expirationDate?.month?.substring(0,3) + "."} ${certificate?.expirationDate?.year}`}
           </span>
         </p>
         <div className="flex gap-2 mt-2">
-          {certificate.skills.map((skill, index) => (
+          {certificate?.skills.map((skill, index) => (
             <span
               key={index}
               className="bg-secondary text-background px-2 py-1 rounded-full text-xs font-bold"
@@ -75,20 +81,24 @@ export default function Certifications({
   isMyProfile,
 }) {
   return (
-    certifications.length > 0 && (
+    (certifications.length > 0 || isMyProfile) && (
       <Container className="border border-[#111] rounded-xl shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
-          Certificates{" "}
-          {isMyProfile && <ModCertificate adding/>}
+          Certificates {isMyProfile && <ModCertificate adding />}
         </h3>
         <div className="space-y-8">
           {(!allCertificates ? certifications.slice(0, 3) : certifications).map(
             (exp, index) => (
               <div className="space-y-8" key={index}>
-                <CertificateCard certificate={exp} isMyProfile={isMyProfile}/>
+                <CertificateCard certificate={exp} isMyProfile={isMyProfile} />
                 {index !== certifications.length - 1 && <hr />}
               </div>
             )
+          )}
+          {isMyProfile && certifications.length === 0 && (
+            <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
+              <p>Add your certifications to let others know more about you. </p>
+            </div>
           )}
 
           {certifications.length > 3 && (

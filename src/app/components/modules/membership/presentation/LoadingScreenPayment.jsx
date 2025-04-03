@@ -1,6 +1,10 @@
 "use client";
 
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * LoadingScreenPayment component renders a full-screen loading indicator
  * with a spinning animation and messages to inform the user that their
  * payment is being processed.

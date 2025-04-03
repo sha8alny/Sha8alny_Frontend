@@ -5,6 +5,10 @@ import CreateCompanySection from "../presentation/CreateCompanySection";
 import { createCompany } from "@/app/services/companyManagment";
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * CreateCompanySectionContainer manages the state and logic for creating a new company.
  * It handles form validation, input changes, and submission while interacting with the `CreateCompanySection` component.
  *

@@ -4,6 +4,10 @@ import { useState } from "react";
 import JobApplicationModalContainer from "../container/JobApplicationModalContainer";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobActions component renders action buttons for a job listing.
  *
  * @component
@@ -16,7 +20,7 @@ import JobApplicationModalContainer from "../container/JobApplicationModalContai
  * @returns {JSX.Element} The rendered JobActions component.
  */
 
-export default function JobActions({ job }) {
+export default function JobActions({ job, handleSaveJob }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleOpenModal = () => setModalOpen(true);
@@ -45,6 +49,8 @@ export default function JobActions({ job }) {
             ? "bg-blue-600 text-white hover:bg-blue-700"
             : "border border-secondary text-secondary hover:bg-blue-100"
         }`}
+
+        onClick = {() => handleSaveJob(job.id) }
       >
         <BookmarkIcon
           className={`h-5 w-5 ${

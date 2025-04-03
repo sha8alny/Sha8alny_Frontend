@@ -12,6 +12,10 @@ import CertificationsContainer from "../container/CertificationsContainer";
 export function ProfileSkeleton() {}
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders the profile page presentation component
  * @param {Object} props - The component props
  * @param {Object} props.userProfile - The user profile data object containing user information
@@ -32,8 +36,8 @@ export default function ProfilePresentation({
 }) {
   return (
     <div>
-      <main className="flex gap-2 p-8 bg-foreground">
-        <section className="flex-[3_1_0]">
+      <main className="flex flex-col md:flex-row gap-10 p-8 md:px-32 bg-background">
+        <section className="md:flex-[3_1_0]">
           <ProfileHeader userProfile={userProfile} isMyProfile={isMyProfile}/>
           <About about={userProfile.about} isMyProfile={isMyProfile}/>
           <ExperienceContainer experience={userProfile.experience} />
@@ -43,10 +47,10 @@ export default function ProfilePresentation({
             certifications={userProfile.certifications}
           />
         </section>
-        <section className="flex-1 rounded-3xl space-y-2">
+        <section className="flex-1 hidden md:block rounded-3xl space-y-2">
           {isMyProfile && (
             <>
-              <ChangeURL username={userProfile.username} />
+              <ChangeURL userInfo={userProfile} />
               <ProfileStrength profileStrength={profileStrength} />
             </>
           )}

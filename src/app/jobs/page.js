@@ -10,13 +10,7 @@ export default function Home() {
       <Head>
         <title>Shaغalny - Job Search Platform</title>
       </Head>
-
-      {/* Navbar */}
-      <div className="sticky top-0 z-50">
-        <header>
-          <Navbar />
-        </header>
-      </div>
+   
 
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row gap-6 ">

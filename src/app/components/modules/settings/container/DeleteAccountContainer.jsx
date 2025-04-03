@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/app/context/ToastContext";
 import { useState } from "react";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * DeleteAccountContainer component handles the logic for deleting a user account.
  * It fetches the user data, manages the delete account mutation, and handles success and error scenarios.
  *

@@ -11,6 +11,10 @@ import { useRef } from "react";
 
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * JobsFormContainer component
  * 
  * This component is responsible for fetching and displaying the list of posted jobs.

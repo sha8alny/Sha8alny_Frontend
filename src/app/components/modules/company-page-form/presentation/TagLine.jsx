@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
 "use client";
 function TagLine({companyTagline, setCompanyTagline}){
     return (

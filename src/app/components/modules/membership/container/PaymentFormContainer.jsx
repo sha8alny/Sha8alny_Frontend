@@ -4,12 +4,21 @@ import {
   useStripe,
   useElements,
   CardNumberElement,
+  CardCvcElement,
+  CardExpiryElement,
 } from "@stripe/react-stripe-js";
-import { processPayment } from "@/app/services/payment";
+import {
+  processPaymentMonthly,
+  processPaymentOneTime,
+} from "@/app/services/payment";
 import PaymentFormPresentation from "../presentation/PaymentFormPresentation";
 import SuccessPaymentPresentation from "../presentation/SuccessPaymentPresentation";
 import { useToast } from "@/app/context/ToastContext";
 
+/**
+ * @namespace membership
+ * @module membership
+ */
 /**
  * PaymentFormContainer component handles the payment form logic and submission.
  * It integrates with Stripe for payment processing and displays either the payment form or success message based on the payment status.
@@ -45,9 +54,9 @@ const PaymentFormContainer = () => {
   const [textColor, setTextColor] = useState("#191919");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [premiumType, setPremiumType] = useState("premiumMonthly");
+  const [premiumType, setPremiumType] = useState("monthlyPremium");
   const [success, setSuccess] = useState(false);
-  
+
   // price calculations logic
   const prices = { monthly: 9.99, annual: 99.99 };
   const monthlyCost = prices.monthly;
@@ -98,8 +107,7 @@ const PaymentFormContainer = () => {
     }
 
     const { token, error } = await stripe.createToken(
-      elements.getElement(CardNumberElement),
-      { name, addressCountry: country }
+      elements.getElement(CardNumberElement)
     );
     setLoading(true);
 
@@ -115,12 +123,29 @@ const PaymentFormContainer = () => {
         const paymentData = {
           planId: premiumType,
           paymentMethod: "card",
-          stripeToken: token.id,
+          StripeToken: token.id,
         };
-        const response = await processPayment(paymentData);
-        setSuccess(true);
+        let response = "dummy"
+        if(premiumType == "monthlyPremium"){
+
+           response = await processPaymentMonthly(paymentData);
+        }
+        else{
+           response = await processPaymentOneTime(paymentData);
+        }
+        if (response.error) {
+          showToast(response.error.message || "Payment failed", false);
+          setCardError(response.error.message);
+        }
+        else{
+          showToast("Payment successful", true);
+          setSuccess(true);
+        } 
       } catch (error) {
-        setCardError(error.message);
+        showToast(
+          error.message || "Payment failed",
+          false
+        );
       } finally {
         setLoading(false);
       }

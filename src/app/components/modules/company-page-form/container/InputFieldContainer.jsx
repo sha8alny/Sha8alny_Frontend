@@ -4,6 +4,10 @@ import InputField from "../presentation/InputField";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * InputFieldContainer manages input fields related to company information.
  * It handles validation for required fields (company name and industry) and updates the state accordingly.
  *
