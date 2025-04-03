@@ -41,11 +41,14 @@ const SignInContainer = () => {
     loginMutation.mutate(
       { email, password, rememberMe },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          if (data.success) {
           toast("Welcome back!");
           setTimeout(() => {
             router.push("/");
-          }, 3000);
+          }, 3000);}
+          else{
+            toast("Incorrect email or password",false);}
         },
         onError: (error) => alert(error.message),
       }

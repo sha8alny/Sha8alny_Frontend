@@ -169,8 +169,10 @@ export const handleSignIn = async ({email,password, rememberMe})=>{
       console.log("accessToken",sessionStorage.getItem("accessToken"));
       return {success:true};
     }
+    return {success:false, message:"Login failed"};
   }catch(error){
     console.error(error);
+    return {success:false, message:error.message};
   }
 
 };
