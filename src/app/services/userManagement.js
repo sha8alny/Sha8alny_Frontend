@@ -34,9 +34,8 @@ export const deleteAccount = async (password) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-      Password: password,
     },
+    body: JSON.stringify({ password }),
   });
 
   if (!response.ok) throw new Error("Failed to delete account");
