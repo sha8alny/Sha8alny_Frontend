@@ -3,6 +3,23 @@ import ResultsCard from "@/app/components/modules/search/presentation/ResultCard
 import { Briefcase } from "lucide-react";
 import { JobCard } from "@/app/components/modules/jobs/presentation/JobsCard";
 import { normalizeJob } from "@/app/utils/normalizeJob";
+/**
+ * JobSectionAllPresentation Component
+ * 
+ * This component is responsible for displaying a section of job listings. It handles
+ * loading states, error states, and renders a list of job cards or a message if no jobs are found.
+ * 
+ * @namespace search
+ * @module search
+ * 
+ * @param {Object} props - The props object.
+ * @param {Array} props.jobs - An array of job objects to be displayed. Each job object is normalized before rendering.
+ * @param {boolean} props.isLoading - A flag indicating whether the job data is currently loading.
+ * @param {boolean} props.isError - A flag indicating whether there was an error loading the job data.
+ * @param {Function} props.onViewMore - A callback function triggered when the "View all job results" button is clicked.
+ * 
+ * @returns {JSX.Element} The rendered JobSectionAllPresentation component.
+ */
 
  const JobSectionAllPresentation = ({ jobs, isLoading, isError, onViewMore }) => {
   if (isError) {

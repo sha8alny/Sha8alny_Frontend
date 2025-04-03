@@ -1,9 +1,39 @@
 "use client";
 
-import { SearchLayout } from "@/app/components/modules/search/presentation/SearchLayout";
-import { CompanySectionAllContainer } from "@/app/components/modules/search/container/CompanySectionAllContainer";
+import SearchLayout  from "@/app/components/modules/search/presentation/SearchLayout";
+import  CompanySectionAllContainer  from "@/app/components/modules/search/container/CompanySectionAllContainer";
 import PeopleSectionAllContainer  from "@/app/components/modules/search/container/PeopleSectionAllContainer";
 import JobSectionAllContainer from "../container/JobSectionAllContainer";
+/**
+ * @namespace search
+ * @module search
+ */
+
+/**
+ * AllPagePresentation component renders the main layout for the search page, 
+ * including a sidebar with navigation links and main content sections for people, 
+ * companies, jobs, and posts.
+ *
+ * @function AllPagePresentation
+ * @param {Object} props - The component props.
+ * @param {string} props.activeSection - The currently active section ID.
+ * @param {Array} props.sections - An array of section objects, each containing an `id` and `label`.
+ * @param {Function} props.setActiveSection - A function to set the active section.
+ * @param {string} props.query - The search query string.
+ * @returns {JSX.Element} The rendered AllPagePresentation component.
+ */
+
+/**
+ * SidebarLink component renders a single link in the sidebar navigation.
+ *
+ * @function SidebarLink
+ * @param {Object} props - The component props.
+ * @param {string} props.href - The href attribute for the link.
+ * @param {React.ReactNode} props.children - The content of the link.
+ * @param {boolean} props.active - Indicates whether the link is active.
+ * @param {Function} props.handler - A function to handle the click event and set the active section.
+ * @returns {JSX.Element} The rendered SidebarLink component.
+ */
 
  function AllPagePresentation({ activeSection, sections, setActiveSection, query }) {
   const SidebarContent = (
