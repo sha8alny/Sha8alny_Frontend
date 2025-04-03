@@ -7,8 +7,30 @@ import {
 import { Badge } from "@/app/components/ui/Badge";
 import { MapPin, Users, Calendar } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
+/**
+ * @namespace search
+ * @module search
+ * 
+ * @description
+ * The `CompanyCardPresentation` component is a presentational component that displays
+ * a company's information in a card format. It includes the company's logo, username,
+ * industry, description, location, founding date, number of followers, and a follow button.
+ * It also provides interactivity for navigating to the company's page and toggling the follow state.
+ * 
+ * @param {Object} props - The props object for the component.
+ * @param {string} props.companyUsername - The username of the company.
+ * @param {string} [props.logo="/placeholder.svg?height=48&width=48"] - The URL of the company's logo.
+ * @param {string} props.industry - The industry the company belongs to.
+ * @param {string} props.description - A brief description of the company.
+ * @param {string} props.location - The location of the company.
+ * @param {string} props.foundingDate - The founding date of the company.
+ * @param {number} props.numFollowers - The number of followers the company has.
+ * @param {boolean} props.isFollowed - Indicates whether the user is following the company.
+ * @param {Function} props.onNavigateToCompany - Callback function triggered when navigating to the company's page.
+ * @param {Function} props.onFollowClick - Callback function triggered when the follow button is clicked.
+ */
 
-export function CompanyCardPresentation({
+ function CompanyCardPresentation({
   companyUsername,
   logo = "/placeholder.svg?height=48&width=48",
   industry,
@@ -27,7 +49,7 @@ export function CompanyCardPresentation({
   };
 
   return (
-    <div className="border-t dark:border-gray-500 py-3 hover:bg-hover p-3 cursor-pointer">
+    <div className="border-t dark:border-gray-500 py-3 hover:bg-hover p-3 cursor-pointer  duration-200">
       <div className="flex items-start gap-3">
         <Avatar
           className="w-12 h-12 cursor-pointer"
@@ -82,3 +104,4 @@ export function CompanyCardPresentation({
     </div>
   );
 }
+export default CompanyCardPresentation;

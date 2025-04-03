@@ -1,8 +1,30 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import AllPagePresentation from "../presentation/AllPagePresentation";
 import { useSearchParams } from "next/navigation";
+
+/**
+ * @namespace search
+ * @module search
+ */
+/**
+ * AllPageContainer Component
+ *
+ * This component serves as a container for the "All Page" functionality. It manages the active section state,
+ * handles scroll-based section activation, and passes relevant props to the presentation component.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered AllPageContainer component.
+ *
+ * @description
+ * - Tracks the active section based on scroll position.
+ * - Retrieves the search query from the URL using `useSearchParams`.
+ * - Passes the active section, sections list, and query to the presentation component.
+ *
+ */
+
 function AllPageContainer() {
   const [activeSection, setActiveSection] = useState("people");
   const searchParams = useSearchParams();

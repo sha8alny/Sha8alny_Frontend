@@ -1,8 +1,21 @@
 import ResultsCard from "@/app/components/modules/search/presentation/ResultCard";
 import { Briefcase } from "lucide-react";
-import { CompanyCardContainer } from "../container/CompanyCardContainer";
+import  CompanyCardContainer  from "../container/CompanyCardContainer";
 
-export const CompanySectionAllPresentation = ({
+/**
+ * @namespace search
+ * @module search
+ * @description A presentation component for displaying a section of company results.
+ *
+ * @param {Object} props - The props object.
+ * @param {Array} props.companies - An array of company objects to display.
+ * @param {boolean} props.isLoading - A flag indicating whether the data is still loading.
+ * @param {boolean} props.isError - A flag indicating whether there was an error loading the data.
+ * @param {Function} props.onViewMore - A callback function triggered when the "View More" button is clicked.
+ *
+ * @returns {JSX.Element} The rendered CompanySectionAllPresentation component.
+ */
+ const CompanySectionAllPresentation = ({
   companies,
   isLoading,
   isError,
@@ -42,3 +55,5 @@ export const CompanySectionAllPresentation = ({
     </ResultsCard>
   );
 };
+
+export default CompanySectionAllPresentation;

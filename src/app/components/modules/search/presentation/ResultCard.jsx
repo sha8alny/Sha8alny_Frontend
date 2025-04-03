@@ -1,5 +1,18 @@
 "use client";   
 import ResultCardSkeleton from "@/app/components/modules/search/presentation/ResultCardSkeleton";
+/**
+ * @namespace search
+ * @module search
+ * @description A reusable card component for displaying search results with optional loading state and "View More" functionality.
+ *
+ * @param {Object} props - The properties object.
+ * @param {string} props.title - The title of the result card.
+ * @param {React.ReactNode} props.icon - The icon to display next to the title.
+ * @param {React.ReactNode} props.children - The content to display inside the card.
+ * @param {Function} [props.onViewMore] - Callback function triggered when the "View More" button is clicked.
+ * @param {string} [props.viewMoreText] - The text to display on the "View More" button.
+ * @param {boolean} [props.isLoading] - Flag to indicate whether the card is in a loading state.
+ */
 
 function ResultsCard({ title, icon, children, onViewMore, viewMoreText, isLoading }) {
   if (isLoading) {

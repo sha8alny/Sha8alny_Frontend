@@ -1,8 +1,22 @@
 import ResultsCard from "@/app/components/modules/search/presentation/ResultCard";
 import { User } from "lucide-react";
 import  PersonCardContainer  from "../container/PersonCardContainer";
+/**
+ * @namespace search
+ * @module search
+ * 
+ * @description
+ * The `PeopleSectionAllPresentation` component is a presentation component that displays a list of user profiles
+ * in a card format. It handles loading, error, and empty states, and allows for viewing more results.
+ * 
+ * @param {Object} props - The props object.
+ * @param {Array} props.users - An array of user objects to display. Each user object should contain properties like `id`, `username`, `name`, `position`, `company`, `headline`, `about`, and `location`.
+ * @param {boolean} props.isLoading - A flag indicating whether the data is currently loading.
+ * @param {boolean} props.isError - A flag indicating whether there was an error loading the data.
+ * @param {Function} props.onViewMore - A callback function triggered when the "View all people results" button is clicked.
+ */
 
-export const PeopleSectionAllPresentation = ({
+ const PeopleSectionAllPresentation = ({
   users,
   isLoading,
   isError,
@@ -45,3 +59,4 @@ export const PeopleSectionAllPresentation = ({
     </ResultsCard>
   );
 };
+export default PeopleSectionAllPresentation;
