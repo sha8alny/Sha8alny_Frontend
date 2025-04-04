@@ -34,7 +34,7 @@ import CompanyListContainer from "../container/CompanyListContainer";
   onCreateCompany,
 }) {
 return (
-    <div className="flex flex-col  w-full">
+    <div className="flex flex-col min-h-screen  w-full">
     <div className="flex-grow space-y-6 p-4">
       <div className="flex items-center justify-between p-4 flex-wrap">
         <h1 className="text-2xl font-bold tracking-tight text-text w-full sm:w-auto mb-2 sm:mb-0">
