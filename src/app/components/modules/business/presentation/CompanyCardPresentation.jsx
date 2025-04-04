@@ -29,7 +29,7 @@ import { MapPin, ExternalLink } from "lucide-react";
   };
 
   return (
-    <Card className="overflow-hidden p-2 transition-all hover:shadow-md bg-foreground border-0 shadow-xl">
+    <Card className="overflow-hidden p-2 transition-all hover:shadow-md bg-foreground border-0 ">
       <CardHeader className="p-4 pb-0">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
@@ -48,7 +48,7 @@ import { MapPin, ExternalLink } from "lucide-react";
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-4 pt-0">
         <div className="space-y-2">
           <div className="flex items-center text-sm text-muted-foreground">
             <MapPin className="mr-2 h-4 w-4" />

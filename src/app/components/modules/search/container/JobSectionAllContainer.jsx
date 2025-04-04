@@ -14,9 +14,11 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
   const router = useRouter();
 
   const handleViewMore = () => {
-    router.push("/jobs?q=" + query);
+    router.push("/jobs?keyword=" + query);
   };
-
+  const handleJobClick = (jobId) => {
+    router.push("/jobs/" + jobId);
+  }
   const normalizedJobs = jobs?.map((job) => normalizeJob(job)) || [];
 
   return (
@@ -25,6 +27,7 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
       isLoading={isLoading}
       isError={isError}
       onViewMore={handleViewMore}
+      handleJobClick={handleJobClick}
     />
   );
 };
