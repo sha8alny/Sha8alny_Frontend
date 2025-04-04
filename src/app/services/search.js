@@ -1,4 +1,4 @@
-const apiURL = "http://localhost:5000";
+const apiURL  = process.env.NEXT_PUBLIC_API_URL;
 import { fetchWithAuth } from "./userAuthentication";
 
 export const searchCompany = async (text, pageNum) => {
