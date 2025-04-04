@@ -1,4 +1,7 @@
-
+/**
+ * @namespace layout
+ * @module layout
+ */
 /**
  * Footer component that renders the site's footer section.
  * 
@@ -9,7 +12,7 @@
  */
 export default function Footer() {
   return (
-    <footer className="bg-background border border-[#111] rounded-2xl p-4 mt-2">
+    <footer className="bg-foreground w-full border border-[#111] rounded-2xl p-4 mt-2">
       <div className="flex flex-wrap gap-2 text-xs text-muted">
         <a href="#" className="hover:text-secondary">
           About

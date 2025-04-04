@@ -1,27 +1,85 @@
 
+import { fetchWithAuth } from "@/app/services/userAuthentication";
 const apiURL  = process.env.NEXT_PUBLIC_API_URL;
 
 
 export const fetchJobListings = async ({ pageParam = 1 }) => {
-    const itemsPerPage = 5;
-    const url = new URL(
-      `${apiURL}/jobs/search/${pageParam}`
-    );
-    url.searchParams.append("limit", itemsPerPage);
-    //console.log(url.toString());
-    const response = await fetch(url.toString());
+  const itemsPerPage = 5;
+  const url = new URL(
+    `${apiURL}/jobs/search/${pageParam}`
+  );
+  url.searchParams.append("limit", itemsPerPage);
   
+  try {
+    const response = await fetchWithAuth(url.toString());
+    
+    if (response.status === 204) {
+      return { data: [], nextPage: null };
+    }
+    
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  
+    
     const data = await response.json();
-  
+    
     return { data, nextPage: data.length === itemsPerPage ? pageParam + 1 : null };
+  } catch (error) {
+    console.error("Error fetching job listings:", error);
+    throw error;
+  }
+};
+
+
+  export const fetchJobListingsExperimental = async ({ 
+    pageParam = 1, 
+    filters = {},
+    sortBy = null,
+    itemsPerPage = 5 
+  }) => {
+    const url = new URL(`${apiURL}/jobs/search/${pageParam}`);
+    
+    // Add pagination limit
+    url.searchParams.append("limit", itemsPerPage);
+    
+    // Add any filters from the filters object
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        url.searchParams.append(key, value);
+      }
+    });
+    
+    // Add sorting if provided
+    if (sortBy) {
+      url.searchParams.append("sort", sortBy);
+    }
+    
+    try {
+      const response = await fetch(url.toString());
+      
+      if (response.status === 204) {
+        return { data: [], nextPage: null };
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      return { 
+        data, 
+        nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
+        currentPage: pageParam
+      };
+    } catch (error) {
+      console.error("Error fetching job listings:", error);
+      throw error;
+    }
   };
 
   export const fetchAppliedJobs = async () => {
-    const response = await fetch(`${apiURL}/jobs/applied`);
+    const response = await fetchWithAuth(`${apiURL}/jobs/applied`);
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -37,7 +95,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
     );
     url.searchParams.append("limit", itemsPerPage);
     //console.log(url.toString());
-    const response = await fetch(url.toString());
+    const response = await fetchWithAuth(url.toString());
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -49,7 +107,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
   };
   
   export const fetchJobDetails = async (id) => {
-    const response = await fetch(`${apiURL}/jobs/${id}`);
+    const response = await fetchWithAuth(`${apiURL}/jobs/${id}`);
   
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -69,7 +127,7 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
       formData.append("resume", resume);
     }
   
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${apiURL}/jobs/${jobId}/apply`,
       {
         method: "POST",
@@ -83,6 +141,17 @@ export const fetchJobListings = async ({ pageParam = 1 }) => {
     }
   };
   
+  export const saveJob = async (jobId) => {
+    const response = await fetchWithAuth(`${apiURL}/jobs/${jobId}/save`, {
+      method: "POST",
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  
+    return response.json();
+  };
 
 
 export const fetchJobListingsPageNumber = async ({ pageParam = 1 }) => {
@@ -92,7 +161,7 @@ export const fetchJobListingsPageNumber = async ({ pageParam = 1 }) => {
   );
 
 
-  const response = await fetch(url.toString());
+  const response = await fetchWithAuth(url.toString());
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
   }

@@ -1,5 +1,9 @@
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * JobError component displays an error message with an option to reload the page.
  *
  * @param {Object} props - The component props.

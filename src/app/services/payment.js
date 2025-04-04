@@ -1,22 +1,10 @@
+import { fetchWithAuth } from "./userAuthentication";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const getToken = () => {
-  const token = localStorage.getItem("token") || "mock-token";
-  // if (!token) throw new Error("No token found");
-  return token;
-};
-
 export const fetchSubscription = async () => {
-  const authToken = getToken();
-
-  if (!authToken) {
-    throw new Error("User not authenticated");
-  }
-
-  const response = await fetch(`${API_URL}/subscriptions`, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
+  const response = await fetchWithAuth(`${API_URL}/subscriptions`, {
+    method: "GET",
   });
 
   if (!response.ok) throw new Error("Failed to fetch subscription data");
@@ -24,16 +12,8 @@ export const fetchSubscription = async () => {
 };
 
 export const fetchPlansDetails = async () => {
-  const authToken = getToken();
-
-  if (!authToken) {
-    throw new Error("User not authenticated");
-  }
-
-  const response = await fetch(`${API_URL}/plans`, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
+  const response = await fetchWithAuth(`${API_URL}/plans`, {
+    method: "GET",
   });
 
   if (!response.ok) throw new Error("Failed to fetch subscription data");
@@ -41,48 +21,104 @@ export const fetchPlansDetails = async () => {
 };
 
 export const cancelSubscription = async () => {
-  const authToken = getToken();
-
-  if (!authToken) {
-    throw new Error("User not authenticated");
-  }
-
-  const response = await fetch(`${API_URL}/subscriptions/cancel`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
-  });
-
-  if (!response.ok) throw new Error("Failed to cancel subscription");
-  return response.json();
-};
-
-export const processPayment = async (paymentData) => {
   try {
-    const authToken = getToken(); 
-    
-    if (!authToken) {
-      throw new Error("User not authenticated");
-    }
-
-    const response = await fetch(`${API_URL}/subscriptions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken}`,
-      },
-      body: JSON.stringify({
-        ...paymentData,
-        token: authToken, 
-      }),
+    const response = await fetchWithAuth(`${API_URL}/subscriptions/cancel`, {
+      method: "DELETE",
     });
 
     const result = await response.json();
-    if (!response.ok) throw new Error(result.message || "Payment failed");
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to cancel subscription');
+    }
 
     return result;
+    
   } catch (error) {
-    throw error;
+    throw new Error(error.message || 'Failed to cancel subscription');
   }
+};
+
+export const processPaymentMonthly = async (paymentData, maxRetries = 3) => {
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(
+        "http://sha8alny.uaenorth.cloudapp.azure.com:5000/api/subscriptions/monthly",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+          body: JSON.stringify(paymentData),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Payment failed");
+      }
+
+      return result;
+    } catch (error) {
+      console.log("Error:", error);
+      if (error.message !== "Failed to fetch") {
+        return { error };
+      }
+      lastError = error;
+
+      if (attempt < maxRetries) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * Math.pow(2, attempt - 1))
+        );
+      }
+    }
+  }
+
+  throw lastError;
+};
+export const processPaymentOneTime = async (paymentData, maxRetries = 3) => {
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(
+        "http://sha8alny.uaenorth.cloudapp.azure.com:5000/api/subscriptions/oneTime",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+          body: JSON.stringify(paymentData),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Payment failed");
+      }
+
+      return result;
+    } catch (error) {
+      console.log("Error:", error);
+
+      if (error.message !== "Failed to fetch") {
+        return { error };
+      }
+      lastError = error;
+
+      if (attempt < maxRetries) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * Math.pow(2, attempt - 1))
+        );
+      }
+    }
+  }
+
+  throw lastError;
 };

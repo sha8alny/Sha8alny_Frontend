@@ -4,6 +4,10 @@ import ContactsOutlined from "@mui/icons-material/ContactsOutlined";
 import { Button } from "@/app/components/ui/Button";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * JobsForm component
  * 
  * This component renders a list of jobs. It displays a loading indicator while the jobs are being fetched.

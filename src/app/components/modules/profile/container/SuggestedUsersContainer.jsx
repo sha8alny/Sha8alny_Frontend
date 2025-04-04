@@ -1,5 +1,9 @@
+/**
+ * @namespace profile
+ * @module profile
+ */
 'use client';
-import SuggestedUsers from "@/app/components/layout/SuggestedUsers";
+import SuggestedUsers, { SuggestedUsersSkeleton } from "@/app/components/layout/SuggestedUsers";
 import { useRouter } from "next/navigation";
 
 export default function SuggestedUsersContainer({ title }) {
@@ -42,5 +46,16 @@ export default function SuggestedUsersContainer({ title }) {
       image: "https://media.licdn.com/dms/image/v2/D4E03AQGf0fmYLHNYXQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1682634168413?e=1747872000&v=beta&t=MrpOdpBk_H_dBkO7McUamkzptaVLk_K3RbGZJyUqMEA",
     },
   ];
+  const isLoading = false;
+  const isError = false;
+
+  if (isLoading) {
+    return <SuggestedUsersSkeleton title={title} isLoading={isLoading} />;
+  }
+
+  if (isError) {
+    return <SuggestedUsersSkeleton title={title} isLoading={isLoading} />;
+  }
+  
   return <SuggestedUsers title={title} users={PeopleYouMayKnow} onClick={navigateToProfile} />;
 }

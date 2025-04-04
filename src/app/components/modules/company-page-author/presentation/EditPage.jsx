@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
 "use client";
 
 import EditInputFieldContainer from "../container/EditInputFieldContainer";

@@ -3,6 +3,10 @@ import MembershipCardContainer from "../container/MembershipCardContainer";
 import MembershipStatus from "./MembershipStatus";
 import MembershipPageLayout from "./MembershipPageLayout";
 /**
+ * @namespace membership
+ * @module membership
+ */
+/**
  * MembershipPage component displays the membership dashboard with current plan details and options to upgrade or cancel the subscription.
  * @component
  * @param {Object} props - The component props.
@@ -27,8 +31,12 @@ const MembershipPage = ({
   handleCancelSubscription,
   isCancelling,
   handleUpgrade,
+  statusIsLoading,
+  statusError,
 }) => {
+
   return (
+    
     <MembershipPageLayout>
       <div className="flex p-4 flex-col gap-4">
         <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -39,6 +47,8 @@ const MembershipPage = ({
           renewalDate={renewalDate}
           isMissed={isMissed}
           freePlanDetails={freePlanDetails}
+          statusIsLoading={statusIsLoading}
+          statusError={statusError}
         />
 
         <div className="flex flex-col items-center  md:flex-row gap-6 justify-center mt-5">

@@ -1,5 +1,9 @@
 "use client";
 /**
+ * @namespace admin
+ * @module admin
+ */
+/**
  * FlaggedJobModal component displays the details of a flagged job in a modal.
  *
  * @param {Object} props - The component props.

@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
 import EmergencyRoundedIcon from '@mui/icons-material/EmergencyRounded';
 function SelectField({label, name, options, required, optionlabel, selectedvalue, onChange}) {
     return (

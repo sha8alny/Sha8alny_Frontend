@@ -2,6 +2,10 @@ import Container from "@/app/components/layout/Container";
 import { Shield } from "lucide-react";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that displays a profile strength indicator with a progress bar and checklist.
  * 
  * @component

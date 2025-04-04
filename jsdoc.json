@@ -1,12 +1,54 @@
 {
   "tags": {
-    "allowUnknownTags": true
+    "allowUnknownTags": true,  
+    "dictionaries": ["jsdoc", "closure"] 
   },
   "source": {
-    "include": ["./src/app/components"],
-    "includePattern": ".(jsx|js|ts|tsx)$"
+    "include": [
+      "./src/app/components/layout",    
+      "./src/app/components/modules",   
+      "./src/app/components/ui"         
+    ],
+    "includePattern": "\\.(jsx|js|tsx|ts)$",  
+    "excludePattern": "(node_modules|__tests__|\\.(test|spec)\\.(js|jsx|ts|tsx)$)"  
   },
   "opts": {
-    "destination": "./docs"
+    "destination": "./docs",   
+    "recurse": true,        
+    "template": "node_modules/docdash",  
+    "readme": "README.md"      
+  },
+  "plugins": [
+    "plugins/markdown",        
+    "node_modules/jsdoc-react"  
+  ],
+  "templates": {
+    "cleverLinks": true,        
+    "monospaceLinks": false,    
+    "default": {
+      "outputSourceFiles": false 
+    },
+    "docdash": {
+      "static": true,         
+      "sort": true,            
+      "collapse": true,       
+      "sections": true,       
+      "search": true,          
+      "menu": {
+        "namespaces": {
+          "collapsed": false, 
+          "display": "hierarchical" 
+        },
+        "modules": {
+          "collapsed": false,  
+          "display": "list"     
+        }
+      }
+    }
+  },
+  "markdown": {
+    "parser": "gfm", 
+    "hardwrap": true,      
+    "idInHeadings": true       
   }
 }

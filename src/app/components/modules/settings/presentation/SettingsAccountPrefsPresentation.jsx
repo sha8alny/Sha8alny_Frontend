@@ -1,6 +1,10 @@
 import SettingsCard from "./SettingsCard";
 
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsAccountPrefsPresentation component renders the account preferences settings.
  *
  * @param {Object} props - The component props.

@@ -3,6 +3,10 @@ import { useState } from "react";
 import SelectField from "../presentation/SelectField";
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * SelectFieldContainer manages the state for two dropdown fields: Organization Size and Organization Type.
  * It provides the selected values and updates them when the user selects an option.
  *

@@ -5,6 +5,10 @@ import { Label } from "@/app/components/ui/Label";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/app/components/ui/Select";
 import { Button } from "@/app/components/ui/Button";
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * PostNewJobForm component
  * 
  * This component renders a form for posting a new job. It includes fields for job details,

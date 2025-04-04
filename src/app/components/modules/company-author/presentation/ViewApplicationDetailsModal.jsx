@@ -17,6 +17,10 @@ import { Calendar, FileText, Mail, MapPin, Phone } from "lucide-react"
 import { X } from "lucide-react";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * ViewApplicationDetailsModal component
  * 
  * This component displays the details of a job application in a modal dialog.

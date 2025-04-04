@@ -4,7 +4,12 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import ChatIcon from "@mui/icons-material/Chat";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import MembershipStatusSkeleton from "./MembershipStatusSkeleton";
 
+/**
+ * @namespace membership
+ * @module membership
+ */
 /**
  * MembershipStatus component displays the current membership plan status of the user.
  *
@@ -20,19 +25,22 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
  * @returns {JSX.Element} The MembershipStatus component.
  */
 
-
 const MembershipStatus = ({
   plan,
   limits,
   renewalDate,
   isMissed,
-  freePlanDetails
+  freePlanDetails,
+  statusIsLoading,
+  statusError,
 }) => {
-  const isPremium = plan === "premium";
+  console.log("current plan", plan);
+  const isPremium = plan === "monthlyPremium" || plan === "oneTimePremium";
+  console.log("isPremium", isPremium);
   const isExpiredPremium = isMissed;
   const goldText = "text-[#F0A24F]";
   const greenText = "text-green-500";
-  
+  renewalDate = new Date(renewalDate).toLocaleDateString();
 
   return (
     <div className="mx-auto flex bg-foreground w-full max-w-[725px] p-4 rounded-2xl shadow-2xl">
@@ -48,8 +56,10 @@ const MembershipStatus = ({
                 : greenText
             }
           >
-            {isPremium
-              ? "Premium"
+            {isPremium && plan === "monthlyPremium"
+              ? "Premium (Monthly)"
+              : isPremium && plan === "oneTimePremium"
+              ? "Premium (One-Time)"
               : isExpiredPremium
               ? "Premium (Expired)"
               : "Basic"}
@@ -66,7 +76,9 @@ const MembershipStatus = ({
               ) : (
                 <>
                   {limits.monthlyConnectionRequests + " "}/
-                  <span className={greenText}>{freePlanDetails.features.maxConnections}</span>
+                  <span className={greenText}>
+                    {freePlanDetails.features.maxConnections}
+                  </span>
                 </>
               )}
             </div>
@@ -78,7 +90,9 @@ const MembershipStatus = ({
               ) : (
                 <>
                   {limits.dailyMessageRequests + " "}/
-                  <span className={greenText}>{freePlanDetails.features.dailyMessages}</span>
+                  <span className={greenText}>
+                    {freePlanDetails.features.dailyMessages}
+                  </span>
                 </>
               )}
             </div>
@@ -93,12 +107,14 @@ const MembershipStatus = ({
               ) : (
                 <>
                   {limits.dailyJobApplications + " "}/
-                  <span className={greenText}>{freePlanDetails.features.jobApplications}</span>
+                  <span className={greenText}>
+                    {freePlanDetails.features.jobApplications}
+                  </span>
                 </>
               )}
             </div>
 
-            {isPremium && !isExpiredPremium && (
+            {isPremium && !isExpiredPremium && plan === "monthlyPremium" && (
               <div className="flex gap-2">
                 <CalendarMonthIcon />
                 Plan ends on: {renewalDate}

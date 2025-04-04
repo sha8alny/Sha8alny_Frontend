@@ -9,6 +9,10 @@ import { useRef } from "react";
 import { useToast } from "@/app/context/ToastContext";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * PostNewJobContainer component
  * 
  * This component is responsible for handling the state and logic for posting a new job.

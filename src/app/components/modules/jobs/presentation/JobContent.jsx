@@ -1,4 +1,8 @@
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * Component to display job content.
  *
  * @param {Object} props - Component props.
