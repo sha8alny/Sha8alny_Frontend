@@ -1,8 +1,6 @@
 import { fetchWithAuth } from "./userAuthentication";
 
-
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
-import { fetchWithAuth } from "./userAuthentication";
 
 
 export const getName = async () => {
