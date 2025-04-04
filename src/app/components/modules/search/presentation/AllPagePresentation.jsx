@@ -66,6 +66,7 @@ import JobSectionAllContainer from "../container/JobSectionAllContainer";
         <JobSectionAllContainer query={query} />
       </section>
       <section id="posts">
+      
         <CompanySectionAllContainer  query={query}/>
       </section>
     </div>
