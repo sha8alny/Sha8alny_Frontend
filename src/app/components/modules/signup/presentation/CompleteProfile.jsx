@@ -63,9 +63,9 @@ const CompleteProfile = ({
                 <input
                     id="fullname"
                     type="text"
-                    name="fullname"
+                    name="name"
                     placeholder="Enter your Full Name"
-                    value={formData.fullname}
+                    value={formData.name}
                     onChange={handleChange}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"

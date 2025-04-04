@@ -24,7 +24,7 @@ const CompleteProfileContainer = () => {
     const toast = useToast();
     const router = useRouter();
     const [formData, setFormData] = useState({
-        fullname: "",
+        name: "",
         location: "",
     });
     const [profilePicture, setProfilePicture] = useState(null);
@@ -37,7 +37,7 @@ const CompleteProfileContainer = () => {
 
     useEffect(() => {
         setIsFormValid(
-            formData.fullname.trim() !== "" &&
+            formData.name.trim() !== "" &&
             formData.location.trim() !== "" &&
             profilePicture !== null &&
             coverPicture !== null
@@ -80,11 +80,15 @@ const CompleteProfileContainer = () => {
         setIsSubmitting(true);
         
         try {
-            await handleCompleteProfile.mutateAsync({
-                ...formData,
+            const response=await handleCompleteProfile.mutateAsync({
+                formData:formData,
                 profilePic:saveProfilePic,
                 coverPic:saveCoverPic
             });
+            if (!response) {
+                toast("Error completing profile", false);
+                return;
+            }
             console.log("✅ Profile updated successfully.");
             toast("Profile updated successfully");
             setTimeout(() => {
@@ -108,7 +112,6 @@ const CompleteProfileContainer = () => {
             handleImageChange={handleImageChange}
             handleSubmit={handleSubmit}
             isFormValid={isFormValid}
-            handleLocationSelect={handleLocationSelect}
         />
     );
 }
