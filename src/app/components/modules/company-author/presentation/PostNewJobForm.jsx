@@ -1,7 +1,9 @@
+"use client";
 import  ArrowBackIcon  from "@mui/icons-material/ArrowBack";
-import { Alert } from "@mui/material";
-import { TextField, MenuItem } from "@mui/material";
-
+import { Input } from "@/app/components/ui/Input";
+import { Label } from "@/app/components/ui/Label";
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/app/components/ui/Select";
+import { Button } from "@/app/components/ui/Button";
 /**
  * @namespace company-author
  * @module company-author
@@ -20,7 +22,6 @@ import { TextField, MenuItem } from "@mui/material";
  * @param {Function} props.handleJobSubmit - The function to handle form submission.
  * @param {boolean} props.isLoading - The state indicating if the form is being submitted.
  * @param {Function} props.onBack - The function to call when the back button is clicked.
- * @param {Object} props.alert - The state object containing alert message and type.
  * 
  * @example
  * return (
@@ -31,7 +32,6 @@ import { TextField, MenuItem } from "@mui/material";
  *     handleJobSubmit={handleJobSubmit}
  *     isLoading={isLoading}
  *     onBack={onBack}
- *     alert={alert}
  *   />
  * )
  */
@@ -41,11 +41,10 @@ const PostNewJobForm =({
     errors,
     handleJobSubmit,
     isLoading,
-    onBack,
-    alert
-})=>{
+    onBack
+  })=>{
     return(
-        <div className="bg-transparent flex-grow p-6 rounded-lg border border-secondary max-w-2xl m-5 relative grid grid-cols-1 gap-6">
+        <div className="bg-foreground flex-grow p-6 rounded-lg  max-w-2xl m-5 relative grid grid-cols-1 gap-6">
         <div className="grid grid-cols-2">
         <h2 className="text-3xl text-secondary font-semibold mb-4">Post New Job</h2>
         <div className="flex justify-end">
@@ -55,153 +54,129 @@ const PostNewJobForm =({
         }}  role="button" aria-label="ArrowBack"></ArrowBackIcon>
         </div>
             </div>
-            {alert && (
-              <Alert severity={alert?.type === "success" ? "success" : "error"}>
-                {alert?.message}
-              </Alert>
-            )}
                       
          <form onSubmit={handleJobSubmit} className="space-y-4">
             <div className="flex flex-col gap-4">
                 
-                <TextField 
-                    data-testid="title" 
-                    sx={{
-                    "& label": { color: "var(--text)" }, 
-                    "& .MuiOutlinedInput-root": {
-                      color: "var(--text)", 
-                      "& fieldset": { borderColor: "var(--text)" }, 
-                    },
-                    "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                  }} error={!!errors.title} id="title" name="title" label="Enter Job Title" variant="outlined" value={newJob.title} onChange={handleChange} className="w-full my-2 " helperText={errors.title}
+               <Label className="text-text text-lg" htmlFor="title">Enter Job Title</Label>
+                    <Input className="text-text text-md"
+                        id="title"
+                        name="title"
+                        value={newJob.title}
+                        onChange={handleChange}
+                        error={errors.title}
+                    />
+                    {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
                 
-                />
-                
-                <TextField      
-                    data-testid="location"            
-                 sx={{
-                    "& label": { color: "var(--text)" }, 
-                    "& .MuiOutlinedInput-root": {
-                      color: "var(--text)", 
-                      "& fieldset": { borderColor: "var(--text)" }, 
-                    },
-                    "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                  }} error={!!errors.location} id="location" name="location" label="Enter Job Location" variant="outlined" value={newJob.location} onChange={handleChange} className="w-full my-2 " helperText={errors.location}/>
-                
-                <TextField    
-                    data-testid="description"               
-                sx={{
-                    "& label": { color: "var(--text)" }, 
-                    "& .MuiOutlinedInput-root": {
-                      color: "var(--text)", 
-                      "& fieldset": { borderColor: "var(--text)" }, 
-                    },
-                    "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                  }} error={!!errors.description} id="description" name="description" label="Enter Job Description" variant="outlined" value={newJob.description} onChange={handleChange} className="w-full my-2 " helperText={errors.description}/>
-                <TextField
-                data-testid="employmentType"
-                sx={{
-                "& label": { color: "var(--text)" }, 
-                "& .MuiOutlinedInput-root": {
-                    color: "var(--text)", 
-                    "& fieldset": { borderColor: "var(--text)" }, 
-                },
-                "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                }}
-                select
-                error={!!errors.employmentType}
-                id="employmentType"
-                name="employmentType"
-                label="Employment Type"
-                variant="outlined"
-                value={newJob.employmentType}
-                onChange={handleChange}
-                className="w-full my-2 "
-                helperText={errors.employmentType}
-                >
-                <MenuItem value="Full Time">Full Time</MenuItem>
-                <MenuItem value="Part Time">Part Time</MenuItem>
-                <MenuItem value="Contract">Contract</MenuItem>
-                <MenuItem value="Internship">Internship</MenuItem>
-                </TextField>
-                <TextField
-                data-testid="work"
-                sx={{
-                "& label": { color: "var(--text)" }, 
-                "& .MuiOutlinedInput-root": {
-                    color: "var(--text)", 
-                    "& fieldset": { borderColor: "var(--text)" }, 
-                },
-                "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                }}
-                select
-                error={!!errors.workLocation}
-                id="workLocation"
-                name="workLocation"
-                label="Work Location"
-                variant="outlined"
-                value={newJob.workLocation}
-                onChange={handleChange}
-                className="w-full my-2 "
-                helperText={errors.workLocation}
-                >
-                <MenuItem value="Remote">Remote</MenuItem>
-                <MenuItem value="Onsite">Onsite</MenuItem>
-                <MenuItem value="Hybrid">Hybrid</MenuItem>
-                </TextField>
-                <TextField 
-                    data-testid="industry"                  
-                sx={{
-                    "& label": { color: "var(--text)" }, 
-                    "& .MuiOutlinedInput-root": {
-                      color: "var(--text)", 
-                      "& fieldset": { borderColor: "var(--text)" }, 
-                    },
-                    "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                  }} error={!!errors.industry} id="industry" name="industry" label="Enter Industry" variant="outlined" value={newJob.industry} onChange={handleChange} className="w-full my-2 " helperText ={errors.industry} />
-                <TextField
-                data-testid="experience"
-                sx={{
-                "& label": { color: "var(--text)" }, 
-                "& .MuiOutlinedInput-root": {
-                    color: "var(--text)", 
-                    "& fieldset": { borderColor: "var(--text)" }, 
-                },
-                "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                }}
-                select
-                error={!!errors.experience}
-                id="experience"
-                name="experience"
-                label="Experience"
-                variant="outlined"
-                value={newJob.experience}
-                onChange={handleChange}
-                className="w-full my-2 "
-                helperText={errors.experience}
-                >
-                <MenuItem value="Entry Level">Entry Level</MenuItem>
-                <MenuItem value="Mid Level">Mid Level</MenuItem>
-                <MenuItem value="Senior Level">Senior Level</MenuItem>
-                </ TextField>
-                <TextField         
-                    data-testid="salary"          
-                sx={{
-                    "& label": { color: "var(--text)" }, 
-                    "& .MuiOutlinedInput-root": {
-                      color: "var(--text)", 
-                      "& fieldset": { borderColor: "var(--text)" }, 
-                    },
-                    "& .MuiFormHelperText-root": { color: "var(--text)" }, 
-                  }} error={!!errors.salary} id="salary" name="salary" label="Enter Salary" variant="outlined" value={newJob.salary} onChange={handleChange} type="number" className="w-full my-2 " helperText={errors.salary}/>
+                <Label className="text-text text-lg" htmlFor="location">Enter Job Location</Label>
+                    <Input className="text-text text-md"
+                        id="location"
+                        name="location"
+                        value={newJob.location}
+                        onChange={handleChange}
+                        error={errors.location}
+                    />
+                    {errors.location && <p className="text-red-500 text-sm">{errors.location}</p>}
+
+                <Label className="text-text text-lg" htmlFor="description">Enter Job Description</Label>
+                    <Input className="text-text text-md"
+                        id="description"
+                        name="description"
+                        value={newJob.description}
+                        onChange={handleChange}
+                        error={errors.description}
+                    />
+                    {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
+
+                <Label className="text-text text-lg" htmlFor="employmentType">Employment Type</Label>
+                    <Select
+                        id="employmentType"
+                        name="employmentType"
+                        value={newJob.employmentType}
+                        onValueChange={(value) => handleChange({ target: { name: "employmentType", value } })}
+                        error={errors.employmentType}
+                        placeholder="Select Employment Type"
+                    >
+                        <SelectTrigger className="w-full text-text">
+                        <SelectValue>{newJob.employmentType}</SelectValue>
+                        </SelectTrigger>  
+                        <SelectContent>
+                            <SelectItem value="Full-time">Full-time</SelectItem>
+                            <SelectItem value="Part-time">Part-time</SelectItem>
+                            <SelectItem value="Internship">Internship</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    {errors.employmentType && <p className="text-red-500 text-sm">{errors.employmentType}</p>}
+
+                <Label className="text-text text-lg" htmlFor="workLocation">Work Location</Label>
+                    <Select
+                        id="workLocation"
+                        name="workLocation"
+                        value={newJob.workLocation}
+                        onValueChange={(value) => handleChange({ target: { name: "workLocation", value } })}
+                        error={errors.workLocation}
+                        placeholder="Select Work Location"
+                    >
+                        <SelectTrigger className="w-full text-text">
+                        <SelectValue>{newJob.workLocation}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Remote">Remote</SelectItem>
+                            <SelectItem value="Onsite">Onsite</SelectItem>
+                            <SelectItem value="Hybrid">Hybrid</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    {errors.workLocation && <p className="text-red-500 text-sm">{errors.workLocation}</p>}
+
+                <Label className="text-text text-lg" htmlFor="industry">Enter Industry</Label>
+                    <Input className="text-text text-md"
+                        id="industry"
+                        name="industry"
+                        value={newJob.industry}
+                        onChange={handleChange}
+                        error={errors.industry}
+                    />  
+                    {errors.industry && <p className="text-red-500 text-sm">{errors.industry}</p>}
+
+                <Label className="text-text text-lg" htmlFor="experience">Experience</Label>
+                    <Select
+                        id="experience" 
+                        name="experience"
+                        value={newJob.experience}
+                        onValueChange={(value) => handleChange({ target: { name: "experience", value } })}
+                        error={errors.experience}
+                        placeholder="Select Experience"
+            
+                    > 
+                        <SelectTrigger className="w-full text-text">
+                            <SelectValue>{newJob.experience}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent> 
+                            <SelectItem value="Entry Level">Entry Level</SelectItem>
+                            <SelectItem value="Mid Level">Mid Level</SelectItem>
+                            <SelectItem value="Senior Level">Senior Level</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    {errors.experience && <p className="text-red-500 text-sm">{errors.experience}</p>}
+
+                <Label className="text-text text-lg" htmlFor="salary">Enter Salary</Label>
+                    <Input className="text-text text-md"
+                        id="salary"
+                        name="salary"
+                        type="number"
+                        value={newJob.salary}
+                        onChange={handleChange}
+                        error={errors.salary}
+                    />
+                    {errors.salary && <p className="text-red-500 text-sm">{errors.salary}</p>}
             </div>
             <div className="flex justify-center">
-            <button
+            <Button
             type="submit"
             aria-label="Post"
-             className=" border border-secondary text-xl text-secondary rounded-full px-8 py-2 hover:bg-foreground transition duration-300"
+             className=" border border-secondary bg-secondary text-xl text-foreground rounded-full px-8 py-2 hover:bg-foreground hover:text-secondary transition duration-300"
             disabled={isLoading}
-            >            {isLoading ? "Posting..." : "Post"}</button>
+            >            {isLoading ? "Posting..." : "Post"}</Button>
             </div>
         </form>
         </div>
