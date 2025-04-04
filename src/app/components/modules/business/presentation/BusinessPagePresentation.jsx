@@ -34,45 +34,51 @@ import CompanyListContainer from "../container/CompanyListContainer";
   onCreateCompany,
 }) {
 return (
-    <div className="space-y-6 p-4 w-full">
-        <div className="flex items-center justify-between p-4 flex-wrap">
-            <h1 className="text-2xl font-bold tracking-tight text-text w-full sm:w-auto mb-2 sm:mb-0">
-                Your Companies
-            </h1>
-            <Button
-                onClick={onCreateCompany}
-                className="text-base bg-secondary p-2 px-4 rounded-lg text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200 w-full sm:w-auto"
-            >
-                <Add className="mr-2" /> Create Company
-            </Button>
-        </div>
-
-        <CompanyListContainer
-            companies={companies}
-            isLoading={isLoading}
-            isError={isError}
-            error={error}
-        />
-
-        <div className="flex justify-between items-center mt-4">
-            <button
-                className={`text-secondary p-2 rounded-md ${
-                    currentPage === 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                }`}
-                disabled={currentPage === 1}
-                onClick={() => onPageChange(currentPage - 1)}
-            >
-                Previous
-            </button>
-            <span className="text-sm text-text">Page {currentPage}</span>
-            <button
-                className="text-secondary p-2 rounded-md cursor-pointer"
-                onClick={() => onPageChange(currentPage + 1)}
-            >
-                Next
-            </button>
-        </div>
+    <div className="flex flex-col  w-full">
+    <div className="flex-grow space-y-6 p-4">
+      <div className="flex items-center justify-between p-4 flex-wrap">
+        <h1 className="text-2xl font-bold tracking-tight text-text w-full sm:w-auto mb-2 sm:mb-0">
+          Your Companies
+        </h1>
+        <Button
+          onClick={onCreateCompany}
+          className="text-base bg-secondary p-2 px-4 rounded-lg text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200 w-full sm:w-auto"
+        >
+          <Add className="mr-2" /> Create Company
+        </Button>
+      </div>
+  
+      <CompanyListContainer
+        companies={companies}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+      />
     </div>
+  
+    <div className="p-4 border-t border-border bg-background flex justify-between items-center">
+      <button
+        className={`text-secondary p-2 rounded-md ${
+          currentPage === 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        }`}
+        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
+      >
+        Previous
+      </button>
+      <span className="text-sm text-text">Page {currentPage}</span>
+      <button
+          className={`text-secondary p-2 rounded-md ${
+            currentPage === 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+          }`}
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={!companies ||companies.length < 5} 
+      >
+        Next
+      </button>
+    </div>
+  </div>
+  
 );
 }
 

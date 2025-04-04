@@ -85,9 +85,7 @@ const Icon = ({ icon, currentPath, navigateTo }) => {
       }`}
     >
       <icon.icon
-        className={`${
-          currentPath === icon.pathName ? "text-secondary" : ""
-        }`}
+        className={`${currentPath === icon.pathName ? "text-secondary" : ""}`}
         sx={{ fontSize: 20 }}
       />
       <p className="text-xs">{icon.name}</p>
@@ -150,7 +148,7 @@ export default function NavbarPresentation({
   currentPath,
   navigateTo,
   open,
-  setOpen
+  setOpen,
 }) {
   return (
     <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6">
@@ -158,7 +156,11 @@ export default function NavbarPresentation({
       <div className="md:hidden flex items-center">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-primary mr-2 cursor-pointer">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-primary mr-2 cursor-pointer"
+            >
               <MenuIcon />
             </Button>
           </SheetTrigger>
@@ -226,7 +228,11 @@ export default function NavbarPresentation({
               >
                 <MessageCircle sx={{ fontSize: 20 }} />
                 <span>Messages</span>
-                <Badge className="ml-auto bg-secondary">{userInfo?.messagesReceived > 99 ? "99+" : userInfo?.messagesReceived}</Badge>
+                <Badge className="ml-auto bg-secondary">
+                  {userInfo?.messagesReceived > 99
+                    ? "99+"
+                    : userInfo?.messagesReceived}
+                </Badge>
               </Button>
 
               <Button
@@ -239,7 +245,11 @@ export default function NavbarPresentation({
               >
                 <Bell sx={{ fontSize: 20 }} />
                 <span>Notifications</span>
-                <Badge className="ml-auto bg-secondary">{userInfo?.notificationsReceived > 99 ? "99+" : userInfo?.notificationsReceived}</Badge>
+                <Badge className="ml-auto bg-secondary">
+                  {userInfo?.notificationsReceived > 99
+                    ? "99+"
+                    : userInfo?.notificationsReceived}
+                </Badge>
               </Button>
 
               {/* Settings & Logout for Mobile */}
@@ -289,8 +299,20 @@ export default function NavbarPresentation({
             type="text"
             placeholder="Search..."
             className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
+            onKeyDown={(e) => {
+              console.log("i searched")
+              if (e.key === "Enter") {
+                const query = e.target.value.trim();
+                if (query) {
+                  navigateTo(`/search/all?query=${encodeURIComponent(query)}`);
+                }
+              }
+            }}
           />
-          <Search className="absolute right-3 top-2.5 text-gray-500" sx={{ fontSize: 20 }} />
+          <Search
+            className="absolute right-3 top-2.5 text-gray-500"
+            sx={{ fontSize: 20 }}
+          />
         </div>
       </section>
 
@@ -311,8 +333,16 @@ export default function NavbarPresentation({
         {/* Notification Icons - Hidden on mobile */}
         <div className="hidden md:flex gap-3">
           {[
-            { name: "Messages", icon: MessageCircle, number: userInfo?.messagesReceived },
-            { name: "Notifications", icon: Bell, number: userInfo?.notificationsReceived },
+            {
+              name: "Messages",
+              icon: MessageCircle,
+              number: userInfo?.messagesReceived,
+            },
+            {
+              name: "Notifications",
+              icon: Bell,
+              number: userInfo?.notificationsReceived,
+            },
           ].map((icon, index) => (
             <IconWithBadge key={index} icon={icon} />
           ))}
@@ -403,7 +433,11 @@ export const NavBarPresentationSkeleton = ({
       <div className="md:hidden flex items-center">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-primary mr-2 cursor-pointer">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-primary mr-2 cursor-pointer"
+            >
               <MenuIcon />
             </Button>
           </SheetTrigger>
@@ -423,20 +457,34 @@ export const NavBarPresentationSkeleton = ({
             <div className="flex flex-col gap-4 py-4">
               {/* User Profile Section Skeleton for Mobile */}
               <div className="flex items-center gap-3 mb-6">
-                <div className={`relative rounded-full bg-gray-400 ${isLoading ? "animate-pulse" : ""} size-12`} />
+                <div
+                  className={`relative rounded-full bg-gray-400 ${
+                    isLoading ? "animate-pulse" : ""
+                  } size-12`}
+                />
                 <div className="space-y-2">
-                  <div className={`h-4 w-24 bg-gray-400 rounded-md ${isLoading ? "animate-pulse" : ""}`} />
-                  <div className={`h-3 w-32 bg-gray-400 rounded-md ${isLoading ? "animate-pulse" : ""}`} />
+                  <div
+                    className={`h-4 w-24 bg-gray-400 rounded-md ${
+                      isLoading ? "animate-pulse" : ""
+                    }`}
+                  />
+                  <div
+                    className={`h-3 w-32 bg-gray-400 rounded-md ${
+                      isLoading ? "animate-pulse" : ""
+                    }`}
+                  />
                 </div>
               </div>
-              
+
               {/* Navigation Links Skeleton for Mobile */}
               {navIcons.map((icon, index) => (
                 <Button
                   key={index}
                   variant="ghost"
                   className={`justify-start gap-3 cursor-pointer ${
-                    currentPath === icon.pathName ? "bg-secondary/10 text-secondary" : "hover:bg-primary/10"
+                    currentPath === icon.pathName
+                      ? "bg-secondary/10 text-secondary"
+                      : "hover:bg-primary/10"
                   }`}
                   onClick={() => {
                     navigateTo(icon.pathName);
@@ -447,26 +495,34 @@ export const NavBarPresentationSkeleton = ({
                   <span>{icon.name}</span>
                 </Button>
               ))}
-              
+
               {/* Messages & Notifications Skeleton for Mobile */}
               <Button variant="ghost" className="justify-start gap-3" disabled>
                 <MessageCircle sx={{ fontSize: 20 }} />
                 <span>Messages</span>
-                <div className={`ml-auto h-5 w-5 rounded-full bg-gray-400 ${isLoading ? "animate-pulse" : ""}`} />
+                <div
+                  className={`ml-auto h-5 w-5 rounded-full bg-gray-400 ${
+                    isLoading ? "animate-pulse" : ""
+                  }`}
+                />
               </Button>
-              
+
               <Button variant="ghost" className="justify-start gap-3" disabled>
                 <Bell sx={{ fontSize: 20 }} />
                 <span>Notifications</span>
-                <div className={`ml-auto h-5 w-5 rounded-full bg-gray-400 ${isLoading ? "animate-pulse" : ""}`} />
+                <div
+                  className={`ml-auto h-5 w-5 rounded-full bg-gray-400 ${
+                    isLoading ? "animate-pulse" : ""
+                  }`}
+                />
               </Button>
-              
+
               {/* Settings & Logout Skeleton */}
               <Button variant="ghost" className="justify-start gap-3" disabled>
                 <Settings sx={{ fontSize: 20 }} />
                 <span>Settings</span>
               </Button>
-              
+
               <Button variant="ghost" className="justify-start gap-3" disabled>
                 <LogOut sx={{ fontSize: 20 }} />
                 <span>Log Out</span>
@@ -475,7 +531,7 @@ export const NavBarPresentationSkeleton = ({
           </SheetContent>
         </Sheet>
       </div>
-      
+
       {/* Logo Section - Visible on all screens */}
       <section className="flex w-full mr-auto items-center p-2">
         <div
@@ -496,7 +552,10 @@ export const NavBarPresentationSkeleton = ({
             disabled={isLoading}
             className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
           />
-          <Search className="absolute right-3 top-2.5 text-gray-500" sx={{ fontSize: 20 }} />
+          <Search
+            className="absolute right-3 top-2.5 text-gray-500"
+            sx={{ fontSize: 20 }}
+          />
         </div>
       </section>
 
@@ -516,45 +575,65 @@ export const NavBarPresentationSkeleton = ({
       <section className="flex gap-3 p-3 text-primary justify-end items-center w-full ml-auto">
         {/* Notification Icons Skeleton - Hidden on mobile */}
         {isLoading && (
-        <div className="hidden md:flex gap-3">
-          {[
-            { name: "Messages", icon: MessageCircle },
-            { name: "Notifications", icon: Bell },
-          ].map((icon, index) => (
-            <div key={index} className="relative hidden md:block">
-              <Button
-                variant="ghost"
-                size="icon"
-                disabled
-                className="rounded-full cursor-not-allowed opacity-70"
-                aria-label={icon.name}
-              >
-                <icon.icon className="text-muted-foreground" sx={{ fontSize: 20 }} />
-              </Button>
-              <div className={`absolute -top-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center bg-gray-400 ${isLoading ? "animate-pulse" : ""}`} />
-            </div>
-          ))}
-        </div>
+          <div className="hidden md:flex gap-3">
+            {[
+              { name: "Messages", icon: MessageCircle },
+              { name: "Notifications", icon: Bell },
+            ].map((icon, index) => (
+              <div key={index} className="relative hidden md:block">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled
+                  className="rounded-full cursor-not-allowed opacity-70"
+                  aria-label={icon.name}
+                >
+                  <icon.icon
+                    className="text-muted-foreground"
+                    sx={{ fontSize: 20 }}
+                  />
+                </Button>
+                <div
+                  className={`absolute -top-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center bg-gray-400 ${
+                    isLoading ? "animate-pulse" : ""
+                  }`}
+                />
+              </div>
+            ))}
+          </div>
         )}
 
         {/* User Avatar Skeleton */}
         {isLoading && (
-        <div className="flex items-center ml-4 space-x-2">
-          <div className={`relative rounded-full bg-gray-400 ${isLoading ? "animate-pulse" : ""} size-9`} />
-          <div className="hidden md:block space-y-1">
-            <div className={`h-4 w-24 bg-gray-400 rounded-md ${isLoading ? "animate-pulse" : ""}`} />
-            <div className={`h-3 w-32 bg-gray-400 rounded-md ${isLoading ? "animate-pulse" : ""}`} />
+          <div className="flex items-center ml-4 space-x-2">
+            <div
+              className={`relative rounded-full bg-gray-400 ${
+                isLoading ? "animate-pulse" : ""
+              } size-9`}
+            />
+            <div className="hidden md:block space-y-1">
+              <div
+                className={`h-4 w-24 bg-gray-400 rounded-md ${
+                  isLoading ? "animate-pulse" : ""
+                }`}
+              />
+              <div
+                className={`h-3 w-32 bg-gray-400 rounded-md ${
+                  isLoading ? "animate-pulse" : ""
+                }`}
+              />
+            </div>
           </div>
-        </div>
         )}
 
         {!isLoading && (
-          <button className="flex gap-2 items-center rounded-2xl bg-secondary/80 px-6 py-2 text-sm font-semibold text-background cursor-pointer duration-300 hover:bg-secondary/60 "
+          <button
+            className="flex gap-2 items-center rounded-2xl bg-secondary/80 px-6 py-2 text-sm font-semibold text-background cursor-pointer duration-300 hover:bg-secondary/60 "
             onClick={() => navigateTo("/signin")}
           >
-            <LoginIcon sx={{ fontSize: 20}} />
+            <LoginIcon sx={{ fontSize: 20 }} />
             Login
-            </button>
+          </button>
         )}
 
         {/* Theme Toggle Button */}

@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import SignUpForm from "../presentation/SignUpForm";
 import { handleSignup, handleSignupCross } from "../../../../services/userManagement";
 import { RememberMe } from "@mui/icons-material";
+import { useToast } from "@/app/context/ToastContext";
 
 /**
  * @namespace signup
@@ -22,6 +23,7 @@ import { RememberMe } from "@mui/icons-material";
  * )
  */
 const SignUpContainer = () => {
+    const toast = useToast();
     const router = useRouter();
     const [formData, setFormData] = useState({
         username: "",
@@ -82,10 +84,10 @@ const SignUpContainer = () => {
 
             signupMutation.mutate({username,email,password, isAdmin, recaptcha, rememberMe }, 
                 {onSuccess: () =>
-                  {alert("Registration Successful & Auto-Login Successful!");
-                    router.push('/')},
+                  {toast("Registration Successful & Auto-Login Successful!");
+                    router.push('/complete-profile');},
                  onError: (error) => {
-                        alert(error.message);
+                        toast("Email or Username already taken!", false);
                 },});
         }
 

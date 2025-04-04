@@ -21,7 +21,7 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
  * @returns {JSX.Element} The rendered JobSectionAllPresentation component.
  */
 
- const JobSectionAllPresentation = ({ jobs, isLoading, isError, onViewMore }) => {
+ const JobSectionAllPresentation = ({ jobs, isLoading, isError, onViewMore,handleJobClick }) => {
   if (isError) {
     return (
       <ResultsCard title="Jobs" icon={<Briefcase className="h-4 w-4" />}>
@@ -48,7 +48,7 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
             <JobCard
               key={normalizedJob.id || index}
               job={normalizedJob} 
-              onClick={() => console.log(`Clicked on ${normalizedJob.title}`)}
+              onClick={() => handleJobClick(normalizedJob.id)}
             />
           );
         })

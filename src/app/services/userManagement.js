@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "./userAuthentication";
 
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
@@ -129,6 +130,41 @@ export const handleSignupCross = async ({ username,email,password, isAdmin, reca
   }
 };
 
+export const completeProfile = async ({formData, profilePic, coverPic})=>{
+  try{
+    const profileFormData = new FormData();
+    profileFormData.append("profilePicture", profilePic);
+    const profileResponse = await fetchWithAuth(`${apiURL}/profile/profile-picture`, {
+      method: "PUT",
+      body: profileFormData,
+    });
+    if (!profileResponse.ok) throw new Error("Failed to upload profile picture");
+
+    const coverFormData = new FormData();
+    coverFormData.append("coverPhoto", coverPic);
+    const coverResponse = await fetchWithAuth(`${apiURL}/profile/cover-photo`, {
+      method: "PUT",
+      body: coverFormData,
+    });
+    if (!coverResponse.ok) throw new Error("Failed to upload cover photo");
+
+    const data = await fetchWithAuth(`${apiURL}/profile/edit`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    if (!data.ok) throw new Error("Failed to complete profile");
+
+    return true;
+
+  }catch(error){
+    throw new Error(error.message);
+  }
+};
+
+
 export const handleSignIn = async ({email,password, rememberMe})=>{
 
   try{
@@ -150,8 +186,10 @@ export const handleSignIn = async ({email,password, rememberMe})=>{
       console.log("accessToken",sessionStorage.getItem("accessToken"));
       return {success:true};
     }
+    return {success:false, message:"Login failed"};
   }catch(error){
     console.error(error);
+    return {success:false, message:error.message};
   }
 
 };
