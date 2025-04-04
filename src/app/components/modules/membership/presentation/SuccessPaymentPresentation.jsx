@@ -3,11 +3,16 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DoneIcon from "@mui/icons-material/Done";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
+/**
+ * @namespace membership
+ * @module membership
+ */
 /**
  * SuccessPaymentPresentation component displays a success message after a payment is made.
  * It shows a confirmation message and redirects the user to the membership page after 5 seconds.
- * 
+ *
  * @component
  */
 
@@ -17,7 +22,7 @@ const SuccessPaymentPresentation = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push("/membership-page");
-    }, 5000);
+    }, );
 
     return () => clearTimeout(timer);
   }, [router]);
@@ -25,8 +30,8 @@ const SuccessPaymentPresentation = () => {
   return (
     <div className=" flex items-center justify-center ">
       <div className="bg-foreground p-8 rounded-2xl shadow-lg max-w-md w-full text-center">
-        <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-          <DoneIcon className="text-green-500" />
+        <div className="bg-background w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <CheckCircleIcon className="text-secondary" sx={{ fontSize: 60 }} />
         </div>
 
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -39,7 +44,7 @@ const SuccessPaymentPresentation = () => {
 
         <button
           onClick={() => router.push("/membership-page")}
-          className="bg-secondary text-white font-medium py-2 px-6 rounded-lg hover:bg-opacity-90 transition-all cursor-pointer"
+          className="bg-secondary text-background font-medium py-2 px-6 rounded-lg hover:bg-opacity-90 transition-all cursor-pointer"
         >
           Return to Dashboard
         </button>

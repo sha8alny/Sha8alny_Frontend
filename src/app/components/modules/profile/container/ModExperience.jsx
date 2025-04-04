@@ -9,22 +9,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
-const formSchema = z.object({
+// Form schemas for each stage
+const stage1Schema = z.object({
   title: z.string().nonempty("Job title is required."),
   employmentType: z.string().nonempty("Employment type is required."),
   company: z.string().nonempty("Company is required."),
   location: z.string().nonempty("Location is required."),
+});
+
+const stage2Schema = z.object({
   startDate: z.object({
     month: z.string().nonempty("Start month is required."),
     year: z.string().nonempty("Start year is required."),
   }),
-  endDate: z.object({
-    month: z.string().nonempty("End year is required."),
-    year: z.string().nonempty("End year is required."),
-  }),
+  endDate: z.union([
+    z.null(),
+    z.object({
+      month: z.string().nonempty("End month is required."),
+      year: z.string().nonempty("End year is required."),
+    }),
+  ]),
   isCurrent: z.boolean().default(false),
+});
+
+const stage3Schema = z.object({
   description: z.string().max(1000, "Description is too long.").optional(),
   skills: z.array(z.string()).default([]),
+});
+
+// Combined schema for the complete form
+const formSchema = z.object({
+  ...stage1Schema.shape,
+  ...stage2Schema.shape,
+  ...stage3Schema.shape,
 });
 
 const generateYears = () => {
@@ -48,7 +65,12 @@ const months = [
 ];
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * A component that renders a dialog for modifying or adding work experience
+ * using a multi-stage form approach
  * @component
  * @param {Object} props - Component props
  * @param {Object} [props.experience] - Experience data object to edit
@@ -70,7 +92,27 @@ const months = [
  */
 export default function ModExperience({ experience, adding }) {
   const [skillInput, setSkillInput] = useState("");
+  const [currentStage, setCurrentStage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [stageValidation, setStageValidation] = useState({
+    1: false,
+    2: false,
+    3: false,
+  });
+  const [submitError, setSubmitError] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   const years = generateYears();
+
+  const jobTypes = {
+    "Full-time": "fullTime",
+    "Part-time": "partTime",
+    Internship: "internship",
+    Freelance: "freelance",
+    Contract: "contract",
+    Apprenticeship: "apprenticeship",
+    Seasonal: "seasonal",
+    "Self-employed": "selfEmployed",
+  };
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -81,12 +123,16 @@ export default function ModExperience({ experience, adding }) {
       location: experience?.location || "",
       startDate: {
         month: experience?.startDate?.month || "",
-        year: experience?.startDate?.year.toString() || "",
+        year: experience?.startDate?.year
+          ? experience.startDate.year.toString()
+          : "",
       },
-      endDate: {
-        month: experience?.endDate?.month || "",
-        year: experience?.endDate?.year.toString() || "",
-      },
+      endDate: experience?.endDate
+        ? {
+            month: experience?.endDate?.month,
+            year: experience?.endDate?.year.toString(),
+          }
+        : { month: "", year: "" },
       isCurrent: experience?.isCurrent || false,
       description: experience?.description || "",
       skills: experience?.skills || [],
@@ -94,22 +140,19 @@ export default function ModExperience({ experience, adding }) {
     mode: "onChange",
   });
 
-  const { handleSubmit, setValue, watch, formState } = form;
-  const { errors, isValid } = formState;
+  const { handleSubmit, setValue, watch, formState, trigger } = form;
+  const { errors } = formState;
   const skills = watch("skills");
   const isCurrent = watch("isCurrent");
   const handleUserUpdate = useUpdateProfile();
+  const isLoading = handleUserUpdate.isPending;
 
   const handleIsCurrent = (value) => {
     setValue("isCurrent", value, { shouldValidate: true });
-    if (!value) {
-      setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
+    if (value) {
+      setValue("endDate", null, { shouldValidate: true });
     } else {
-      setValue(
-        "endDate",
-        { month: "January", year: "1900" },
-        { shouldValidate: true }
-      );
+      setValue("endDate", { month: "", year: "" }, { shouldValidate: true });
     }
   };
 
@@ -128,24 +171,145 @@ export default function ModExperience({ experience, adding }) {
     );
   };
 
+  const validateStageAndProceed = async (direction) => {
+    if (direction === "next") {
+      let isValid = false;
+
+      if (currentStage === 1) {
+        isValid = await trigger([
+          "title",
+          "employmentType",
+          "company",
+          "location",
+        ]);
+        if (isValid) {
+          setStageValidation((prev) => ({ ...prev, 1: true }));
+          setCurrentStage(2);
+        }
+      } else if (currentStage === 2) {
+        const fieldsToValidate = ["startDate.month", "startDate.year"];
+        if (!isCurrent) {
+          fieldsToValidate.push("endDate.month", "endDate.year");
+        }
+
+        isValid = await trigger(fieldsToValidate);
+        if (isValid) {
+          setStageValidation((prev) => ({ ...prev, 2: true }));
+          setCurrentStage(3);
+        }
+      } else if (currentStage === 3) {
+        isValid = await trigger(["description"]);
+        if (isValid) {
+          setStageValidation((prev) => ({ ...prev, 3: true }));
+          setCurrentStage(4);
+        }
+      }
+    } else if (direction === "prev") {
+      if (currentStage > 1) {
+        setCurrentStage(currentStage - 1);
+      }
+    }
+  };
+
   const handleFormSubmit = (data) => {
-    handleUserUpdate.mutate({
-      api: adding ? "add-experience" : "edit",
-      method: adding ? "POST" : "PATCH",
-      data: { experience: [data] },
-    });
+    setSubmitError(null);
+    setShowSuccess(false);
+    const updatedData = { ...data, _id: experience?._id };
+    console.log("updatedData", updatedData);
+    handleUserUpdate.mutate(
+      {
+        api: adding ? "profile/add-experience" : "profile/edit-experience",
+        method: adding ? "POST" : "PATCH",
+        data: { ...updatedData },
+      },
+      {
+        onSuccess: () => {
+          setShowSuccess(true);
+          setTimeout(() => {
+            setSkillInput("");
+            setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
+          }, 3000);
+        },
+        onError: (error) => {
+          setSubmitError(
+            error?.message ||
+              "Failed to save experience information. Please try again."
+          );
+        },
+      }
+    );
+  };
+
+  const handleDeleteExperience = () => {
+    handleUserUpdate.mutate(
+      {
+        api: "profile/delete-experience",
+        method: "DELETE",
+        data: { experienceId: experience?._id },
+      },
+      {
+        onSuccess: () => {
+          setShowSuccess(true);
+          setTimeout(() => {
+            // Reset the form to the schema default values
+            form.reset(
+              formSchema.parse({
+                title: "",
+                employmentType: "",
+                company: "",
+                location: "",
+                startDate: {
+                  month: "",
+                  year: "",
+                },
+                endDate: { month: "", year: "" },
+                isCurrent: false,
+                description: "",
+                skills: [],
+              })
+            );
+            setSkillInput("");
+            setShowSuccess(false);
+            setOpen(false);
+            setStageValidation({
+              1: false,
+              2: false,
+              3: false,
+            });
+            setCurrentStage(1);
+          }, 3000);
+        },
+        onError: (error) => {
+          setSubmitError(
+            error?.message ||
+              "Failed to delete experience information. Please try again."
+          );
+        },
+      }
+    );
   };
 
   return (
     <Dialog
       className="min-w-max"
+      open={open}
+      onOpenChange={setOpen}
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
       AlertContent={
         <ModExperiencePresentation
           form={form}
           isCurrent={isCurrent}
-          isValid={isValid}
+          isValid={
+            stageValidation[1] && stageValidation[2] && stageValidation[3]
+          }
           months={months}
           years={years}
           errors={errors}
@@ -160,6 +324,15 @@ export default function ModExperience({ experience, adding }) {
           handleIsCurrent={handleIsCurrent}
           setValue={setValue}
           skills={skills}
+          isLoading={isLoading}
+          submitError={submitError}
+          showSuccess={showSuccess}
+          setSubmitError={setSubmitError}
+          currentStage={currentStage}
+          validateStageAndProceed={validateStageAndProceed}
+          stageValidation={stageValidation}
+          setCurrentStage={setCurrentStage}
+          handleDeleteExperience={handleDeleteExperience}
         />
       }
     />

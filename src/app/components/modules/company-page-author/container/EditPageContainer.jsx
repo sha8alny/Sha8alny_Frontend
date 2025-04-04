@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 
 
 /**
+ * @namespace company-page-author
+ * @module company-page-author
+ */
+/**
  * EditPageContainer manages the state and logic for editing company details.
  * It provides input fields for company attributes and handles saving and discarding changes.
  *

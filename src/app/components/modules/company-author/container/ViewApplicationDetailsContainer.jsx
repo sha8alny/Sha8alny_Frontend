@@ -5,6 +5,10 @@ import  ViewApplicationDetailsModal  from "../presentation/ViewApplicationDetail
 import { getApplication, updateApplication } from "../../../../services/companyManagment";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * ViewApplicationDetailsContainer component
  * 
  * This component handles the logic for fetching and displaying the details of a job application.

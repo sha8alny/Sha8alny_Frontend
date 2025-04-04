@@ -3,6 +3,10 @@ import { useState } from "react";
 import CheckBoxField from "../presentation/CheckBoxField";
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * CheckBoxFieldContainer manages a checkbox field with validation.
  * It toggles the checkbox state and displays an error if necessary.
  *

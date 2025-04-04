@@ -2,7 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import { Shield, Close } from "@mui/icons-material";
 import SettingsFormLayout from "./SettingsFormLayout";
 import BackButton from "./BackButton";
-import Button from "./Button";
+import { Input } from "@/app/components/ui/Input";
+import { Label } from "@/app/components/ui/Label";
+import { Button } from "@/app/components/ui/Button";
+/**
+ * @namespace settings
+ * @module settings
+ */
 /**
  * ChangePasswordForm component allows users to change their password.
  *
@@ -83,65 +89,71 @@ const ChangePasswordForm = ({
         </div>
 
         <form className="flex flex-col gap-4 mt-2" onSubmit={handleSubmit}>
-          <label className="text-sm text-text flex" htmlFor="currentPassword">
-            Type your current password{" "}
-            <span className="ml-1 text-red-500"> *</span>
-          </label>
-          <input
-            className="bg-background rounded-lg p-1"
-            type="password"
-            id="currentPassword"
-            name="currentPassword"
-            value={passwords.currentPassword}
-            onChange={handleChange}
-            required
-          />
-          {errors.currPassError && (
-            <p className="text-red-500">{errors.currPassError}</p>
-          )}
+        <div className="space-y-2">
+            <Label className="flex items-center">
+              Current password <span className="text-destructive ml-1">*</span>
+            </Label>
+            <Input
+              type="password"
+              id="currentPassword"
+              name="currentPassword"
+              value={passwords.currentPassword}
+              onChange={handleChange}
+              required
+              className={errors.currPassError ? "border-destructive" : ""}
+            />
+            {errors.currPassError && (
+              <p className="text-sm text-destructive">{errors.currPassError}</p>
+            )}
+          </div>
 
-          <label className="text-sm text-text flex" htmlFor="newPassword">
-            Type your new password <span className="ml-1 text-red-500"> *</span>
-          </label>
-          <input
-            className="bg-background rounded-lg p-1"
-            type="password"
-            id="newPassword"
-            name="newPassword"
-            value={passwords.newPassword}
-            onChange={handleChange}
-            required
-          />
-          {errors.newPassError && (
-            <p className="text-red-500">{errors.newPassError}</p>
-          )}
+          <div className="space-y-2">
+            <Label className="flex items-center">
+              New password <span className="text-destructive ml-1">*</span>
+            </Label>
+            <Input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              value={passwords.newPassword}
+              onChange={handleChange}
+              required
+              className={errors.newPassError ? "border-destructive" : ""}
+            />
+            {errors.newPassError && (
+              <p className="text-sm text-destructive">{errors.newPassError}</p>
+            )}
+          </div>
 
-          <label className="text-sm text-text flex" htmlFor="confirmPassword">
-            Retype the password{" "}
-            <span className="ml-1 text-red-500"> *</span>
-          </label>
-          <input
-            className="bg-background rounded-lg p-1"
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={passwords.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-          {errors.confirmPassError && (
-            <p className="text-red-500">{errors.confirmPassError}</p>
-          )}
+          <div className="space-y-2">
+            <Label className="flex items-center">
+              Confirm password <span className="text-destructive ml-1">*</span>
+            </Label>
+            <Input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={passwords.confirmPassword}
+              onChange={handleChange}
+              required
+              className={errors.confirmPassError ? "border-destructive" : ""}
+            />
+            {errors.confirmPassError && (
+              <p className="text-sm text-destructive">{errors.confirmPassError}</p>
+            )}
+          </div>
 
           <Button
-            content="Save Password"
-            handler={handleSubmit}
+            type="submit"
+            className="w-full bg-secondary text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
             disabled={
               !passwords.currentPassword ||
               !passwords.newPassword ||
               !passwords.confirmPassword
             }
-          />
+          >
+            Save Password
+          </Button>
         </form>
           <button onClick={handleForgetPassword} className="cursor-pointer w-max hover:text-secondary p-2 rounded-lg">
             Forgot Password

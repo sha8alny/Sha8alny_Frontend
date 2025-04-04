@@ -4,6 +4,10 @@ import { useEffect } from "react";
 import FileUpload from "../presentation/FileUpload";
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * FileUploadContainer handles the logic for uploading a file.
  * It updates the parent component's state with the selected file name.
  *

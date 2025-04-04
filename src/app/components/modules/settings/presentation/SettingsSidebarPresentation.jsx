@@ -1,6 +1,10 @@
 import React from "react";
 
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsSidebarPresentation component renders the sidebar for the settings page.
  *
  * @param {Object} props - The component props.

@@ -6,6 +6,10 @@ import EditButton from "@/app/components/ui/EditButton";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * ModAbout component for editing or adding user profile's about section
  * 
  * @component
@@ -29,7 +33,7 @@ export default function ModAbout({ about, adding = false }) {
 
   const handleAbout = (value) => {
     setAbout(value);
-    if (value.length > 1000) {
+    if (value?.length > 1000) {
       setError("About is too long.");
       return;
     }
@@ -41,7 +45,7 @@ export default function ModAbout({ about, adding = false }) {
   };
   const handleSubmit = (data) => {
       updateProfileMutation.mutate({
-        api: "edit",
+        api: "profile/edit",
         method: "PATCH",
         data: { about: data },
       });

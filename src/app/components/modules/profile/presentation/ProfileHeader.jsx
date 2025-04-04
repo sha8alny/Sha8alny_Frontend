@@ -3,6 +3,10 @@ import Image from "next/image";
 import ModHeader from "../container/ModHeader";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders the header section of a user's profile
  * @param {Object} props - Component props
  * @param {Object} props.userProfile - User profile information
@@ -23,15 +27,14 @@ export default function ProfileHeader({ userProfile }) {
           <div className="absolute top-0 left-0 w-full h-40 bg-gray-700 rounded-t-xl">
             <Image
               src={
-                userProfile.coverPhoto ??
-                "https://picsum.photos/id/11/600/400"
+                userProfile.coverPhoto ?? "https://picsum.photos/id/11/600/400"
               }
               fill
               alt="Cover Photo"
               className="rounded-t-xl object-cover"
             />
           </div>
-          <div className="relative size-48 z-10 ml-6 bg-gray-500 rounded-full border-8 border-background mt-10">
+          <div className="relative size-48 z-10 ml-6 bg-gray-500 rounded-full border-8 border-foreground mt-10">
             <Image
               src={
                 userProfile.profilePicture ??
@@ -48,12 +51,12 @@ export default function ProfileHeader({ userProfile }) {
         <div>
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">{userProfile.name}</h1>
-            <h6 className="text-muted ml-2">•</h6>
-            <span className="text-muted ml-2">
-              {userProfile.relation ?? "1st"}
-            </span>
+            {!(userProfile?.isMyProfile) && <h6 className="text-muted ml-2">•</h6>}
+            {!(userProfile?.isMyProfile) && (
+              <span className="text-muted ml-2">{userProfile?.relation}</span>
+            )}
           </div>
-          <h2 className="text-muted font-semibold">{userProfile.headline}</h2>
+          <h2 className="text-muted font-medium">{userProfile.headline}</h2>
           <div className="flex gap-2 items-center">
             <p className="text-muted text-sm">{userProfile.location}</p>
             <h6 className="text-muted">•</h6>
@@ -69,7 +72,7 @@ export default function ProfileHeader({ userProfile }) {
           </button>
         </div>
         <div className="flex ml-auto self-end">
-          <ModHeader />
+          <ModHeader userInfo={userProfile} />
         </div>
       </div>
     </Container>

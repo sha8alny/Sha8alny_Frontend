@@ -3,10 +3,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignUpForm from "../presentation/SignUpForm";
-import { handleSignup } from "../../../../services/userManagement";
+import { handleSignup, handleSignupCross } from "../../../../services/userManagement";
 import { RememberMe } from "@mui/icons-material";
 import { useToast } from "@/app/context/ToastContext";
 
+/**
+ * @namespace signup
+ * @module signup
+ */
 /**
  * SignUpContainer component handles the user registration process.
  * It uses a mutation to call the signup service and handles the success and error responses.
@@ -36,7 +40,7 @@ const SignUpContainer = () => {
     );
     
     const signupMutation = useMutation({
-        mutationFn: handleSignup,
+        mutationFn: handleSignupCross,
     });
 
     const validateField = (name,value) => {

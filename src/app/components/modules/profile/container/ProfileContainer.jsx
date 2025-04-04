@@ -7,6 +7,10 @@ import { useEffect } from "react";
 
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Calculates the profile strength percentage based on profile completeness
  * @param {Object} userProfile - The user profile object
  * @returns {number} - Profile strength score from 0 to 100
@@ -101,10 +105,11 @@ function ProfileContent({ username }) {
     data: userProfile,
     isLoading,
     isError,
+    error
   } = useQuery({
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
-    staleTime: 1000 * 30, // 30 seconds
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
   useEffect(() => {
@@ -117,19 +122,39 @@ function ProfileContent({ username }) {
   if (isLoading) return <ProfileSkeleton />;
 
   if (isError) {
+    let errorMessage = "Error fetching user profile.";
+    console.log("Error details:", error);
+    
+    if (error?.response?.status) {
+      const status = error.response.status;
+      switch (status) {
+        case 404:
+          errorMessage = "User profile not found.";
+          break;
+        case 403:
+          errorMessage = "You don't have permission to view this profile.";
+          break;
+        case 401:
+          errorMessage = "Authentication required to access this profile.";
+          break;
+        case 500:
+          errorMessage = "Server error. Please try again later.";
+          break;
+        default:
+          errorMessage = `Error fetching profile: ${status}`;
+      }
+    }
     return (
-      <div className="w-full h-full flex items-center justify-center bg-black text-red-400">
-        Error fetching user profile.
+      <div className="w-full h-full flex items-center justify-center bg-background text-red-400">
+        {errorMessage}
       </div>
     );
   }
 
-
-
-  if (!userProfile.isVisible) {
+  if (!userProfile) {
     return (
-      <div className="size-full flex items-center justify-center bg-black text-red-400">
-        User profile is private.
+      <div className="w-full h-full flex items-center justify-center bg-background text-red-400">
+        Profile data is unavailable.
       </div>
     );
   }
@@ -151,7 +176,7 @@ function ProfileContent({ username }) {
     <ProfilePresentation
       userProfile={userProfile}
       profileStrength={profileStrength}
-      isMyProfile={userProfile.isMyProfile}
+      isMyProfile={userProfile?.isMyProfile || false}
     />
   );
 }

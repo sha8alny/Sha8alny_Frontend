@@ -1,6 +1,10 @@
 "use client";
 
 /**
+ * @namespace signin
+ * @module signin
+ */
+/**
  * SignInForm component
  * 
  * This component renders a sign-in form with fields for email, password, and a "Remember Me" checkbox.

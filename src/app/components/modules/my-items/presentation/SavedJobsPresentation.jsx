@@ -2,6 +2,10 @@ import React from "react";
 import JobsCard from "../../jobs/presentation/JobsCard";
 
 /**
+ * @namespace my-items
+ * @module my-items
+ */
+/**
  * Component for displaying saved jobs with options to browse more jobs or load additional saved jobs.
  *
  * @component

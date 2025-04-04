@@ -4,6 +4,10 @@ import { updateUsername } from "../../../../services/userManagement";
 import ChangeUsernameForm from "../presentation/ChangeUsernameForm";
 import { useToast } from "@/app/context/ToastContext";
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * ChangeUsernameContainer component handles the logic for changing the username.
  * It manages the state for the username and error messages, and handles form submission.
  *
