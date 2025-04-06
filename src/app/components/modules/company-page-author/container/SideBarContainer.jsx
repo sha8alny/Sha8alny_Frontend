@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef} from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import SideBar from "../presentation/SideBar";
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
@@ -78,6 +78,7 @@ function SideBarContainer({username, logo ,setLogo }){
     const [coverPreview, setCoverPreview] = useState(null);
     const coverInputRef = useRef(null);
     const logoInputRef = useRef(null);
+    const router = useRouter(); 
     
     const coverUpload = (e) => {
         const selectedFile=e.target.files[0];
@@ -116,6 +117,15 @@ function SideBarContainer({username, logo ,setLogo }){
         }
     };
 
+    const OpenCompanyUserPage=()=>{
+        router.push(`/company-user-admin/${username}/about-page`);
+    };
+
+    const OpenPostsPage=()=>{
+        router.push(`/company-admin/${username}/posts-page`);
+        setModalOpen(false);
+    }
+
     const menuItems =[
         {name: "Dashboard", href:`/company-admin/${username}/company-page-author/?logo=${encodeURIComponent(logo|| "")} `,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Page Posts", href:`/company-admin/${username}/posts-page/?logo=${encodeURIComponent(logo || "")}` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
@@ -134,7 +144,7 @@ function SideBarContainer({username, logo ,setLogo }){
             coverpreview={coverPreview} logo={logo} 
             triggerCoverInput={triggerCoverInput} triggerLogoInput={triggerLogoInput} 
             coverInputRef={coverInputRef} logoInputRef={logoInputRef} 
-            fileusername={username}/>
+            fileusername={username} OpenCompanyUserPage={OpenCompanyUserPage}/>
             <Modal open={isModalOpen} onClose={() => setModalOpen(false)} aria-labelledby="deactivate-modal" data-testid="deactivate-modal">
                 <Box sx={{
                     position: "absolute",
@@ -179,27 +189,27 @@ function SideBarContainer({username, logo ,setLogo }){
                         <>
                         <div className="text-text">
                             <ul className="flex flex-col space-y-3 p-2">
-                                <Link className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2" href="/posts-page"> 
-                                    <div className="flex items-center gap-2">
+                                <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] cursor-pointer p-2" onClick={OpenPostsPage}> 
+                                    <div className="flex items-center gap-2 hover:underline">
                                         <PostAddOutlinedIcon style={{fontSize:"20px"}}/>
                                         <span>Start a Post</span>
                                     </div>
-                                    <span className="text-xs ml-[26px]">Share content to connect with your followers</span>
-                                </Link>
-                                <Link className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2" href="#">
-                                    <div className="flex items-center gap-2">
+                                    <span className="text-xs pr-24">Share content to connect with your followers</span>
+                                </button>
+                                <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2 cursor-pointer">
+                                    <div className="flex items-center gap-2 hover:underline">
                                         <WorkOutlineOutlinedIcon style={{fontSize:"20px"}} />
                                         <span>Post a free job</span>
                                     </div>
-                                    <span className="text-xs ml-[26px]">Raech more qualified applicants</span>
-                                </Link>
-                                <Link className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2" href="#">
-                                    <div className="flex items-center gap-2">
+                                    <span className="text-xs pr-42">Raech more qualified applicants</span>
+                                </button>
+                                <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2 cursor-pointer">
+                                    <div className="flex items-center gap-2 hover:underline">
                                         <FeedOutlinedIcon style={{fontSize:"20px"}}/>
                                         <span>Publish an article</span>
                                     </div> 
-                                    <span className="text-xs ml-[26px]">Connect with followers through long-form content </span>
-                                </Link>
+                                    <span className="text-xs pr-18">Connect with followers through long-form content </span>
+                                </button>
                             </ul>
                         </div>
                     </>
