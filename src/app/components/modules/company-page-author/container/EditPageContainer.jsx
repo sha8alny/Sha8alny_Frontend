@@ -40,6 +40,8 @@ function EditPageContainer({username}){
     const [companyLocation, setCompanyLocation] = useState("");
     const [companyURL, setCompanyURL]= useState("");
     const [companyWebsite, setCompanyWebsite] = useState("");
+    const [companyDate, setCompanyDate] = useState("");
+    const [companyPhone, setCompanyPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter(); 
@@ -48,29 +50,33 @@ function EditPageContainer({username}){
         setCompanyName("");
         setCompanyIndustry("");
         setCompanyTagline("");
-        setCompanySize("Select size");
-        setCompanyType("Select type");
+        setCompanySize("");
+        setCompanyType("");
         setCompanyLocation("");
         setCompanyURL("");
         setCompanyWebsite("");
+        setCompanyDate("");
+        setCompanyPhone("");
     }
 
     
     const handleSave = async()=>{
         setLoading(true);
-  
+        console.log("Sending Data:", { companySize, companyType });
         const companyData = {
-            name: companyName ,
-            username :companyName.toLowerCase().replace(/\s+/g, "-") ,
-            URL: companyURL,
-            industry: companyIndustry ,
-            description: companyTagline ,
-            orgSize: companySize,
-            orgType: companyType,
-            logo: "", 
-            location: companyLocation
+            name: companyName || undefined,
+            username :companyName.toLowerCase().replace(/\s+/g, "-") || undefined,
+            URL: companyURL || undefined,
+            orgSize: companySize || undefined,
+            orgType: companyType || undefined,
+            logo: "" || undefined, 
+            cover:"" || undefined,
+            description: companyTagline || undefined ,
+            industry: companyIndustry || undefined ,
+            location: companyLocation || undefined,
+            phoneNumber: companyPhone || undefined,
+            foundingDate:companyDate || undefined,
         };
-
         try{
             const response = await updateCompany(username, companyData);
             username = companyName;
@@ -96,6 +102,8 @@ function EditPageContainer({username}){
             companyLocation={companyLocation} setCompanyLocation={setCompanyLocation}
             companyURL={companyURL} setCompanyURL={setCompanyURL} 
             companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
+            companyDate={companyDate} setCompanyDate={setCompanyDate} 
+            companyPhone={companyPhone} setCompanyPhone={setCompanyPhone}
             onSave={handleSave} onDiscard={handleDiscard} loading={loading} errors={errors} setErrors={setErrors} />
         </div>
     );
