@@ -118,10 +118,10 @@ function WritePostContainer({onPostSubmit, logo}){
                 }}>
                 <div className="text-text flex items-center justify-between border-b">
                     <Typography variant="h6" className="text-lg font-semibold">Write an article</Typography>
-                    <Button  className="cursor-pointer" onClick={() => setModalOpen(false)} ><CloseIcon className="text-white"/></Button>
+                    <Button  className="cursor-pointer" onClick={() => setModalOpen(false)} ><CloseIcon className="text-[var(--text)]"/></Button>
                 </div>
                 <div>
-                    <textarea className="w-full border rounded-lg p-2 mt-2 text-white" placeholder="Start writing your article..." rows="5" value={articleText} onChange={(e) => setArticleText(e.target.value)}/>
+                    <textarea className="w-full border rounded-lg p-2 mt-2 text-[var(--text)]" placeholder="Start writing your article..." rows="5" value={articleText} onChange={(e) => setArticleText(e.target.value)}/>
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button onClick={() => setModalOpen(false)} variant="outlined" sx={{color: "var(--secondary)"}}>Cancel</Button>
