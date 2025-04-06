@@ -12,7 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
 
-function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, onChangeCover,  onChangeLogo, coverpreview, logo, coverInputRef,  logoInputRef,fileusername}){
+function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, onChangeCover,  onChangeLogo, coverpreview, logo, coverInputRef,  logoInputRef,fileusername, OpenCompanyUserPage}){
     return (
         <aside className="bg-[var(--foreground)] text-text w-70px flex flex-col mt-5 mx-5 space-y-4 border rounded-lg p-4">
             {/*Logo and cover image for company*/}
@@ -25,7 +25,7 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
                     )}
                     <label htmlFor="upload-cover" className="absolute bottom-2 right-2 cursor-pointer group p-2 bg-gray-800 rounded-full">
                         <CameraAltRoundedIcon />
-                        <span className="absolute top-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 bg-gray-800 text-[var(--text)] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
                             Edit cover image
                         </span>
                     </label>
@@ -39,7 +39,7 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
                     )}
                     <label htmlFor="upload-logo" className="absolute bottom-[-4px] right-[-4px] cursor-pointer group p-1 bg-gray-800 rounded-full z-10" >
                         <EditIcon style={{ fontSize: "18px" }} />
-                        <span className="absolute top-full left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 bg-gray-800 text-[var(--text)] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
                             Edit logo
                         </span>
                     </label>
@@ -48,31 +48,31 @@ function SideBar({menuItems=[], pathname, setActive, isModalOpen, setModalOpen, 
             </div>
             {/*Company name*/}
             <div>
-                <div className="mb-1 border-b border-[var(--secondary)] pb-2 w-full">
-                    <p className="text-lg font-semibold w-full">{fileusername ? fileusername.charAt(0).toUpperCase() + fileusername.slice(1): "Company Name"}</p>
-                    <p className="text-xs text-gray-300"> 7,472,293 followers</p>
+                <div className="text-[var(--text)] mb-1 border-b border-[var(--secondary)] pb-2 w-full">
+                    <p className="text-2xl font-bold w-full">{fileusername ? fileusername.charAt(0).toUpperCase() + fileusername.slice(1): "Company Name"}</p>
+                    <p className="text-xs"> 7,472,293 followers</p>
                 </div>
                 <div className="border-b border-[var(--secondary)] pb-2 flex flex-row justify-between items-center">
                     <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all relative" onClick={()=>setModalOpen("create")}>
                         <AddIcon className="transition-transform duration-200 group-hover:scale-110"/>
-                        <span className="absolute left-full ml-2 text-white text-xs px-2 py-1  opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm">Create </span>
+                        <span className="absolute left-full ml-2 text-[var(--text)] text-xs px-2 py-1  opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm">Create </span>
                     </button>
-                    <div className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all">
+                    <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all" onClick={OpenCompanyUserPage}>
                         <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs">View as member</span>
                         <VisibilityIcon className="transition-transform duration-200 group-hover:scale-110"/>
-                    </div>
+                    </button>
                 </div>
             </div>
             {/*List of items in dashboard*/}
             <nav>
                 {menuItems.map((item)=>(
-                    <Link key={item.name} href={item.href} className={`group hover:bg-[var(--foreground)] hover:rounded-lg flex items-center gap-2 p-2 ${pathname===item.href ? "bg-red rounded-lg bg-opacity-100" :"hover:bg-[var(--d)]"}`} onClick={item.action ? item.action :() => setActive(item.name)} >
+                    <Link key={item.name} href={item.href} className={`group flex items-center rounded-lg gap-2 p-2 ${pathname === item.href ? "bg-[var(--secondary)] " : "hover:bg-[var(--secondary)]"}`} onClick={item.action ? item.action :() => setActive(item.name)} >
                         {item.icon} {item.name}
                     </Link>))
                 }
                 <button className="relative flex justify-end items-center cursor-pointer group">
                     <LogoutIcon />
-                    <span className="absolute top-full mt-1 right-1/600 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-white text-xs transition-opacity duration-200 ">
+                    <span className="absolute top-full mt-1 right-1/600 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 ">
                         Logout
                     </span>
                 </button>
