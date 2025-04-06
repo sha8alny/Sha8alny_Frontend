@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import CompanyPreviewSection from "../presentation/CompanyPreviewSection";
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * CompanyPreviewSectionContainer handles the preview display of company details.
  * It generates a preview URL for an uploaded file (e.g., a logo) and cleans up the object URL to prevent memory leaks.
  *
