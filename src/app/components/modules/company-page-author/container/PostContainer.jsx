@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function Post({ username,logoPreview, cardInfo }) {
+export function Post({ username,logo, cardInfo }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(cardInfo.likes);
   const [isShared, setIsShared] = useState(false);
@@ -59,14 +59,12 @@ export function Post({ username,logoPreview, cardInfo }) {
       <section className="flex gap-2 items-center justify-between w-full">
         <section className="flex gap-2">
           <div className="size-9 relative bg-gray-600 rounded-full">
-          {logoPreview && logoPreview.trim() !== "" && (
               <Image
-              src={logoPreview}
+              src={logo?.trim() ? logo : "/default-logo.png"}
               alt="User Avatar"
               fill
               className="rounded-full object-cover"
             />
-          )}
           </div>
           <div className="text-left">
             <div className="flex gap-1">
@@ -87,15 +85,6 @@ export function Post({ username,logoPreview, cardInfo }) {
       </section>
       <div className="p-2 text-left w-full">
         <p className="text-left mb-2 text-[var(--text)]">{cardInfo.description}</p>
-        {cardInfo.media && cardInfo.media.trim() !== "" && (
-          <Image
-            src={cardInfo.media}
-            className="w-full max-h-[50vh] object-contain rounded-lg"
-            alt="Post Image"
-            width={500}
-            height={500}
-          />
-        )}
       </div>
       <section className="flex gap-2 w-full">
         <div className="flex gap-2 w-2/3 justify-between">
