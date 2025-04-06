@@ -32,7 +32,7 @@ function Post({username, followers, text, imageUrl,videoUrl, likes, liked, comme
                     </div>
                 </div>
                 <div className="mt-2 p-2">
-                    <p className="mt-2 text-white">{text}</p>
+                    <p className="mt-2 text-[var(--text)]">{text}</p>
                     {imageUrl && imageUrl.trim() !== null? (
                         <img src={imageUrl} alt="" className="w-full h-full rounded-lg mt-2" />
                     ) : null}
