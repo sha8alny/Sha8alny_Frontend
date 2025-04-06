@@ -5,6 +5,10 @@ import CreateCompanySection from "../presentation/CreateCompanySection";
 import { createCompany } from "@/app/services/companyManagment";
 
 /**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+/**
  * CreateCompanySectionContainer manages the state and logic for creating a new company.
  * It handles form validation, input changes, and submission while interacting with the `CreateCompanySection` component.
  *
@@ -28,6 +32,8 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
     const [companyType, setCompanyType] = useState("");
     const [companyLocation, setCompanyLocation] = useState("");
     const [companyWebsite, setCompanyWebsite] = useState("");
+    const [companyDate, setCompanyDate] = useState("");
+    const [companyPhone, setCompanyPhone] = useState("");
     const [isChecked, setIsChecked] = useState(false);
     const [showerror, setShowError] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -40,15 +46,21 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
                         companyLocation.trim() !== "";
 
     const handleInputChange = (field, value) => {
-        setErrors((prevErrors) => ({...prevErrors,[field]: "", }));
-    };
-
-    const checkBox =()=>{
-        setShowError(isChecked);
-        setIsChecked(!isChecked);
         setErrors((prevErrors) => ({
             ...prevErrors,
-            terms: !isChecked ? "" : "You must agree to the terms.",}));
+            [field]: value.trim() ? "" : `${field} is required`,
+        }));
+    };
+    const checkBox = () => {
+        setIsChecked((prev) => {
+            const newChecked = !prev;
+            setShowError(!newChecked);
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                terms: newChecked ? "" : "You must agree to the terms.",
+            }));
+            return newChecked;
+        });
     };
     
     const handleSubmit = async () => {
@@ -63,7 +75,7 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            return; 
+            return;
         }
 
         setLoading(true);
@@ -74,27 +86,30 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         if (file) {
             const formData = new FormData();
             formData.append("file", file);
-            
             logoURL = URL.createObjectURL(file);
         }
 
         const companyData = {
             username: companyName.toLowerCase().replace(/\s+/g, "-"),
             name: companyName,
-            URL: companyWebsite, 
+            URL: companyWebsite || null, 
             orgSize: companySize,
             orgType: companyType, 
-            logo: logoURL, 
+            logo: null, 
             cover: null, 
             description: companyTagline,
             industry: companyIndustry,
             location: companyLocation,
+            phoneNumber:companyPhone,
+            foundingDate:companyDate,
         };
 
         try {
+            logoURL=null;
            await createCompany(companyData);
-            router.push(`/company-page-author/${companyData.username}?logo=${encodeURIComponent(logoURL)}`);
+            router.push(`/company-admin/${companyData.username}/company-page-author/?logo=${encodeURIComponent(logoURL||'')}`);
         } catch (err) {
+            console.log(err.message);
             setError(err.message || "Failed to create company");
         } finally {
             setLoading(false);
@@ -111,7 +126,9 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         companyType={companyType} setCompanyType={(value)=>{setCompanyType(value);handleInputChange("companyType", value);}} 
         companyLocation={companyLocation} setCompanyLocation={(value)=>{setCompanyLocation(value);handleInputChange("companyLocation", value);}} 
         companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite}
-        companyURL={companyURL} setCompanyURL={(value)=>{setCompanyURL(value);handleInputChange("companyURL", value);}} 
+        companyURL={companyURL} setCompanyURL={(value)=>{setCompanyURL(value);handleInputChange("companyURL", value);}}
+        companyDate={companyDate} setCompanyDate ={(value)=>{setCompanyDate(value);handleInputChange("companyDate", value);}}
+        companyPhone={companyPhone} setCompanyPhone= {(value)=>{setCompanyPhone(value);handleInputChange("companyPhone", value);}}
         onCreateCompany={handleSubmit} loading={loading} isFormValid={isFormValid} errors={errors} setErrors={setErrors}
         isChecked={isChecked} checkBox={checkBox} error={error}/>
     );
