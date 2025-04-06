@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
 function checkBoxField({onChange, checked}) {
   return (
     <div>
