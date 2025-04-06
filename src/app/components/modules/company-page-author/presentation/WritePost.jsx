@@ -7,14 +7,14 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 
-function WritePost({text, setText,onImageUpload, onVideoUpload, preview, triggerFileInput,imageInputRef,onSubmit, logoPreview, openArticleModal, openPollModal}) {
+function WritePost({text, setText,onImageUpload, onVideoUpload, preview, triggerFileInput,imageInputRef,onSubmit, logo, openArticleModal, openPollModal}) {
   return (
     <div className="text-text">
         <div className="bg-[var(--foreground)] border rounded-lg p-4">
             <div className="flex items-center gap-4">
-                {logoPreview ? (
+                {logo ? (
                         <img 
-                            src={logoPreview} 
+                            src={logo} 
                             alt="company-logo" 
                             className="rounded-full w-14 h-14 object-cover" 
                         />
@@ -29,19 +29,19 @@ function WritePost({text, setText,onImageUpload, onVideoUpload, preview, trigger
                 <div htmlFor="upload-file" className="relative group">
                     <div className="relative group" onClick={()=>triggerFileInput("image")}>
                         <ImageOutlinedIcon className="cursor-pointer group"/>
-                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-white text-xs transition-opacity duration-200 "> Upload Image</span>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload Image</span>
                     </div>
                     <input id="upload-file" data-testid="upload-file" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={imageInputRef} onChange={onImageUpload}/>
                 </div>
                 <div htmlFor="upload-Poll" onClick={openPollModal} className="relative group">
                     <div className="relative group">
                         <PollOutlinedIcon className="cursor-pointer group"/>
-                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-white text-xs transition-opacity duration-200 "> Upload Poll</span>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload Poll</span>
                     </div>
                 </div>
                 <div className="relative group" onClick={openArticleModal} data-testid="write-post-modal">
                     <FeedOutlinedIcon className="cursor-pointer group"/>
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-white text-xs transition-opacity duration-200 "> Write Article</span>
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Write Article</span>
                 </div>
                 <button className={`bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity ${!text.trim() && !preview ? "opacity-50 cursor-not-allowed" : "" }`} onClick={onSubmit} disabled={!text.trim() && !preview}>
                     Post
@@ -50,10 +50,10 @@ function WritePost({text, setText,onImageUpload, onVideoUpload, preview, trigger
             {/*Filters*/}
         </div>
         <div className="mt-2 flex flex-row justify-between">
-        <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Page Posts</button>
-        <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Following</button>
-        <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Employee Posts</button>
-        <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Hashtags</button>
+            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3 mt-2 ">Page Posts</button>
+            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Following</button>
+            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Employee Posts</button>
+            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Hashtags</button>
         </div>
     </div>
   );
