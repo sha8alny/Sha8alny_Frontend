@@ -71,46 +71,242 @@ export const getApplication = async (jobId, applicantId) => {
     };
 };
 
+//Get CompantId using username
+export const getCompanyId = async (companyUsername) => {
+    try{
+        console.log("received username", companyUsername);
+        const response= await fetchWithAuth(`${apiURL}/getCompanyId/${companyUsername}`,{
+            method: "GET",
+            headers: { "Content-Type": "application/json", 
+                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` 
+            },
+        });
+        console.log("Raw response object:", response);
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get companyId: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
+};
+
+//List of companies owned by user
+export const getUserCompanies = async (pageNum = 1) => {
+    try{
+        const response = await fetchWithAuth(`${apiURL}/company?pageNum=${pageNum}`,{
+            method: "GET",
+            headers: { "Content-Type": "application/json", 
+                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` 
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get companies owned by user: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
+};
 
 export const createCompany = async (companyData) => {
-    const response =await fetch(`${apiURL}/company`,{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(companyData),
-    });
-    if(!response.ok) throw new Error("Failed to create company");
-    return await response.json();
+    try {
+        const response = await fetchWithAuth(`${apiURL}/company`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+            },
+            body: JSON.stringify(companyData),
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to create company: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+        
+    } catch (error) {
+        throw new Error(error.message);
+    }
 };
 
 export const getCompany = async (companyUsername) => {
-    const response = await fetch(`${apiURL}/company/${companyUsername}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok)  throw new Error("Failed to fetch company details");
-    return await response.json();
+    try{
+        const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json", 
+                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` 
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to view company profile: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
 };
 
 export const updateCompany = async (companyUsername, companyData) => {
-    const response = await fetch(`${apiURL}/company/${companyUsername}/edit`, {
-        method: "PUT",
-        headers: { 
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(companyData),
-    });
-    if (!response.ok) throw new Error("Failed to update company");
-    return await response.json();
+    try{
+        console.log("Updating company with data:", companyData);
+        console.log("received username: ", companyUsername);
+        const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
+            method: "PATCH",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+            body: JSON.stringify(companyData),
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to update company: ${response.status} ${responseText}`);
+        }
+        try {
+            const parsedResponse = JSON.parse(responseText);
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message)
+    }
 };
 
 export const deleteCompany = async (companyUsername) => {
-    const response = await fetch(`${apiURL}/company/${companyUsername}/edit`, {
-        method: "DELETE",
-        headers: { 
-            "Content-Type": "application/json",
-        },
-    });
-    if (!response.ok) throw new Error("Failed to delete company");
-    return "Company deleted successfully";
+    try{
+        const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to delete company: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
 };
 
+export const getDeletedCompanies = async(pageNum = 1)=>{
+    try{
+        const response = fetchWithAuth (`${apiURL}/company/restore?pageNum=${pageNum}`,{
+            method:"GET",
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get deleted company: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
+};
+export const restoreCompany = async (companyUsername) => {
+    try{
+        const response=  fetchWithAuth(`${apiURL}/company/${companyUsername}/restore`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to restore company: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
+};
+
+export const serachCompany = async(text, pageNum = 1)=>{
+    try{
+        const response = fetchWithAuth (`${apiURL}/company/search?text=${encodeURIComponent(text)}&pageNum=${pageNum}`,{
+            method:"GET",
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get searched company: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
+};
