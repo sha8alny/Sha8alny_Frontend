@@ -38,7 +38,7 @@ import CloseIcon from '@mui/icons-material/Close';
  * Handles post submission. Prevents empty posts from being submitted.
  */
 
-function WritePostContainer({onPostSubmit, logoPreview}){
+function WritePostContainer({onPostSubmit, logo}){
     const [text, setText] = useState("");
     const [preview, setPreview]= useState(null);
     const [file, setFile]= useState(null);
@@ -50,7 +50,7 @@ function WritePostContainer({onPostSubmit, logoPreview}){
     const imageUpload = (e) => {
         const selectedFile=e.target.files[0];
         if (selectedFile && selectedFile.type.startsWith("image/")){
-            setFile(selectedFile.name);
+            setFile(selectedFile);
             setPreview(URL.createObjectURL(selectedFile));
         }
     };
@@ -69,18 +69,14 @@ function WritePostContainer({onPostSubmit, logoPreview}){
         if (fileType === "video") videoInputRef.current?.click();
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         if (!text?.trim() && !file) return; 
         const newPost = {
-            id: Date.now(), 
-            description: text.trim(),
-            media:preview,
-            media:preview,
-            likes: 0,
-            reposts: 0,
-            views: 0,
-            comments: [],
-            timePosted: new Date().toISOString(),
+            text: text.trim(),
+            media:preview || null,
+            time: new Date().toISOString(),
+            tags:[],
+            keywords:[],
         };
         onPostSubmit(newPost); 
         setText("");
@@ -89,18 +85,14 @@ function WritePostContainer({onPostSubmit, logoPreview}){
     };
     const handleArticle = () => {
         if (!articleText.trim()) return; 
-        
         const newArticle = {
-            id: Date.now(), 
-            description: articleText,
-            likes: 0,
-            reposts: 0,
-            views: 0,
-            comments: [],
+            text: articleText,
+            media:null,
             timePosted: new Date().toISOString(),
+            tags:[],
+            keywords:[],
             isArticle: true,
         };
-    
         onPostSubmit(newArticle); 
         setArticleText(""); 
         setModalOpen(false); 
@@ -109,7 +101,8 @@ function WritePostContainer({onPostSubmit, logoPreview}){
     return(
         <div>
             <WritePost text={text} setText={setText} onImageUpload={imageUpload} onVideoUpload={videoUpload} preview={preview} triggerFileInput={triggerFileInput}
-            imageInputRef={imageInputRef} videoInputRef={videoInputRef} onSubmit={handleSubmit} logoPreview={logoPreview} openArticleModal={() => setModalOpen(true)}/>
+            imageInputRef={imageInputRef} videoInputRef={videoInputRef} onSubmit={handleSubmit} 
+            logo={logo} openArticleModal={() => setModalOpen(true)}/>
             <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
             <Box sx={{
                     position: "absolute",
