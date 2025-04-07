@@ -1,13 +1,12 @@
 "use client";
 import { useState, useRef} from "react";
-import Link from "next/link";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import SideBar from "../presentation/SideBar";
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined';
 import DynamicFeedOutlinedIcon from "@mui/icons-material/DynamicFeedOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
@@ -19,6 +18,8 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import { Modal, Box, Button, Typography } from "@mui/material";
 import { deleteCompany } from "@/app/services/companyManagment";
+import { getCompany } from "@/app/services/companyManagment";
+import { updateCompany } from "@/app/services/companyManagment";
 
 
 /**
@@ -72,26 +73,67 @@ import { deleteCompany } from "@/app/services/companyManagment";
 
 function SideBarContainer({username, logo ,setLogo }){
     const pathname= usePathname();
-    const [active, setActive] = useState(null);
+    const isActive = (href) => pathname.startsWith(href);
+    const [company, setCompany] = useState(null);
     const [isModalOpen, setModalOpen] = useState(false); 
     const [modalType, setModalType] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
     const coverInputRef = useRef(null);
     const logoInputRef = useRef(null);
     const router = useRouter(); 
+
     
-    const coverUpload = (e) => {
+    useEffect(() => {
+        const fetchCompany = async () => {
+        try {
+            const data = await getCompany(username);
+            console.log("Fetched company:", data); 
+            setCompany(data);
+        } catch (err) {
+            setError(err.message);
+        } 
+        };
+
+        if (username) fetchCompany();
+    }, [username]);
+
+    const coverUpload = async(e) => {
         const selectedFile=e.target.files[0];
         if (selectedFile){
-          setCoverPreview(URL.createObjectURL(selectedFile))
+            const newCoverURL = URL.createObjectURL(selectedFile);
+            setCoverPreview(newCoverURL);
+            if (company) {
+                const updatedCompany = {
+                    ...company,
+                    cover: newCoverURL
+                };
+                setCompany(updatedCompany);
+                try {
+                    await updateCompany(username, { cover: newCoverURL });
+                } catch (err) {
+                    console.error("Failed to update logo:", err);
+                }
+            }
         }
     };
     
-    const logoUpload = (e) => {
+    const logoUpload = async(e) => {
         const file = e.target.files[0];
         if (file) {
             const newLogoURL = URL.createObjectURL(file);
             setLogo(newLogoURL);
+            if (company) {
+                const updatedCompany = {
+                    ...company,
+                    logo: newLogoURL
+                };
+                setCompany(updatedCompany);
+                try {
+                    await updateCompany(username, { logo: newLogoURL });
+                } catch (err) {
+                    console.error("Failed to update logo:", err);
+                }
+            }
         }
     };
 
@@ -112,6 +154,7 @@ function SideBarContainer({username, logo ,setLogo }){
         try {
             await deleteCompany(username);
             setModalOpen(false); 
+            router.push("/company-page-form");
         } catch (error) {
             console.error("Error deactivating company:", error);
         }
@@ -127,24 +170,25 @@ function SideBarContainer({username, logo ,setLogo }){
     }
 
     const menuItems =[
-        {name: "Dashboard", href:`/company-admin/${username}/company-page-author/?logo=${encodeURIComponent(logo|| "")} `,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
-        {name: "Page Posts", href:`/company-admin/${username}/posts-page/?logo=${encodeURIComponent(logo || "")}` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Dashboard", href:`/company-admin/${username}/company-page-author`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
+        {name: "Page Posts", href:`/company-admin/${username}/posts-page` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Feed",href:"#", icon: <DynamicFeedOutlinedIcon style={{fontSize:"20px"}} />},
         {name: "Activity",href:"#", icon: <NotificationsOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
-        {name: "Edit Page", href:`/company-admin/${username}/edit-page/?logo=${encodeURIComponent(logo || "")}`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Jobs", href:`/company-admin/${username}/company-author/?logo=${encodeURIComponent(logo || "")} `,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Edit Page", href:`/company-admin/${username}/edit-page`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Jobs", href:`/company-admin/${username}/company-author`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(
         <div>
-            <SideBar menuItems={menuItems} pathname={pathname} setActive={setActive} 
+            <SideBar company={company} menuItems={menuItems}
+            isActive={isActive}
             isModalOpen={isModalOpen} setModalOpen={handleOpenModal} 
             onChangeCover={coverUpload} onChangeLogo={logoUpload} 
-            coverpreview={coverPreview} logo={logo} 
             triggerCoverInput={triggerCoverInput} triggerLogoInput={triggerLogoInput} 
             coverInputRef={coverInputRef} logoInputRef={logoInputRef} 
             fileusername={username} OpenCompanyUserPage={OpenCompanyUserPage}/>
+            
             <Modal open={isModalOpen} onClose={() => setModalOpen(false)} aria-labelledby="deactivate-modal" data-testid="deactivate-modal">
                 <Box sx={{
                     position: "absolute",
