@@ -47,16 +47,6 @@ function WritePost({company, text, setText,onImageUpload, preview, triggerFileIn
                     Post
                 </button>
             </div>
-            {/* 👇 ADD PREVIEW RIGHT HERE */}
-            {preview && (
-            <div className="mt-4">
-                <img
-                src={preview}
-                alt="Preview"
-                className="rounded-lg max-h-64 object-contain border border-gray-700"
-                />
-            </div>
-            )}
             {/*Filters*/}
         </div>
         <div className="mt-2 w-full overflow-x-auto scrollbar-hide">
