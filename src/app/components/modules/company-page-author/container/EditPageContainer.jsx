@@ -66,7 +66,7 @@ function EditPageContainer({username}){
         const companyData = {
             name: companyName || undefined,
             username :companyName.toLowerCase().replace(/\s+/g, "-") || undefined,
-            URL: companyURL || undefined,
+            URL: companyWebsite || undefined,
             orgSize: companySize || undefined,
             orgType: companyType || undefined,
             logo: "" || undefined, 
