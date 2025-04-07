@@ -63,14 +63,7 @@ function JobCard({ job, onClick }) {
     }
   };
 
-  const formatSalary = (salary) => {
-    if (!salary) return "Salary: undisclosed";
-    return `Salary: ${new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(salary)}`;
-  };
+
 
   return (
     <div
@@ -101,7 +94,7 @@ function JobCard({ job, onClick }) {
         <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
           <span>Posted {getRelativeTimeString(job.createdAt)}</span>
           <span className="font-medium">
-            {formatSalary(job.salary)}
+            {job.salaryFormatted}
           </span>
         </div>
       </div>
