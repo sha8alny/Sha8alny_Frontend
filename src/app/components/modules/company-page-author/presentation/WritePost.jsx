@@ -7,14 +7,14 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 
-function WritePost({text, setText,onImageUpload, onVideoUpload, preview, triggerFileInput,imageInputRef,onSubmit, logo, openArticleModal, openPollModal}) {
+function WritePost({company, text, setText,onImageUpload, preview, triggerFileInput,imageInputRef,onSubmit, openArticleModal, openPollModal}) {
   return (
     <div className="text-text">
         <div className="bg-[var(--foreground)] border rounded-lg p-4">
             <div className="flex items-center gap-4">
-                {logo ? (
+                {company?.logo ? (
                         <img 
-                            src={logo} 
+                            src={company?.logo} 
                             alt="company-logo" 
                             className="rounded-full w-14 h-14 object-cover" 
                         />
@@ -47,13 +47,33 @@ function WritePost({text, setText,onImageUpload, onVideoUpload, preview, trigger
                     Post
                 </button>
             </div>
+            {/* 👇 ADD PREVIEW RIGHT HERE */}
+            {preview && (
+            <div className="mt-4">
+                <img
+                src={preview}
+                alt="Preview"
+                className="rounded-lg max-h-64 object-contain border border-gray-700"
+                />
+            </div>
+            )}
             {/*Filters*/}
         </div>
-        <div className="mt-2 flex flex-row justify-between">
-            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3 mt-2 ">Page Posts</button>
-            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Following</button>
-            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Employee Posts</button>
-            <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-2 px-3  mt-2">Hashtags</button>
+        <div className="mt-2 w-full overflow-x-auto scrollbar-hide">
+            <div className="flex justify-between space-x-2 min-w-max pb-2">
+                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap">
+                Page Posts
+                </button>
+                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap">
+                Following
+                </button>
+                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap">
+                Employee Posts
+                </button>
+                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap">
+                Hashtags
+                </button>
+            </div>
         </div>
     </div>
   );
