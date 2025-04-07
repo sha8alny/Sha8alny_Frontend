@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 import MyJobsPresentation from "../presentation/MyJobsPresentation";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchAppliedJobs } from "@/app/services/jobs";
 
 
@@ -21,17 +21,32 @@ import { fetchAppliedJobs } from "@/app/services/jobs";
  * @property {string|null} errorMessage - Error message if query failed, null otherwise
 */
 const useJobApplications = () => {
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["jobApplications"],
-    queryFn: () => fetchAppliedJobs(),
-    enabled: true,
-  });
-  
-  return {
+  const {
     data,
     isLoading,
     isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ["jobApplications"],
+    queryFn: fetchAppliedJobs,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1,
+  });
+  
+  // Flatten the pages data into a single array
+  const flattenedData = data?.pages?.flatMap(page => page.data) || [];
+  
+  return {
+    data: flattenedData,
+    isLoading,
+    isError,
     errorMessage: isError ? error.message : null,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage
   };
 };
 
