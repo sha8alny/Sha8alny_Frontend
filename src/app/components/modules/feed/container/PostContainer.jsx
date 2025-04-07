@@ -8,8 +8,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   determineAge,
   getPost,
-  likePost,
-  unlikePost,
+  likePostComment as likePost,
+  unlikePostComment as unlikePost,
+  savePost,
 } from "@/app/services/post";
 import { useState } from "react";
 import { repostPost } from "@/app/services/repostPost";
@@ -27,7 +28,12 @@ export default function PostContainer({ post }) {
   };
 
   const handleLikeMutation = useMutation({
-    mutationFn: (postId) => (isLiked ? unlikePost(postId) : likePost(postId)),
+    mutationFn: (params) => {
+      const { postId, reaction } = params;
+      return isLiked && post?.reaction === reaction
+        ? unlikePost(postId)
+        : likePost(postId, reaction);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(["posts"]);
     },
@@ -54,20 +60,20 @@ export default function PostContainer({ post }) {
     },
   });
 
-  const handleLike = () => {
-    handleLikeMutation.mutate(post.id);
+  const handleLike = (reaction) => {
+    handleLikeMutation.mutate({ postId: post.postId, reaction });
   };
 
   const handleRepost = () => {
-    handleRepostMutation.mutate(post.id);
+    handleRepostMutation.mutate(post.postId);
   };
 
   const handleReport = () => {
-    handleReportMutation.mutate(post.id);
+    handleReportMutation.mutate(post.postId);
   };
 
   const handleSave = () => {
-    handleSaveMutation.mutate(post.id);
+    handleSaveMutation.mutate(post.postId);
   };
 
   return (

@@ -172,6 +172,7 @@ function ProfileContent({ username }) {
     hasConnections: userProfile?.connectionsCount > 0,
   };
 
+  console.log(userProfile)
   return (
     <ProfilePresentation
       userProfile={userProfile}

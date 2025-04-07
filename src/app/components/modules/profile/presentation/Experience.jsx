@@ -34,7 +34,11 @@ export const ExperienceCard = ({ job, duration, isMyProfile }) => {
     <div className="flex gap-2">
       <div className="relative size-12 bg-gray-700 rounded-full">
         <Image
-          src={job.image ?? `https://picsum.photos/seed/${job?._id}/200`}
+          src={
+            job?.image && job?.image !== ""
+              ? job?.image
+              : `https://picsum.photos/seed/${job?._id}/200`
+          }
           fill
           alt="Company Logo"
           className="rounded-full"
@@ -42,8 +46,7 @@ export const ExperienceCard = ({ job, duration, isMyProfile }) => {
       </div>
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
-          {job.title}{" "}
-          {isMyProfile && <ModExperience experience={job} />}
+          {job.title} {isMyProfile && <ModExperience experience={job} />}
         </h4>
         <p className="flex items-center">
           {job.company}
@@ -52,7 +55,11 @@ export const ExperienceCard = ({ job, duration, isMyProfile }) => {
         </p>
         <p className="text-muted flex">
           <span>
-            {job?.startDate?.month.substring(0,3) + "."} {job?.startDate?.year} - {job?.isCurrent ? `${job?.endDate?.month}` : `${job?.endDate?.month.substring(0,3) + "."}`}{" "}
+            {job?.startDate?.month.substring(0, 3) + "."} {job?.startDate?.year}{" "}
+            -{" "}
+            {job?.isCurrent
+              ? `${job?.endDate?.month}`
+              : `${job?.endDate?.month.substring(0, 3) + "."}`}{" "}
             {job?.endDate?.year}
           </span>
           <span className="ml-2">•</span>
@@ -93,14 +100,11 @@ export default function Experience({
     (experience?.length > 0 || isMyProfile) && (
       <Container className="border border-[#111] shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
-          Experience{" "}
-          {isMyProfile && <ModExperience adding />}
+          Experience {isMyProfile && <ModExperience adding />}
         </h3>
-        { (isMyProfile && experience?.length === 0) && (
+        {isMyProfile && experience?.length === 0 && (
           <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
-            <p>
-              Add your work experience to let others know more about you.{" "}
-            </p>
+            <p>Add your work experience to let others know more about you. </p>
           </div>
         )}
         <div className="space-y-8">

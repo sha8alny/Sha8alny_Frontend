@@ -15,7 +15,6 @@ export default function ModHeader({ userInfo }) {
   const { isMyProfile } = useIsMyProfile();
 
   const handleResumeDownload = (username) => {
-    // Implement resume download from the server
     window.open(`/api/profile/resume/${username}`, "_blank");
   };
 
@@ -35,16 +34,23 @@ export default function ModHeader({ userInfo }) {
 }
 
 export const ModifyProfileContainer = ({ userInfo }) => {
-  // Initialize state with user data if available
   const [profilePicture, setProfilePicture] = useState(
     userInfo?.profilePicture || ""
   );
   const [coverPicture, setCoverPicture] = useState(
-    userInfo?.coverPicture || ""
+    userInfo?.coverPhoto || ""
   );
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [coverPictureFile, setCoverPictureFile] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
+
+  const [isProfilePictureLoading, setIsProfilePictureLoading] = useState(false);
+  const [isCoverPictureLoading, setIsCoverPictureLoading] = useState(false);
+  const [isResumeLoading, setIsResumeLoading] = useState(false);
+
+  const [profilePictureError, setProfilePictureError] = useState(null);
+  const [coverPictureError, setCoverPictureError] = useState(null);
+  const [resumeError, setResumeError] = useState(null);
 
   const [name, setName] = useState(userInfo?.name || "");
   const [location, setLocation] = useState(userInfo?.location || "");
@@ -64,30 +70,126 @@ export const ModifyProfileContainer = ({ userInfo }) => {
 
   useEffect(() => {
     if (isLoading) {
-      setCurrentStage(1); // Loading state
+      setCurrentStage(1);
     } else if (isError) {
-      setCurrentStage(3); // Error state
+      setCurrentStage(3);
       setError(
         profileUpdate.error?.message ||
           "An error occurred while updating your profile"
       );
     } else if (isSuccess) {
-      setCurrentStage(2); // Success state
+      setCurrentStage(2);
     }
   }, [isLoading, isError, isSuccess, profileUpdate.error]);
 
-  const handleFileChange = (e, setFile, setFileObject) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Store the file object for later upload
-      setFileObject(file);
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-      // Create a preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFile(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const VALID_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/svg+xml",
+  ];
+
+  const VALID_RESUME_TYPES = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+
+  const handleFileChange = (e, fileType) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    switch (fileType) {
+      case "profile":
+        setProfilePictureError(null);
+
+        if (file.size > MAX_FILE_SIZE) {
+          setProfilePictureError("File size exceeds 5MB limit");
+          return;
+        }
+
+        if (!VALID_IMAGE_TYPES.includes(file.type)) {
+          setProfilePictureError(
+            "File must be an image (JPEG, PNG, GIF, WebP, or SVG)"
+          );
+          return;
+        }
+
+        setIsProfilePictureLoading(true);
+        setProfilePictureFile(file);
+        const profileReader = new FileReader();
+        profileReader.onloadend = () => {
+          setProfilePicture(profileReader.result);
+          setIsProfilePictureLoading(false);
+        };
+        profileReader.onerror = () => {
+          setProfilePictureError("Failed to read file");
+          setIsProfilePictureLoading(false);
+        };
+        profileReader.readAsDataURL(file);
+        break;
+
+      case "cover":
+        setCoverPictureError(null);
+
+        if (file.size > MAX_FILE_SIZE) {
+          setCoverPictureError("File size exceeds 5MB limit");
+          return;
+        }
+
+        if (!VALID_IMAGE_TYPES.includes(file.type)) {
+          setCoverPictureError(
+            "File must be an image (JPEG, PNG, GIF, WebP, or SVG)"
+          );
+          return;
+        }
+
+        setIsCoverPictureLoading(true);
+        setCoverPictureFile(file);
+        const coverReader = new FileReader();
+        coverReader.onloadend = () => {
+          setCoverPicture(coverReader.result);
+          setIsCoverPictureLoading(false);
+        };
+        coverReader.onerror = () => {
+          setCoverPictureError("Failed to read file");
+          setIsCoverPictureLoading(false);
+        };
+        coverReader.readAsDataURL(file);
+        break;
+
+      case "resume":
+        setResumeError(null);
+
+        if (file.size > MAX_FILE_SIZE) {
+          setResumeError("File size exceeds 5MB limit");
+          return;
+        }
+
+        if (!VALID_RESUME_TYPES.includes(file.type)) {
+          setResumeError("File must be a PDF or Word document");
+          return;
+        }
+
+        setIsResumeLoading(true);
+        setResumeFile(file);
+        const resumeReader = new FileReader();
+        resumeReader.onloadend = () => {
+          setResume(resumeReader.result);
+          setIsResumeLoading(false);
+        };
+        resumeReader.onerror = () => {
+          setResumeError("Failed to read file");
+          setIsResumeLoading(false);
+        };
+        resumeReader.readAsDataURL(file);
+        break;
+
+      default:
+        break;
     }
   };
 
@@ -95,7 +197,6 @@ export const ModifyProfileContainer = ({ userInfo }) => {
     e.preventDefault();
 
     try {
-      // Update basic profile info first
       const profileData = {
         name,
         location,
@@ -128,63 +229,54 @@ export const ModifyProfileContainer = ({ userInfo }) => {
         data: profileData,
       });
 
-      // Handle profile picture upload if changed
       if (profilePictureFile) {
         const profilePicFormData = new FormData();
-        profilePicFormData.append("image", profilePictureFile);
+        if (profilePictureFile instanceof File && profilePictureFile.size > 0) {
+          profilePicFormData.append("profilePicture", profilePictureFile);
 
-        // Determine if we're updating an existing profile picture or adding a new one
-        const method = userInfo?.profilePicture ? "PUT" : "POST";
-
-        await profileUpdate.mutateAsync({
-          api: "profile/profile-picture",
-          method: method,
-          data: profilePicFormData,
-          isFormData: true,
-        });
+          await profileUpdate.mutateAsync({
+            api: "profile/profile-picture",
+            method: "PUT",
+            data: profilePicFormData,
+            isFormData: true,
+          });
+        }
       }
 
-      // Handle cover photo upload if changed
       if (coverPictureFile) {
         const coverPicFormData = new FormData();
-        coverPicFormData.append("image", coverPictureFile);
+        if (coverPictureFile instanceof File && coverPictureFile.size > 0) {
+          coverPicFormData.append("coverPhoto", coverPictureFile);
 
-        // Determine if we're updating an existing cover photo or adding a new one
-        const method = userInfo?.coverPicture ? "PUT" : "POST";
-
-        await profileUpdate.mutateAsync({
-          api: "profile/cover-photo",
-          method: method,
-          data: coverPicFormData,
-          isFormData: true,
-        });
+          await profileUpdate.mutateAsync({
+            api: "profile/cover-photo",
+            method: "PUT",
+            data: coverPicFormData,
+            isFormData: true,
+          });
+        }
       }
 
-      // Handle resume upload if changed
       if (resumeFile) {
         const resumeFormData = new FormData();
-        resumeFormData.append("resume", resumeFile);
+        if (resumeFile instanceof File && resumeFile.size > 0) {
+          resumeFormData.append("resume", resumeFile);
 
-        // Determine if we're updating an existing resume or adding a new one
-        const method = userInfo?.resume ? "PUT" : "POST";
-
-        await profileUpdate.mutateAsync({
-          api: "profile/upload-resume",
-          method: method,
-          data: resumeFormData,
-          isFormData: true,
-        });
+          await profileUpdate.mutateAsync({
+            api: "profile/upload-resume",
+            method: "POST",
+            data: resumeFormData,
+            isFormData: true,
+          });
+        }
       }
-
-      // Success handling is managed by useEffect
     } catch (err) {
-      setCurrentStage(3); // Error state
+      setCurrentStage(3);
       setError(err.message || "An error occurred during profile update");
     }
   };
 
   const removeProfilePicture = () => {
-    // Send DELETE request to remove profile picture
     if (userInfo?.profilePicture) {
       profileUpdate.mutate({
         api: "profile/profile-picture",
@@ -197,8 +289,7 @@ export const ModifyProfileContainer = ({ userInfo }) => {
   };
 
   const removeCoverPicture = () => {
-    // Send DELETE request to remove cover photo
-    if (userInfo?.coverPicture) {
+    if (userInfo?.coverPhoto) {
       profileUpdate.mutate({
         api: "profile/cover-photo",
         method: "DELETE",
@@ -210,7 +301,6 @@ export const ModifyProfileContainer = ({ userInfo }) => {
   };
 
   const removeResume = () => {
-    // Send DELETE request to remove resume
     if (userInfo?.resume) {
       profileUpdate.mutate({
         api: "profile/upload-resume",
@@ -226,12 +316,15 @@ export const ModifyProfileContainer = ({ userInfo }) => {
     switch (type) {
       case "profile":
         removeProfilePicture();
+        setProfilePictureError(null);
         break;
       case "cover":
         removeCoverPicture();
+        setCoverPictureError(null);
         break;
       case "resume":
         removeResume();
+        setResumeError(null);
         break;
       default:
         break;
@@ -263,18 +356,9 @@ export const ModifyProfileContainer = ({ userInfo }) => {
       setLocationError={setLocationError}
       headlineError={headlineError}
       setHeadlineError={setHeadlineError}
-      handleFileChange={(e, fileType) => {
-        if (fileType === "profile") {
-          handleFileChange(e, setProfilePicture, setProfilePictureFile);
-        } else if (fileType === "cover") {
-          handleFileChange(e, setCoverPicture, setCoverPictureFile);
-        } else if (fileType === "resume") {
-          handleFileChange(e, setResume, setResumeFile);
-        }
-      }}
+      handleFileChange={handleFileChange}
       removeFile={handleRemoveFile}
       onSubmit={onSubmit}
-      // Pass flags to indicate if images are from server (URLs) versus local uploads
       isProfileRemote={
         profilePicture &&
         typeof profilePicture === "string" &&
@@ -288,6 +372,12 @@ export const ModifyProfileContainer = ({ userInfo }) => {
       isResumeRemote={
         resume && typeof resume === "string" && !resume.startsWith("data:")
       }
+      isProfilePictureLoading={isProfilePictureLoading}
+      isCoverPictureLoading={isCoverPictureLoading}
+      isResumeLoading={isResumeLoading}
+      profilePictureError={profilePictureError}
+      coverPictureError={coverPictureError}
+      resumeError={resumeError}
     />
   );
 };

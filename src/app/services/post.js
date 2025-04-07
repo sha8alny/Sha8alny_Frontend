@@ -71,21 +71,37 @@ export const deletePost = async (postId) => {
   return "Post deleted successfully";
 };
 
-export const likePost = async (postId) => {
-  const response = await fetch(`${apiURL}/posts/${postId}/like`, {
+export const likePostComment = async (postId, reaction, commentId = null) => {
+  console.log("postId", postId);
+  console.log("reaction", reaction);
+  const url =
+    `${apiURL}/posts/${postId}/react` +
+    (commentId ? `?commentId=${commentId}` : "");
+  const response = await fetchWithAuth(url, {
     method: "POST",
-    headers: { Authorization: `Bearer ${getToken()}` },
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ reaction }),
   });
   if (!response.ok) throw new Error("Failed to like post");
   return "Post liked successfully";
 };
 
-export const unlikePost = async (postId) => {
-  const response = await fetch(`${apiURL}/posts/${postId}/like`, {
+export const unlikePostComment = async (postId, commentId = null) => {
+  const url =
+    `${apiURL}/posts/${postId}/react` +
+    (commentId ? `?commentId=${commentId}` : "");
+  const response = await fetchWithAuth(url, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
-  if (!response.ok) throw new Error("Failed to unlike post");
-  return "Post unliked successfully";
+  if (!response.ok) {
+    throw new Error("Failed to unlike.");
+  }
+  return response.status;
 };
 
 export const getLikes = async (postId) => {
@@ -119,15 +135,12 @@ export async function getCommentReplies(postId, commentId, pageNum = 1) {
     if (commentId) {
       url += `&commentId=${commentId}`;
     }
-    const response = await fetchWithAuth(
-      url,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetchWithAuth(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch comments: ${response.status}`);
@@ -148,25 +161,22 @@ export async function getCommentReplies(postId, commentId, pageNum = 1) {
  * @param {string} params.reaction - The reaction type
  * @returns {Promise<Object>} - Response data
  */
-export async function reactToContent({ postId, commentId, reaction = 'Like' }) {
+export async function reactToContent({ postId, commentId, reaction = "Like" }) {
   try {
     // Construct URL with commentId as a query parameter if it exists
     let url = `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/react`;
-    
+
     if (commentId) {
       url += `?commentId=${commentId}`;
     }
-    
-    const response = await fetchWithAuth(
-      url,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ reaction }),
-      }
-    );
+
+    const response = await fetchWithAuth(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reaction }),
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to react: ${response.status}`);
@@ -192,21 +202,18 @@ export async function addComment({ postId, commentId, text, tags = [] }) {
   try {
     // Construct URL with commentId as a query parameter if it exists
     let url = `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/comment`;
-    
+
     if (commentId) {
       url += `?commentId=${commentId}`;
     }
-    
-    const response = await fetchWithAuth(
-      url,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text, tags }),
-      }
-    );
+
+    const response = await fetchWithAuth(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text, tags }),
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to add comment: ${response.status}`);
@@ -324,7 +331,6 @@ export const searchPosts = async (keyword) => {
   if (!response.ok) throw new Error("Failed to search posts");
   return await response.json();
 };
-
 
 export const determineAge = (createdAt) => {
   const currentTime = new Date();

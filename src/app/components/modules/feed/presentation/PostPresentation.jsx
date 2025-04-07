@@ -33,6 +33,12 @@ import {
 } from "@mui/icons-material";
 import ShareContainer from "../container/ShareContainer";
 import React from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/app/components/ui/Tooltip";
 
 // TODO: Modify Reactions
 // TODO: Add Skeleton
@@ -51,7 +57,7 @@ export default function PostPresentation({
   onSave,
   navigateTo,
   post,
-  userReactions
+  userReactions,
 }) {
   return (
     <Card className="bg-foreground w-full max-w-2xl mx-auto mb-4">
@@ -168,28 +174,57 @@ export default function PostPresentation({
       <Separator />
 
       <CardFooter className="flex justify-between">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
-          onClick={onLike}
-        >
-          {React.createElement(
-            (userReactions[post?.reaction] || userReactions.Like).icon,
-            {
-              sx: { fontSize: "1rem" },
-              className: isLiked
-                ? (userReactions[post?.reaction] || userReactions.Like)
-                    .className
-                : "",
-            }
-          )}
-          <span
-            className={`text-muted ${post?.reaction ? "text-secondary" : ""}`}
-          >
-            {post?.numReacts}
-          </span>
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <span
+                className="flex p-1 items-center gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
+              >
+                {React.createElement(
+                  (userReactions[post?.reaction] || userReactions.Like).icon,
+                  {
+                    sx: { fontSize: "1rem" },
+                    className: isLiked
+                      ? (userReactions[post?.reaction] || userReactions.Like)
+                          .className
+                      : "",
+                  }
+                )}
+                <span
+                  className={`text-muted ${
+                    post?.reaction ? "text-secondary" : ""
+                  }`}
+                >
+                  {post?.numReacts}
+                </span>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="bg-foreground border text-primary rounded-md">
+              <div className="flex gap-3 w-full">
+                {Object.entries(userReactions).map(
+                  ([name, { icon, className }]) => (
+                    <div
+                      key={name}
+                      onClick={() => { onLike(name); }}
+                      className="relative group flex items-center justify-center flex-1 px-2"
+                    >
+                      <div className="cursor-pointer group-hover:scale-140 duration-300 transition-transform">
+                        {React.createElement(icon, {
+                          sx: { fontSize: "2rem" },
+                          className: className,
+                        })}
+                      </div>
+                      
+                      <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                        {name}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <Button
           variant="ghost"

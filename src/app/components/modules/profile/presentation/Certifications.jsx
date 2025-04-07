@@ -30,7 +30,7 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
       <div className="relative size-12 bg-gray-700 rounded-full">
         <Image
           src={
-            certificate?.issuingOrganisationLogo ?? "https://picsum.photos/200"
+            (certificate?.issuingOrganisationLogo) ?? "https://picsum.photos/200"
           }
           fill
           alt="Company Logo"

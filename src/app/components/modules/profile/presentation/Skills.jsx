@@ -26,7 +26,7 @@ import ModSkill from "../container/ModSkill";
 export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
   return (
     <div className="space-y-2">
-      <div className="flex sm:flex-row md:flex-col lg:flex-row items-center justify-between">
+      <div className="flex items-center justify-between">
         <h3 className="font-semibold truncate">{skill?.skillName}</h3>
         <span className="text-xs font-medium text-background bg-secondary px-2 py-0.5 rounded-full">
           {level.level}
@@ -38,7 +38,7 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
           style={{ width: `${level.width}%` }}
         />
       </div>
-      <div className="flex sm:flex-row md:flex-col lg:flex-row items-center justify-between text-xs text-muted">
+      <div className="flex items-center justify-between text-xs text-muted">
         <span>{skill?.endorsementsCount ?? 0} endorsements</span>
         <Button
           variant="ghost"
