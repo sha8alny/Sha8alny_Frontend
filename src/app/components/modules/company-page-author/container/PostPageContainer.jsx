@@ -8,12 +8,12 @@ import { Post } from "./PostContainer";
 function PostPageContainer({ username, logo }) {
     const [posts, setPosts] = useState([]); 
     const [company, setCompany] = useState(null);
+    const [error, setError] = useState(null);
 
     const handlePostSubmit = async (newPost) => {
         try {
             const {companyId} = await getCompanyId(username);
             const createdPost = await createPost(newPost, companyId);
-            console.log("Post created:", createdPost); // Debugging line
             if (createdPost.message === "Post created successfully") {
                 const createdPost = {
                     ...newPost, 
