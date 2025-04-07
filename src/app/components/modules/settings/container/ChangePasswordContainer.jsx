@@ -4,6 +4,7 @@ import { changePassword } from "../../../../services/userManagement";
 import ChangePasswordForm from "../presentation/ChangePasswordForm";
 import { useToast } from "@/app/context/ToastContext";
 import { useRouter } from "next/navigation";
+
 /**
  * @namespace settings
  * @module settings
@@ -26,13 +27,17 @@ const ChangePasswordContainer = ({ toggleForm }) => {
     newPassword: "",
     confirmPassword: "",
   });
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef(null);
+
   const [errors, setErrors] = useState({
     currPassError: "",
     newPassError: "",
     confirmPassError: "",
   });
+
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef(null);
+  const router = useRouter();
+  const showToast = useToast();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -40,15 +45,46 @@ const ChangePasswordContainer = ({ toggleForm }) => {
         setShowTooltip(false);
       }
     };
+
     if (showTooltip) {
       document.addEventListener("mousedown", handleClickOutside);
     }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showTooltip]);
-  const router = useRouter();
-  const showToast = useToast();
+
+  const validateAllFields = (updatedValues) => {
+    const { currentPassword, newPassword, confirmPassword } = updatedValues;
+    let newErrors = {
+      currPassError: "",
+      newPassError: "",
+      confirmPassError: "",
+    };
+
+    if (!currentPassword) {
+      newErrors.currPassError = "Your current password is required.";
+    }
+
+    if (newPassword.length < 8 && newPassword.length !== 0) {
+      newErrors.newPassError = "Your password is too short. It should be at least 8 characters long.";
+    } else if (newPassword.length > 200) {
+      newErrors.newPassError = "Your password is too long. It can’t be more than 200 characters.";
+    } else if (newPassword === currentPassword && newPassword !== "") {
+      newErrors.newPassError = "Your new password cannot be the same as your current password.";
+    }
+
+    if (confirmPassword.length < 8 && confirmPassword.length !== 0) {
+      newErrors.confirmPassError = "Your password is too short. It should be at least 8 characters long.";
+    } else if (confirmPassword !== newPassword && confirmPassword !== "") {
+      newErrors.confirmPassError = "Passwords do not match.";
+    }
+
+    setErrors(newErrors);
+    return newErrors;
+  };
+
   const mutation = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
@@ -56,72 +92,37 @@ const ChangePasswordContainer = ({ toggleForm }) => {
       toggleForm();
     },
     onError: (error) => {
-      showToast("Failed to update password", false);
+      const message = error?.response?.data?.message || error?.message || "Something went wrong";
+      showToast(message, false);
     },
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setPasswords({ ...passwords, [name]: value });
-    validateField(name, value);
+    const updatedValues = { ...passwords, [name]: value };
+    setPasswords(updatedValues);
+    validateAllFields(updatedValues);
   };
-
-  const validateField = (name, value) => {
-    setErrors((prev) => {
-      let updatedErrors = { ...prev };
-
-      if (name === "currentPassword") {
-        updatedErrors.currPassError = value
-          ? ""
-          : "Your current password is required.";
-      }
-
-      if (name === "newPassword") {
-        updatedErrors.newPassError =
-          value.length < 8 && value.length !== 0
-            ? "Your password is too short. It should be at least 8 characters long."
-            : value.length > 200
-            ? "Your password is too long. It can’t be more than 200 characters."
-            : "";
-      }
-
-      if (name === "confirmPassword") {
-        updatedErrors.confirmPassError =
-          value.length < 8 && value.length !== 0
-            ? "Your password is too short. It should be at least 8 characters long."
-            : value !== passwords.newPassword
-            ? "Passwords do not match."
-            : "";
-      }
-
-      return updatedErrors;
-    });
-  };
-
 
   const handleForgetPassword = () => {
-    router.push("/forgot-password"); 
-  }
+    router.push("/forgot-password");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      !passwords.currentPassword ||
-      !passwords.newPassword ||
-      !passwords.confirmPassword
-    ) {
-      showToast("Please fill in all fields", false);
 
+    const validationErrors = validateAllFields(passwords);
+
+    const hasErrors = Object.values(validationErrors).some((err) => err !== "");
+    const hasEmptyFields = Object.values(passwords).some((val) => !val);
+
+    if (hasEmptyFields) {
+      showToast("Please fill in all fields", false);
       return;
     }
 
-    if (
-      errors.currPassError ||
-      errors.newPassError ||
-      errors.confirmPassError
-    ) {
+    if (hasErrors) {
       showToast("Please fix validation errors before submitting", false);
-
       return;
     }
 

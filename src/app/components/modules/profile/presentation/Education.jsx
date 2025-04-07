@@ -55,8 +55,8 @@ const EducationCard = ({ placeOfEducation, isMyProfile }) => {
         </p>
         <p className="text-muted flex">
           <span>
-            {placeOfEducation?.startDate?.month} {placeOfEducation?.startDate?.year}{" "}
-            - {placeOfEducation?.endDate?.month} {placeOfEducation?.endDate?.year}
+            {placeOfEducation?.startDate?.month?.substring(0,3) + "."} {placeOfEducation?.startDate?.year}{" "}
+            - {placeOfEducation?.endDate?.month?.substring(0,3) + "."} {placeOfEducation?.endDate?.year}
           </span>
         </p>
         <p className="text-muted">

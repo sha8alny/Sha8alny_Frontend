@@ -44,7 +44,7 @@ function JobTags({ employmentType, workLocation }) {
  * @param {Function} props.onClick - Callback function when the job card is clicked.
  * @returns {JSX.Element} The JobCard component.
  */
-function JobCard({ job, onClick }) {
+export function JobCard({ job, onClick }) {
   const getRelativeTimeString = (date) => {
     try {
       if (!date) return "Recently";

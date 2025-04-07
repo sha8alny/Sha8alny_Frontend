@@ -35,7 +35,6 @@ export default async function Page({ params }) {
   const { username } = await params;
   return (
     <div className="w-screen h-screen overflow-auto">
-      <Navbar />
       <ReactQueryProvider>
         <ProfileContainer username={username}/>
       </ReactQueryProvider>

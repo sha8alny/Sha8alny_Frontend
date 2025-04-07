@@ -8,10 +8,11 @@ import {
 } from "@/app/components/ui/Tabs";
 import { Label } from "@/app/components/ui/Label";
 import { Input } from "@/app/components/ui/Input";
-import { Cancel, Upload, X } from "@mui/icons-material";
+import CancelIcon from '@mui/icons-material/Cancel';
 import { Button } from "@/app/components/ui/Button";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { AlertDialogCancel } from "@/app/components/ui/AlertDialog";
+import { Upload, X } from "@mui/icons-material";
 
 /**
  * @namespace profile
@@ -43,10 +44,12 @@ export default function ModHeaderPresentation({
         />
       ) : (
         <div className="flex gap-4">
-          <ButtonProfile
-            text="Download Resume"
-            onClick={handleResumeDownload}
-          />
+          {userInfo?.resume && (
+            <ButtonProfile
+              text="Download Resume"
+              onClick={handleResumeDownload}
+            />
+          )}
           <ButtonProfile
             text={
               isConnected
@@ -311,16 +314,16 @@ export const ModifyProfilePresentation = ({
                 {/* Profile Info */}
                 <div className="pt-20 pb-6 px-6">
                   <h2 className="text-2xl font-bold">{name || "Your Name"}</h2>
-                  <p className="text-muted-foreground">
-                    {location || "Your Location"}
-                  </p>
-
-                  <div className="mt-1">
+                  <div>
                     <p className="text-sm text-muted-foreground">
                       {headline ||
                         "Your professional headline will appear here"}
                     </p>
                   </div>
+                  <p className="text-muted-foreground text-sm">
+                    {location || "Your Location"}
+                  </p>
+
 
                   {resume && (
                     <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
@@ -347,9 +350,7 @@ export const ModifyProfilePresentation = ({
             </div>
           </TabsContent>
           <div className="flex gap-2 w-full">
-            <AlertDialogCancel
-              className="flex-1 bg-red-700 rounded-2xl font-semibold cursor-pointer hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300 hover:text-background"
-            >
+            <AlertDialogCancel className="flex-1 bg-red-700 rounded-2xl font-semibold cursor-pointer hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300 hover:text-background">
               Cancel
             </AlertDialogCancel>
             <Button
@@ -379,7 +380,7 @@ export const ModifyProfilePresentation = ({
       )}
       {currentStage === 3 && (
         <div className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center">
-          <Cancel className="text-destructive" sx={{ fontSize: 60 }} />
+          <CancelIcon className="text-destructive" sx={{ fontSize: 60 }} />
           <h2 className="text-2xl font-bold">Error</h2>
           <p className="text-muted-foreground">{error}</p>
           <p>Please try again.</p>

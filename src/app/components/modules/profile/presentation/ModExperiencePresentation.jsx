@@ -74,13 +74,24 @@ export default function ModExperiencePresentation({
   showSuccess,
   setSubmitError,
   adding = false,
+  handleDeleteExperience,
 }) {
-  // Stage titles for the progress indicator
   const stageTitles = [
     "Basic Information",
     "Time Period",
     "Additional Details",
     "Review"
+  ];
+
+  const employmentTypes = [
+    { value: "fullTime", label: "Full-time" },
+    { value: "partTime", label: "Part-time" },
+    { value: "contract", label: "Contract" },
+    { value: "freelance", label: "Freelance" },
+    { value: "selfEmployed", label: "Self-employed" },
+    { value: "internship", label: "Internship" },
+    { value: "apprenticeship", label: "Apprenticeship" },
+    { value: "seasonal", label: "Seasonal" },
   ];
   
   return (
@@ -181,31 +192,13 @@ export default function ModExperiencePresentation({
                       >
                         <SelectTrigger id="employmentType">
                           <SelectValue placeholder="Type">
-                            {field.value
-                              ? [
-                                  { value: "fullTime", label: "Full-time" },
-                                  { value: "partTime", label: "Part-time" },
-                                  { value: "contract", label: "Contract" },
-                                  { value: "freelance", label: "Freelance" },
-                                  { value: "selfEmployed", label: "Self-employed" },
-                                  { value: "internship", label: "Internship" },
-                                  { value: "apprenticeship", label: "Apprenticeship" },
-                                  { value: "seasonal", label: "Seasonal" },
-                                ].find((type) => type.value === field.value)?.label
+                            {field.value 
+                              ? employmentTypes.find(type => type.value === field.value)?.label || field.value 
                               : "Type"}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
-                          {[
-                            { value: "fullTime", label: "Full-time" },
-                            { value: "partTime", label: "Part-time" },
-                            { value: "contract", label: "Contract" },
-                            { value: "freelance", label: "Freelance" },
-                            { value: "selfEmployed", label: "Self-employed" },
-                            { value: "internship", label: "Internship" },
-                            { value: "apprenticeship", label: "Apprenticeship" },
-                            { value: "seasonal", label: "Seasonal" },
-                          ].map((type) => (
+                          {employmentTypes.map((type) => (
                             <SelectItem key={type.value} value={type.value}>
                               {type.label}
                             </SelectItem>
@@ -510,16 +503,7 @@ export default function ModExperiencePresentation({
                     <div>
                       <p className="text-xs text-muted-foreground">Employment Type</p>
                       <p className="font-medium">
-                        {[
-                          { value: "fullTime", label: "Full-time" },
-                          { value: "partTime", label: "Part-time" },
-                          { value: "contract", label: "Contract" },
-                          { value: "freelance", label: "Freelance" },
-                          { value: "selfEmployed", label: "Self-employed" },
-                          { value: "internship", label: "Internship" },
-                          { value: "apprenticeship", label: "Apprenticeship" },
-                          { value: "seasonal", label: "Seasonal" },
-                        ].find((type) => type.value === watch("employmentType"))?.label || watch("employmentType")}
+                        {employmentTypes.find(type => type.value === watch("employmentType"))?.label || watch("employmentType")}
                       </p>
                     </div>
                     <div>
@@ -605,7 +589,7 @@ export default function ModExperiencePresentation({
                   <button 
                     type="button"
                     disabled={isLoading}
-                    onClick={() => deleteEducation && deleteEducation(educationId)}
+                    onClick={() => handleDeleteExperience()}
                     className="hover:cursor-pointer p-2 text-sm font-semibold bg-red-500 dark:bg-red-800 text-background rounded-md disabled:opacity-50"
                   >
                     Delete
@@ -614,7 +598,7 @@ export default function ModExperiencePresentation({
                 <button
                   className="hover:cursor-pointer disabled:bg-foreground/30 disabled:cursor-default p-2 text-sm font-semibold bg-secondary text-background rounded-md ml-auto flex items-center gap-2"
                   type="submit"
-                  disabled={!isValid || isLoading}
+                  disabled={!isValid || isLoading || showSuccess}
                 >
                   {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
                   {isLoading ? "Saving..." : "Save"}

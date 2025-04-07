@@ -109,7 +109,7 @@ function ProfileContent({ username }) {
   } = useQuery({
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
-    staleTime: 1000 * 30, // 30 seconds
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
   useEffect(() => {
@@ -123,10 +123,8 @@ function ProfileContent({ username }) {
 
   if (isError) {
     let errorMessage = "Error fetching user profile.";
-    // Get the actual error object using the error property
     console.log("Error details:", error);
     
-    // Check if the error has response data with a status code
     if (error?.response?.status) {
       const status = error.response.status;
       switch (status) {
@@ -157,14 +155,6 @@ function ProfileContent({ username }) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-background text-red-400">
         Profile data is unavailable.
-      </div>
-    );
-  }
-
-  if (!userProfile.isVisible && !userProfile.isMyProfile && false) {
-    return (
-      <div className="size-full flex items-center justify-center bg-black text-red-400">
-        User profile is private.
       </div>
     );
   }
