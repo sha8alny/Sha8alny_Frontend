@@ -8,21 +8,27 @@
  * @returns {Object} Filter object with all filter values
  */
 export function parseUrlToFilters(params) {
+    // Only apply filters if we're on the jobs page
+    const pathname = window.location.pathname;
+    if (pathname !== '/jobs') {
+        return getDefaultFilters();
+    }
+    
     return {
-      keyword: params.get("keyword") || "",
-      location: params.get("location")?.split(",").filter(Boolean) || [],
-      industry: params.get("industry")?.split(",").filter(Boolean) || [],
-      experienceLevel: params.get("experience")?.split(",").filter(Boolean) || [],
-      company: params.get("company")?.split(",").filter(Boolean) || [],
-      salaryRange: {
-        min: parseInt(params.get("minSalary") || "0", 10),
-        max: parseInt(params.get("maxSalary") || "100000", 10),
-      },
-      employmentType: params.get("employmentType")?.split(",").filter(Boolean) || [],
-      workLocation: params.get("workLocation")?.split(",").filter(Boolean) || [],
-      sortBySalary: params.get("sortBySalary") || "",
+        keyword: params.get("keyword") || "",
+        location: params.get("location")?.split(",").filter(Boolean) || [],
+        industry: params.get("industry")?.split(",").filter(Boolean) || [],
+        experienceLevel: params.get("experience")?.split(",").filter(Boolean) || [],
+        company: params.get("company")?.split(",").filter(Boolean) || [],
+        salaryRange: {
+            min: parseInt(params.get("minSalary") || "0", 10),
+            max: parseInt(params.get("maxSalary") || "100000", 10),
+        },
+        employmentType: params.get("employmentType")?.split(",").filter(Boolean) || [],
+        workLocation: params.get("workLocation")?.split(",").filter(Boolean) || [],
+        sortBySalary: params.get("sortBySalary") || "",
     };
-  }
+}
   
   /**
    * Converts filter object to URL search parameters
