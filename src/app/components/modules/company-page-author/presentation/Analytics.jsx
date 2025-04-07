@@ -1,6 +1,4 @@
-import { BarChart, LineChart } from "@/app/components/ui/Chart"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/Tabs"
+import { Card, CardContent } from "@/app/components/ui/Card"
 import { ArrowUp, BarChart2, MessageSquare, Repeat, Eye, TrendingUp } from "lucide-react"
 
 export default function Analytics() {
