@@ -2,17 +2,11 @@
 
 import JobDetailsContainer from "@/app/components/modules/jobs/container/JobsDetailsContainer";
 import JobsExploreContainer from "@/app/components/modules/jobs/container/JobsExploreContainer";
-import Navbar from "@/app/components/layout/NavBar";
+
 
 export default function JobDetails() {
   return (
     <div className="min-h-screen bg-background text-white">
-      {/* Navbar */}
-      <div className="sticky top-0 z-50">
-        <header>
-          <Navbar />
-        </header>
-      </div>
       
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row gap-3">
