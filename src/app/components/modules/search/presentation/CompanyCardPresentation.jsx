@@ -10,13 +10,13 @@ import { Button } from "@/app/components/ui/Button";
 /**
  * @namespace search
  * @module search
- * 
+ *
  * @description
  * The `CompanyCardPresentation` component is a presentational component that displays
  * a company's information in a card format. It includes the company's logo, username,
  * industry, description, location, founding date, number of followers, and a follow button.
  * It also provides interactivity for navigating to the company's page and toggling the follow state.
- * 
+ *
  * @param {Object} props - The props object for the component.
  * @param {string} props.companyUsername - The username of the company.
  * @param {string} [props.logo="/placeholder.svg?height=48&width=48"] - The URL of the company's logo.
@@ -30,7 +30,7 @@ import { Button } from "@/app/components/ui/Button";
  * @param {Function} props.onFollowClick - Callback function triggered when the follow button is clicked.
  */
 
- function CompanyCardPresentation({
+function CompanyCardPresentation({
   companyUsername,
   logo = "/placeholder.svg?height=48&width=48",
   industry,
@@ -49,7 +49,7 @@ import { Button } from "@/app/components/ui/Button";
   };
 
   return (
-    <div className="border-t dark:border-gray-500 py-3 hover:bg-hover p-3 cursor-pointer  duration-200">
+    <div onClick={onNavigateToCompany} className="border-t dark:border-gray-500 py-3 hover:bg-hover p-3 cursor-pointer  duration-200">
       <div className="flex items-start gap-3">
         <Avatar
           className="w-12 h-12 cursor-pointer"
@@ -86,7 +86,15 @@ import { Button } from "@/app/components/ui/Button";
               <Users className="h-3 w-3" /> {numFollowers} Followers
             </p>
             <p className="text-gray-400 text-xs flex items-center gap-1">
-              <Calendar className="h-3 w-3" /> Founded: {foundingDate}
+              <Calendar className="h-3 w-3" />
+              Founded:{" "}
+              {foundingDate
+                ? new Date(foundingDate).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })
+                : "N/D"}
             </p>
           </div>
         </div>

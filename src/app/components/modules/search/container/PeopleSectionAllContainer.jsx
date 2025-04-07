@@ -1,4 +1,3 @@
-
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -31,7 +30,7 @@ const PeopleSectionAllContainer = (query) => {
   });
 
   const handleViewMore = () => {
-    router.push("/search/people");
+    router.push("/search/results?keyword=" + query.query + "&type=user");
   };
 
   return (
