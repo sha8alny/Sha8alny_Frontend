@@ -82,11 +82,18 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         setError(null);
         setErrors({}); 
         let logoURL= null;
+        let coverURL = null;
 
         if (file) {
             const formData = new FormData();
             formData.append("file", file);
             logoURL = URL.createObjectURL(file);
+        }
+
+        if(file){
+            const formData = new FormData();
+            formData.append("file", file);
+            coverURL = URL.createObjectURL(file);
         }
 
         const companyData = {
@@ -95,8 +102,8 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
             URL: companyWebsite || null, 
             orgSize: companySize,
             orgType: companyType, 
-            logo: null, 
-            cover: null, 
+            logo: null || logoURL, 
+            cover: null || coverURL, 
             description: companyTagline,
             industry: companyIndustry,
             location: companyLocation,
