@@ -35,6 +35,7 @@ import ProfileHeader from "../presentation/ProfileHeader";
 export default function ProfileHeaderContainer({ userProfile }) {
     const pathname = usePathname();
     const isActive = (slug) => pathname.includes(slug);
+    const [error, setError] = useState(null);
     const [company, setCompany] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
     const [followerCount, setFollowerCount] = useState(company?.followers || 0);
