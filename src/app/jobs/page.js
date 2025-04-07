@@ -1,7 +1,4 @@
 "use client";
-import Head from "next/head";
-import Navbar from "@/app/components/layout/NavBar";
-import JobsLeftSideBar from "@/app/components/modules/jobs/presentation/JobsLeftSideBar";
 import JobsExploreContainer from "@/app/components/modules/jobs/container/JobsExploreContainer";
 import JobsFilterContainer from "../components/modules/jobs/container/JobFiltersContatiner";
 import RecentSearchesContainer from "../components/modules/jobs/container/RecentSearchesContainer";

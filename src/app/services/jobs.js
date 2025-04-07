@@ -163,7 +163,7 @@ export const submitJobApplication = async (jobId, data, resume) => {
   // formData.append("name", data.name);
   // formData.append("email", data.email);
   // formData.append("jobId", jobId);
-  formData.append("phone", data.phone);
+  formData.append("phoneNumber", data.phone);
   if (data.coverLetter) {
     formData.append("coverLetter", data.coverLetter);
   }
