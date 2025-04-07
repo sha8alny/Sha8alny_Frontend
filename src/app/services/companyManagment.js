@@ -74,7 +74,6 @@ export const getApplication = async (jobId, applicantId) => {
 //Get CompantId using username
 export const getCompanyId = async (companyUsername) => {
     try{
-        console.log("received username", companyUsername);
         const response= await fetchWithAuth(`${apiURL}/getCompanyId/${companyUsername}`,{
             method: "GET",
             headers: { "Content-Type": "application/json", 
