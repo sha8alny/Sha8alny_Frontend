@@ -101,14 +101,19 @@ const RecentSearches = ({
                     <span className="text-xs text-gray-400 hidden sm:inline">
                       {formatTimestamp(search.timestamp)}
                     </span>
-                    <Clear
-                      className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    <div 
                       onClick={(e) => {
                         e.stopPropagation();
+                        e.preventDefault();
                         onClearOne(index);
                       }}
+                      className="cursor-pointer"
                       aria-label="Remove search"
-                    />
+                    >
+                      <Clear
+                        className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
+                    </div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

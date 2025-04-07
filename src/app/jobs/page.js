@@ -1,5 +1,4 @@
 "use client";
-
 import JobsExploreContainer from "@/app/components/modules/jobs/container/JobsExploreContainer";
 import JobsFilterContainer from "../components/modules/jobs/container/JobFiltersContatiner";
 import RecentSearchesContainer from "../components/modules/jobs/container/RecentSearchesContainer";
