@@ -1,16 +1,25 @@
 import React from "react";
 import {
-  Modal,
-  Fade,
-  Button,
-  TextField,
-  Typography,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
-import { Close, CloudUpload, Send, Cancel } from "@mui/icons-material";
-import { useTheme } from "@/app/context/ThemeContext";
-
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/app/components/ui/Dialog";
+import { Button } from "@/app/components/ui/Button";
+import { Input } from "@/app/components/ui/Input";
+import { Textarea } from "@/app/components/ui/Textarea";
+import { Alert, AlertDescription } from "@/app/components/ui/Alert";
+import { Label } from "@/app/components/ui/Label";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import SendIcon from "@mui/icons-material/Send";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+/**
+ * @namespace jobs
+ * @module jobs
+ */
 /**
  * JobApplicationModalPresenter is a React component that renders a modal for job applications.
  * It includes a form for users to input their details, upload a resume, and submit their application.
@@ -45,163 +54,157 @@ const JobApplicationModalPresenter = ({
   error,
   fileInputRef,
 }) => {
-  const { theme, toggleTheme } = useTheme();
-  const isDarkMode = theme === "dark";
-
-  // Consistent Material UI styling for dark/light mode
-  const textFieldSx = {
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: isDarkMode ? "rgba(255, 255, 255, 0.23)" : "rgba(0, 0, 0, 0.23)",
-      },
-      "&:hover fieldset": {
-        borderColor: isDarkMode ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
-      },
-    },
-    "& .MuiInputLabel-root": {
-      color: isDarkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.6)",
-    },
-    "& .MuiInputBase-input": {
-      color: isDarkMode ? "white" : "rgba(0, 0, 0, 0.87)",
-    },
-  };
-
   return (
-    <Modal 
-      open={show} 
-      onClose={handleClose} 
-      closeAfterTransition
-      aria-labelledby="job-application-modal"
-    >
-      <Fade in={show}>
-        <div className="absolute top-1/2 left-1/2 max-w-lg w-11/12 p-6 bg-foreground rounded-xl shadow-xl transform -translate-x-1/2 -translate-y-1/2">
-          <div className="relative">
-            <button
-              onClick={handleClose}
-              className="absolute top-1 right-1 p-1 text-text/60 hover:text-text rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Close"
-            >
-              <Close fontSize="small" />
-            </button>
+    <Dialog open={show} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-lg w-full bg-white dark:bg-background text-gray-900 dark:text-white">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+            Apply for {jobTitle}
+          </DialogTitle>
+        </DialogHeader>
 
-            <Typography
-              variant="h5"
-              component="h2"
-              className="text-text font-semibold mb-4"
-            >
-              Apply for {jobTitle}
-            </Typography>
+        {success && (
+          <Alert className="mb-4 bg-green-100 text-green-800 border border-green-300 rounded-md animate-fade-in">
+            <AlertDescription className="flex items-center gap-2">
+              <CheckCircleIcon fontSize="small" />
+              Your application has been submitted successfully!
+            </AlertDescription>
+          </Alert>
+        )}
 
-            {success && (
-              <Alert severity="success" className="mb-4">
-                Your application has been submitted successfully!
-              </Alert>
+        {error && (
+          <Alert className="mb-4 bg-red-100 text-red-800 border border-red-300 rounded-md animate-fade-in">
+            <AlertDescription className="flex items-center gap-2">
+              <ErrorIcon fontSize="small" />
+              {error}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="space-y-4 w-full"
+          role="form"
+        >
+          <div className="space-y-2 w-full">
+            <Label htmlFor="phone" className="text-gray-700 dark:text-gray-300">
+              Phone Number *
+            </Label>
+            <Input
+              id="phone"
+              type="tel"
+              className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 dark:text-white"
+              {...register("phone")}
+              onKeyDown={(e) => {
+                if (
+                  !/[0-9]/.test(e.key) &&
+                  e.key !== "Backspace" &&
+                  e.key !== "Delete"
+                ) {
+                  e.preventDefault();
+                }
+              }}
+            />
+            {errors.phone && (
+              <p className="text-sm text-red-500">{errors.phone.message}</p>
             )}
-
-            {error && (
-              <Alert severity="error" className="mb-4">
-                {error}
-              </Alert>
-            )}
-
-            <form onSubmit={handleSubmit} noValidate className="space-y-4" role="form">
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="phone"
-                label="Phone Number"
-                {...register("phone")}
-                error={!!errors.phone}
-                helperText={errors.phone?.message}
-                sx={textFieldSx}
-              />
-
-              <TextField
-                margin="normal"
-                fullWidth
-                id="coverLetter"
-                label="Cover Letter"
-                multiline
-                rows={4}
-                {...register("coverLetter")}
-                placeholder="Tell us why you're a good fit for this position"
-                sx={textFieldSx}
-              />
-
-              <div className="py-2">
-                <Typography
-                  variant="subtitle1"
-                  className="text-text font-medium mb-2"
-                >
-                  Resume/CV
-                </Typography>
-                <div>
-                  <label htmlFor="resume-upload">
-                    <input
-                      ref={fileInputRef}
-                      className="hidden"
-                      id="resume-upload"
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleFileChange}
-                    />
-                    <Button
-                      variant="outlined"
-                      component="span"
-                      startIcon={<CloudUpload />}
-                      className="normal-case text-primary border-primary hover:bg-primary/10"
-                    >
-                      Upload Resume *
-                    </Button>
-                  </label>
-                  
-                  {resume?.name ? (
-                    <Typography variant="body2" className="mt-2 text-text">
-                      Selected: {resume.name}
-                    </Typography>
-                  ) : (
-                    <Typography variant="body2" className="mt-2 text-text/60">
-                      No file selected
-                    </Typography>
-                  )}
-                  
-                  {errors.resume && (
-                    <Typography variant="caption" color="error" className="block mt-1">
-                      {errors.resume.message}
-                    </Typography>
-                  )}
-                  
-                  <Typography variant="caption" className="block mt-1 text-text/60">
-                    Accepted formats: PDF, DOC, DOCX (Max size: 5MB)
-                  </Typography>
-                </div>
-              </div>
-
-              <div className="flex gap-4 mt-6 pt-2">
-                <Button
-                  variant="outlined"
-                  onClick={handleClose}
-                  startIcon={<Cancel />}
-                  className="normal-case border-primary text-primary hover:bg-primary/10"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={isSubmitting}
-                  startIcon={isSubmitting ? <CircularProgress size={16} /> : <Send />}
-                  className="normal-case bg-primary text-white hover:bg-primary/90 disabled:bg-primary/70"
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Application"}
-                </Button>
-              </div>
-            </form>
           </div>
-        </div>
-      </Fade>
-    </Modal>
+
+          <div className="space-y-2 w-full">
+            <Label
+              htmlFor="coverLetter"
+              className="text-gray-700 dark:text-gray-300"
+            >
+              Cover Letter
+            </Label>
+            <Textarea
+              id="coverLetter"
+              placeholder="Tell us why you're a good fit for this position"
+              className="min-h-[120px] w-full break-words resize-none max-h-[120px] bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+              {...register("coverLetter")}
+            />
+          </div>
+
+          <div className="space-y-2 w-full">
+            <Label
+              htmlFor="resume-upload"
+              className="text-gray-700 dark:text-gray-300"
+            >
+              Resume/CV
+            </Label>
+            <div className="flex flex-col gap-2">
+              <div>
+                <input
+                  ref={fileInputRef}
+                  className="hidden"
+                  id="resume-upload"
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="gap-2 border-gray-300 dark:border-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <FileUploadIcon className="h-4 w-4" />
+                  Upload Resume *
+                </Button>
+              </div>
+
+              {resume?.name ? (
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {resume.name}
+                </p>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No file selected
+                </p>
+              )}
+
+              {errors.resume && (
+                <p className="text-sm text-red-500">{errors.resume.message}</p>
+              )}
+
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Accepted formats: PDF, DOC, DOCX (Max size: 5MB)
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 pt-4 justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+              className="gap-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <CancelIcon className="h-4 w-4" />
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="gap-2 bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white"
+            >
+              {isSubmitting ? (
+                <>
+                  <AutorenewIcon className="h-4 -w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <SendIcon className="h-4 w-4" />
+                  Submit Application
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

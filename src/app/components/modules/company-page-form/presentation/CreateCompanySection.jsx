@@ -1,3 +1,7 @@
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
 import EmergencyRoundedIcon from '@mui/icons-material/EmergencyRounded';
 import InputFieldContainer from '../container/InputFieldContainer';
 import SelectFieldContainer from "../container/SelectFieldContainer";

@@ -2,6 +2,10 @@
 import ReCAPTCHA from "react-google-recaptcha";
 
 /**
+ * @namespace signup
+ * @module signup
+ */
+/**
  * SignUpForm component
  * 
  * This component renders a sign-up form with fields for username, email, password, and an admin checkbox.

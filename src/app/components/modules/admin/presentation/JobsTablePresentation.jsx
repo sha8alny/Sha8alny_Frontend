@@ -27,6 +27,10 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Delete } from "@mui/icons-material";
 
 /**
+ * @namespace admin
+ * @module admin
+ */
+/**
  * JobsTablePresentation component , shows a table of jobs and options to manage a job post
  * @param {Object} props - Component props
  * @param {Array} props.jobs - List of job objects

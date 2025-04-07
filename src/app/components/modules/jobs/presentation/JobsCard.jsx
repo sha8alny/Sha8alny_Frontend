@@ -1,6 +1,10 @@
 import Image from "next/image";
 
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * Renders a job tag component with a given label.
  * @param {Object} props - The component props.
  * @param {string} props.tag - The tag text.
@@ -40,7 +44,7 @@ function JobTags({ employmentType, workLocation }) {
  * @param {Function} props.onClick - Callback function when the job card is clicked.
  * @returns {JSX.Element} The JobCard component.
  */
-function JobCard({ job, onClick }) {
+export function JobCard({ job, onClick }) {
   const getRelativeTimeString = (date) => {
     try {
       if (!date) return "Recently";
@@ -58,6 +62,8 @@ function JobCard({ job, onClick }) {
       return "Recently";
     }
   };
+
+
 
   return (
     <div
@@ -84,11 +90,11 @@ function JobCard({ job, onClick }) {
           employmentType={job.employmentType}
           workLocation={job.workLocation}
         />
-        <p className="text-sm text-gray-300 line-clamp-2">{job.description}</p>
+        <p className="text-sm dark:text-gray-300 text-gray-500 line-clamp-2">{job.description}</p>
         <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
           <span>Posted {getRelativeTimeString(job.createdAt)}</span>
           <span className="font-medium">
-            {job.salary ? `Salary: ${job.salary} $` : "Salary: undisclosed"}
+            {job.salaryFormatted}
           </span>
         </div>
       </div>

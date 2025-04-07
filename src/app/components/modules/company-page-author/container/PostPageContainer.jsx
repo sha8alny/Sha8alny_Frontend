@@ -6,6 +6,7 @@ import { getCompanyId, getCompany} from "@/app/services/companyManagment";
 import { Post } from "./PostContainer";
 
 function PostPageContainer({ username, logo }) {
+
     const [posts, setPosts] = useState([]); 
     const [company, setCompany] = useState(null);
     const [error, setError] = useState(null);

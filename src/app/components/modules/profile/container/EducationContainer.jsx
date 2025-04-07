@@ -3,6 +3,10 @@ import Education from "../presentation/Education";
 import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Container component for managing education data display.
  * Manages the state for showing all education entries and provides functionality to toggle display.
  * 

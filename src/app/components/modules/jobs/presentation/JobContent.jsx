@@ -1,4 +1,8 @@
 /**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
  * Component to display job content.
  *
  * @param {Object} props - Component props.
@@ -28,7 +32,7 @@ export default function JobContent({ job, isLoading }) {
  * @returns {boolean} Whether job has necessary details
  */
 function hasJobDetails(job) {
-  return job.employmentType || job.salary || job.createdAt || job.description || job.experience || job.industry || job.location;
+  return job && (job.employmentType || job.salary || job.createdAt || job.description || job.experience || job.industry || job.location);
 }
 
 /**
@@ -56,10 +60,11 @@ function JobTags({ job = {} }) {
     },
     {
       value: job.salary,
-      label: `$${job.salary}`,
+      label: `${job.salaryFormatted}`,
       className:
         "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
       title: "Annual Salary",
+      condition: job.salary !== null && job.salary !== undefined,
     },
     {
       value: job.createdAt,

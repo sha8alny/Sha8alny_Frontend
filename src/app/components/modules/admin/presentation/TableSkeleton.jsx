@@ -1,3 +1,7 @@
+/**
+ * @namespace admin
+ * @module admin
+ */
 import {
   Table,
   TableBody,

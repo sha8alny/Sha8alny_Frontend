@@ -7,6 +7,10 @@ import { fetchReports, deleteReport, deleteJob, updateStatusReport } from "@/app
 import { useToast } from "@/app/context/ToastContext";
 
 /**
+ * @namespace admin
+ * @module admin
+ */
+/**
  * FlaggedJobsTableContainer component handles the logic for displaying and managing flagged job reports.
  * It fetches the reports, handles deletion of reports and jobs, and manages the state for viewing report details.
  *

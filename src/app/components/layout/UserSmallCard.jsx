@@ -1,6 +1,9 @@
 import { Plus, UserPlus } from "lucide-react";
 import Image from "next/image";
-
+/**
+ * @namespace layout
+ * @module layout
+ */
 /**
  * A component that displays a small card with user information including profile image, name, relation, job title, and a connect button.
  * 
