@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function Post({ username,logo, cardInfo }) {
+export function Post({ company, username,logo, cardInfo }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(cardInfo.likes);
   const [isShared, setIsShared] = useState(false);
@@ -60,7 +60,7 @@ export function Post({ username,logo, cardInfo }) {
         <section className="flex gap-2">
           <div className="size-9 relative bg-gray-600 rounded-full">
               <Image
-              src={logo?.trim() ? logo : "/default-logo.png"}
+              src={company?.logo || "/default-logo.png"}
               alt="User Avatar"
               fill
               className="rounded-full object-cover"
@@ -84,7 +84,7 @@ export function Post({ username,logo, cardInfo }) {
         </section>
       </section>
       <div className="p-2 text-left w-full">
-        <p className="text-left mb-2 text-[var(--text)]">{cardInfo.description}</p>
+        <p className="text-left mb-2 text-white">{cardInfo.description}</p>
       </div>
       <section className="flex gap-2 w-full">
         <div className="flex gap-2 w-2/3 justify-between">
