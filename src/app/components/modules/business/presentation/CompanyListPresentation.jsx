@@ -75,7 +75,7 @@ function CompanyListPresentation({ companies, isError, error }) {
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {companies.companies.map((company) => (
+      {companies?.companies?.map((company) => (
         <CompanyCardContainer key={company.companyUsername} company={company} />
       ))}
     </div>
