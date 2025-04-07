@@ -38,7 +38,7 @@ function JobDetailsPresentation({
   }
 
   // Handle case when job is null, undefined, or empty but not in error state
-  if ((!job || Object.keys(job).length === 0) && !isLoading) {
+  if (!isLoading && (!job || (typeof job === 'object' && Object.keys(job).length === 0))) {
     return <JobError errorMessage="Job information not available" onRetry={onRetry} />;
   }
 
