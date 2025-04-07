@@ -12,7 +12,7 @@ function FileUpload({onChange, preview, file, onRemove}){
               Logo 
             </label>
             {preview ? 
-            (<div className="text-text flex items-center w-full border border-[var(--foreground)] rounded-lg mt-2 gap-2">
+            (<div className="text-text flex items-center w-full border border-[(var--foreground)] rounded-lg mt-2 gap-2">
                 <img src={preview} alt="Preview" className="w-20 h-15 rounded-tl-lg rounded-bl-lg object-cover"/>
                 <div className="flex flex-col text-[var(--text)] text-sm">
                     <span>{file.name}</span>
