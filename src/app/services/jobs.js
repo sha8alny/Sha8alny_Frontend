@@ -18,7 +18,7 @@ export const fetchJobListings = async ({
   sortBy = null,
   itemsPerPage = 10,
 }) => {
-  const url = new URL(`${apiURL}/jobs/search/${pageParam}`);
+  const url = new URL(`${apiURL}/jobs/search/${pageParam}/${itemsPerPage}`);
   
   // Add any filters from the filters object
   Object.entries(filters).forEach(([key, value]) => {
@@ -102,7 +102,7 @@ export const fetchFilterOptions = async () => {
 
 export const fetchAppliedJobs = async ({ pageParam = 1 }) => {
   const itemsPerPage = 5;
-  const url = new URL(`${apiURL}/jobs/applied/${pageParam}`);
+  const url = new URL(`${apiURL}/jobs/applied/${pageParam}/${itemsPerPage}`);
 
   try {
     const response = await fetchWithAuth(url.toString());
@@ -129,7 +129,7 @@ export const fetchAppliedJobs = async ({ pageParam = 1 }) => {
 
 export const fetchSavedJobs = async ({ pageParam = 1 }) => {
   const itemsPerPage = 5;
-  const url = new URL(`${apiURL}/jobs/saved/${pageParam}`);
+  const url = new URL(`${apiURL}/jobs/saved/${pageParam}/${itemsPerPage}`);
 
   //console.log(url.toString());
   const response = await fetchWithAuth(url.toString());
