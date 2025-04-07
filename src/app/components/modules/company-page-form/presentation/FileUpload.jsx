@@ -14,7 +14,7 @@ function FileUpload({onChange, preview, file, onRemove}){
             {preview ? 
             (<div className="text-text flex items-center w-full border border-[(var--foreground)] rounded-lg mt-2 gap-2">
                 <img src={preview} alt="Preview" className="w-20 h-15 rounded-tl-lg rounded-bl-lg object-cover"/>
-                <div className="flex flex-col text-white text-sm">
+                <div className="flex flex-col text-[var(--text)] text-sm">
                     <span>{file.name}</span>
                 </div>
                 <button className="ml-auto mr-2 cursor-pointer" onClick={onRemove} aria-label="remove"

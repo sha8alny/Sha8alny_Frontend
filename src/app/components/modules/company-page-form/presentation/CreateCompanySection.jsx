@@ -9,14 +9,20 @@ import FileUploadContainer from "../container/FileUploadContainer";
 import CheckBoxFieldContainer from "../container/CheckBoxFieldContainer";
 import TagLineContainer from "../container/TagLineContainer";
 
-function CreateCompanySection({companyName, setCompanyName,companyIndustry, setCompanyIndustry,companyTagline, setCompanyTagline, file, setFile, companySize,setCompanySize, companyType,setCompanyType,companyLocation, setCompanyLocation, companyWebsite, setCompanyWebsite, onCreateCompany, companyURL, setCompanyURL, loading, isFormValid, errors, setErrors, isChecked, checkBox, error})
+/**
+ * @namespace company-page-form
+ * @module company-page-form
+ */
+
+function CreateCompanySection({companyName, setCompanyName,companyIndustry, setCompanyIndustry,companyTagline, setCompanyTagline, file, setFile, companySize,setCompanySize, companyType,setCompanyType,companyLocation, setCompanyLocation, companyWebsite, setCompanyWebsite, onCreateCompany, companyURL, setCompanyURL, companyDate, setCompanyDate, companyPhone, setCompanyPhone, loading, isFormValid, errors, setErrors, isChecked, checkBox, error})
 {
     return (
         <div>
             <p className="flex items-center mb-1 text-sm text-gray-500"><EmergencyRoundedIcon style={{fontSize:"10px"}} className="mr-1"/>indicates required</p>
             <form onSubmit={(e) => { e.preventDefault(); onCreateCompany(); }} className="flex flex-col gap-4 bg-[var(--foreground)] p-4 rounded-lg">
                 <InputFieldContainer 
-                companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} companyURL={companyURL} setCompanyURL={setCompanyURL} errors={errors} setErrors={setErrors}/> 
+                companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} companyURL={companyURL} setCompanyURL={setCompanyURL} 
+                companyDate={companyDate} setCompanyDate={setCompanyDate} companyPhone={companyPhone} setCompanyPhone={setCompanyPhone} errors={errors} setErrors={setErrors}/> 
 
                 <SelectFieldContainer companySize={companySize} setCompanySize={setCompanySize} companyType={companyType} setCompanyType={setCompanyType} errors={errors} setErrors={setErrors}/>
 
@@ -27,8 +33,10 @@ function CreateCompanySection({companyName, setCompanyName,companyIndustry, setC
             </form>
             <div className="flex justify-end">
                 {error && <p role="alert" className="text-red-500">{error}</p>}
+
+                {console.log(error)}
                 <button className={`bg-[var(--secondary)] text-[var(--background)] rounded-full cursor-pointer py-2 px-3  mt-2 ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
-                onClick={onCreateCompany} disabled={!isFormValid || loading || !isChecked}>
+                onClick={onCreateCompany} disabled={!isFormValid || loading}>
                 {loading ? "Creating..." : "Create Page"}</button>            
             </div>
         </div>
