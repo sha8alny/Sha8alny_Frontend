@@ -38,7 +38,7 @@ import CloseIcon from '@mui/icons-material/Close';
  * Handles post submission. Prevents empty posts from being submitted.
  */
 
-function WritePostContainer({onPostSubmit, logo}){
+function WritePostContainer({company, onPostSubmit, logo}){
     const [text, setText] = useState("");
     const [preview, setPreview]= useState(null);
     const [file, setFile]= useState(null);
@@ -49,6 +49,7 @@ function WritePostContainer({onPostSubmit, logo}){
     
     const imageUpload = (e) => {
         const selectedFile=e.target.files[0];
+        console.log("Image selected", e.target.files[0]);
         if (selectedFile && selectedFile.type.startsWith("image/")){
             setFile(selectedFile);
             setPreview(URL.createObjectURL(selectedFile));
@@ -71,9 +72,10 @@ function WritePostContainer({onPostSubmit, logo}){
 
     const handleSubmit = async() => {
         if (!text?.trim() && !file) return; 
+        const cleanedPreview = preview ? preview.replace(/^blob:/, '') : null;
         const newPost = {
             text: text.trim(),
-            media:preview || null,
+            media: cleanedPreview || null,
             time: new Date().toISOString(),
             tags:[],
             keywords:[],
@@ -97,10 +99,9 @@ function WritePostContainer({onPostSubmit, logo}){
         setArticleText(""); 
         setModalOpen(false); 
     };
-    
     return(
         <div>
-            <WritePost text={text} setText={setText} onImageUpload={imageUpload} onVideoUpload={videoUpload} preview={preview} triggerFileInput={triggerFileInput}
+            <WritePost company={company} text={text} setText={setText} onImageUpload={imageUpload} onVideoUpload={videoUpload} preview={preview} triggerFileInput={triggerFileInput}
             imageInputRef={imageInputRef} videoInputRef={videoInputRef} onSubmit={handleSubmit} 
             logo={logo} openArticleModal={() => setModalOpen(true)}/>
             <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
@@ -118,10 +119,10 @@ function WritePostContainer({onPostSubmit, logo}){
                 }}>
                 <div className="text-text flex items-center justify-between border-b">
                     <Typography variant="h6" className="text-lg font-semibold">Write an article</Typography>
-                    <Button  className="cursor-pointer" onClick={() => setModalOpen(false)} ><CloseIcon className="text-[var(--text)]"/></Button>
+                    <Button  className="cursor-pointer" onClick={() => setModalOpen(false)} ><CloseIcon className="text-white"/></Button>
                 </div>
                 <div>
-                    <textarea className="w-full border rounded-lg p-2 mt-2 text-[var(--text)]" placeholder="Start writing your article..." rows="5" value={articleText} onChange={(e) => setArticleText(e.target.value)}/>
+                    <textarea className="w-full border rounded-lg p-2 mt-2 text-white" placeholder="Start writing your article..." rows="5" value={articleText} onChange={(e) => setArticleText(e.target.value)}/>
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button onClick={() => setModalOpen(false)} variant="outlined" sx={{color: "var(--secondary)"}}>Cancel</Button>
@@ -131,7 +132,6 @@ function WritePostContainer({onPostSubmit, logo}){
                 </div>
 
             </Box>
-
             </Modal>
         </div>
     );
