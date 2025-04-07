@@ -9,26 +9,28 @@ export default function useJobDetails() {
 
   const title = searchParams.get("title");
   const companyName = searchParams.get("company");
-  
+
   const {
     data: job,
     isLoading,
     isError,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["jobDetails", jobId],
     queryFn: () => fetchJobDetails(jobId),
     enabled: !!jobId,
-    initialData: jobId && title && companyName
-      ? { id: jobId, title, company: { name: companyName } }
-      : undefined,
+    initialData:
+      jobId && title && companyName
+        ? { id: jobId, title, company: { name: companyName } }
+        : undefined,
   });
-  
 
   return {
     job,
     isLoading,
     isError,
     errorMessage: isError ? error.message : null,
+    refetch,
   };
 }
