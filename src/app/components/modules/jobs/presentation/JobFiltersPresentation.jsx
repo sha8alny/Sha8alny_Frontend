@@ -19,7 +19,10 @@ import {
   CollapsibleTrigger,
 } from "@/app/components/ui/Collapsible";
 import { Input } from "@/app/components/ui/Input";
-
+/**
+ * @namespace jobs
+ * @module jobs
+ */
 /**
  * SalaryRangeFilter component for selecting a salary range with a slider.
  */
@@ -131,6 +134,35 @@ function CheckboxFilterList({
 
 /**
  * JobsFilterPresentation component displays filter options for job listings.
+ */
+/**
+ * A presentational component for job filtering functionality.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {Object} props.filters - Current filter values for various filter categories
+ * @param {Object} props.filters.keyword - Search keyword for job title, skills, etc.
+ * @param {string|null} props.filters.sortBySalary - Salary sort direction ('asc', 'desc', or '')
+ * @param {Array|Object} props.filters.salaryRange - Min and max salary range values
+ * @param {Array} props.filters.location - Selected location filters
+ * @param {Array} props.filters.industry - Selected industry filters
+ * @param {Array} props.filters.experienceLevel - Selected experience level filters
+ * @param {Array} props.filters.company - Selected company filters
+ * @param {Array} props.filters.employmentType - Selected employment type filters
+ * @param {Array} props.filters.workLocation - Selected work location type filters
+ * @param {Object} props.options - Available options for each filter category
+ * @param {Array} props.options.location - Available location options
+ * @param {Array} props.options.industry - Available industry options
+ * @param {Array} props.options.experienceLevel - Available experience level options
+ * @param {Array} props.options.company - Available company options
+ * @param {Array} props.options.employmentType - Available employment type options
+ * @param {Array} props.options.workLocation - Available work location type options
+ * @param {Array} props.selectedFilters - Active filters displayed as badges
+ * @param {boolean} props.isLoading - Loading state for filter data
+ * @param {Function} props.onFilterChange - Callback when a filter is changed or selected
+ * @param {Function} props.onRemoveFilter - Callback when a filter is removed
+ * @param {Function} props.onClearAllFilters - Callback to clear all active filters
+ * @returns {JSX.Element} A job filters card component
  */
 function JobsFilterPresentation({
   filters,

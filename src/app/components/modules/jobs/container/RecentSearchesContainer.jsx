@@ -3,8 +3,35 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import RecentSearches from "../presentation/RecentSearchesPresentation";
+/**
+ * @namespace jobs
+ * @module jobs
+ */
 
-
+/**
+ * RecentSearchesContainer component manages recent job search history.
+ * 
+ * This component tracks, stores, and displays the user's recent job searches.
+ * It handles the persistence of search data in localStorage, formatting search labels,
+ * and provides functionality to navigate to previous searches or clear the search history.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <RecentSearchesContainer />
+ * )
+ * 
+ * @returns {JSX.Element} The Recent Searches component with populated data and event handlers
+ * 
+ * @remarks
+ * The component maintains the following functionality:
+ * - Stores up to 5 recent searches in localStorage
+ * - Parses search parameters into human-readable format
+ * - Generates descriptive labels for searches based on parameters
+ * - Formats timestamps to show relative time (e.g., "2h ago")
+ * - Provides navigation to previous searches
+ * - Allows clearing individual or all search history
+ */
 const RecentSearchesContainer = () => {
   const [recentSearches, setRecentSearches] = useState([]);
   const router = useRouter();

@@ -5,7 +5,25 @@ import { useEffect, useState } from "react";
 import { formatFiltersForApi, parseUrlToFilters } from "@/app/utils/jobFilters";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchJobListings } from "@/app/services/jobs";
-
+/**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
+ * Container component for the Jobs Explore page.
+ * 
+ * This component handles the data fetching, pagination, and state management for job listings.
+ * It uses react-query's useInfiniteQuery for efficient pagination and data fetching.
+ * 
+ * The component provides:
+ * - Infinite scrolling for job listings
+ * - Search filtering based on URL parameters
+ * - Normalized job data formatting
+ * - Navigation to individual job details
+ * 
+ * @component
+ * @returns {JSX.Element} JobsExplorePresentation component with all necessary props
+ */
 function JobsExploreContainer() {
   const router = useRouter();
   const useJobListings = ({ itemsPerPage = 10 } = {}) => {

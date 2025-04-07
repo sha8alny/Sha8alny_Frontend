@@ -6,7 +6,35 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/components/ui/Tooltip";
-
+/**
+ * @namespace jobs
+ * @module jobs
+ */
+/**
+ * Recent Searches component for displaying user's search history
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Array} props.recentSearches - Array of recent search objects
+ * @param {Function} props.onSearchClick - Handler for when a search is clicked
+ * @param {Function} props.onClearOne - Handler for removing a single search item
+ * @param {Function} props.onClearAll - Handler for clearing all search history
+ * @param {Function} props.formatTimestamp - Function to format timestamp to readable string
+ * 
+ * @returns {JSX.Element|null} - Returns the search history UI or null if no search history
+ * 
+ * @example
+ * // Each search object is expected to have this structure:
+ * const searchItem = {
+ *   label: "Frontend Developer",    // Display text
+ *   query: "frontend-developer",    // Search query to execute
+ *   filters: {                      // Optional filters that were applied
+ *     location: "Remote",
+ *     experience: "2-5 years"
+ *   },
+ *   timestamp: 1678954321000        // When the search was performed
+ * };
+ */
 const RecentSearches = ({
   recentSearches,
   onSearchClick,
