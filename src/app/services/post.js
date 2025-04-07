@@ -5,7 +5,7 @@ const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
 export const getMyPosts = async (pageNum, companyId)=>{
     try{
-        const response = await fetchWithAuth (`${apiURL}/myPosts?companyId=${companyId}`,{
+        const response = await fetchWithAuth (`${apiURL}/myPosts?pageNum=${pageNum}&companyId=${companyId}`,{
             method: "GET",
             headers: { "Content-Type": "application/json",
                 "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
@@ -159,6 +159,8 @@ export const getPost= async(pageNum,query = "")=>{
 
 export const createPost= async(postData, companyId)=>{
     try{
+        console.log("📦 postData being sent:", postData);
+        console.log("📦 companyId being sent:", companyId);
         const response= await fetchWithAuth(`${apiURL}/posts?companyId=${companyId}`,{
             method: "POST",
             headers: {
@@ -591,3 +593,4 @@ export const getTags = async (text) => {
         throw new Error(error.message);
     }
 };
+
