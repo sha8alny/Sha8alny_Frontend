@@ -74,6 +74,7 @@ import { updateCompany } from "@/app/services/companyManagment";
 function SideBarContainer({username, logo ,setLogo }){
     const pathname= usePathname();
     const isActive = (href) => pathname.startsWith(href);
+    const [error, setError] = useState(null);
     const [company, setCompany] = useState(null);
     const [isModalOpen, setModalOpen] = useState(false); 
     const [modalType, setModalType] = useState(null);
