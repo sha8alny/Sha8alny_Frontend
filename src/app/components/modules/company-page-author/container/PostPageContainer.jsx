@@ -1,17 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WritePostContainer from "./WritePostContainer";
 import { createPost } from "@/app/services/post";
-import { getCompanyId } from "@/app/services/companyManagment";
+import { getCompanyId, getCompany} from "@/app/services/companyManagment";
 import { Post } from "./PostContainer";
 
 function PostPageContainer({ username, logo }) {
     const [posts, setPosts] = useState([]); 
+    const [company, setCompany] = useState(null);
 
     const handlePostSubmit = async (newPost) => {
         try {
             const {companyId} = await getCompanyId(username);
             const createdPost = await createPost(newPost, companyId);
+            console.log("Post created:", createdPost); // Debugging line
             if (createdPost.message === "Post created successfully") {
                 const createdPost = {
                     ...newPost, 
@@ -30,13 +32,24 @@ function PostPageContainer({ username, logo }) {
         }
     };
 
+    useEffect(() => {
+        const fetchCompany = async () => {
+        try {
+            const data = await getCompany(username);
+            setCompany(data);
+        } catch (err) {
+            setError(err.message);
+        }
+        };
+        if (username) fetchCompany();
+    }, [username]);
     return (
         <div>
-            <WritePostContainer onPostSubmit={handlePostSubmit} logo={logo} />
+            <WritePostContainer company={company} onPostSubmit={handlePostSubmit} logo={logo} />
             <div className="space-y-6">
                 {posts.length > 0 ? (
                     posts.map((post, index) => (
-                        <Post username ={username} logo={logo} key={post.id || `post-${index}`} cardInfo={{ ...post, username, logo, hasMedia: !!(post.image || post.video),
+                        <Post company={company} username ={username} logo={logo} key={post.id || `post-${index}`} cardInfo={{ ...post, username, logo, hasMedia: !!(post.image || post.video),
                         description: post.text || "No content",}} />
                     ))
                 ) : (
