@@ -1,32 +1,101 @@
-import useJobListings from "@/app/hooks/useJobListings";
+import { useRouter, useSearchParams } from "next/navigation";
 import JobsExplorePresentation from "../presentation/JobsExplorePresentation";
-import { useRouter } from "next/navigation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
-
+import { useEffect, useState } from "react";
+import { formatFiltersForApi, parseUrlToFilters } from "@/app/utils/jobFilters";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchJobListings } from "@/app/services/jobs";
 /**
  * @namespace jobs
  * @module jobs
  */
 /**
- * JobsExploreContainer component fetches and displays job listings.
- * It supports pagination and handles navigation to job details.
- *
- * @returns {JSX.Element} The rendered component.
+ * Container component for the Jobs Explore page.
+ * 
+ * This component handles the data fetching, pagination, and state management for job listings.
+ * It uses react-query's useInfiniteQuery for efficient pagination and data fetching.
+ * 
+ * The component provides:
+ * - Infinite scrolling for job listings
+ * - Search filtering based on URL parameters
+ * - Normalized job data formatting
+ * - Navigation to individual job details
+ * 
+ * @component
+ * @returns {JSX.Element} JobsExplorePresentation component with all necessary props
  */
-
 function JobsExploreContainer() {
+  const router = useRouter();
+  const useJobListings = ({ itemsPerPage = 10 } = {}) => {
+    const searchParams = useSearchParams();
+    const [filters, setFilters] = useState(parseUrlToFilters(searchParams));
+    
+    // Update filters when URL parameters change
+    useEffect(() => {
+      setFilters(parseUrlToFilters(searchParams));
+    }, [searchParams]);
+  
+    // Use react-query's useInfiniteQuery for pagination
+    const queryResult = useInfiniteQuery({
+      queryKey: ['jobListings', filters],
+      queryFn: ({ pageParam = 1 }) => fetchJobListings({
+        pageParam,
+        filters: formatFiltersForApi(filters),
+        itemsPerPage
+      }),
+      getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+      // Keep previous data when fetching a new page
+      keepPreviousData: true,
+      // Only refetch on window focus if data is stale (3 minutes)
+      staleTime: 3 * 60 * 1000,
+      // Don't refetch on window focus if data is fresh (prevents jarring experience)
+      refetchOnWindowFocus: false,
+    });
+    
+    // Flatten the paged data structure for easier consumption
+    const flattenedData = queryResult.data?.pages.flatMap(page => page.data) || [];
+    
+    // Track if a search is currently being performed
+    const isSearching = Boolean(
+      filters.keyword || 
+      filters.location?.length || 
+      filters.industry?.length || 
+      filters.company?.length || 
+      filters.experienceLevel?.length || 
+      filters.employmentType?.length || 
+      filters.workLocation?.length || 
+      (filters.salaryRange?.min > 0 || filters.salaryRange?.max < 100000)
+    );
+  
+    return {
+      ...queryResult,
+      filters,
+      flattenedData,
+      isSearching
+    };
+  };
+
   const {
-    data,
+    flattenedData,
     error,
     isLoading,
-    fetchNextPage,
-    hasNextPage,
     isFetchingNextPage,
-  } = useJobListings();
+    hasNextPage,
+    fetchNextPage,
+    isSearching
+  } = useJobListings({
+    itemsPerPage: 10
+  });
 
-  const jobsData = data?.pages.flatMap((page) => normalizeJob(page.data));
+  // Normalize job data to ensure consistent format
+  const normalizedJobs = normalizeJob(flattenedData || []);
 
-  const router = useRouter();
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
   const handleJobClick = (job) => {
     router.push(
       `/jobs/${job.id}?title=${encodeURIComponent(
@@ -34,15 +103,17 @@ function JobsExploreContainer() {
       )}&company=${encodeURIComponent(job.company.name)}`
     );
   };
+
   return (
     <JobsExplorePresentation
-      data={jobsData}
+      data={normalizedJobs}
       error={error}
       isLoading={isLoading}
-      fetchNextPage={fetchNextPage}
+      fetchNextPage={handleLoadMore}
       hasNextPage={hasNextPage}
       isFetchingNextPage={isFetchingNextPage}
       handleJobClick={handleJobClick}
+      isSearching={isSearching}
     />
   );
 }
