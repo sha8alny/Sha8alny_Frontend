@@ -1,73 +1,64 @@
 "use client";
-import { useState, useRef} from "react";
-import { useEffect } from "react";
-import SideBarContainer from "./SideBarContainer";
-import PostContainer from "./PostContainer";
+import { useState, useEffect } from "react";
 import WritePostContainer from "./WritePostContainer";
-import Analytics from "../presentation/Analytics";
 import { createPost } from "@/app/services/post";
+import { getCompanyId, getCompany} from "@/app/services/companyManagment";
+import { Post } from "./PostContainer";
 
-/**
- * @namespace company-page-author
- * @module company-page-author
- */
-/**
- * PostPageContainer Component
- * 
- * This component serves as the main container for the post page, integrating 
- * the sidebar, post creation, post display, and analytics.
- * 
- * @component
- * @returns {JSX.Element} - Rendered PostPageContainer component.
- */
+function PostPageContainer({ username, logo }) {
 
-/**
- * Handles post submission by calling the createPost service and updating the posts state.
- * 
- * @param {Object} newPost - The new post object to be created.
- */
-
-
-function PostPageContainer({username, logo}){
-    const [logoPreview, setLogoPreview] = useState(logo || null);
-    const logoInputRef = useRef(null);
     const [posts, setPosts] = useState([]); 
+    const [company, setCompany] = useState(null);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (logo) {
-            setLogoPreview(logo);
-        }
-    }, [logo]);
-
-    const logoUpload = (e) => {
-        const selectedFile=e.target.files[0];
-        if (selectedFile){
-            const newLogoURL = URL.createObjectURL(selectedFile); 
-            setLogoPreview(newLogoURL);
-        }
-    };
-    
     const handlePostSubmit = async (newPost) => {
         try {
-            const createdPost = await createPost(newPost);
-            if (createdPost) {
-                setPosts((prevPosts) => [...(prevPosts || []), createdPost]);
+            const {companyId} = await getCompanyId(username);
+            const createdPost = await createPost(newPost, companyId);
+            if (createdPost.message === "Post created successfully") {
+                const createdPost = {
+                    ...newPost, 
+                    id: Date.now(), 
+                    likes: 0, 
+                    reposts: 0, 
+                    comments: [], 
+                    views: 0, 
+                    logo: logo,
+                };
+                console.log("Post after adding logo:", createdPost); 
+                setPosts((prevPosts) => [createdPost, ...prevPosts]);
             }
         } catch (error) {
             console.error("Failed to create post:", error);
         }
     };
-    return(
-        <div className="flex flex-row min-h-screen gap-x-24">
-            <SideBarContainer username={username} logoPreview={logoPreview} logoInputRef={logoInputRef} logoUpload={logoUpload} />
-            <main>
-                <div>
-                    <WritePostContainer onPostSubmit={handlePostSubmit} logoPreview={logoPreview}/>
-                    <PostContainer username={username} followers="7,472,293" posts={posts} logoPreview={logoPreview}/>
-                </div>
-            </main>
-            <Analytics/>
+
+    useEffect(() => {
+        const fetchCompany = async () => {
+        try {
+            const data = await getCompany(username);
+            setCompany(data);
+        } catch (err) {
+            setError(err.message);
+        }
+        };
+        if (username) fetchCompany();
+    }, [username]);
+    return (
+        <div>
+            <WritePostContainer company={company} onPostSubmit={handlePostSubmit} logo={logo} />
+            <div className="space-y-6">
+                {posts.length > 0 ? (
+                    posts.map((post, index) => (
+                        <Post company={company} username ={username} logo={logo} key={post.id || `post-${index}`} cardInfo={{ ...post, username, logo, hasMedia: !!(post.image || post.video),
+                        description: post.text || "No content",}} />
+                    ))
+                ) : (
+                    <p className="flex justify-center mt-2 text-gray-400">No posts available</p>
+                )}
+            </div>
         </div>
     );
 }
+
 export default PostPageContainer;

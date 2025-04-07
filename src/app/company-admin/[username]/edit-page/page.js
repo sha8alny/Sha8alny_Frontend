@@ -5,11 +5,9 @@ import EditContainer from "@/app/components/modules/company-page-author/containe
 
 function EditCompanyPage(){
     const { username } = useParams();
-    const searchParams = useSearchParams();
-    const logo = searchParams.get("logo");
     return(
-        <div>
-            <EditContainer username={username} logo={logo}/> 
+        <div className="space-y-6">
+            <EditContainer username={username}/>
         </div>
     );
 }

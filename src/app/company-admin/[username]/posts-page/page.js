@@ -8,7 +8,7 @@ function PostPage(){
     const searchParams = useSearchParams();
     const logo = searchParams.get("logo");
     return(
-        <div className="w-full" >
+        <div className="space-y-6">
             <PostPageContainer username={username} logo={logo}/>
         </div>
     );
