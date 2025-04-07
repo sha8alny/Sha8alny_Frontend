@@ -46,7 +46,7 @@ const ChangeEmailForm = ({
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
+            
             className={errors.email ? "border-destructive" : ""}
           />
           {errors.email && (
@@ -62,7 +62,7 @@ const ChangeEmailForm = ({
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            
             className={errors.password ? "border-destructive" : ""}
           />
           {errors.password && (

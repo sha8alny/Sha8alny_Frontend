@@ -32,7 +32,7 @@ import  CompanySectionAllPresentation  from "../presentation/CompanySectionAllPr
   const router = useRouter();
 
   const handleViewMore = () => {
-    router.push("/search/companies?keyword=" + query);
+    router.push("/search/results?keyword=" + query + "&type=company");
   };
 
   return (

@@ -12,7 +12,6 @@ import RightSidebarPresentation from "./components/modules/feed/presentation/Rig
 export default function Page() {
   return (
     <div className="w-screen h-screen overflow-auto">
-      <Navbar />
       <div className="gap-4 px-4 md:px-16 pt-8 flex">
         <div className="hidden md:flex flex-1 rounded-lg flex-col gap-2 items-center">
           <LeftSidebar />
