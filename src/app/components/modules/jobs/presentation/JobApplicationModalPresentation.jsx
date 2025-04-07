@@ -56,7 +56,7 @@ const JobApplicationModalPresenter = ({
 }) => {
   return (
     <Dialog open={show} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+      <DialogContent className="sm:max-w-lg w-full bg-white dark:bg-background text-gray-900 dark:text-white">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
             Apply for {jobTitle}
