@@ -8,8 +8,8 @@ const getToken = () => {
   return token;
 };
 
-export const getPosts = async (query = "") => {
-  const response = await fetch(`${apiURL}/posts?query=${query}`, {
+export const getPosts = async (pageNum) => {
+  const response = await fetchWithAuth(`${apiURL}/posts?pageNum=${pageNum}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
@@ -19,16 +19,12 @@ export const getPosts = async (query = "") => {
 
 export const createPost = async (postData) => {
   console.log("postData", postData);
-  const response = await fetch(`${apiURL}/posts`, {
+  const response = await fetchWithAuth(`${apiURL}/posts`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(postData),
+    body: postData,
   });
   if (!response.ok) throw new Error("Failed to create post");
-  return await response.json();
+  return response.json();
 };
 
 export const getPost = async (postId) => {
@@ -63,9 +59,8 @@ export const updatePost = async (postId, postData) => {
 };
 
 export const deletePost = async (postId) => {
-  const response = await fetch(`${apiURL}/posts/${postId}/edit`, {
+  const response = await fetchWithAuth(`${apiURL}/myposts/${postId}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${getToken()}` },
   });
   if (!response.ok) throw new Error("Failed to delete post");
   return "Post deleted successfully";
@@ -141,12 +136,13 @@ export async function getCommentReplies(postId, commentId, pageNum = 1) {
         "Content-Type": "application/json",
       },
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch comments: ${response.status}`);
+    if (response.status === 404){
+      return [];
     }
-
-    return await response.json();
+    if (!response.ok) {
+      throw new Error(`Failed to fetch comment replies: ${response.status}`);
+    }
+    return response.json();
   } catch (error) {
     console.error("Error fetching comment replies:", error);
     throw error;
@@ -198,21 +194,22 @@ export async function reactToContent({ postId, commentId, reaction = "Like" }) {
  * @param {Array<string>} params.tags - Optional tags for the comment
  * @returns {Promise<Object>} - Response data
  */
-export async function addComment({ postId, commentId, text, tags = [] }) {
-  try {
-    // Construct URL with commentId as a query parameter if it exists
-    let url = `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/comment`;
 
-    if (commentId) {
-      url += `?commentId=${commentId}`;
-    }
+export const addComment = async ({ postId, commentId, text, tags = [] }) => {
+  try {
+    const url = `${apiURL}/posts/${postId}/comment`;
+    const body = {
+      text,
+      tags,
+      ...(commentId && { commentId }),
+    };
 
     const response = await fetchWithAuth(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ text, tags }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -224,7 +221,8 @@ export async function addComment({ postId, commentId, text, tags = [] }) {
     console.error("Error adding comment:", error);
     throw error;
   }
-}
+};
+
 
 /**
  * Update a comment or reply
@@ -288,28 +286,6 @@ export async function deleteComment({ postId, commentId }) {
     throw error;
   }
 }
-
-// export const addComment = async (postId, text) => {
-//   const response = await fetch(`${apiURL}/posts/${postId}/comment`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: `Bearer ${getToken()}`,
-//     },
-//     body: JSON.stringify({ text }),
-//   });
-//   if (!response.ok) throw new Error("Failed to add comment");
-//   return "Comment added successfully";
-// };
-
-// export const deleteComment = async (postId, commentId) => {
-//   const response = await fetch(`${apiURL}/posts/${postId}/comment`, {
-//     method: "DELETE",
-//     headers: { Authorization: `Bearer ${getToken()}` },
-//   });
-//   if (!response.ok) throw new Error("Failed to delete comment");
-//   return "Comment deleted successfully";
-// };
 
 export const likeComment = async (postId, commentId) => {
   const response = await fetch(

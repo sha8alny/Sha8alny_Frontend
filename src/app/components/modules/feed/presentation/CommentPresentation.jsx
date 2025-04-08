@@ -1,9 +1,15 @@
-import { ExpandMore, PersonAdd, Send } from "@mui/icons-material";
+import { ExpandMore, Person, PersonAdd, Send } from "@mui/icons-material";
 
 import Image from "next/image";
 import CommentContainer from "../container/CommentContainer";
 import { Textarea } from "@/app/components/ui/Textarea";
 import { Button } from "@/app/components/ui/Button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/app/components/ui/Tooltip";
 import React from "react";
 
 export default function CommentPresentation({
@@ -51,14 +57,20 @@ export default function CommentPresentation({
                   <button
                     disabled={comment?.isFollowed}
                     onClick={() => onFollow(comment?.username)}
-                    className={`rounded-2xl items-center flex gap-1 ml-2 px-2 py-1 text-xs ${
-                      comment.isFollowed
+                    className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
+                      comment?.isFollowed
                         ? "bg-secondary/80 text-background dark:text-primary cursor-default"
                         : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
                     } transition-colors duration-200`}
                   >
-                    <PersonAdd sx={{ fontSize: 12 }} />
-                    {comment?.isFollowed ? "Following" : "Follow"}
+                    {comment?.isFollowed ? (
+                      <Person sx={{ fontSize: "0.75rem" }} />
+                    ) : (
+                      <PersonAdd sx={{ fontSize: "0.75rem" }} />
+                    )}
+                    <span className="max-w-0 overflow-hidden group-hover:max-w-24 group-hover:ml-2 group-hover:mr-1 transition-all duration-300 whitespace-nowrap">
+                      {comment?.isFollowed ? "Following" : "Follow"}
+                    </span>
                   </button>
                 </div>
                 <span className="text-xs text-muted">{comment?.headline}</span>
@@ -77,17 +89,63 @@ export default function CommentPresentation({
               }`}
               onClick={onLike}
             >
-              {React.createElement(
-                (userReactions[comment?.reaction] || userReactions.Like).icon,
-                {
-                  sx: { fontSize: "1rem" },
-                  className: isLiked
-                    ? (userReactions[comment?.reaction] || userReactions.Like)
-                        .className
-                    : "",
-                }
-              )}
-              <span className="text-muted">{comment?.numReacts}</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span
+                      onClick={() => onLike("Like")}
+                      className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
+                    >
+                      {React.createElement(
+                        (userReactions[comment?.reaction] || userReactions.Like)
+                          .icon,
+                        {
+                          sx: { fontSize: "1rem" },
+                          className: isLiked
+                            ? (
+                                userReactions[comment?.reaction] ||
+                                userReactions.Like
+                              ).className
+                            : "",
+                        }
+                      )}
+                      <span
+                        className={`text-muted ${
+                          comment?.reaction ? "text-secondary" : ""
+                        }`}
+                      >
+                        {comment?.numReacts}
+                      </span>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-foreground border text-primary rounded-md">
+                    <div className="flex gap-3 w-full">
+                      {Object.entries(userReactions).map(
+                        ([name, { icon, className }]) => (
+                          <div
+                            key={name}
+                            onClick={() => {
+                              onLike(name);
+                            }}
+                            className="relative group flex items-center justify-center flex-1 px-2"
+                          >
+                            <div className="cursor-pointer group-hover:scale-140 duration-300 transition-transform">
+                              {React.createElement(icon, {
+                                sx: { fontSize: "2rem" },
+                                className: className,
+                              })}
+                            </div>
+
+                            <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                              {name}
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </button>
             <button
               className="text-xs text-muted hover:underline duration-200 cursor-pointer transition-colors"

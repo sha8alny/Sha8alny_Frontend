@@ -4,24 +4,27 @@ import { useRouter } from "next/navigation";
 import PostPresentation, {
   PostSkeleton,
 } from "../presentation/PostPresentation";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   determineAge,
   getPost,
   likePostComment as likePost,
   unlikePostComment as unlikePost,
   savePost,
+  deletePost,
 } from "@/app/services/post";
 import { useState } from "react";
 import { repostPost } from "@/app/services/repostPost";
 import { reportPost } from "@/app/services/reportPost";
 import { Reactions } from "@/app/utils/Reactions";
+import { followUser } from "@/app/services/connectionManagement";
 
 export default function PostContainer({ post }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(post?.reaction || false);
   const [isSaved, setIsSaved] = useState(post?.isSaved || false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const navigateTo = (path) => {
     router.push(path);
@@ -60,6 +63,20 @@ export default function PostContainer({ post }) {
     },
   });
 
+  const handleFollowMutation = useMutation({
+    mutationFn: (username) => followUser(username),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["posts"]);
+    },
+  });
+
+  const handleDeleteMutation = useMutation({
+    mutationFn: (postId) => deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["posts"]);
+    },
+  });
+
   const handleLike = (reaction) => {
     handleLikeMutation.mutate({ postId: post.postId, reaction });
   };
@@ -76,6 +93,71 @@ export default function PostContainer({ post }) {
     handleSaveMutation.mutate(post.postId);
   };
 
+  const handleFollow = (username) => {
+    handleFollowMutation.mutate(username);
+  };
+
+  const handleDelete = () => {
+    handleDeleteMutation.mutate(post.postId);
+  };
+
+
+  const convertRelation = (relation) => {
+    switch (relation) {
+      case 1:
+        return "1st";
+      case 2:
+        return "2nd";
+      case 3:
+        return "3rd+";
+      default:
+        return null;
+    }
+  };
+
+  const getLayout = (count) => {
+    switch (count) {
+      case 1:
+        return {
+          layoutClass: "grid grid-cols-1",
+          itemClasses: ["aspect-video"],
+        };
+      case 2:
+        return {
+          layoutClass: "grid grid-cols-2",
+          itemClasses: ["aspect-video", "aspect-video"],
+        };
+      case 3:
+        return {
+          layoutClass: "grid grid-rows-2 grid-cols-3",
+          itemClasses: [
+            "aspect-video row-span-2 col-span-2 w-full h-full",
+            "aspect-video",
+            "aspect-video",
+          ],
+        };
+      case 4:
+        return {
+          layoutClass: "grid grid-rows-3 grid-cols-3",
+          itemClasses: [
+            "aspect-video w-full h-full row-span-3 col-span-2",
+            "aspect-video",
+            "aspect-video",
+            "aspect-video",
+          ],
+        };
+      default:
+        const itemClasses = ["aspect-video w-full h-full row-span-3 col-span-2"];
+        for (let i = 1; i < count; i++) {
+          itemClasses.push("aspect-video");
+        }
+        return {
+          layoutClass: "grid grid-rows-3 grid-cols-3",
+          itemClasses: itemClasses,
+        };
+    }
+  };
+
   return (
     <PostPresentation
       commentSectionOpen={commentSectionOpen}
@@ -86,9 +168,18 @@ export default function PostContainer({ post }) {
       onRepost={handleRepost}
       onReport={handleReport}
       onSave={handleSave}
+      onDelete={handleDelete}
+      onFollow={handleFollow}
       navigateTo={navigateTo}
-      post={{ ...post, age: determineAge(post?.time) }}
+      post={{
+        ...post,
+        age: determineAge(post?.time),
+        relation: convertRelation(post?.connectionDegree),
+        numReacts: post?.numLikes + post?.numCelebrates + post?.numLoves + post?.numSupports + post?.numFunnies + post?.numInsightfuls,
+      }}
       userReactions={Reactions}
+      layoutClass={getLayout(post?.media.length).layoutClass}
+      itemClasses={getLayout(post?.media.length).itemClasses}
     />
   );
 }

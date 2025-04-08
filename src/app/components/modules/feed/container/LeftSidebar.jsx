@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import { CalendarMonth, Group, Message, Work } from "@mui/icons-material";
 import LeftSidebarPresentation, { LeftSidebarPresentationSkeleton } from "../presentation/LeftSidebarPresentation";
 import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
+import PostButton from "./PostButton";
 
-function LeftSidebar() {
+function LeftSidebar({ addButton = false }) {
   const router = useRouter();
 
   const {
@@ -119,12 +120,15 @@ function LeftSidebar() {
   };
 
   return (
+    <>
     <LeftSidebarPresentation
       sideBar={sideBar}
       navigateTo={handleNavigation}
       trackedStats={trackedStats}
       determineStat={determineStat}
     />
+    {addButton && <PostButton userInfo={sideBar}/>}
+    </>
   );
 }
 

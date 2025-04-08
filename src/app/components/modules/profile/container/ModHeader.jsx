@@ -14,8 +14,14 @@ import { connectUser } from "@/app/services/connectionManagement";
 export default function ModHeader({ userInfo }) {
   const { isMyProfile } = useIsMyProfile();
 
-  const handleResumeDownload = (username) => {
-    window.open(`/api/profile/resume/${username}`, "_blank");
+  const handleResumeDownload = () => {
+    if (!userInfo?.resume) return;
+    const link = document.createElement('a');
+    link.href = userInfo.resume;
+    link.download = `resume_${userInfo.name || 'download'}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleConnect = (username) => {

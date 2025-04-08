@@ -1,12 +1,12 @@
 "use client";
 import { getPosts } from "@/app/services/post";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import PostsPresentation from "../presentation/PostsPresentation";
+import { PostSkeleton } from "../presentation/PostPresentation";
 
 function PostsContainer() {
   const observerRef = useRef(null);
-  const [lastElementRef, setLastElementRef] = useState(null);
 
   const {
     data,
@@ -15,49 +15,61 @@ function PostsContainer() {
     error,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage
+    isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ["posts"],
-    queryFn: getPosts,
+    queryFn: ({ pageParam = 1 }) => getPosts(pageParam),
     getNextPageParam: (lastPage, allPages) => {
+      // Check if there are more pages to fetch
       return lastPage.hasMore ? allPages.length + 1 : undefined;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  useEffect(() => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    }, { threshold: 0.5 });
-
-    if (lastElementRef) {
-      observerRef.current.observe(lastElementRef);
-    }
-
-    return () => {
+  // Create a callback ref that we'll pass to the last element
+  const lastElementRef = useCallback(
+    (node) => {
+      if (isFetchingNextPage) return;
+      
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
-    };
-  }, [lastElementRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
+      
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting && hasNextPage) {
+            fetchNextPage();
+          }
+        },
+        { threshold: 0.1 }
+      );
+      
+      if (node) {
+        observerRef.current.observe(node);
+      }
+    },
+    [isFetchingNextPage, fetchNextPage, hasNextPage]
+  );
 
-  const allPosts = data?.pages.flatMap(page => page.posts) || [];
+  // Handle the API response format - the posts are directly in the response
+  const allPosts = data?.pages ? 
+    data.pages.flatMap(page => Array.isArray(page) ? page : []) : 
+    [];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <PostSkeleton />;
   }
+  
   if (isError) {
-    return <div>Error: {error.message}</div>;
+    return <div className="flex justify-center items-center h-full text-muted">No posts to show.</div>;
   }
 
   return (
-    <PostsPresentation posts={allPosts} isLoading={isLoading} isError={isError} error={error} />
+    <PostsPresentation
+      posts={allPosts}
+      isFetchingNextPage={isFetchingNextPage}
+      lastElementRef={lastElementRef}
+    />
   );
 }
 

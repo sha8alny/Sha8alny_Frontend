@@ -14,7 +14,7 @@ export default function ProfileCard({ userInfo, navigateTo }) {
             className="rounded-t-xl"
           />
         </div>
-        <div className="relative w-16 h-16 z-10 ml-4 bg-gray-600 rounded-full border-2 border-gray-400 mt-10">
+        <div className="relative w-16 h-16 z-10 ml-4 bg-gray-600 rounded-full border-2 border-foreground mt-10">
           <Image
             src={userInfo?.profilePicture}
             alt="User Avatar"
@@ -25,7 +25,7 @@ export default function ProfileCard({ userInfo, navigateTo }) {
       </div>
       <div className="px-4 pt-1 flex flex-col pb-4">
         <button
-          onClick={() => navigateTo(userInfo?.username)}
+          onClick={() => navigateTo(`/u/${userInfo?.username}`)}
           className="text-lg text-start cursor-pointer hover:underline font-bold"
         >
           {userInfo?.name}

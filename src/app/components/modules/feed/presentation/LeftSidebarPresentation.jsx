@@ -12,7 +12,7 @@ function LeftSidebarPresentation({
   determineStat,
 }) {
   return (
-    <aside className="w-full flex flex-col gap-2 shadow-lg">
+    <aside className="w-full flex flex-col gap-2 drop-shadow-sm">
       <ProfileCard userInfo={sideBar} navigateTo={navigateTo} />
       <QuickAccess navigateTo={navigateTo} />
       {!sideBar?.isPremium && <TryPremium navigateTo={navigateTo} />}

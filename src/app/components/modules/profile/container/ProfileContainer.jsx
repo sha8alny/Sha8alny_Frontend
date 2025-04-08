@@ -187,6 +187,8 @@ function ProfileContent({ username }) {
     }
   }
 
+  console.log(userProfile)
+
   return (
     <ProfilePresentation
       userProfile={{...userProfile, relation: changeRelation(userProfile?.relation)}}

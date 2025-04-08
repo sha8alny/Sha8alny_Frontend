@@ -6,7 +6,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { IosShare } from "@mui/icons-material";
 
-export default function ShareContainer({ onPost = false, username, postId }) {
+export default function ShareContainer({ fontSize, onPost = false, username, postId }) {
   const pathName = usePathname();
   const shareUrl = onPost
     ? `https://sha8alny.com${pathName}`
@@ -25,8 +25,8 @@ export default function ShareContainer({ onPost = false, username, postId }) {
     <Dialog
       variant="ghost"
       size="sm"
-      buttonData={<IosShare sx={{ fontSize: 16 }} />}
-      buttonClass="cursor-pointer text-primary rounded-md hover:bg-primary/10"
+      buttonData={<IosShare sx={{ fontSize: fontSize }} />}
+      buttonClass="cursor-pointer flex items-center text-primary rounded-md hover:bg-primary/10"
       className="min-w-max"
       AlertContent={
         <SharePresentation

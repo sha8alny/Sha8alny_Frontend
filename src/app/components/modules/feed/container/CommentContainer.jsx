@@ -41,7 +41,7 @@ export default function CommentContainer({ postId, comment }) {
     enabled: !!comment?.commentId && !comment.isReply, // Only fetch if we have a commentId and it's not a reply itself
   });
 
-  const displayedReplies = data?.pages.flat() || [];
+  const displayedReplies = data?.pages.flatMap(page => Array.isArray(page) ? page : []) || [];
 
   const loadMoreReplies = () => {
     fetchNextPage();
@@ -72,13 +72,16 @@ export default function CommentContainer({ postId, comment }) {
   });
 
   const handleCommentMutation = useMutation({
-    mutationFn: addComment,
+    mutationFn: (params) => addComment({
+      postId: params.postId,
+      commentId: params.commentId,
+      text: params.text,
+      tags: params.tags || [],
+    }),
     onSuccess: () => {
-      queryClient.invalidateQueries([
-        "commentReplies",
-        postId,
-        comment?.commentId,
-      ]);
+      // Invalidate both the comments query and the comment replies query
+      queryClient.invalidateQueries(["comments", postId]);
+      queryClient.invalidateQueries(["commentReplies", postId, comment?.commentId]);
       setReplyText("");
       setIsReplying(false);
     },
@@ -87,11 +90,11 @@ export default function CommentContainer({ postId, comment }) {
     },
   });
 
-  const handleLike = () => {
+  const handleLike = (reaction = "Like") => {
     handleReactMutation.mutate({
       postId,
       commentId: comment?.commentId,
-      reaction: "Like", // TODO : Add dynamic reaction selection
+      reaction: reaction,
     });
   };
 
@@ -101,7 +104,7 @@ export default function CommentContainer({ postId, comment }) {
     handleCommentMutation.mutate({
       postId,
       commentId: comment?.commentId,
-      text: replyText,
+      text: replyText.trim(),
       tags: [],
     });
   };
@@ -125,7 +128,7 @@ export default function CommentContainer({ postId, comment }) {
       onReply={handleReply}
       navigateTo={navigateTo}
       postId={postId}
-      displayedReplies={comment?.replies} //displayedReplies}
+      displayedReplies={displayedReplies}
       isLoadingReplies={isLoadingReplies}
       hasMoreReplies={hasNextPage}
       isFetchingMoreReplies={isFetchingNextPage}
@@ -135,7 +138,7 @@ export default function CommentContainer({ postId, comment }) {
       replyText={replyText}
       setReplyText={setReplyText}
       onFollow={handleFollow}
-      hasRepliesSection={comment?.replies?.length > 0 || hasRepliesSection}
+      hasRepliesSection={displayedReplies?.length > 0 || hasRepliesSection}
       userReactions={Reactions}
     />
   );
