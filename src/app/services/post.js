@@ -217,14 +217,16 @@ export const getSpecificPost= async(postId)=>{
     }
 }
 
-export const getSavedPosts = async(pageNum)=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/save`,{
-            method:"GET",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
+export const getSavedPosts = async(pageNum = 1) => {
+    try {
+        const response = await fetchWithAuth(`${apiURL}/save/posts?pageNum=${pageNum}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
             }
         });
+    
         const responseText = await response.text(); 
         console.log("Raw response text:", responseText); 
     
@@ -232,13 +234,13 @@ export const getSavedPosts = async(pageNum)=>{
             console.error("Error response:", responseText);
             throw new Error(`Failed to get saved posts: ${response.status} ${responseText}`);
         }
+        
         try {
             return JSON.parse(responseText);
         } catch {
             return { message: responseText };
         }
-
-    }catch(error){
+    } catch(error) {
         throw new Error(error.message);
     }
 };
