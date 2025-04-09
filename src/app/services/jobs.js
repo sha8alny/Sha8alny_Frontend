@@ -126,6 +126,58 @@ export const fetchAppliedJobs = async ({ pageParam = 1 }) => {
     throw error;
   }
 };
+export const fetchArchivedJobs = async ({ pageParam = 1 }) => {
+  const itemsPerPage = 5;
+  const url = new URL(`${apiURL}/jobs/archived/${pageParam}/${itemsPerPage}`);
+
+  try {
+    const response = await fetchWithAuth(url.toString());
+
+    if (response.status === 204) {
+      return { data: [], nextPage: null };
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      data,
+      nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
+    };
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+    throw error;
+  }
+};
+export const fetchInProgressJobs = async ({ pageParam = 1 }) => {
+  const itemsPerPage = 5;
+  const url = new URL(`${apiURL}/jobs/in_progress/${pageParam}/${itemsPerPage}`);
+
+  try {
+    const response = await fetchWithAuth(url.toString());
+
+    if (response.status === 204) {
+      return { data: [], nextPage: null };
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      data,
+      nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
+    };
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+    throw error;
+  }
+};
 
 export const fetchSavedJobs = async ({ pageParam = 1 }) => {
   const itemsPerPage = 5;
