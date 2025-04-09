@@ -30,33 +30,110 @@ export const postJob = async ({jobData, username}) => {
     }
 };
 
-export const postedJobs = async (companyUsername) => {
-    try{
-        const postedJobsResponse = await fetchWithAuth(`${apiURL}/company/${companyUsername}/job`,{
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        });
-        if (!postedJobsResponse.ok) {
-            throw new Error("Failed to fetch jobs");}
-        const data = await postedJobsResponse.json();
-        console.log("Fetched jobs",data);
-        console.log("is array:",Array.isArray(data));
-        return data;
-        }catch(error){
-            throw new Error(error.message);
+export const postedJobs = async ({page, companyUsername}) => {
+    try {
+      console.log("Fetching jobs for page:", page);
+      console.log("companyUsername:", companyUsername);
+      const pageSize = 5
+      const queryParams = new URLSearchParams({
+        company: companyUsername,
+      });
+      
+      const url = `${apiURL}/jobs/search/${page}/${pageSize}?${queryParams}`;
+      console.log("➡️ Final fetch URL:", url);
+      
+      const postedJobsResponse = await fetchWithAuth(
+        `${apiURL}/jobs/search/${page}/${pageSize}?${queryParams.toString()}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         }
+      );
+  
+      if (!postedJobsResponse.ok) {
+        throw new Error("Failed to fetch jobs");
+      }
+  
+      const contentLength = postedJobsResponse.headers.get("content-length");
+      if (contentLength && parseInt(contentLength) === 0) {
+        console.warn("No content returned (empty JSON).");
+        return []; // return empty array to avoid crashing
+      }
+  
+      const text = await postedJobsResponse.text();
+      if (!text) {
+        console.warn("Empty response body.");
+        return []; // again, safe fallback
+      }
+  
+      const data = JSON.parse(text);
+      console.log("Fetched jobs", data);
+      return data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  export const deleteJob = async ({companyUsername,jobId}) => {
+    const token = sessionStorage.getItem("accessToken");
+    console.log("token:", token);
+    try {
+        const deleteJobResponse = await fetchWithAuth(`${apiURL}/company/${companyUsername}/job/${jobId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json",
+                "Authorization": `Bearer ${token.trim()}`,
+            },
+        });
+        if (!deleteJobResponse.ok) {
+            throw new Error("Failed to delete job");
+        }
+        return await deleteJobResponse.json();
+    } catch (error) {
+        throw new Error(error.message);
+    }
 };
+
+export const editJob = async ({companyUsername, jobId, jobData}) => {
+    const token = sessionStorage.getItem("accessToken");
+    console.log("token:", token);
+    console.log("jobData:", jobData);
+    try {
+        const editJobResponse = await fetchWithAuth(`${apiURL}/company/${companyUsername}/job/${jobId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json",
+                "Authorization": `Bearer ${token.trim()}`,
+            },
+            body: JSON.stringify(jobData),
+        });
+        if (!editJobResponse.ok) {
+            throw new Error("Failed to edit job");
+        }
+        return await editJobResponse.json();
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+  
 
 
 export const JobApplicants = async (jobId, page = 1) => {
+    const token = sessionStorage.getItem("accessToken");
+    console.log("token:", token);
+    console.log("Fetching applicants for jobId:", jobId);
+    const pageSize = 5;
     try{
-        const applicantsResponse = await fetchWithAuth(`${apiURL}/employers/${jobId}/applicants/${page}`,{
+        const applicantsResponse = await fetchWithAuth(`${apiURL}/employers/${jobId}/applicants/${page}/${pageSize}`,{
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
         if (!applicantsResponse.ok) {
             throw new Error("Failed to fetch applicants");}
-        const data = await applicantsResponse.json();
+        const text = await applicantsResponse.text();
+        if (!text) {
+            console.warn("Empty response body.");
+            return []; 
+        }
+        const data = JSON.parse(text);
         console.log(`fetched page ${page} applicants:`,data);
         return data;
     } catch(error){
@@ -65,10 +142,13 @@ export const JobApplicants = async (jobId, page = 1) => {
 };
 
 export const getApplication = async (jobId, applicantId) => {
+    const token = sessionStorage.getItem("accessToken");
+    console.log("token:", token);
     try{
         const applicationResponse = await fetchWithAuth(`${apiURL}/employers/${jobId}/${applicantId}/application`,{
             method: "GET",
             headers: { "Content-Type": "application/json" },
+            Authorization: `Bearer ${token.trim()}`,
         });
         if (!applicationResponse.ok) {
             throw new Error("Failed to fetch application");}
