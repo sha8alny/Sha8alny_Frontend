@@ -5,6 +5,7 @@ import { ToastProvider } from "./context/ToastContext";
 import ReactQueryProvider from "./providers/ReactQueryProvider";
 import StripeProvider from "./providers/StripeProvider";
 import Navbar from "./components/layout/NavBar";
+import {AuthProvider} from "./context/AuthContext";
 export const metadata = {
   title: "Shaغlny",
   description: "i need job",
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <AuthProvider>
         <ReactQueryProvider>
           <StripeProvider>
             <ThemeProvider>
@@ -26,6 +28,7 @@ export default function RootLayout({ children }) {
             </ThemeProvider>
           </StripeProvider>
         </ReactQueryProvider>
+        </AuthProvider>
       </body>
     </html>
   );
