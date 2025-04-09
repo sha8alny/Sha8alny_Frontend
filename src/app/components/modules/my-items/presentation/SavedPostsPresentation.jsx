@@ -1,15 +1,13 @@
 "use client";
-import {
-  Bookmark,
-  Share,
-  MoreHorizontal,
-  Search,
-  Calendar,
-  ExternalLink,
-  ThumbsUp,
-  MessageSquare,
-  User,
-} from "lucide-react";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import ShareIcon from "@mui/icons-material/Share";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import SearchIcon from "@mui/icons-material/Search";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import LaunchIcon from "@mui/icons-material/Launch";
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import PersonIcon from "@mui/icons-material/Person";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import {
@@ -82,8 +80,8 @@ export default function SavedPostsPresentation({
               Access your bookmarked articles and resources
             </p>
           </div>
-          <div className="relative w-full sm:w-auto">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full sm:w-auto text-muted-foreground">
+            <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search saved posts..."
@@ -116,7 +114,7 @@ export default function SavedPostsPresentation({
                   )
                 }
               >
-                <User className="h-3 w-3" />
+                <PersonIcon className="h-3 w-3" />
                 {person.fullName}
               </Badge>
             ))}
@@ -170,10 +168,10 @@ function PostCard({ post, onPostClick, formatPostTime }) {
   }).reduce((sum, [_, count]) => sum + count, 0);
 
   return (
-    <Card className="overflow-hidden border hover:shadow-md transition-shadow duration-200 bg-hover">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow duration-200 bg-foreground ">
       <div className="flex flex-col sm:flex-row">
       {post.media && post.media.length > 0 && (
-          <div className="hidden sm:block w-32 h-auto bg-muted ml-2 rounded-lg overflow-hidden ">
+          <div className="hidden sm:block w-32 h-auto bg-neutral-700 ml-2 rounded-lg overflow-hidden ">
             <img
               src={post.media[0]}
               alt="Post thumbnail"
@@ -207,7 +205,7 @@ function PostCard({ post, onPostClick, formatPostTime }) {
                   {post.headline}
                 </p>
                 <div className="flex items-center text-xs text-muted-foreground mt-1">
-                  <Calendar className="h-3 w-3 mr-1" />
+                  <CalendarTodayIcon className="h-3 w-3 mr-1" />
                   <span>{formattedTime}</span>
                 </div>
               </div>
@@ -215,17 +213,17 @@ function PostCard({ post, onPostClick, formatPostTime }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
+                  <MoreHorizIcon className="h-4 w-4" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
-                  <Share className="mr-2 h-4 w-4" />
+                  <ShareIcon className="mr-2 h-4 w-4" />
                   <span>Share</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Bookmark className="mr-2 h-4 w-4" />
+                  <BookmarkIcon className="mr-2 h-4 w-4" />
                   <span>Remove from saved</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -247,7 +245,7 @@ function PostCard({ post, onPostClick, formatPostTime }) {
                   variant="secondary"
                   className="text-xs flex items-center gap-1"
                 >
-                  <User className="h-3 w-3" />
+                  <PersonIcon className="h-3 w-3" />
                   {person.fullName}
                 </Badge>
               ))}
@@ -262,17 +260,17 @@ function PostCard({ post, onPostClick, formatPostTime }) {
             className="flex items-center gap-1.5"
             onClick={() => onPostClick(post.postId, post.username)}
           >
-            <ExternalLink className="h-3.5 w-3.5" />
+            <LaunchIcon className="h-3.5 w-3.5" />
             <span>Read post</span>
           </Button>
           
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <div className="flex items-center">
-              <ThumbsUp className="h-3.5 w-3.5 mr-1" />
+              <ThumbUpOutlinedIcon className="h-3 w-3 mr-1" />
               <span>{totalReactions}</span>
             </div>
             <div className="flex items-center">
-              <MessageSquare className="h-3.5 w-3.5 mr-1" />
+              <ChatBubbleOutlineIcon className="h-3 w-3 mr-1" />
               <span>{post.numComments}</span>
             </div>
           </div>
@@ -287,7 +285,7 @@ function PostCard({ post, onPostClick, formatPostTime }) {
 function EmptyState({ searchQuery, selectedPerson, onClearFilters }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center bg-hover rounded-lg">
-      <Bookmark className="h-12 w-12 text-muted-foreground mb-4" />
+      <BookmarkIcon className="h-12 w-12 text-muted-foreground mb-4" />
       <h3 className="text-lg font-medium text-text">No saved posts found</h3>
       <p className="text-muted-foreground mt-1 max-w-md mx-auto">
         {searchQuery || selectedPerson
