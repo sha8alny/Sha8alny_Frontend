@@ -5,22 +5,20 @@ import MyJobsPresentation from "../presentation/MyJobsPresentation";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchAppliedJobs, fetchArchivedJobs, fetchInProgressJobs } from "@/app/services/jobs";
 
-
 /**
  * @namespace my-items
  * @module my-items
  */
 /**
- * Custom hook to fetch job applications data.
+ * Custom hook to fetch jobs data with specific status.
  * 
  * @function
- * @returns {Object} Object containing job applications data and query states
- * @property {Array} data - The job applications data
- * @property {boolean} isLoading - Loading state of the query
- * @property {boolean} isError - Error state of the query
- * @property {string|null} errorMessage - Error message if query failed, null otherwise
+ * @param {string} queryKey - The query key identifier for React Query
+ * @param {Function} fetchFn - The function to fetch the data
+ * @param {string} status - The status to assign to the jobs
+ * @returns {Object} Object containing job data and query states
 */
-const useJobApplications = () => {
+const useJobsWithStatus = (queryKey, fetchFn, status) => {
   const {
     data,
     isLoading,
@@ -30,14 +28,20 @@ const useJobApplications = () => {
     hasNextPage,
     isFetchingNextPage
   } = useInfiniteQuery({
-    queryKey: ["jobApplications"],
-    queryFn: fetchAppliedJobs,
+    queryKey: [queryKey],
+    queryFn: fetchFn,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 1,
   });
   
-  // Flatten the pages data into a single array
-  const flattenedData = data?.pages?.flatMap(page => page.data) || [];
+  // Flatten the pages data into a single array and assign status
+  const flattenedData = data?.pages?.flatMap(page => 
+    page.data.map(job => ({
+      ...job,
+      // Only set status if it's not already defined in the API response
+      status: job.status || status
+    }))
+  ) || [];
   
   return {
     data: flattenedData,
@@ -49,64 +53,6 @@ const useJobApplications = () => {
     isFetchingNextPage
   };
 };
-const useJobArchived = () => {
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage
-  } = useInfiniteQuery({
-    queryKey: ["jobArchived"],
-    queryFn: fetchArchivedJobs,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    initialPageParam: 1,
-  });
-  
-  // Flatten the pages data into a single array
-  const flattenedData = data?.pages?.flatMap(page => page.data) || [];
-  
-  return {
-    data: flattenedData,
-    isLoading,
-    isError,
-    errorMessage: isError ? error.message : null,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage
-  };
-}
-const useJobInProgress = () => {
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage
-  } = useInfiniteQuery({
-    queryKey: ["jobInProgress"],
-    queryFn: fetchInProgressJobs,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    initialPageParam: 1,
-  });
-  
-  // Flatten the pages data into a single array
-  const flattenedData = data?.pages?.flatMap(page => page.data) || [];
-  
-  return {
-    data: flattenedData,
-    isLoading,
-    isError,
-    errorMessage: isError ? error.message : null,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage
-  };
-}
 
 /**
  * MyJobsContainer component that fetches and manages the user's job applications.
@@ -121,34 +67,10 @@ const useJobInProgress = () => {
 function MyJobsContainer() {
   const router = useRouter();
 
-  const {
-    data,
-    isLoading,
-    isError,
-    errorMessage,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useJobApplications();
-  const {
-    data: archivedData,
-    isLoading: isLoadingArchived,
-    isError: isErrorArchived,
-    errorMessage: errorMessageArchived,
-    hasNextPage: hasNextPageArchived,
-    fetchNextPage: fetchNextPageArchived,
-    isFetchingNextPage: isFetchingNextPageArchived,
-  } = useJobArchived();
-  const {
-    data: inProgressData,
-    isLoading: isLoadingInProgress,
-    isError: isErrorInProgress,
-    errorMessage: errorMessageInProgress,
-    hasNextPage: hasNextPageInProgress,
-    fetchNextPage: fetchNextPageInProgress,
-    isFetchingNextPage: isFetchingNextPageInProgress,
-  } = useJobInProgress();
-
+  // Use our custom hook for each job type with appropriate status
+  const appliedJobs = useJobsWithStatus("jobApplications", fetchAppliedJobs, "pending");
+  const archivedJobs = useJobsWithStatus("jobArchived", fetchArchivedJobs, "rejected");
+  const inProgressJobs = useJobsWithStatus("jobInProgress", fetchInProgressJobs, "accepted");
 
   const handleJobClick = (job) => {
     router.push(
@@ -159,7 +81,6 @@ function MyJobsContainer() {
   };
 
   const handleMoreJobsClick = () => {
-    // Handle apply click
     router.push("/jobs");
   };
 
@@ -195,44 +116,57 @@ function MyJobsContainer() {
     }
   };
 
-  
+  // Check if any of the queries are loading
+  const isLoading = appliedJobs.isLoading || archivedJobs.isLoading || inProgressJobs.isLoading;
 
-  // Extract jobs from the paginated data structure
-  // Extract jobs from the paginated data structure and set status
-  const jobs = data?.map(job => ({ ...job, status: 'pending' })) || [];
-  const archivedJobs = archivedData?.map(job => ({ ...job, status: 'rejected' })) || [];
-  const inProgressJobs = inProgressData?.map(job => ({ ...job, status: 'accepted' })) || [];
-  const allJobs = [...jobs, ...archivedJobs, ...inProgressJobs];
-  const allJobsLength = allJobs.length;
-  
-  
+  // Check if all queries have completed but returned errors
+  const isAllError = appliedJobs.isError && archivedJobs.isError && inProgressJobs.isError;
 
-  // Loading state
-  if (isLoading || isLoadingArchived || isLoadingInProgress) {
+  // Combine all jobs from different sources
+  const allJobs = [
+    ...appliedJobs.data,
+    ...archivedJobs.data,
+    ...inProgressJobs.data
+  ];
+
+  // Combined loading state
+  if (isLoading) {
     return <div className="text-center py-8">Loading job listings...</div>;
   }
 
-  if (isError) {
+  // If all queries failed, show error
+  if (isAllError) {
     return (
       <div className="text-center py-8 text-red-500">
-       <span>Error loading job listings: {errorMessage}</span> 
+        <span>Error loading job listings</span> 
       </div>
     );
   }
-  if (isErrorArchived) {
-    return (
-      <div className="text-center py-8 text-red-500">
-       <span>Error loading job listings: {errorMessageArchived}</span> 
-      </div>
-    );
-  }
-  if (isErrorInProgress) {
-    return (
-      <div className="text-center py-8 text-red-500">
-       <span>Error loading job listings: {errorMessageInProgress}</span> 
-      </div>
-    );
-  }
+
+  // If some queries succeeded but others failed, show a warning but still display the data
+  const hasPartialError = appliedJobs.isError || archivedJobs.isError || inProgressJobs.isError;
+  const errorMessage = hasPartialError ? "Some job data could not be loaded." : null;
+
+  // Determine if any category has more jobs to load
+  const hasMoreJobs = appliedJobs.hasNextPage || archivedJobs.hasNextPage || inProgressJobs.hasNextPage;
+
+  // Function to load more jobs from all categories that have more
+  const loadMoreJobs = () => {
+    if (appliedJobs.hasNextPage) {
+      appliedJobs.fetchNextPage();
+    }
+    if (archivedJobs.hasNextPage) {
+      archivedJobs.fetchNextPage();
+    }
+    if (inProgressJobs.hasNextPage) {
+      inProgressJobs.fetchNextPage();
+    }
+  };
+
+  // Check if any category is currently fetching more
+  const isLoadingMore = appliedJobs.isFetchingNextPage || 
+                        archivedJobs.isFetchingNextPage || 
+                        inProgressJobs.isFetchingNextPage;
 
   return (
     <MyJobsPresentation
@@ -242,9 +176,10 @@ function MyJobsContainer() {
       getStatusColor={getStatusColor}
       onMoreJobsClick={handleMoreJobsClick}
       onJobClick={handleJobClick}
-      hasMoreJobs={hasNextPage}
-      loadMoreJobs={fetchNextPage}
-      isLoadingMore={isFetchingNextPage}
+      hasMoreJobs={hasMoreJobs}
+      loadMoreJobs={loadMoreJobs}
+      isLoadingMore={isLoadingMore}
+      errorMessage={errorMessage}
     />
   );
 }
