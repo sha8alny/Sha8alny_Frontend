@@ -118,9 +118,8 @@ function JobsCard({ jobListings = [], handleJobClick = () => {} }) {
     <>
       <div className="space-y-4 p-3 mb-4">
         {jobListings.map((job, index) => (
-          <div className="mb-6">
+          <div className="mb-6" key={`${job._id}-${index}`}>
           <JobCard
-            key={`${job._id}-${index}`}
             job={job}
             onClick={handleJobClick}
           />
