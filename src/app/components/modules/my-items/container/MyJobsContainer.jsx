@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 
 import MyJobsPresentation from "../presentation/MyJobsPresentation";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchAppliedJobs } from "@/app/services/jobs";
+import { fetchAppliedJobs, fetchArchivedJobs, fetchInProgressJobs } from "@/app/services/jobs";
 
 
 /**
@@ -49,6 +49,64 @@ const useJobApplications = () => {
     isFetchingNextPage
   };
 };
+const useJobArchived = () => {
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ["jobArchived"],
+    queryFn: fetchArchivedJobs,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1,
+  });
+  
+  // Flatten the pages data into a single array
+  const flattenedData = data?.pages?.flatMap(page => page.data) || [];
+  
+  return {
+    data: flattenedData,
+    isLoading,
+    isError,
+    errorMessage: isError ? error.message : null,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage
+  };
+}
+const useJobInProgress = () => {
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ["jobInProgress"],
+    queryFn: fetchInProgressJobs,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1,
+  });
+  
+  // Flatten the pages data into a single array
+  const flattenedData = data?.pages?.flatMap(page => page.data) || [];
+  
+  return {
+    data: flattenedData,
+    isLoading,
+    isError,
+    errorMessage: isError ? error.message : null,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage
+  };
+}
 
 /**
  * MyJobsContainer component that fetches and manages the user's job applications.
@@ -72,6 +130,25 @@ function MyJobsContainer() {
     fetchNextPage,
     isFetchingNextPage,
   } = useJobApplications();
+  const {
+    data: archivedData,
+    isLoading: isLoadingArchived,
+    isError: isErrorArchived,
+    errorMessage: errorMessageArchived,
+    hasNextPage: hasNextPageArchived,
+    fetchNextPage: fetchNextPageArchived,
+    isFetchingNextPage: isFetchingNextPageArchived,
+  } = useJobArchived();
+  const {
+    data: inProgressData,
+    isLoading: isLoadingInProgress,
+    isError: isErrorInProgress,
+    errorMessage: errorMessageInProgress,
+    hasNextPage: hasNextPageInProgress,
+    fetchNextPage: fetchNextPageInProgress,
+    isFetchingNextPage: isFetchingNextPageInProgress,
+  } = useJobInProgress();
+
 
   const handleJobClick = (job) => {
     router.push(
@@ -118,11 +195,20 @@ function MyJobsContainer() {
     }
   };
 
+  
+
   // Extract jobs from the paginated data structure
-  const jobs = data || [];
+  // Extract jobs from the paginated data structure and set status
+  const jobs = data?.map(job => ({ ...job, status: 'pending' })) || [];
+  const archivedJobs = archivedData?.map(job => ({ ...job, status: 'rejected' })) || [];
+  const inProgressJobs = inProgressData?.map(job => ({ ...job, status: 'accepted' })) || [];
+  const allJobs = [...jobs, ...archivedJobs, ...inProgressJobs];
+  const allJobsLength = allJobs.length;
+  
+  
 
   // Loading state
-  if (isLoading) {
+  if (isLoading || isLoadingArchived || isLoadingInProgress) {
     return <div className="text-center py-8">Loading job listings...</div>;
   }
 
@@ -133,10 +219,24 @@ function MyJobsContainer() {
       </div>
     );
   }
+  if (isErrorArchived) {
+    return (
+      <div className="text-center py-8 text-red-500">
+       <span>Error loading job listings: {errorMessageArchived}</span> 
+      </div>
+    );
+  }
+  if (isErrorInProgress) {
+    return (
+      <div className="text-center py-8 text-red-500">
+       <span>Error loading job listings: {errorMessageInProgress}</span> 
+      </div>
+    );
+  }
 
   return (
     <MyJobsPresentation
-      jobs={jobs}
+      jobs={allJobs}
       formatDate={formatDate}
       formatTime={formatTime}
       getStatusColor={getStatusColor}
