@@ -3,7 +3,7 @@ import { TrendingUp } from "@mui/icons-material";
 
 const TrendingTopicsPresentation = ({ trendingTopics }) => {
   return (
-    <Container className="border-[#111] border shadow-sm p-4">
+    <Container className="dark:border-[#111] dark:border shadow-lg p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
         <TrendingUp sx={{ fontSize: 30 }} className="mr-2" />
         Trending Topics

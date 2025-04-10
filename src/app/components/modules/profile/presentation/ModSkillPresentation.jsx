@@ -83,7 +83,7 @@ export default function ModSkillPresentation({
 const ModSkillCard = ({ skill, removeSkill, isLoading }) => {
   return (
     <div>
-      <div className="flex justify-between items-center p-3 border border-[#111] bg-foreground rounded-md">
+      <div className="flex justify-between items-center p-3 dark:border dark:border-[#111] bg-foreground rounded-md">
         <h3 className="font-semibold text-primary truncate">{skill?.skillName}</h3>
         <button
           onClick={() => removeSkill(2, skill?.skillName)}

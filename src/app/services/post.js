@@ -1,598 +1,384 @@
-
 import { fetchWithAuth } from "./userAuthentication";
+
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
+export const getMyPosts = async (pageNum, companyId) => {
+  try {
+    const response = await fetchWithAuth(
+      `${apiURL}/myPosts?pageNum=${pageNum}&companyId=${companyId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer${sessionStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    const responseText = await response.text();
+    console.log("Raw response text:", responseText);
 
-export const getMyPosts = async (pageNum, companyId)=>{
-    try{
-        const response = await fetchWithAuth (`${apiURL}/myPosts?pageNum=${pageNum}&companyId=${companyId}`,{
-            method: "GET",
-            headers: { "Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            },
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to update post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
+    if (!response.ok) {
+      console.error("Error response:", responseText);
+      throw new Error(
+        `Failed to update post: ${response.status} ${responseText}`
+      );
     }
-};
-
-export const updateMyPosts = async (postId,postData ) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`,{
-            method:"PATCH",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify(postData)
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to update post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const deleteMyPosts = async (postId) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`, {
-            method: "DELETE",
-            headers: { "Authorization": `Bearer${sessionStorage.getItem("accessToken")}` },
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get saved posts: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const getDeletedPosts = async(pageNum)=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/myPosts/restore`,{
-            method:"GET",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get deleted posts: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const restoreDeletedPosts = async (postId)=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/myPosts/restore/${postId}`,{
-            method:"POST",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to restore deleted posts: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const getPost= async(pageNum,query = "")=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts?query=${query}`,{
-            method:"GET",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const createPost= async(postData, companyId)=>{
-    try{
-        console.log("📦 postData being sent:", postData);
-        console.log("📦 companyId being sent:", companyId);
-        const response= await fetchWithAuth(`${apiURL}/posts?companyId=${companyId}`,{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify(postData),
-        });
-
-        if (!response) {
-            throw new Error("No response received from server.");
-        }
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to create post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const getSpecificPost= async(postId)=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}`,{
-            method:"GET",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
-    }
-}
-
-export const getSavedPosts = async(pageNum = 1) => {
     try {
-        const response = await fetchWithAuth(`${apiURL}/save/posts?pageNum=${pageNum}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
-            }
-        });
-    
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get saved posts: ${response.status} ${responseText}`);
-        }
-        
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    } catch(error) {
-        throw new Error(error.message);
+      return JSON.parse(responseText);
+    } catch {
+      return { message: responseText };
     }
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
-export const savePost = async(postId)=>{
-    try{
-        const response = await fetchWithAuth (`${apiURL}/posts/${postId}/save`,{
-            method:"POST",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to save post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
+export const updateMyPosts = async (postId, postData) => {
+  try {
+    const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer${sessionStorage.getItem("accessToken")}`,
+      },
+      body: JSON.stringify(postData),
+    });
+    const responseText = await response.text();
+    console.log("Raw response text:", responseText);
 
-    }catch(error){
-        throw new Error(error.message);
+    if (!response.ok) {
+      console.error("Error response:", responseText);
+      throw new Error(
+        `Failed to update post: ${response.status} ${responseText}`
+      );
     }
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return { message: responseText };
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
-export const unsavePost = async(postId)=>{
-    try{
-        const response = await fetchWithAuth (`${apiURL}/posts/${postId}/save`,{
-            method:"DELETE",
-            headers: {"Authorization": `Bearer${sessionStorage.getItem("accessToken")}`}
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to unsave post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
+export const getPosts = async (pageNum) => {
+  const response = await fetchWithAuth(`${apiURL}/posts?pageNum=${pageNum}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) throw new Error("Failed to fetch posts");
+  return await response.json();
+};
 
-    }catch(error){
-        throw new Error(error.message);
+export const createPost = async (postData) => {
+  console.log("postData", postData);
+  const response = await fetchWithAuth(`${apiURL}/posts`, {
+    method: "POST",
+    body: postData,
+  });
+  if (!response.ok) throw new Error("Failed to create post");
+  return response.json();
+};
+
+export const getPost = async (postId) => {
+  const response = await fetchWithAuth(`${apiURL}/posts/${postId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) throw new Error("Failed to fetch post");
+  return await response.json();
+};
+
+export const restoreDeletedPosts = async (postId) => {
+  try {
+    const response = await fetchWithAuth(
+      `${apiURL}/myPosts/restore/${postId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer${sessionStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    const responseText = await response.text();
+    console.log("Raw response text:", responseText);
+
+    if (!response.ok) {
+      console.error("Error response:", responseText);
+      throw new Error(
+        `Failed to restore deleted posts: ${response.status} ${responseText}`
+      );
     }
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return { message: responseText };
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const savePost = async (postId) => {
+  const response = await fetchWithAuth(`${apiURL}/posts/${postId}/save`, {
+    method: "POST",
+  });
+  if (!response.ok) throw new Error("Failed to save post");
+  return "Post saved successfully";
+};
+
+export const deletePost = async (postId) => {
+  const response = await fetchWithAuth(`${apiURL}/myposts/${postId}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("Failed to delete post");
+  return "Post deleted successfully";
+};
+
+/**
+ * Get comments or replies for a post with pagination
+ * @param {string} postId - The ID of the post
+ * @param {string|null} commentId - The ID of the comment (null for top-level comments)
+ * @param {number} pageNum - The page number for pagination
+ * @returns {Promise<Array>} - Array of comments or replies
+ */
+export async function getCommentReplies(postId, commentId, pageNum = 1) {
+  try {
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/comment?pageNum=${pageNum}`;
+    if (commentId) {
+      url += `&commentId=${commentId}`;
+    }
+    const response = await fetchWithAuth(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 404){
+      return [];
+    }
+    if (!response.ok) {
+      throw new Error(`Failed to fetch comment replies: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching comment replies:", error);
+    throw error;
+  }
 }
 
-export const getShares = async(postId) =>{
-    try{
-        const response = await fetchWithAuth (`${apiURL}/posts/${postId}/share`,{
-            method:"GET",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}` 
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get share: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
+/**
+ * React to a post/comment/reply
+ * @param {Object} params
+ * @param {string} params.postId - The ID of the post
+ * @param {string} params.commentId - The ID of the comment (undefined for post reactions)
+ * @param {string} params.reaction - The reaction type
+ * @param {boolean} params.remove - Whether to remove the reaction
+ * @returns {Promise<Object>} - Response data
+ */
+export async function reactToContent(postId, commentId, reaction = "Like", remove = false) {
+  try {
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/react`;
+
+    if (commentId) {
+      url += `?commentId=${commentId}`;
     }
+
+    const bodyContent = !remove ? { reaction } : undefined;
+
+    const response = await fetchWithAuth(url, {
+      method: remove ? "DELETE" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: bodyContent ? JSON.stringify(bodyContent) : undefined,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to ${remove ? 'remove' : 'add'} reaction: ${response.status}`);
+    }
+
+    return response.status === 204 ? {} : await response.json();
+  } catch (error) {
+    console.error(`Error ${remove ? 'removing' : 'adding'} reaction:`, error);
+    throw error;
+  }
 }
+
+
+/**
+ * Comment or reply on a post
+ * @param {Object} params
+ * @param {string} params.postId - The ID of the post
+ * @param {string} params.commentId - The ID of the parent comment (undefined for top-level comments)
+ * @param {string} params.text - The comment/reply text
+ * @param {Array<string>} params.tags - Optional tags for the comment
+ * @returns {Promise<Object>} - Response data
+ */
+
+export const addComment = async ({ postId, commentId, text, tags = [] }) => {
+  try {
+    let url = `${apiURL}/posts/${postId}/comment`;
+    
+    if (commentId) {
+      url += `?commentId=${commentId}`;
+    }
+
+    const body = {
+      text,
+      tags,
+    };
+
+    const response = await fetchWithAuth(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to add comment: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    throw error;
+  }
+};
 
 export const sharePost = async(postId)=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/share`,{
-            method:"POST",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}` 
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to share post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
+  try{
+      const response = await fetchWithAuth(`${apiURL}/posts/${postId}/share`,{
+          method:"POST",
+          headers: {"Content-Type": "application/json",
+              "Authorization": `Bearer${sessionStorage.getItem("accessToken")}` 
+          }
+      });
+      const responseText = await response.text(); 
+      console.log("Raw response text:", responseText); 
+  
+      if (!response.ok) {
+          console.error("Error response:", responseText);
+          throw new Error(`Failed to share post: ${response.status} ${responseText}`);
+      }
+      try {
+          return JSON.parse(responseText);
+      } catch {
+          return { message: responseText };
+      }
+  }catch(error){
+      throw new Error(error.message);
+  }
 }
 
 export const unsharePost = async(postId)=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/share`,{
-            method:"DELETE",
-            headers: {"Authorization": `Bearer${sessionStorage.getItem("accessToken")}`}
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to unshare post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
+  try{
+      const response = await fetchWithAuth(`${apiURL}/posts/${postId}/share`,{
+          method:"DELETE",
+          headers: {"Authorization": `Bearer${sessionStorage.getItem("accessToken")}`}
+      });
+      const responseText = await response.text(); 
+      console.log("Raw response text:", responseText); 
+  
+      if (!response.ok) {
+          console.error("Error response:", responseText);
+          throw new Error(`Failed to unshare post: ${response.status} ${responseText}`);
+      }
+      try {
+          return JSON.parse(responseText);
+      } catch {
+          return { message: responseText };
+      }
+  }catch(error){
+      throw new Error(error.message);
+  }
 }
 
+/**
+ * Delete a comment or reply
+ * @param {Object} params
+ * @param {string} params.postId - The ID of the post
+ * @param {string} params.commentId - The ID of the comment to delete
+ * @returns {Promise<Object>} - Response data
+ */
+export async function deleteComment(postId, commentId) {
+  try {
+    const response = await fetchWithAuth(
+      `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/comment?commentId=${commentId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-export const unlikePost = async (postId) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/react`, {
-            method: "DELETE",
-            headers :{"Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`}
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to unlike post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
+    if (!response.ok) {
+      throw new Error(`Failed to delete comment: ${response.status}`);
     }
-};
 
-export const getLikes = async (postId) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/react`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-             },
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to fetch likes: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const getComments = async (postId) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/comment`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-             },
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to fetch comments: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const addComment = async (postId, text) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/comment`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify({ text }),
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to add comment: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const updateComment = async(postId, commentId, text)=>{
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/comment`,{
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify({ text }),
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-    
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to add comment: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    throw error;
+  }
 }
-
-export const deleteComment = async (postId, commentId) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/comment`, {
-            method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`, 
-            },
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to delete comment: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const likeComment = async (postId, commentId) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/${postId}/react`, {
-            method: "POST",
-            headers:{"Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`}
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to like comment/post/reply: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
-export const searchPosts = async (keyword) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/posts/search/${keyword}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json",
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
-             },
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get search posts: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
 
 export const getTags = async (text) => {
-    try {
-        const response = await fetchWithAuth(`${apiURL}/tags?text=${encodeURIComponent(text)}`, {
-            method: "GET",
-            headers: { 
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
-            }
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
+  try {
+      const response = await fetchWithAuth(`${apiURL}/tags?text=${encodeURIComponent(text)}`, {
+          method: "GET",
+          headers: { 
+              "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+          }
+      });
+      const responseText = await response.text(); 
+      console.log("Raw response text:", responseText); 
 
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to fetch tags: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    } catch (error) {
-        throw new Error(error.message);
-    }
+      if (!response.ok) {
+          console.error("Error response:", responseText);
+          throw new Error(`Failed to fetch tags: ${response.status} ${responseText}`);
+      }
+      try {
+          return JSON.parse(responseText);
+      } catch {
+          return { message: responseText };
+      }
+  } catch (error) {
+      throw new Error(error.message);
+  }
 };
 
+
+export const determineAge = (createdAt) => {
+  const currentTime = new Date();
+  const commentTime = new Date(createdAt);
+  const timeDifference = currentTime - commentTime;
+  const seconds = Math.floor(timeDifference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (years > 0) {
+    return `${years}y`;
+  } else if (months > 0) {
+    return `${months}m`;
+  } else if (weeks > 0) {
+    return `${weeks}w`;
+  } else if (days > 0) {
+    return `${days}d`;
+  } else if (hours > 0) {
+    return `${hours}h`;
+  } else if (minutes > 0) {
+    return `${minutes}m`;
+  } else {
+    return `${seconds}s`;
+  }
+};

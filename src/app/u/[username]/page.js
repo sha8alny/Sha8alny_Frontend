@@ -1,4 +1,3 @@
-import Navbar from "@/app/components/layout/NavBar";
 import { ProfileContainer } from "@/app/components/modules/profile/container/ProfileContainer";
 import ReactQueryProvider from "@/app/providers/ReactQueryProvider";
 
@@ -19,14 +18,6 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `Shaغalny - ${username}`,
       description: `This is the profile page for ${username}.`,
-      images: [
-        {
-          url: `https://lorempicsum.com/200`,
-          width: 1200,
-          height: 630,
-          alt: `Profile image for ${username}`,
-        },
-      ],
     },
   };
 }
@@ -34,7 +25,7 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { username } = await params;
   return (
-    <div className="w-screen h-screen overflow-auto">
+    <div className="overflow-y-auto">
       <ReactQueryProvider>
         <ProfileContainer username={username}/>
       </ReactQueryProvider>

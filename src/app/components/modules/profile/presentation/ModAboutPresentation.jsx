@@ -41,7 +41,7 @@ export default function ModAboutPresentation({
       <button
         onClick={() => handleSubmit(about)}
         disabled={error}
-        className="disabled:bg-red-800 bg-secondary w-full disabled:cursor-default hover:cursor-pointer disabled:hover:opacity-100 hover:bg-secondary hover:opacity-80 duration-250 text-primary font-semibold px-4 py-2 rounded-md mt-4"
+        className="disabled:bg-red-800 bg-secondary w-full disabled:cursor-default hover:cursor-pointer disabled:hover:opacity-100 hover:bg-secondary hover:opacity-80 duration-250 text-background font-semibold px-4 py-2 rounded-md mt-4"
       >
         Save
       </button>
