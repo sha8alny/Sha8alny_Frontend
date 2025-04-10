@@ -5,6 +5,7 @@ import Navbar from "@/app/components/layout/NavBar";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import React from "react";
+import { getCompany } from "@/app/services/companyManagment";
 
 export default function CompanyAdminLayout({ children }) {
     const { username } = useParams();
@@ -12,6 +13,22 @@ export default function CompanyAdminLayout({ children }) {
     const [logo, setLogo] = useState(searchParams.get("logo") || "");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+
+    const [company, setCompany] = useState(null);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        const fetchCompany = async () => {
+        try {
+            const data = await getCompany(username);
+            console.log("Fetched company:", data); 
+            setCompany(data);
+        } catch (err) {
+            setError(err.message);
+        } 
+        };
+
+        if (username) fetchCompany();
+    }, [username]);
 
     useEffect(() => {
         setLogo(searchParams.get("logo") || "");
@@ -54,7 +71,7 @@ export default function CompanyAdminLayout({ children }) {
                 >
                     {isSidebarOpen ? "✕" : "☰"}
                 </button>
-                <h1 className="text-lg font-medium text-text">{username}</h1>
+                <h1 className="text-lg font-medium text-text">{company?.name}</h1>
                 <button 
                     onClick={toggleAnalytics}
                     className="p-2 rounded-md text-text cursor-pointer"
@@ -75,6 +92,7 @@ export default function CompanyAdminLayout({ children }) {
                         lg:translate-x-0 lg:shadow-none
                     `}>
                         <SideBarContainer 
+                            company={company}
                             username={username} 
                             logo={logo} 
                             setLogo={setLogo} 
