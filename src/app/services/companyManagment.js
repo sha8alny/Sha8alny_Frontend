@@ -126,6 +126,8 @@ export const getUserCompanies = async (pageNum = 1) => {
 
 export const createCompany = async (companyData) => {
     try {
+        console.log("Creating company with data:", companyData);
+        console.log("accessToken: ", sessionStorage.getItem("accessToken"));
         const response = await fetchWithAuth(`${apiURL}/company`, {
             method: "POST",
             headers: { 
@@ -154,6 +156,7 @@ export const createCompany = async (companyData) => {
 
 export const getCompany = async (companyUsername) => {
     try{
+        console.log("Fetching company with username:", companyUsername);
         const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
             method: "GET",
             headers: { "Content-Type": "application/json", 
@@ -197,7 +200,6 @@ export const updateCompany = async (companyUsername, companyData) => {
             throw new Error(`Failed to update company: ${response.status} ${responseText}`);
         }
         try {
-            const parsedResponse = JSON.parse(responseText);
             return JSON.parse(responseText);
         } catch {
             return { message: responseText };
