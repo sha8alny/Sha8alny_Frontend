@@ -20,7 +20,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
  * @returns {JSX.Element} The rendered InputFieldContainer component
  */
 
-function InputFieldContainer({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyLocation, setCompanyLocation, companyURL, companyWebsite, setCompanyWebsite, setCompanyURL,errors={}, setErrors}) {
+function InputFieldContainer({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyLocation, setCompanyLocation, companyURL, companyWebsite, setCompanyWebsite, setCompanyURL, companyDate, setCompanyDate ,companyPhone,  setCompanyPhone,errors={}, setErrors}) {
   const [isCompanyURLEdited, setIsCompanyURLEdited ]= useState(false);
 
   const handleNameError = (e) =>{
@@ -89,24 +89,36 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
     }
   };
 
+  const handleDateChange = (e) =>{
+    setCompanyDate(e.target.value);
+  };
+
+  const handlePhoneChange = (e) =>{
+    setCompanyPhone(e.target.value);
+  };
+
   return (
     <div>
-      <InputField label="Name" name="company-name" placeholder="Add your organization's name" maxLength={120} required selectedname={companyName} onChange={handleNameError}/>
+      <InputField label="Name" type="text" name="company-name" placeholder="Add your organization's name" maxLength={120} required selectedname={companyName} onChange={handleNameError}/>
       {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
 
       <div>
-        <InputField label="shaغalny.com/company/" name="company-url" placeholder="Add your unique shaغalny address" required selectedname={companyURL || companyName} onChange={handleURlChange} />
+        <InputField label="shaغalny.com/company/" type="text"  name="company-url" placeholder="Add your unique shaغalny address" required selectedname={companyURL || companyName} onChange={handleURlChange} />
         <a href="#" className="mt-4 hover:underline font-bold text-[var(--secondary)]">Learn more about the Page Public URL </a>  
         {setErrors && <p className="text-red-500 text-sm mt-1">{errors.companyURL}</p> }
       </div>
 
-      <InputField label="Website" name="company-website" placeholder="Begin with http://, https://, www." selectedname={companyWebsite} onChange={handleWebsiteChange}/>
+      <InputField label="Website" type="text"  name="company-website" placeholder="Begin with http://, https://, www." selectedname={companyWebsite} onChange={handleWebsiteChange}/>
 
-      <InputField label="Location" name="company-location" placeholder="Add your organization's location" required selectedname={companyLocation} onChange={handleLocationChange}/>
+      <InputField label="Location" type="text" name="company-location" placeholder="Add your organization's location" required selectedname={companyLocation} onChange={handleLocationChange}/>
       {setErrors && <p className="text-red-500 text-sm mt-1">{errors.companyLocation}</p>}
 
-      <InputField label="Industry" name="company-industry" placeholder="ex:Information Services" required selectedname={companyIndustry} onChange={handleIndustryError}/> 
+      <InputField label="Industry" type="text" name="company-industry" placeholder="ex:Information Services" required selectedname={companyIndustry} onChange={handleIndustryError}/> 
       {setErrors && <p className="text-red-500 text-sm mt-1">{errors.companyIndustry}</p>}
+
+      <InputField label="Founding Date" type="date" name="company-date" placeholder="Select a date" required selectedname={companyDate} onChange={handleDateChange}/>
+      
+      <InputField label="Phone Number" type="tel" name="company-number" placeholder="Add your phone number" selectedname={companyPhone} onChange={handlePhoneChange}/>
     </div> 
   );
 }

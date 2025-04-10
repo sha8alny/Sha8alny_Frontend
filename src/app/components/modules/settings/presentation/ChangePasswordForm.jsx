@@ -34,10 +34,8 @@ const ChangePasswordForm = ({
   showTooltip,
   setShowTooltip,
   tooltipRef,
-  handleForgetPassword
+  handleForgetPassword,
 }) => {
-  
-
   return (
     <SettingsFormLayout>
       <BackButton handler={toggleForm} />
@@ -61,9 +59,7 @@ const ChangePasswordForm = ({
               className="absolute left-0 top-full mt-2 w-80 bg-background text-text rounded-lg p-4 shadow-2xl z-10"
             >
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold">
-                  Choose a strong password
-                </h3>
+                <h3 className="font-semibold">Choose a strong password</h3>
                 <button onClick={() => setShowTooltip(false)}>
                   <Close
                     size={18}
@@ -89,9 +85,10 @@ const ChangePasswordForm = ({
         </div>
 
         <form className="flex flex-col gap-4 mt-2" onSubmit={handleSubmit}>
-        <div className="space-y-2">
-            <Label className="flex items-center">
-              Current password <span className="text-destructive ml-1">*</span>
+          <div className="space-y-2">
+            <Label htmlFor="currentPassword" className="flex items-center">
+              Type your current password{" "}
+              <span className="text-destructive ml-1">*</span>
             </Label>
             <Input
               type="password"
@@ -108,8 +105,9 @@ const ChangePasswordForm = ({
           </div>
 
           <div className="space-y-2">
-            <Label className="flex items-center">
-              New password <span className="text-destructive ml-1">*</span>
+            <Label htmlFor="newPassword" className="flex items-center">
+              Type your new password{" "}
+              <span className="text-destructive ml-1">*</span>
             </Label>
             <Input
               type="password"
@@ -126,8 +124,9 @@ const ChangePasswordForm = ({
           </div>
 
           <div className="space-y-2">
-            <Label className="flex items-center">
-              Confirm password <span className="text-destructive ml-1">*</span>
+            <Label htmlFor="confirmPassword" className="flex items-center">
+              Retype the password
+              <span className="text-destructive ml-1">*</span>
             </Label>
             <Input
               type="password"
@@ -139,7 +138,9 @@ const ChangePasswordForm = ({
               className={errors.confirmPassError ? "border-destructive" : ""}
             />
             {errors.confirmPassError && (
-              <p className="text-sm text-destructive">{errors.confirmPassError}</p>
+              <p className="text-sm text-destructive">
+                {errors.confirmPassError}
+              </p>
             )}
           </div>
 
@@ -155,9 +156,12 @@ const ChangePasswordForm = ({
             Save Password
           </Button>
         </form>
-          <button onClick={handleForgetPassword} className="cursor-pointer w-max hover:text-secondary p-2 rounded-lg">
-            Forgot Password
-          </button>
+        <button
+          onClick={handleForgetPassword}
+          className="cursor-pointer w-max hover:text-secondary p-2 rounded-lg"
+        >
+          Forgot Password
+        </button>
       </div>
     </SettingsFormLayout>
   );

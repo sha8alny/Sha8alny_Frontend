@@ -63,7 +63,7 @@ const DeleteAccountPresentation = ({
             Are you sure you want to close your account? You’ll lose your
             connections, messages, endorsements, and recommendations.
           </p>
-          <Button className="w-25 bg-secondary cursor-pointerhover:bg-secondary/80 transition-colors duration-200/" onClick={handleContinueForm}>Continue</Button>
+          <Button className="w-25 bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200" onClick={handleContinueForm}>Continue</Button>
         </>
       )}
     </SettingsFormLayout>

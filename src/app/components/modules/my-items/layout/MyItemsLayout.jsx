@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Navbar from "../../../layout/NavBar";
 import {
   Work as JobsIcon,
   Bookmark as SavedIcon,
@@ -25,7 +24,6 @@ const MyItemsLayout = ({ children, activeContent }) => {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar */}

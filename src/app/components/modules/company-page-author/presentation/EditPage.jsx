@@ -8,11 +8,12 @@ import EditInputFieldContainer from "../container/EditInputFieldContainer";
 import EditSelectFieldContainer from "../container/EditSelectFieldContainer";
 import TagLineContainer from "../../company-page-form/container/TagLineContainer";
 
-function EditPage({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyTagline, setCompanyTagline, companySize, setCompanySize, companyType, setCompanyType, companyLocation, setCompanyLocation,companyURL, setCompanyURL, companyWebsite, setCompanyWebsite, onSave, onDiscard, loading, errors, setErrors}){
+function EditPage({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyTagline, setCompanyTagline, companySize, setCompanySize, companyType, setCompanyType, companyLocation, setCompanyLocation,companyURL, setCompanyURL, companyWebsite, setCompanyWebsite, companyDate, setCompanyDate, companyPhone, setCompanyPhone, onSave, onDiscard, loading, errors, setErrors}){
     return(
-        <div className="flex flex-row">
-            <div className="w-full p-4 pr-6 space-y-2 border border-[var(--secondary)] mt-5 rounded-lg mx-4">
-                <EditInputFieldContainer companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyURL={companyURL} setCompanyURL={setCompanyURL} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} errorss={errors} setErrors={setErrors}/>
+        <div>
+            <div className="p-4 bg-[var(--foreground)] border rounded-lg">
+                <EditInputFieldContainer companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyURL={companyURL} setCompanyURL={setCompanyURL} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
+                companyDate={companyDate} setCompanyDate={setCompanyDate} companyPhone={companyPhone} setCompanyPhone={setCompanyPhone} errorss={errors} setErrors={setErrors}/>
                 <EditSelectFieldContainer companySize={companySize} setCompanySize={setCompanySize} companyType={companyType} setCompanyType={setCompanyType}/>
                 <TagLineContainer companyTagline={companyTagline} setCompanyTagline={setCompanyTagline}/>
                 <div className="flex flex-row gap-4">

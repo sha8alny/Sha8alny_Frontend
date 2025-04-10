@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignInForm from "../presentation/SignInForm";
 import { handleSignIn } from "../../../../services/userManagement";
+import { useToast } from "@/app/context/ToastContext";
+import { set } from "date-fns";
 
 /**
  * @namespace signin
@@ -22,10 +24,10 @@ import { handleSignIn } from "../../../../services/userManagement";
  */
 const SignInContainer = () => {
   const router = useRouter();
-  const [recaptcha, setRecaptcha] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const toast = useToast();
 
   const loginMutation = useMutation({
     mutationFn: handleSignIn,
@@ -33,27 +35,24 @@ const SignInContainer = () => {
 
   /**
    * Handles the form submission.
-   * Checks if the reCAPTCHA is verified before proceeding with the signin mutation.
-   *
-   *
-   * @param {boolean} recaptcha - The reCAPTCHA verification status.
    * @param {string} email - The email entered by the user.
    * @param {string} password - The password entered by the user.
    * @param {boolean} rememberMe - The "Remember Me" checkbox status.
    */
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!recaptcha) {
-      alert("Please verify that you are not a robot");
-      return;
-    }
 
     loginMutation.mutate(
       { email, password, rememberMe },
       {
-        onSuccess: () => {
-          alert("Login Successful!");
-          router.push("/");
+        onSuccess: (data) => {
+          if (data.success) {
+          toast("Welcome back!");
+          setTimeout(() => {
+            router.push("/");
+          }, 3000);}
+          else{
+            toast("Incorrect email or password",false);}
         },
         onError: (error) => alert(error.message),
       }
@@ -69,7 +68,6 @@ const SignInContainer = () => {
         setPassword={setPassword}
         rememberMe={rememberMe}
         setRememberMe={setRememberMe}
-        setRecaptcha={setRecaptcha}
         handleSubmit={handleSubmit}
         isSubmitting={loginMutation.isPending}
       />

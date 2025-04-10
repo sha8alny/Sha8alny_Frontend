@@ -2,10 +2,64 @@ import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-const getToken = () => {
-  const token = localStorage.getItem("token") || "mock-token";
-  // if (!token) throw new Error("No token found");
-  return token;
+export const getMyPosts = async (pageNum, companyId) => {
+  try {
+    const response = await fetchWithAuth(
+      `${apiURL}/myPosts?pageNum=${pageNum}&companyId=${companyId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer${sessionStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    const responseText = await response.text();
+    console.log("Raw response text:", responseText);
+
+    if (!response.ok) {
+      console.error("Error response:", responseText);
+      throw new Error(
+        `Failed to update post: ${response.status} ${responseText}`
+      );
+    }
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return { message: responseText };
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateMyPosts = async (postId, postData) => {
+  try {
+    const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer${sessionStorage.getItem("accessToken")}`,
+      },
+      body: JSON.stringify(postData),
+    });
+    const responseText = await response.text();
+    console.log("Raw response text:", responseText);
+
+    if (!response.ok) {
+      console.error("Error response:", responseText);
+      throw new Error(
+        `Failed to update post: ${response.status} ${responseText}`
+      );
+    }
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return { message: responseText };
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 export const getPosts = async (pageNum) => {
@@ -19,12 +73,16 @@ export const getPosts = async (pageNum) => {
 
 export const createPost = async (postData) => {
   console.log("postData", postData);
-  const response = await fetchWithAuth(`${apiURL}/posts`, {
+  const response = await fetch(`${apiURL}/posts`, {
     method: "POST",
-    body: postData,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(postData),
   });
   if (!response.ok) throw new Error("Failed to create post");
-  return response.json();
+  return await response.json();
 };
 
 export const getPost = async (postId) => {
@@ -36,6 +94,37 @@ export const getPost = async (postId) => {
   return await response.json();
 };
 
+export const restoreDeletedPosts = async (postId) => {
+  try {
+    const response = await fetchWithAuth(
+      `${apiURL}/myPosts/restore/${postId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer${sessionStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    const responseText = await response.text();
+    console.log("Raw response text:", responseText);
+
+    if (!response.ok) {
+      console.error("Error response:", responseText);
+      throw new Error(
+        `Failed to restore deleted posts: ${response.status} ${responseText}`
+      );
+    }
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return { message: responseText };
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const savePost = async (postId) => {
   const response = await fetchWithAuth(`${apiURL}/posts/${postId}/save`, {
     method: "POST",
@@ -44,76 +133,12 @@ export const savePost = async (postId) => {
   return "Post saved successfully";
 };
 
-export const updatePost = async (postId, postData) => {
-  const response = await fetch(`${apiURL}/posts/${postId}/edit`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(postData),
-  });
-  if (!response.ok) throw new Error("Failed to update post");
-  return await response.json();
-};
-
 export const deletePost = async (postId) => {
   const response = await fetchWithAuth(`${apiURL}/myposts/${postId}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete post");
   return "Post deleted successfully";
-};
-
-export const likePostComment = async (postId, reaction, commentId = null) => {
-  console.log("postId", postId);
-  console.log("reaction", reaction);
-  const url =
-    `${apiURL}/posts/${postId}/react` +
-    (commentId ? `?commentId=${commentId}` : "");
-  const response = await fetchWithAuth(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ reaction }),
-  });
-  if (!response.ok) throw new Error("Failed to like post");
-  return "Post liked successfully";
-};
-
-export const unlikePostComment = async (postId, commentId = null) => {
-  const url =
-    `${apiURL}/posts/${postId}/react` +
-    (commentId ? `?commentId=${commentId}` : "");
-  const response = await fetchWithAuth(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (!response.ok) {
-    throw new Error("Failed to unlike.");
-  }
-  return response.status;
-};
-
-export const getLikes = async (postId) => {
-  const response = await fetch(`${apiURL}/posts/${postId}/like`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!response.ok) throw new Error("Failed to fetch likes");
-  return await response.json();
-};
-
-export const getComments = async (postId) => {
-  const response = await fetch(`${apiURL}/posts/${postId}/comment`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!response.ok) throw new Error("Failed to fetch comments");
-  return await response.json();
 };
 
 /**
@@ -186,6 +211,7 @@ export async function reactToContent(postId, commentId, reaction = "Like", remov
   }
 }
 
+
 /**
  * Comment or reply on a post
  * @param {Object} params
@@ -228,39 +254,61 @@ export const addComment = async ({ postId, commentId, text, tags = [] }) => {
   }
 };
 
-
-/**
- * Update a comment or reply
- * @param {Object} params
- * @param {string} params.postId - The ID of the post
- * @param {string} params.commentId - The ID of the comment to update
- * @param {string} params.text - The updated comment/reply text
- * @param {Array<string>} params.tags - Optional updated tags for the comment
- * @returns {Promise<Object>} - Response data
- */
-export async function updateComment({ postId, commentId, text, tags = [] }) {
-  try {
-    const response = await fetchWithAuth(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/comment?commentId=${commentId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text, tags }),
+export const sharePost = async(postId)=>{
+  try{
+      const response = await fetchWithAuth(`${apiURL}/posts/${postId}/share`,{
+          method:"POST",
+          headers: {"Content-Type": "application/json",
+              "Authorization": `Bearer${sessionStorage.getItem("accessToken")}` 
+          }
+      });
+      const responseText = await response.text(); 
+      console.log("Raw response text:", responseText); 
+  
+      if (!response.ok) {
+          console.error("Error response:", responseText);
+          throw new Error(`Failed to share post: ${response.status} ${responseText}`);
       }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to update comment: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error updating comment:", error);
-    throw error;
+      try {
+          return JSON.parse(responseText);
+      } catch {
+          return { message: responseText };
+      }
+  }catch(error){
+      throw new Error(error.message);
   }
 }
+
+export const unsharePost = async(postId)=>{
+  try{
+      const response = await fetchWithAuth(`${apiURL}/posts/${postId}/share`,{
+          method:"DELETE",
+          headers: {"Authorization": `Bearer${sessionStorage.getItem("accessToken")}`}
+      });
+      const responseText = await response.text(); 
+      console.log("Raw response text:", responseText); 
+  
+      if (!response.ok) {
+          console.error("Error response:", responseText);
+          throw new Error(`Failed to unshare post: ${response.status} ${responseText}`);
+      }
+      try {
+          return JSON.parse(responseText);
+      } catch {
+          return { message: responseText };
+      }
+  }catch(error){
+      throw new Error(error.message);
+  }
+}
+
+export const deleteComment = async (postId, commentId) => {
+  const response = await fetchWithAuth(`${apiURL}/posts/${postId}/comment`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("Failed to delete comment");
+  return "Comment deleted successfully";
+};
 
 /**
  * Delete a comment or reply
@@ -292,26 +340,31 @@ export async function deleteComment(postId, commentId) {
   }
 }
 
-export const likeComment = async (postId, commentId) => {
-  const response = await fetch(
-    `${apiURL}/posts/${postId}/comment/${commentId}/like`,
-    {
-      method: "POST",
-      headers: { Authorization: `Bearer ${getToken()}` },
-    }
-  );
-  if (!response.ok) throw new Error("Failed to like comment");
-  return "Comment liked successfully";
+export const getTags = async (text) => {
+  try {
+      const response = await fetchWithAuth(`${apiURL}/tags?text=${encodeURIComponent(text)}`, {
+          method: "GET",
+          headers: { 
+              "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+          }
+      });
+      const responseText = await response.text(); 
+      console.log("Raw response text:", responseText); 
+
+      if (!response.ok) {
+          console.error("Error response:", responseText);
+          throw new Error(`Failed to fetch tags: ${response.status} ${responseText}`);
+      }
+      try {
+          return JSON.parse(responseText);
+      } catch {
+          return { message: responseText };
+      }
+  } catch (error) {
+      throw new Error(error.message);
+  }
 };
 
-export const searchPosts = async (keyword) => {
-  const response = await fetch(`${apiURL}/posts/search/${keyword}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!response.ok) throw new Error("Failed to search posts");
-  return await response.json();
-};
 
 export const determineAge = (createdAt) => {
   const currentTime = new Date();
