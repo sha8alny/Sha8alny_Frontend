@@ -70,7 +70,7 @@ const JobsFormContainer = ({username,logo}) => {
         fetchJobs();
     }, [page, username, getJobs]);
 
-    const handleDeleteJob = async ( jobId) => {
+    const handleDeleteJob = async ( jobId, username) => {
          try{
           const response = await deleteJob({companyUsername:username,jobId});
           if (response){
@@ -87,7 +87,7 @@ const JobsFormContainer = ({username,logo}) => {
           }
       };  
 
-    const handleEditJob = async (jobId) => {
+    const handleEditJob = async (jobId, username) => {
         try {
           const response = await editJob({ companyUsername: username, jobId, jobData: updatedJob });
           if (response) {
@@ -150,9 +150,9 @@ const JobsFormContainer = ({username,logo}) => {
                     onNextPage={nextPage}
                     onPrevPage={prevPage}
                     hasMore={hasMore}
-                    onDeleteJob={(jobId)=> handleDeleteJob(jobId)}
+                    onDeleteJob={(jobId)=> handleDeleteJob(jobId,username)}
                     setUpdatedJob={setUpdatedJob}
-                    onEditJob={(jobId) => handleEditJob(jobId)}
+                    onEditJob={(jobId) => handleEditJob(jobId, username)}
                   />
                   <Analytics />
                 </>
