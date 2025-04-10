@@ -182,10 +182,7 @@ export default function NavbarPresentation({
               <div className="flex items-center gap-3 mb-6">
                 <div className="relative rounded-full size-12">
                   <Image
-                    src={
-                      userInfo.profilePicture ||
-                      "https://picsum.photos/id/15/500/200"
-                    }
+                    src={userInfo?.profilePicture}
                     alt="User Avatar"
                     fill
                     className="rounded-full"
@@ -300,7 +297,7 @@ export default function NavbarPresentation({
             placeholder="Search..."
             className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
             onKeyDown={(e) => {
-              console.log("i searched")
+              console.log("i searched");
               if (e.key === "Enter") {
                 const query = e.target.value.trim();
                 if (query) {
@@ -353,10 +350,7 @@ export default function NavbarPresentation({
           <DropdownMenuTrigger className="ml-4 flex items-center space-x-2">
             <div className="relative rounded-full size-9">
               <Image
-                src={
-                  userInfo.profilePicture ||
-                  "https://picsum.photos/id/15/500/200"
-                }
+                src={userInfo?.profilePicture}
                 alt="User Avatar"
                 fill
                 className="rounded-full"

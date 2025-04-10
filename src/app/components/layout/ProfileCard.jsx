@@ -11,7 +11,7 @@ export default function ProfileCard({ userInfo, navigateTo }) {
             src={userInfo?.coverPhoto}
             fill
             alt="Cover Image"
-            className="rounded-t-xl"
+            className="rounded-t-xl object-cover"
           />
         </div>
         <div className="relative w-16 h-16 z-10 ml-4 bg-gray-600 rounded-full border-2 border-foreground mt-10">
