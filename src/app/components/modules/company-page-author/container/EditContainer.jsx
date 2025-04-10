@@ -14,7 +14,7 @@ import EditPageContainer from "./EditPageContainer";
  * @returns {JSX.Element} The rendered EditContainer component.
  */
 
-function EditContainer({username}){
+function EditContainer({username }){
     return(
         <div> 
             <EditPageContainer username={username} />
