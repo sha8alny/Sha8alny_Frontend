@@ -49,7 +49,7 @@ function SideBar({company, menuItems=[], isActive, isModalOpen, setModalOpen, on
             {/*Company name*/}
             <div>
                 <div className="text-[var(--text)] mb-1 border-b border-[var(--secondary)] pb-2 w-full">
-                    <p className="text-2xl font-bold w-full">{fileusername ? fileusername.charAt(0).toUpperCase() + fileusername.slice(1): "Company Name"}</p>
+                    <p className="text-2xl font-bold w-full">{company?.name}</p>
                     <p className="text-xs"> {company?.numFollowers}</p>
                 </div>
                 <div className="border-b border-[var(--secondary)] pb-2 flex flex-row justify-between items-center">
