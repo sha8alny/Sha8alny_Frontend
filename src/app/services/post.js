@@ -29,6 +29,33 @@ export const getMyPosts = async (pageNum, companyId)=>{
     }
 };
 
+export const getProfilePosts = async(pageNum, profileId,isCompany )=>{
+    try{
+        const response = await fetchWithAuth (`${apiURL}/profilePosts/${profileId}?pageNum=${pageNum}&isCompany=${isCompany}`,{
+            method: "GET",
+            headers: { "Content-Type": "application/json",
+                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+    
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get profile posts: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+
+    }catch(error){
+        throw new Error(error.message);
+    }
+
+};
+
 export const updateMyPosts = async (postId,postData ) => {
     try{
         const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`,{
