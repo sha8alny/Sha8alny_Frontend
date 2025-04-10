@@ -112,9 +112,7 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         };
 
         try {
-            console.log("Sending Data:", companyData);
             const response = await createCompany(companyData);
-            console.log("Backend Response:", response);
             router.push(`/company-admin/${companyData.username}/company-page-author/?logo=${encodeURIComponent(logoURL||'')}`);
         } catch (err) {
             console.log(err.message);
