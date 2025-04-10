@@ -4,45 +4,71 @@ import { addComment, getCommentReplies } from "@/app/services/post";
 import { useMutation } from "@tanstack/react-query";
 import CommentSectionPresentation from "../presentation/CommentSectionPresentation";
 import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function CommentSectionContainer({ postId }) {
+export default function CommentSectionContainer({ username, postId }) {
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const queryClient = useQueryClient();
-  
+  const router = useRouter();
+  const currentPath = usePathname();
+
   const {
     data,
     isLoading: isLoadingComments,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    refetch
   } = useInfiniteQuery({
     queryKey: ["comments", postId],
-    queryFn: ({ pageParam = 1 }) => getCommentReplies(postId, null, pageParam),
+    queryFn: async ({ pageParam = 1 }) => {
+      try {
+        const result = await getCommentReplies(postId, null, pageParam);
+        return { data: result, pageParam };
+      } catch (error) {
+        if (error.response?.status === 404) {
+          return { data: [], pageParam, noMoreData: true };
+        }
+        throw error;
+      }
+    },
     getNextPageParam: (lastPage, allPages) => {
-      // Only return next page if we have data and it's a full page
-      if (!lastPage || !Array.isArray(lastPage) || lastPage.length === 0) {
-        console.log("No more comments to load or invalid data format.");
+      if (lastPage.noMoreData) {
         return undefined;
       }
-      // Assuming 5 comments per page
-      return lastPage.length === 5 ? allPages.length + 1 : undefined;
+
+      const data = lastPage.data;
+
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        return undefined;
+      }
+
+      const perPage = 5;
+      return data.length === perPage ? lastPage.pageParam + 1 : undefined;
     },
-    staleTime: 60000, // 1 minute
+    staleTime: 1000 * 60, // 1 minute
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
   });
-  
-  // Ensure proper data formatting from API response
-  const comments = data?.pages?.flatMap(page => Array.isArray(page) ? page : []) || [];
-  
-  const isLoading = isLoadingComments || isFetchingNextPage;
+
+  const comments =
+    data?.pages?.flatMap((page) =>
+      Array.isArray(page.data) ? page.data : []
+    ) || [];
+
+  const isLoading = isLoadingComments && !isFetchingNextPage;
   const hasMore = hasNextPage && !isLoadingComments;
-  
-  // Force a refetch on initial load to ensure we have the latest data
+
   useEffect(() => {
-    refetch();
-  }, [postId, refetch]);
-  
+    const initialLoad =
+      typeof window !== "undefined" &&
+      !sessionStorage.getItem(`loaded-comments-${postId}`);
+
+    if (initialLoad) {
+      sessionStorage.setItem(`loaded-comments-${postId}`, "true");
+    }
+  }, [postId]);
+
   const loadMore = () => {
     if (hasMore) {
       fetchNextPage();
@@ -50,27 +76,28 @@ export default function CommentSectionContainer({ postId }) {
   };
 
   const handleCommentMutation = useMutation({
-    mutationFn: (params) => addComment({
-      postId: params.postId,
-      commentId: params.commentId,
-      text: params.comment,
-      tags: []
-    }),
+    mutationFn: (params) =>
+      addComment({
+        postId: params.postId,
+        commentId: params.commentId,
+        text: params.comment,
+        tags: [],
+      }),
     onSuccess: () => {
       setComment("");
       setError(null);
-      // Invalidate and refetch comments immediately
       queryClient.invalidateQueries(["comments", postId]);
-      refetch();
     },
     onError: (error) => {
       setError(error.message);
     },
   });
 
-  if (isLoading || isLoadingComments) {
-    return <CommentSectionPresentation isLoading={true} />;
-  }
+  const navigateTo = () => {
+    router.push(`/u/${username}/post/${postId}`);
+  };
+
+  const isPost = currentPath.includes("/post/");
 
   const isSubmittingComment = handleCommentMutation.isLoading;
 
@@ -79,15 +106,13 @@ export default function CommentSectionContainer({ postId }) {
       setError("Comment cannot be empty");
       return;
     }
-    
+
     handleCommentMutation.mutate({
       postId,
       commentId: null,
-      comment: comment.trim()
+      comment: comment.trim(),
     });
   };
-
-  console.log(data);
 
   return (
     <CommentSectionPresentation
@@ -99,6 +124,11 @@ export default function CommentSectionContainer({ postId }) {
       setComment={setComment}
       isSubmittingComment={isSubmittingComment}
       error={error}
+      postId={postId}
+      navigateTo={navigateTo}
+      isPost={isPost}
+      isLoading={isLoading}
+      isLoadingComments={isFetchingNextPage}
     />
   );
 }

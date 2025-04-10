@@ -29,7 +29,7 @@ function LeftSidebarPresentationSkeleton({ isLoading = true }) {
   return (
     <aside className="w-full flex flex-col gap-2">
       {/* Profile Card Skeleton */}
-        <Container className="w-full border border-[#111] rounded-2xl shadow-lg">
+        <Container className="w-full dark:border dark:border-[#111] rounded-2xl shadow-lg">
         <div className="relative w-full flex">
           <div className="absolute top-0 left-0 w-full h-20 bg-gray-700 dark:bg-gray-500 rounded-t-xl"/>
           <div className="w-16 h-16 z-10 ml-4 bg-gray-500 dark:bg-gray-300 rounded-full border-2 border-gray-400 mt-10"/>

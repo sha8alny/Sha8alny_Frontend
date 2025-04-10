@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, Edit, Plus } from "lucide-react";
 import Image from "next/image";
 import ModEducation from "../container/ModEducation";
 import AddButton from "@/app/components/ui/AddButton";
+import { Separator } from "@/app/components/ui/Separator";
 
 /**
  * @namespace profile
@@ -119,7 +120,7 @@ export default function Education({
 }) {
   return (
     (isMyProfile || education?.length > 0) && (
-      <Container className="border border-[#111] shadow-lg mt-4 p-8">
+      <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
         <div className="flex justify-between text-2xl mb-4 font-bold">
           Education {isMyProfile && <ModEducation adding={true} />}
         </div>
@@ -131,7 +132,7 @@ export default function Education({
                   placeOfEducation={edu}
                   isMyProfile={isMyProfile}
                 />
-                {index !== education.length - 1 && <hr />}
+                {index !== education.length - 1 && <Separator />}
               </div>
             )
           )}

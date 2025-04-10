@@ -32,6 +32,8 @@ import {
   MoreHoriz,
   Person,
   Delete,
+  ThumbUpOutlined,
+  Share,
 } from "@mui/icons-material";
 import ShareContainer from "../container/ShareContainer";
 import React from "react";
@@ -41,6 +43,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/components/ui/Tooltip";
+import Like from "@/app/components/ui/Like";
+import Insightful from "@/app/components/ui/Insightful";
+import Celebrate from "@/app/components/ui/Celebrate";
+import Love from "@/app/components/ui/Love";
+import Funny from "@/app/components/ui/Funny";
+import Support from "@/app/components/ui/Support";
 
 // TODO: Add image modal to view all images in a carousel
 // TODO: Modify Icons (choose what goes where)
@@ -62,6 +70,7 @@ export default function PostPresentation({
   userReactions,
   layoutClass,
   itemClasses,
+  isVideo,
 }) {
   return (
     <Card className="bg-foreground w-full max-w-2xl mx-auto mb-4">
@@ -126,8 +135,7 @@ export default function PostPresentation({
                 <span className="text-muted text-xs">{post?.relation}</span>
               </div>
             )}
-            {(post?.connectionDegree !== 0 &&
-              post?.connectionDegree !== -1) && (
+            {post?.connectionDegree !== 0 && post?.connectionDegree !== -1 && (
               <button
                 disabled={post?.isFollowed}
                 onClick={() => onFollow(post?.username)}
@@ -204,16 +212,19 @@ export default function PostPresentation({
       <CardContent>
         <div className="whitespace-pre-line mb-4">{post?.text}</div>
 
-        {post?.media && post?.media.length > 0 && (
+        {isVideo && post?.media && post?.media.length > 0 && (
+          <video
+            src={post?.media[0]}
+            controls
+            className="w-full aspect-square rounded-2xl"
+          />
+        )}
+        {!isVideo && post?.media && post?.media.length > 0 && (
           <div className={`gap-2 ${layoutClass}`}>
             {post?.media
               .slice(0, post?.media.length > 4 ? 4 : post?.media.length)
               .map((mediaUrl, index) => (
-                <div
-                  key={index}
-                  className={`relative ${itemClasses[index]}`}
-                  onClick={() => post?.onMediaClick?.(index)}
-                >
+                <div key={index} className={`relative ${itemClasses[index]}`}>
                   <Image
                     src={mediaUrl || ""}
                     alt={`Post media ${index + 1}`}
@@ -243,50 +254,49 @@ export default function PostPresentation({
                 onClick={() => onLike("Like")}
                 className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
               >
-                {React.createElement(
-                  (userReactions[post?.reaction] || userReactions.Like).icon,
-                  {
-                    sx: { fontSize: "1.3rem" },
-                    className: isLiked
-                      ? (userReactions[post?.reaction] || userReactions.Like)
-                          .className
-                      : "",
-                  }
+                {post?.reaction === "Like" && <Like size="1.5rem" />}
+                {post?.reaction === "Insightful" && (
+                  <Insightful size="1.3rem" />
+                )}
+                {post?.reaction === "Support" && <Support size="1.5rem" />}
+                {post?.reaction === "Funny" && <Funny size="1.5rem" />}
+                {post?.reaction === "Love" && <Love size="1.5rem" />}
+                {post?.reaction === "Celebrate" && <Celebrate size="1.5rem" />}
+                {!!post?.reaction || (
+                  <ThumbUpOutlined sx={{ fontSize: "1.3rem" }} />
                 )}
                 <span
-                  className={`text-muted ${
-                    post?.reaction ? "text-secondary" : ""
-                  }`}
+                  className={
+                    post?.reaction
+                      ? "text-secondary/70 font-semibold"
+                      : "text-muted"
+                  }
                 >
                   {post?.numReacts}
                 </span>
               </span>
             </TooltipTrigger>
-            <TooltipContent className="bg-foreground border text-primary rounded-md">
-              <div className="flex gap-3 w-full">
-                {Object.entries(userReactions).map(
-                  ([name, { icon, className }]) => (
-                    <div
-                      key={name}
-                      onClick={() => {
-                        onLike(name);
-                      }}
-                      className="relative group flex items-center justify-center flex-1 px-2"
-                    >
-                      <div className="cursor-pointer group-hover:scale-140 duration-300 transition-transform">
-                        {React.createElement(icon, {
-                          sx: { fontSize: "2rem" },
-                          className: className,
-                        })}
-                      </div>
+            <TooltipContent className="bg-foreground flex gap-1 border text-primary rounded-md">
+              {Object.entries(userReactions).map(([name, { icon }]) => (
+                <div
+                  key={name}
+                  onClick={() => {
+                    onLike(name);
+                  }}
+                  className="relative group flex items-center justify-center flex-1 px-2"
+                >
+                  <div className="cursor-pointer duration-300 transition-transform">
+                    {React.createElement(icon, {
+                      className:
+                        "transform transition-transform group-hover:scale-150 duration-200",
+                    })}
+                  </div>
 
-                      <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-                        {name}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
+                  <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                    {name}
+                  </div>
+                </div>
+              ))}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -322,7 +332,7 @@ export default function PostPresentation({
           size="sm"
           className="flex gap-2 items-center cursor-pointer text-primary rounded-md hover:bg-primary/10"
         >
-          <Send sx={{ fontSize: "1.3rem" }} />
+          <Share sx={{ fontSize: "1.3rem" }} />
         </Button>
 
         <ShareContainer
@@ -332,7 +342,12 @@ export default function PostPresentation({
         />
       </CardFooter>
 
-      {commentSectionOpen && <CommentSectionContainer postId={post?.postId} />}
+      {commentSectionOpen && (
+        <CommentSectionContainer
+          username={post?.username}
+          postId={post?.postId}
+        />
+      )}
     </Card>
   );
 }

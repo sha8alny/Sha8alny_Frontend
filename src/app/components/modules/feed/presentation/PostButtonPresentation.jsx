@@ -1,7 +1,5 @@
 import { Separator } from "@/app/components/ui/Separator";
-import { Textarea } from "@/app/components/ui/Textarea";
 import Image from "next/image";
-import { MapPin, Smile, UserPlus, Video } from "lucide-react";
 import {
   AccessTimeOutlined,
   ImageOutlined,
@@ -59,6 +57,50 @@ export default function PostButtonPresentation({
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
+        {/* Media Preview */}
+        <div className="flex gap-2 flex-wrap">
+          {images?.map((image, index) => (
+            <div
+              key={index}
+              className="relative size-12 bg-gray-700 rounded-lg"
+            >
+              <Image
+                src={URL.createObjectURL(image)}
+                fill
+                alt="Media Preview"
+                className="rounded-lg object-cover"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80 dark:hover:bg-foreground/80 cursor-pointer"
+                onClick={() => onRemoveMedia(index, "image")}
+              >
+                &times;
+              </Button>
+            </div>
+          ))}
+          {/* For single video file */}
+          {videos && (
+            <div
+              className="relative w-24 h-24 bg-gray-700 rounded-lg mb-4"
+            >
+              <video
+                src={URL.createObjectURL(videos)}
+                controls
+                className="rounded-lg"
+              ></video>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80 dark:hover:bg-foreground/80 cursor-pointer"
+                onClick={() => onRemoveMedia(0, "video")}
+              >
+                &times;
+              </Button>
+            </div>
+          )}
+        </div>
         <Separator />
         <div className="flex gap-2 mt-4 justify-between items-center">
           <span className="text-sm font-semibold">Add to your post</span>
@@ -88,7 +130,7 @@ export default function PostButtonPresentation({
               size="icon"
               className="h-8 w-8 rounded-full text-yellow-500 cursor-pointer"
             >
-                <LocalOfferOutlined sx={{ fontSize: "1rem" }} />
+              <LocalOfferOutlined sx={{ fontSize: "1rem" }} />
             </Button>
             <Button
               variant="ghost"
@@ -106,12 +148,10 @@ export default function PostButtonPresentation({
             </Button>
           </div>
         </div>
-        {error && (
-          <p className="text-red-500 text-sm">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <Button
           variant="ghost"
-          className="w-full mt-2 h-12 cursor-pointer rounded-full dark:text-primary bg-secondary hover:bg-secondary/70 dark:hover:bg-secondary/70 dark:hover:text-primary text-background font-bold"
+          className="w-full mt-2 h-12 cursor-pointer rounded-2xl bg-secondary hover:bg-secondary/90 hover:text-background dark:hover:bg-secondary/90 dark:hover:text-background text-background font-bold"
           onClick={onPost}
         >
           Post
@@ -124,14 +164,22 @@ export default function PostButtonPresentation({
         className="hidden"
         accept="image/*"
         multiple
-        onChange={onAddMedia}
+        onChange={(e) => {
+          if (e.target.files.length > 0) {
+            Array.from(e.target.files).forEach((file) => onAddMedia(file));
+          }
+        }}
       />
       <input
         type="file"
         ref={videoInputRef}
         className="hidden"
         accept="video/*"
-        onChange={onAddMedia}
+        onChange={(e) => {
+          if (e.target.files.length > 0) {
+            onAddMedia(e.target.files[0]);
+          }
+        }}
       />
     </div>
   );

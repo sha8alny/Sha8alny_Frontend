@@ -20,13 +20,19 @@ function PostsContainer() {
     queryKey: ["posts"],
     queryFn: ({ pageParam = 1 }) => getPosts(pageParam),
     getNextPageParam: (lastPage, allPages) => {
-      // Check if there are more pages to fetch
-      return lastPage.hasMore ? allPages.length + 1 : undefined;
+      if (Array.isArray(lastPage) && lastPage.length > 0) {
+        return allPages.length + 1;
+      }
+      
+      if (lastPage.posts && lastPage.posts.length > 0) {
+        return allPages.length + 1;
+      }
+
+      return undefined;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 1, // 1 minute
   });
 
-  // Create a callback ref that we'll pass to the last element
   const lastElementRef = useCallback(
     (node) => {
       if (isFetchingNextPage) return;
@@ -38,29 +44,38 @@ function PostsContainer() {
       observerRef.current = new IntersectionObserver(
         (entries) => {
           if (entries[0]?.isIntersecting && hasNextPage) {
+            console.log("Last element is intersecting, loading more posts");
             fetchNextPage();
           }
         },
-        { threshold: 0.1 }
+        { 
+          threshold: 0.1,
+          rootMargin: "100px"
+        }
       );
       
       if (node) {
+        console.log("Observing new last element");
         observerRef.current.observe(node);
       }
     },
     [isFetchingNextPage, fetchNextPage, hasNextPage]
   );
 
-  // Handle the API response format - the posts are directly in the response
   const allPosts = data?.pages ? 
-    data.pages.flatMap(page => Array.isArray(page) ? page : []) : 
+    data.pages.flatMap(page => {
+      if (page.posts) return page.posts;
+      if (Array.isArray(page)) return page;
+      return [];
+    }) : 
     [];
-
+    
   if (isLoading) {
     return <PostSkeleton />;
   }
   
   if (isError) {
+    console.error("Error loading posts:", error);
     return <div className="flex justify-center items-center h-full text-muted">No posts to show.</div>;
   }
 

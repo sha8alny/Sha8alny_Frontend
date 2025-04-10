@@ -84,22 +84,51 @@ export default function PostButton({ userInfo }) {
   };
 
   const handleAddMedia = (media) => {
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_IMAGE_COUNT = 10; // 10 images
+    const MAX_VIDEO_COUNT = 1; // 1 video
+
+    if (media.size > MAX_SIZE) {
+      setError(`File too large. Please keep files under ${MAX_SIZE / (1024 * 1024)}MB.`);
+      return;
+    }
+
     if (media.type.startsWith("image/")) {
+      const supportedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!supportedImageTypes.includes(media.type)) {
+        setError("Unsupported image format. Please use JPEG, PNG, GIF or WebP.");
+        return;
+      }
+      if (images.length > MAX_IMAGE_COUNT) {
+        setError(`You can only upload ${MAX_IMAGE_COUNT} image(s) at a time. Please remove the existing image(s) first.`);
+        return;
+      }
+      
       if (videos) {
-        setError("You can only upload one type of media at a time.");
+        setError("You can only upload one type of media at a time. Please remove videos first.");
         return;
       }
       setImages((prev) => [...prev, media]);
       setError(null);
     } else if (media.type.startsWith("video/")) {
+      const supportedVideoTypes = ["video/mp4", "video/webm"];
+      if (!supportedVideoTypes.includes(media.type)) {
+        setError("Unsupported video format. Please use MP4 or WebM.");
+        return;
+      }
+      if (videos) {
+        setError(`You can only upload ${MAX_VIDEO_COUNT} video(s) at a time. Please remove the existing video(s) first.`);
+        return;
+      }
+      
       if (images.length > 0) {
-        setError("You can only upload one type of media at a time.");
+        setError("You can only upload one type of media at a time. Please remove images first.");
         return;
       }
       setVideos(media);
       setError(null);
     } else {
-      setError("Unsupported media type. Please upload an image or video.");
+      setError("Unsupported media type. Please upload an image (JPEG, PNG, GIF, WebP) or video (MP4, WebM).");
     }
   };
 
@@ -142,7 +171,7 @@ export default function PostButton({ userInfo }) {
       open={open}
       onOpenChange={setOpen}
       useRegularButton
-      buttonClass="w-full drop-shadow-lg h-14 bg-primary hover:bg-primary/90 cursor-pointer ease-in-out duration-500 text-background border border-[#111] rounded-full font-bold p-2"
+      buttonClass="w-full drop-shadow-lg mt-2 h-14 bg-secondary hover:bg-secondary/90 cursor-pointer ease-in-out duration-500 text-background dark:border dark:border-[#111] rounded-2xl font-bold p-2"
       buttonData="Post"
       className="bg-foreground"
       AlertContent={

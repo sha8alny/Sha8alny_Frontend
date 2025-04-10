@@ -175,7 +175,7 @@ export default function NavbarPresentation({
                 </div>
               </SheetTitle>
             </SheetHeader>
-            <div className="flex flex-col gap-4 py-4">
+            <div className="flex flex-col gap-4 py-4 h-[calc(100vh-120px)] overflow-y-auto">
               {/* User Profile Section for Mobile */}
               <div className="flex items-center gap-3 mb-6">
                 <div className="relative rounded-full size-12">
@@ -420,7 +420,8 @@ export const NavBarPresentationSkeleton = ({
                 </div>
               </SheetTitle>
             </SheetHeader>
-            <div className="flex flex-col gap-4 py-4">
+            <div className="flex flex-col gap-4 py-4 h-[calc(100vh-120px)] overflow-y-auto">
+              {/* Skeleton content items */}
               {/* User Profile Section Skeleton for Mobile */}
               <div className="flex items-center gap-3 mb-6">
                 <div className={`relative rounded-full bg-gray-400 ${isLoading ? "animate-pulse" : ""} size-12`} />

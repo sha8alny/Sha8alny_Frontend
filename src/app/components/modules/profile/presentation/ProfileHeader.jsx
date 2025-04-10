@@ -21,7 +21,7 @@ import ModHeader from "../container/ModHeader";
  */
 export default function ProfileHeader({ userProfile }) {
   return (
-    <Container className="border-[#111] border shadow-lg">
+    <Container className="dark:border-[#111] dark:border shadow-lg">
       <div className="w-full h-max rounded-xl">
         <div className="relative w-full flex">
           <div className="absolute top-0 left-0 w-full h-40 bg-gray-700 rounded-t-xl">

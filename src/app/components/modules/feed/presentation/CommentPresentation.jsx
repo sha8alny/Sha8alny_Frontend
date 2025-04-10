@@ -1,4 +1,11 @@
-import { ExpandMore, Person, PersonAdd, Send } from "@mui/icons-material";
+import {
+  ExpandLess,
+  ExpandMore,
+  Person,
+  PersonAdd,
+  Send,
+  ThumbUpOutlined,
+} from "@mui/icons-material";
 
 import Image from "next/image";
 import CommentContainer from "../container/CommentContainer";
@@ -11,6 +18,12 @@ import {
   TooltipTrigger,
 } from "@/app/components/ui/Tooltip";
 import React from "react";
+import Celebrate from "@/app/components/ui/Celebrate";
+import Support from "@/app/components/ui/Support";
+import Insightful from "@/app/components/ui/Insightful";
+import Like from "@/app/components/ui/Like";
+import Love from "@/app/components/ui/Love";
+import Funny from "@/app/components/ui/Funny";
 
 export default function CommentPresentation({
   comment,
@@ -31,6 +44,13 @@ export default function CommentPresentation({
   onFollow,
   hasRepliesSection,
   userReactions,
+  showMoreButtonText = "Show more replies",
+  showReplies,
+  onShowReplies,
+  onHideReplies,
+  hasReplies,
+  onDelete,
+  isDeleting
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
@@ -50,28 +70,31 @@ export default function CommentPresentation({
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => navigateTo(comment?.username)}
-                    className="text-sm font-medium hover:underline cursor-pointer"
+                    className="text-sm font-semibold hover:underline cursor-pointer"
                   >
                     {comment?.fullName}
                   </button>
-                  <button
-                    disabled={comment?.isFollowed}
-                    onClick={() => onFollow(comment?.username)}
-                    className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
-                      comment?.isFollowed
-                        ? "bg-secondary/80 text-background dark:text-primary cursor-default"
-                        : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
-                    } transition-colors duration-200`}
-                  >
-                    {comment?.isFollowed ? (
-                      <Person sx={{ fontSize: "0.75rem" }} />
-                    ) : (
-                      <PersonAdd sx={{ fontSize: "0.75rem" }} />
+                  {comment?.connectionDegree !== 0 &&
+                    comment?.connectionDegree !== -1 && (
+                      <button
+                        disabled={comment?.isFollowed}
+                        onClick={() => onFollow(comment?.username)}
+                        className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
+                          comment?.isFollowed
+                            ? "bg-secondary/80 text-background dark:text-primary cursor-default"
+                            : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
+                        } transition-colors duration-200`}
+                      >
+                        {comment?.isFollowed ? (
+                          <Person sx={{ fontSize: "0.75rem" }} />
+                        ) : (
+                          <PersonAdd sx={{ fontSize: "0.75rem" }} />
+                        )}
+                        <span className="max-w-0 overflow-hidden group-hover:max-w-24 group-hover:ml-2 group-hover:mr-1 transition-all duration-300 whitespace-nowrap">
+                          {comment?.isFollowed ? "Following" : "Follow"}
+                        </span>
+                      </button>
                     )}
-                    <span className="max-w-0 overflow-hidden group-hover:max-w-24 group-hover:ml-2 group-hover:mr-1 transition-all duration-300 whitespace-nowrap">
-                      {comment?.isFollowed ? "Following" : "Follow"}
-                    </span>
-                  </button>
                 </div>
                 <span className="text-xs text-muted">{comment?.headline}</span>
               </div>
@@ -83,7 +106,7 @@ export default function CommentPresentation({
           </div>
 
           <div className="flex items-center gap-4 pl-1">
-            <button
+            <span
               className={`flex items-center gap-1 text-xs transition-colors ${
                 isLiked ? "text-primary" : "text-muted hover:text-foreground"
               }`}
@@ -96,18 +119,20 @@ export default function CommentPresentation({
                       onClick={() => onLike("Like")}
                       className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
                     >
-                      {React.createElement(
-                        (userReactions[comment?.reaction] || userReactions.Like)
-                          .icon,
-                        {
-                          sx: { fontSize: "1rem" },
-                          className: isLiked
-                            ? (
-                                userReactions[comment?.reaction] ||
-                                userReactions.Like
-                              ).className
-                            : "",
-                        }
+                      {comment?.reaction === "Like" && <Like size="1.3rem" />}
+                      {comment?.reaction === "Insightful" && (
+                        <Insightful size="1.3rem" />
+                      )}
+                      {comment?.reaction === "Support" && (
+                        <Support size="1.3rem" />
+                      )}
+                      {comment?.reaction === "Funny" && <Funny size="1.3rem" />}
+                      {comment?.reaction === "Love" && <Love size="1.3rem" />}
+                      {comment?.reaction === "Celebrate" && (
+                        <Celebrate size="1.3rem" />
+                      )}
+                      {!!comment?.reaction || (
+                        <ThumbUpOutlined sx={{ fontSize: "1rem" }} />
                       )}
                       <span
                         className={`text-muted ${
@@ -118,41 +143,78 @@ export default function CommentPresentation({
                       </span>
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-foreground border text-primary rounded-md">
-                    <div className="flex gap-3 w-full">
-                      {Object.entries(userReactions).map(
-                        ([name, { icon, className }]) => (
-                          <div
-                            key={name}
-                            onClick={() => {
-                              onLike(name);
-                            }}
-                            className="relative group flex items-center justify-center flex-1 px-2"
-                          >
-                            <div className="cursor-pointer group-hover:scale-140 duration-300 transition-transform">
-                              {React.createElement(icon, {
-                                sx: { fontSize: "2rem" },
-                                className: className,
-                              })}
-                            </div>
+                  <TooltipContent className="bg-foreground flex gap-1 border text-primary rounded-md">
+                    {Object.entries(userReactions).map(([name, { icon }]) => (
+                      <div
+                        key={name}
+                        onClick={() => {
+                          onLike(name);
+                        }}
+                        className="relative group flex items-center justify-center flex-1 px-2"
+                      >
+                        <div className="cursor-pointer duration-300 transition-transform">
+                          {React.createElement(icon, {
+                            className:
+                              "transform transition-transform group-hover:scale-150 duration-200",
+                          })}
+                        </div>
 
-                            <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-                              {name}
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
+                        <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                          {name}
+                        </div>
+                      </div>
+                    ))}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </button>
+            </span>
             <button
               className="text-xs text-muted hover:underline duration-200 cursor-pointer transition-colors"
               onClick={() => setIsReplying(!isReplying)}
             >
               Reply
             </button>
+            {comment?.connectionDegree === 0 && (
+              <button
+                className={`text-xs ${isDeleting 
+                  ? "text-muted cursor-default" 
+                  : "text-muted hover:underline cursor-pointer"
+                }`}
+                disabled={isDeleting}
+                onClick={onDelete}
+              >
+                {isDeleting ? (
+                  <span className="flex items-center">
+                    <div className="size-3 animate-spin border-2 border-t-transparent border-secondary rounded-full mr-1" />
+                    Deleting...
+                  </span>
+                ) : (
+                  "Delete"
+                )}
+              </button>
+            )}
+
+            {!showReplies && hasReplies && (
+              <button
+                className="text-xs text-muted hover:underline duration-200 cursor-pointer transition-colors"
+                onClick={onShowReplies}
+              >
+                <ExpandMore fontSize="small" className="mr-1" />
+                Show replies ({comment.numComments})
+              </button>
+            )}
+
+            {showReplies && hasReplies && (
+              <button
+                className="text-xs text-muted hover:underline duration-200 cursor-pointer transition-colors"
+                onClick={onHideReplies}
+              >
+                <span className="flex items-center">
+                  <ExpandLess fontSize="small" className="mr-1" />
+                  Hide replies
+                </span>
+              </button>
+            )}
           </div>
 
           {isReplying && (
@@ -169,7 +231,7 @@ export default function CommentPresentation({
                 disabled={!replyText.trim()}
                 className="cursor-pointer bg-secondary/80 dark:text-primary hover:bg-secondary/60 transition-colors duration-200"
               >
-                <Send sx={{ fontSize: 17 }} />
+                <Send sx={{ fontSize: "1rem" }} />
               </Button>
             </div>
           )}
@@ -180,7 +242,7 @@ export default function CommentPresentation({
         <div className="ml-10 mt-2 border-l border-primary/20 pl-4 space-y-4">
           {isLoadingReplies && !isFetchingMoreReplies ? (
             <div className="flex justify-center p-4">
-              <div className="size-6 animate-spin border-2 border-t-transparent border-secondary rounded-full mr-2" />
+              <CommentSkeleton />
             </div>
           ) : (
             <>
@@ -199,13 +261,13 @@ export default function CommentPresentation({
                   disabled={isFetchingMoreReplies}
                 >
                   {isFetchingMoreReplies ? (
-                    <div className="size-6 border-2 border-t-transparent animate-spin border-secondary rounded-full mr-2" />
+                    <div className="size-4 animate-spin border-2 border-t-transparent border-secondary rounded-full mr-2" />
                   ) : (
                     <ExpandMore fontSize="small" className="mr-1" />
                   )}
                   {isFetchingMoreReplies
                     ? "Loading more replies..."
-                    : "Show more replies"}
+                    : showMoreButtonText}
                 </button>
               )}
             </>

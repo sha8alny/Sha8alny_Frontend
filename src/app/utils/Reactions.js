@@ -1,35 +1,27 @@
-import {
-  CelebrationOutlined,
-  EmojiEmotionsOutlined,
-  FavoriteBorderOutlined,
-  LightbulbOutlined,
-  ThumbUpOffAltOutlined,
-  VolunteerActivismOutlined,
-} from "@mui/icons-material";
+import Like from "../components/ui/Like";
+import Celebrate from "../components/ui/Celebrate";
+import Support from "../components/ui/Support";
+import Love from "../components/ui/Love";
+import Insightful from "../components/ui/Insightful";
+import Funny from "../components/ui/Funny";
 
 export const Reactions = {
   Like: {
-    icon: ThumbUpOffAltOutlined,
-    className: "text-secondary",
+    icon: Like,
   },
   Celebrate: {
-    icon: CelebrationOutlined,
-    className: "text-amber-500",
+    icon: Celebrate,
   },
   Support: {
-    icon: VolunteerActivismOutlined,
-    className: "text-green-600",
+    icon: Support,
   },
   Love: {
-    icon: FavoriteBorderOutlined,
-    className: "text-rose-600",
+    icon: Love,
   },
   Insightful: {
-    icon: LightbulbOutlined,
-    className: "text-yellow-600",
+    icon: Insightful,
   },
   Funny: {
-    icon: EmojiEmotionsOutlined,
-    className: "text-yellow-600",
+    icon: Funny,
   },
 };

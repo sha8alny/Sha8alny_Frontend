@@ -8,10 +8,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   determineAge,
   getPost,
-  likePostComment as likePost,
-  unlikePostComment as unlikePost,
   savePost,
   deletePost,
+  reactToContent,
 } from "@/app/services/post";
 import { useState } from "react";
 import { repostPost } from "@/app/services/repostPost";
@@ -34,8 +33,8 @@ export default function PostContainer({ post }) {
     mutationFn: (params) => {
       const { postId, reaction } = params;
       return isLiked && post?.reaction === reaction
-        ? unlikePost(postId)
-        : likePost(postId, reaction);
+        ? reactToContent(postId, null, null, true)
+        : reactToContent(postId, null, reaction);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["posts"]);
@@ -101,7 +100,6 @@ export default function PostContainer({ post }) {
     handleDeleteMutation.mutate(post.postId);
   };
 
-
   const convertRelation = (relation) => {
     switch (relation) {
       case 1:
@@ -147,7 +145,9 @@ export default function PostContainer({ post }) {
           ],
         };
       default:
-        const itemClasses = ["aspect-video w-full h-full row-span-3 col-span-2"];
+        const itemClasses = [
+          "aspect-video w-full h-full row-span-3 col-span-2",
+        ];
         for (let i = 1; i < count; i++) {
           itemClasses.push("aspect-video");
         }
@@ -156,7 +156,17 @@ export default function PostContainer({ post }) {
           itemClasses: itemClasses,
         };
     }
+    
   };
+  
+  const isVideo = (mediaUrl) => {
+    if (!mediaUrl) return false;
+    const extension = mediaUrl.split('.').pop().toLowerCase();
+    const videoExtensions = ['mp4', 'webm', 'mov', 'avi', 'wmv', 'mkv'];
+    return videoExtensions.includes(extension);
+  };
+
+  const videoCheck = isVideo(post?.media[0]);
 
   return (
     <PostPresentation
@@ -175,11 +185,18 @@ export default function PostContainer({ post }) {
         ...post,
         age: determineAge(post?.time),
         relation: convertRelation(post?.connectionDegree),
-        numReacts: post?.numLikes + post?.numCelebrates + post?.numLoves + post?.numSupports + post?.numFunnies + post?.numInsightfuls,
+        numReacts:
+          post?.numLikes +
+          post?.numCelebrates +
+          post?.numLoves +
+          post?.numSupports +
+          post?.numFunnies +
+          post?.numInsightfuls,
       }}
       userReactions={Reactions}
       layoutClass={getLayout(post?.media.length).layoutClass}
       itemClasses={getLayout(post?.media.length).itemClasses}
+      isVideo={videoCheck}
     />
   );
 }

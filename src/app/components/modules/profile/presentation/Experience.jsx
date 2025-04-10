@@ -3,6 +3,7 @@ import Image from "next/image";
 import ExperienceCardContainer from "../container/ExperienceCardContainer";
 import Container from "@/app/components/layout/Container";
 import ModExperience from "../container/ModExperience";
+import { Separator } from "@/app/components/ui/Separator";
 
 /**
  * @namespace profile
@@ -98,7 +99,7 @@ export default function Experience({
 }) {
   return (
     (experience?.length > 0 || isMyProfile) && (
-      <Container className="border border-[#111] shadow-lg mt-4 p-8">
+      <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Experience {isMyProfile && <ModExperience adding />}
         </h3>
@@ -112,7 +113,7 @@ export default function Experience({
             (exp, index) => (
               <div className="space-y-8" key={index}>
                 <ExperienceCardContainer job={exp} />
-                {index !== experience.length - 1 && <hr />}
+                {index !== experience.length - 1 && <Separator />}
               </div>
             )
           )}

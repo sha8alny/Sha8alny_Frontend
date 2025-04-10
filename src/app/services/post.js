@@ -37,9 +37,8 @@ export const getPost = async (postId) => {
 };
 
 export const savePost = async (postId) => {
-  const response = await fetch(`${apiURL}/posts/${postId}/save`, {
+  const response = await fetchWithAuth(`${apiURL}/posts/${postId}/save`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${getToken()}` },
   });
   if (!response.ok) throw new Error("Failed to save post");
   return "Post saved successfully";
@@ -155,32 +154,34 @@ export async function getCommentReplies(postId, commentId, pageNum = 1) {
  * @param {string} params.postId - The ID of the post
  * @param {string} params.commentId - The ID of the comment (undefined for post reactions)
  * @param {string} params.reaction - The reaction type
+ * @param {boolean} params.remove - Whether to remove the reaction
  * @returns {Promise<Object>} - Response data
  */
-export async function reactToContent({ postId, commentId, reaction = "Like" }) {
+export async function reactToContent(postId, commentId, reaction = "Like", remove = false) {
   try {
-    // Construct URL with commentId as a query parameter if it exists
     let url = `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/react`;
 
     if (commentId) {
       url += `?commentId=${commentId}`;
     }
 
+    const bodyContent = !remove ? { reaction } : undefined;
+
     const response = await fetchWithAuth(url, {
-      method: "POST",
+      method: remove ? "DELETE" : "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ reaction }),
+      body: bodyContent ? JSON.stringify(bodyContent) : undefined,
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to react: ${response.status}`);
+      throw new Error(`Failed to ${remove ? 'remove' : 'add'} reaction: ${response.status}`);
     }
 
-    return await response.json();
+    return response.status === 204 ? {} : await response.json();
   } catch (error) {
-    console.error("Error reacting to content:", error);
+    console.error(`Error ${remove ? 'removing' : 'adding'} reaction:`, error);
     throw error;
   }
 }
@@ -197,11 +198,15 @@ export async function reactToContent({ postId, commentId, reaction = "Like" }) {
 
 export const addComment = async ({ postId, commentId, text, tags = [] }) => {
   try {
-    const url = `${apiURL}/posts/${postId}/comment`;
+    let url = `${apiURL}/posts/${postId}/comment`;
+    
+    if (commentId) {
+      url += `?commentId=${commentId}`;
+    }
+
     const body = {
       text,
       tags,
-      ...(commentId && { commentId }),
     };
 
     const response = await fetchWithAuth(url, {
@@ -264,7 +269,7 @@ export async function updateComment({ postId, commentId, text, tags = [] }) {
  * @param {string} params.commentId - The ID of the comment to delete
  * @returns {Promise<Object>} - Response data
  */
-export async function deleteComment({ postId, commentId }) {
+export async function deleteComment(postId, commentId) {
   try {
     const response = await fetchWithAuth(
       `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/comment?commentId=${commentId}`,

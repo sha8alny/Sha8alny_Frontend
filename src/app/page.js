@@ -16,7 +16,7 @@ export default function Page() {
         <div className="hidden md:flex flex-1 rounded-lg flex-col gap-2 items-center">
           <LeftSidebar addButton />
         </div>
-        <div className="md:flex-[2_1_0] flex flex-col md:mx-8 rounded-lg">
+        <div className="w-full md:flex-[2_1_0] flex flex-col md:mx-8 rounded-lg">
           <PostsContainer />
         </div>
         <div className="hidden md:block flex-1 space-y-2 drop-shadow-lg">
