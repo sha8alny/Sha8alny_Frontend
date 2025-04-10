@@ -73,16 +73,12 @@ export const getPosts = async (pageNum) => {
 
 export const createPost = async (postData) => {
   console.log("postData", postData);
-  const response = await fetch(`${apiURL}/posts`, {
+  const response = await fetchWithAuth(`${apiURL}/posts`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(postData),
+    body: postData,
   });
   if (!response.ok) throw new Error("Failed to create post");
-  return await response.json();
+  return response.json();
 };
 
 export const getPost = async (postId) => {
@@ -301,14 +297,6 @@ export const unsharePost = async(postId)=>{
       throw new Error(error.message);
   }
 }
-
-export const deleteComment = async (postId, commentId) => {
-  const response = await fetchWithAuth(`${apiURL}/posts/${postId}/comment`, {
-    method: "DELETE",
-  });
-  if (!response.ok) throw new Error("Failed to delete comment");
-  return "Comment deleted successfully";
-};
 
 /**
  * Delete a comment or reply

@@ -107,32 +107,6 @@ export const getCompanyId = async (companyUsername) => {
     }
 };
 
-//List of companies owned by user
-export const getUserCompanies = async (pageNum = 1) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/company?pageNum=${pageNum}`,{
-            method: "GET",
-            headers: { "Content-Type": "application/json", 
-                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` 
-            },
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
-
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to get companies owned by user: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
 export const updateApplication = async (jobId,applicantId, data) => {
     try {
       const response = await fetchWithAuth(`${apiURL}/employers/${jobId}/${applicantId}/application`, {

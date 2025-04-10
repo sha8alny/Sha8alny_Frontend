@@ -34,6 +34,7 @@ import {
   Delete,
   ThumbUpOutlined,
   Share,
+  Verified,
 } from "@mui/icons-material";
 import ShareContainer from "../container/ShareContainer";
 import React from "react";
@@ -123,11 +124,7 @@ export default function PostPresentation({
               onClick={() => navigateTo(`/u/${post?.username}`)}
             >
               {post?.fullName}
-              {post?.isCompany && (
-                <Badge variant="outline" className="ml-2 text-xs">
-                  Company
-                </Badge>
-              )}
+              {post?.isCompany && <Verified className="text-secondary" sx={{ fontSize: "1rem" }} />}
             </div>
             {post?.relation && (
               <div className="text-muted text-xs space-x-2 flex items-center">
