@@ -3,7 +3,7 @@ import Home from "../presentation/Home";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCompany } from "@/app/services/companyManagment";
-import { getMyPosts } from "@/app/services/post";
+import { getProfilePosts } from "@/app/services/post";
 import { getCompanyId } from "@/app/services/companyManagment";
 
 /**
@@ -43,17 +43,20 @@ export default function HomeContainer({ username }) {
 
     useEffect(() => {
         const fetchPosts = async () => {
-            const {companyId} = await getCompanyId(username);
+        const response = await getCompanyId(username);
+        console.log("Response from getCompanyId:", response); // Debugging line
+        const { companyId } = response;
+        console.log("Company ID:", companyId);
             try {
-                const myPosts = await getMyPosts(1, companyId); // assuming page 1 for now
-                console.log("Fetched posts:", myPosts); // Debugging line
+                const myPosts = await getProfilePosts(1, companyId, true); // assuming page 1 for now
+                console.log("Fetched posts:", myPosts); 
                 setPosts(myPosts);
             } catch (err) {
                 setError(err.message);
             }
         };
-        fetchPosts();
-    }, [company]);
+        if (username) fetchPosts();
+    }, [username]);
 
     return (
         <div>
