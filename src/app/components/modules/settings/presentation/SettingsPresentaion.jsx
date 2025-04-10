@@ -4,6 +4,10 @@ import SettingsSidebarContainer from "../container/SettingsSidebarContainer";
 import SettingsNavbarContainer from "../container/SettingsNavbarContainer";
 
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsPresentation component renders the main settings page layout.
  *
  * @param {Object} props - The component props.
@@ -18,7 +22,7 @@ export default function SettingsPresentation({
 }) {
   return (
     <div className="flex flex-col h-screen w-screen bg-background overflow-x-hidden overflow-y-scroll">
-      <SettingsNavbarContainer />
+      {/* <SettingsNavbarContainer /> */}
       <div className="flex flex-col md:flex-row h-full">
         <SettingsSidebarContainer setActiveSetting={setActiveSetting} />
         <div className="flex flex-col gap-4 p-8 rounded-lg h-full w-full">

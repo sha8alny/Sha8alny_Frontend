@@ -24,7 +24,7 @@ const Toast = ({ message, onClose, success }) => {
 
   return (
     <div
-      className={`fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-white font-semibold transition-all duration-300
+      className={`z-100 fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-white font-semibold transition-all duration-300
         ${visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10"}
         ${success ? "bg-green-500" : "bg-red-500"}`}
     >

@@ -1,7 +1,12 @@
 "use client";
 import RemoveRedEyeOutlined from "@mui/icons-material/RemoveRedEyeOutlined";
 import ContactsOutlined from "@mui/icons-material/ContactsOutlined";
+import { Button } from "@/app/components/ui/Button";
 
+/**
+ * @namespace company-author
+ * @module company-author
+ */
 /**
  * JobsForm component
  * 
@@ -28,7 +33,7 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants}) => {
 
     return(
         <div className="flex-grow">
-        <section className="flex-grow p-8 bg-transparent border border-secondary rounded-lg shadow-xl m-8 max-w-2xl mt-5 bottom-8 grid grid-cols-2">
+        <section className="flex-grow p-8 bg-foreground rounded-lg shadow-xl m-8 max-w-2xl mt-5 bottom-8 grid grid-cols-2">
         <div>
         <h1 className="text-2xl text-semibold text-secondary">Jobs</h1>
         <p className="text-sm text-text">Manage your page's 
@@ -36,13 +41,13 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants}) => {
         </p>
         </div>
         <div className="flex justify-end">
-            <button 
+            <Button 
             onClick={onShowPostJobForm}
-            className=" border border-secondary text-lg text-secondary rounded-full px-8 py-2 hover:bg-foreground transition duration-300 ">Post new job</button>
+            className="  border border-secondary bg-secondary text-xl text-foreground rounded-full px-8 py-2 hover:bg-foreground hover:text-secondary transition duration-300">Post new job</Button>
 
             </div>
         </section> 
-        <section className="flex-grow p-10 bg-transparent border border-secondary rounded-lg shadow-xl m-8 max-w-2xl min-h-138 ">
+        <section className="flex-grow p-10 bg-foreground rounded-lg shadow-xl m-8 max-w-2xl min-h-138 ">
         <h1 className="text-3xl justify-center text-semibold text-secondary">Posted Jobs</h1>
         <hr className="border-secondary  mt-4"/>
         {isLoading ?( <p className="text-text text-xl text-semibold">Loading...</p> ) : ( jobs.length === 0 ? (
@@ -50,16 +55,16 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants}) => {
                 jobs.map((job,index) => (
         <form
             key={job.job_id || index}
-          className=" bg-foreground flex-grow p-10 w-full rounded-lg border border-secondary  mt-8  ">
+          className=" bg-background flex-grow p-10 w-full rounded-lg mt-8  ">
           <div > 
             <div className="flex flex-col md:flex-row justify-between mb-6">
           <h1 className="text-secondary text-2xl text-semibold">{job.title}</h1>
-          <button
+          <Button
             type="button"
             onClick={()=>
                 {console.log("Job ID:", job.job_id); 
                 onShowApplicants(job.job_id)}}
-           className="mt-2 md:mt-0 border border-secondary text-md  text-secondary rounded-full  hover:bg-background transition duration-300 px-4 py-1 ">Show Applicants</button>
+           className="mt-2 md:mt-0 border border-secondary text-md bg-secondary  text-foreground rounded-full  hover:bg-foreground hover:text-secondary transition duration-300 px-4 py-1 ">Show Applicants</Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>

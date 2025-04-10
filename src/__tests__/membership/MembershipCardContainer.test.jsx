@@ -39,13 +39,13 @@ describe('Basic Card', () => {
 
 
   test('shows downgrade button for premium users viewing basic plan', () => {
-    render(<MembershipCardContainer {...baseProps} currentPlan="premium" />);
+    render(<MembershipCardContainer {...baseProps} currentPlan="oneTimePremium" />);
     expect(screen.getByText('Downgrade Plan')).toBeInTheDocument();
   });
 
 
   test('calls handleCancel when downgrade button is clicked', () => {
-    render(<MembershipCardContainer {...baseProps} currentPlan="premium" />);
+    render(<MembershipCardContainer {...baseProps} currentPlan="oneTimePremium" />);
     fireEvent.click(screen.getByText('Downgrade Plan'));
     expect(mockHandleCancel).toHaveBeenCalled();
   });
@@ -80,7 +80,7 @@ describe('Premium Card', () => {
 
 
   test('shows current plan button when isCurrentPlan is true', () => {
-    render(<MembershipCardPresentation {...baseProps} isCurrentPlan={true} />);
+    render(<MembershipCardPresentation {...baseProps} isPremium={true} currentPlan={"monthlyPremium"}  />);
     const button = screen.getByText('Current Plan');
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute('disabled');

@@ -1,32 +1,26 @@
-
+import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
 
-const getToken = () => {
-  const token = localStorage.getItem("token") || "mock-token";
-  // if (!token) throw new Error("No token found");
-  return token;
-};
 
 export const getName = async () => {
-  const response = await fetch(`${apiURL}/settings/get-name`, {
+  const response = await fetchWithAuth(`${apiURL}/settings/get-name`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
     },
   });
 
-  if (!response.ok) throw new Error("Failed to fetch user name");
+  if (!response.ok) throw new Error("Failed to fetchWithAuth user name");
   return response.json();
 };
 
 export const getEmail = async () => {
-  const response = await fetch(`${apiURL}/settings/get-email`, {
+  const response = await fetchWithAuth(`${apiURL}/settings/get-email`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
+ 
     },
   });
 
@@ -35,13 +29,12 @@ export const getEmail = async () => {
 };
 
 export const deleteAccount = async (password) => {
-  const response = await fetch(`${apiURL}/settings/delete-account`, {
+  const response = await fetchWithAuth(`${apiURL}/settings/delete-account`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-      Password: password,
     },
+    body: JSON.stringify({ password }),
   });
 
   if (!response.ok) throw new Error("Failed to delete account");
@@ -50,11 +43,10 @@ export const deleteAccount = async (password) => {
 
 
 export const updateEmail = async ({ email, password }) => {
-  const response = await fetch(`${apiURL}/settings/update-email`, {
+  const response = await fetchWithAuth(`${apiURL}/settings/update-email`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ email, password }),
   });
@@ -63,13 +55,11 @@ export const updateEmail = async ({ email, password }) => {
   return response.json();
 };
 
-
 export const changePassword = async ({ currentPassword, newPassword }) => {
-  const response = await fetch(`${apiURL}/settings/change-password`, {
+  const response = await fetchWithAuth(`${apiURL}/settings/change-password`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({
       currentPassword,
@@ -77,16 +67,22 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
     }),
   });
 
-  if (!response.ok) throw new Error("Failed to update password");
-  return response.json();
+  const data = await response.json();
+
+  if (!response.ok) {
+    const message =
+      data?.message || data?.error || "Failed to update password";
+    throw new Error(message);
+  }
+
+  return data;
 };
 
 export const updateUsername = async ({ newUsername }) => {
-  const response = await fetch(`${apiURL}/settings/update-username`, {
+  const response = await fetchWithAuth(`${apiURL}/settings/update-username`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ username: newUsername }),
   });
@@ -96,12 +92,13 @@ export const updateUsername = async ({ newUsername }) => {
 };
 
 
-export const handleSignup = async ({ username,email,password, isAdmin, captcha, rememberMe }) => {
+export const handleSignup = async ({ username,email,password, isAdmin, recaptcha, rememberMe }) => {
   try{
+    const type = isAdmin ? "Admin" : "User";
     const signupResponse = await fetch(`${apiURL}/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({username,email,password, isAdmin, captcha}),
+      body: JSON.stringify({username,email,password, type, recaptcha}),
     });
 
     if (!signupResponse.ok) throw new Error("Failed to signup");
@@ -115,6 +112,62 @@ export const handleSignup = async ({ username,email,password, isAdmin, captcha, 
     throw new Error(error.message);
   }
 };
+
+export const handleSignupCross = async ({ username,email,password, isAdmin, recaptcha, rememberMe }) => {
+  try{
+    const type = isAdmin ? "Admin" : "User";
+    const signupResponse = await fetch(`${apiURL}/signup_cross`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({username,email,password, type}),
+    });
+
+    if (!signupResponse.ok) throw new Error("Failed to signup");
+
+
+    const loginResponse = await handleSignIn({email,password, rememberMe});
+    if (!loginResponse) throw new Error("Failed to login");
+    return {success:true};
+
+  }catch(error){
+    throw new Error(error.message);
+  }
+};
+
+export const completeProfile = async ({formData, profilePic, coverPic})=>{
+  try{
+    const profileFormData = new FormData();
+    profileFormData.append("profilePicture", profilePic);
+    const profileResponse = await fetchWithAuth(`${apiURL}/profile/profile-picture`, {
+      method: "PUT",
+      body: profileFormData,
+    });
+    if (!profileResponse.ok) throw new Error("Failed to upload profile picture");
+
+    const coverFormData = new FormData();
+    coverFormData.append("coverPhoto", coverPic);
+    const coverResponse = await fetchWithAuth(`${apiURL}/profile/cover-photo`, {
+      method: "PUT",
+      body: coverFormData,
+    });
+    if (!coverResponse.ok) throw new Error("Failed to upload cover photo");
+
+    const data = await fetchWithAuth(`${apiURL}/profile/edit`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    if (!data.ok) throw new Error("Failed to complete profile");
+
+    return true;
+
+  }catch(error){
+    throw new Error(error.message);
+  }
+};
+
 
 export const handleSignIn = async ({email,password, rememberMe})=>{
 
@@ -137,8 +190,10 @@ export const handleSignIn = async ({email,password, rememberMe})=>{
       console.log("accessToken",sessionStorage.getItem("accessToken"));
       return {success:true};
     }
+    return {success:false, message:"Login failed"};
   }catch(error){
     console.error(error);
+    return {success:false, message:error.message};
   }
 
 };

@@ -2,6 +2,10 @@ import AddButton from "@/app/components/ui/AddButton";
 import { Trash } from "lucide-react";
 
 /**
+ * @namespace profile
+ * @module profile
+ */
+/**
  * Renders a skill modification presentation component with search and add functionality
  * @param {Object} props - Component props
  * @param {Array} props.skills - Array of skill objects
@@ -53,8 +57,9 @@ export default function ModSkillPresentation({
         ) : (
           skills.map((skill) => (
             <ModSkillCard
-              key={skill.skill_name}
+              key={skill?.skillName}
               skill={skill}
+              isLoading={isLoading}
               removeSkill={updateSkill}
             />
           ))
@@ -70,7 +75,7 @@ export default function ModSkillPresentation({
  * @component
  * @param {Object} props - The component props
  * @param {Object} props.skill - The skill object containing skill information
- * @param {string} props.skill.skill_name - The name of the skill
+ * @param {string} props.skill.skillName - The name of the skill
  * @param {Function} props.removeSkill - Callback function to remove the skill
  * @param {boolean} props.isLoading - Flag indicating if the remove operation is in progress
  * @returns {JSX.Element} A card displaying the skill name with a delete button
@@ -79,9 +84,9 @@ const ModSkillCard = ({ skill, removeSkill, isLoading }) => {
   return (
     <div>
       <div className="flex justify-between items-center p-3 border border-[#111] bg-foreground rounded-md">
-        <h3 className="font-semibold text-primary">{skill.skill_name}</h3>
+        <h3 className="font-semibold text-primary truncate">{skill?.skillName}</h3>
         <button
-          onClick={() => removeSkill(2, skill.skill_name)}
+          onClick={() => removeSkill(2, skill?.skillName)}
           className="text-primary font-semibold p-1 rounded-md hover:bg-foreground cursor-pointer duration-250"
           disabled={isLoading}
         >

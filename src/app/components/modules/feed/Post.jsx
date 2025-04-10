@@ -8,6 +8,7 @@ import {
   MessageSquare,
   Repeat,
   Share,
+  ChevronLeft,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -17,25 +18,46 @@ export function Post({ cardInfo }) {
   const [isLiked, setisLiked] = useState(false);
   const [isShared, setisShared] = useState(false);
   const [checkComments, setCheckComments] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
+
   const handleClick = (username) => {
     router.push(`/u/${username}`);
-  }
+  };
+
   const optimiseViews = (views) => {
     const formatNumber = (value, unit) => {
       const formattedValue = value % 1 === 0 ? value : value.toFixed(1);
       return `${formattedValue}${unit}`;
-    }
+    };
 
     if (views < 1000) return views.toLocaleString();
-    if (views < 1_000_000) return formatNumber(views / 1000, 'K');
-    if (views < 1_000_000_000) return formatNumber(views / 1_000_000, 'M');
-    return formatNumber(views / 1_000_000_000, 'B');
-  }
+    if (views < 1_000_000) return formatNumber(views / 1000, "K");
+    if (views < 1_000_000_000) return formatNumber(views / 1_000_000, "M");
+    return formatNumber(views / 1_000_000_000, "B");
+  };
 
+  // Handle carousel navigation
+  const nextImage = () => {
+    if (!cardInfo.mediaItems || !cardInfo.mediaItems.length) return;
+    setCurrentImageIndex((prev) =>
+      prev === cardInfo.mediaItems.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    if (!cardInfo.mediaItems || !cardInfo.mediaItems.length) return;
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? cardInfo.mediaItems.length - 1 : prev - 1
+    );
+  };
+
+  // Check if we have multiple images
+  const hasMultipleImages =
+    cardInfo.hasMedia && cardInfo.mediaItems && cardInfo.mediaItems.length > 1;
 
   return (
-    <div className="flex flex-col mb-2 gap-2 h-max items-center p-4 rounded-2xl border border-[#111111] bg-[#1b1f23] w-full">
+    <div className="flex flex-col mb-2 gap-2 h-full items-center p-4 rounded-2xl border border-[#111] bg-foreground text-primary w-full">
       <section className="flex gap-2 items-center justify-between w-full">
         <section className="flex gap-2">
           <div className="size-9 relative bg-gray-600 rounded-full">
@@ -48,7 +70,12 @@ export function Post({ cardInfo }) {
           </div>
           <div className="text-left">
             <div className="flex gap-1">
-              <button className="hover:underline hover:cursor-pointer text-sm font-[525]" onClick={() => handleClick(cardInfo.username)}>{cardInfo.name}</button>
+              <button
+                className="hover:underline hover:cursor-pointer text-sm font-[525]"
+                onClick={() => handleClick(cardInfo.username)}
+              >
+                {cardInfo.name}
+              </button>
               <div className="text-xs self-center text-gray-300">•</div>
               <div className="text-xs self-center text-gray-300">
                 {cardInfo.relation}
@@ -58,20 +85,62 @@ export function Post({ cardInfo }) {
           </div>
         </section>
         <section className="self-start flex gap-2">
-          <div className="text-sm text-gray-300">{compareDate(cardInfo.timePosted).split(' ')[0].substring(0, 3)}</div>
+          <div className="text-sm text-gray-300">
+            {compareDate(cardInfo.timePosted).split(" ")[0].substring(0, 3)}
+          </div>
           <button className="text-xs text-gray-300">•••</button>
         </section>
       </section>
       <p className="self-start">{cardInfo.description}</p>
+
       {cardInfo.hasMedia && (
-        <Image
-          src={cardInfo.media}
-          className="w-full max-h-[50vh] object-contain rounded-lg"
-          alt="Post Image"
-          width={500}
-          height={500}
-        />
+        <div
+          className="w-full relative rounded-lg overflow-hidden"
+          style={{ height: "300px" }}
+        >
+          {/* Image Carousel */}
+          {hasMultipleImages && (
+            <>
+              <button
+                onClick={prevImage}
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full z-10 hover:bg-black/70 transition-colors"
+              >
+                <ChevronLeft className="size-5 text-white" />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full z-10 hover:bg-black/70 transition-colors"
+              >
+                <ChevronRight className="size-5 text-white" />
+              </button>
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1 z-10">
+                {cardInfo.mediaItems.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={`size-2 rounded-full ${
+                      idx === currentImageIndex ? "bg-white" : "bg-white/50"
+                    }`}
+                    onClick={() => setCurrentImageIndex(idx)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Current image */}
+          <Image
+            src={
+              hasMultipleImages
+                ? cardInfo.mediaItems[currentImageIndex]
+                : cardInfo.media
+            }
+            className="w-full h-full object-contain"
+            alt="Post Image"
+            fill
+          />
+        </div>
       )}
+
       <section className="flex gap-2 w-full">
         <div className="flex gap-2 w-2/3 justify-between">
           <button
@@ -79,10 +148,11 @@ export function Post({ cardInfo }) {
             className="flex gap-1 hover:bg-gray-700 p-2 rounded-md duration-200 items-center"
           >
             <Heart
-              className={`${isLiked
-                ? "text-red-500 fill-current transition-colors duration-300"
-                : ""
-                } size-5`}
+              className={`${
+                isLiked
+                  ? "text-red-500 fill-current transition-colors duration-300"
+                  : ""
+              } size-5`}
             />
             <p className="text-sm font-semibold text-gray-300">
               {cardInfo.likes}
@@ -93,10 +163,11 @@ export function Post({ cardInfo }) {
             className="flex gap-1 hover:bg-gray-700 p-2 rounded-md duration-200 items-center"
           >
             <MessageSquare
-              className={`${checkComments
-                ? "fill-current text-gray-400 transition-colors duration-300"
-                : ""
-                } size-5`}
+              className={`${
+                checkComments
+                  ? "fill-current text-gray-400 transition-colors duration-300"
+                  : ""
+              } size-5`}
             />
             <p className="text-sm font-semibold text-gray-300">
               {cardInfo.comments.length}
@@ -107,8 +178,9 @@ export function Post({ cardInfo }) {
             className="flex gap-1 hover:bg-gray-700 p-2 rounded-md duration-200 items-center"
           >
             <Repeat
-              className={`size-5 ${isShared ? "text-green-500 transition-colors duration-300" : ""
-                }`}
+              className={`size-5 ${
+                isShared ? "text-green-500 transition-colors duration-300" : ""
+              }`}
             />
             <p className="text-sm font-semibold text-gray-300">
               {cardInfo.reposts}
@@ -191,10 +263,11 @@ const Comment = ({ comment }) => {
           className="flex flex-col ml-auto hover:bg-gray-600 p-1 rounded-md duration-200"
         >
           <Heart
-            className={`${isLiked
-              ? "text-red-500 fill-current transition-colors duration-300"
-              : ""
-              } size-4`}
+            className={`${
+              isLiked
+                ? "text-red-500 fill-current transition-colors duration-300"
+                : ""
+            } size-4`}
           />
           <p className="text-xs font-semibold text-gray-300">{comment.likes}</p>
         </button>
@@ -202,7 +275,6 @@ const Comment = ({ comment }) => {
     </div>
   );
 };
-
 
 const compareDate = (date) => {
   const INTERVALS = {

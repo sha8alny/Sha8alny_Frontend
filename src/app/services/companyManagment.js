@@ -1,13 +1,22 @@
 
+import { use } from "react";
 import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
 
-export const postJob = async (jobData, companyUsername) => {
+export const postJob = async ({jobData, username}) => {
+    const token=sessionStorage.getItem("accessToken");
+    console.log("token:",token);
+    console.log("jobData:",jobData);
+    console.log("username:",username);
+    const companyUsername =username
     try{
         const postJobResponse = await fetchWithAuth(`${apiURL}/company/${companyUsername}/job`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json",
+            "Authorization": `Bearer ${token.trim()}`,
+          },
+          
           body: JSON.stringify(jobData),
         });
 
@@ -123,6 +132,21 @@ export const getUserCompanies = async (pageNum = 1) => {
         throw new Error(error.message);
     }
 };
+
+export const updateApplication = async (jobId,applicantId, data) => {
+    try {
+      const response = await fetchWithAuth(`${apiURL}/employers/${jobId}/${applicantId}/application`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) throw new Error("Failed to update application");
+    } catch (error) {
+      console.error("Error updating application:", error);
+    }
+  };
+  
 
 export const createCompany = async (companyData) => {
     try {
@@ -308,3 +332,33 @@ export const serachCompany = async(text, pageNum = 1)=>{
         throw new Error(error.message);
     }
 };
+
+export const followCompany = async (companyUsername) => {
+    const response = await fetch(`http://localhost:5000/company/${companyUsername}/follow`, {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok) throw new Error("Failed to follow company");
+    return await response.json();
+}
+
+export const getUserCompanies = async (page) => {
+    const response = await fetchWithAuth(`${apiURL}/company?pageNum=${page}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (errorData.error === "Companies not found") {
+        throw new Error("No companies found for the given query.");
+      }
+      throw new Error("Failed to fetch companies.");
+    }
+    return await response.json();
+  };
+  

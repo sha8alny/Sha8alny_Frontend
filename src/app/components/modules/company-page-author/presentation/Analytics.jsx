@@ -21,6 +21,7 @@ export default function Analytics() {
     { name: "Sun", reposts: 200, comments: 410, reactions: 2200, impressions: 18000, pageViews: 5800 },
   ]
 
+
   const monthlyData = [
     { name: "Jan", reposts: 800, comments: 2100, reactions: 9500, impressions: 85000, pageViews: 28000 },
     { name: "Feb", reposts: 950, comments: 2400, reactions: 10800, impressions: 92000, pageViews: 32000 },

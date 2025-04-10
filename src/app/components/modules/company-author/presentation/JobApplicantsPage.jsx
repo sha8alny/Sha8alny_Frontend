@@ -5,6 +5,10 @@ import ViewApplicationDetailsContainer from "../container/ViewApplicationDetails
 import { ArrowForwardIos,ArrowBackIos } from "@mui/icons-material";
 
 /**
+ * @namespace company-author
+ * @module company-author
+ */
+/**
  * JobApplicantsPage component
  * 
  * This component renders a page displaying the list of job applicants. It includes navigation buttons
@@ -56,7 +60,7 @@ const JobApplicantsPage = ({
 }) => {
    console.log("Applicants",Applicants);
     return (
-        <div className="bg-transparent flex-grow p-6 rounded-lg border border-secondary max-w-4xl m-5 relative grid grid-cols-1 gap-6">
+        <div className="bg-foreground flex-grow p-6 rounded-lg max-w-4xl m-5 relative grid grid-cols-1 gap-6">
         <div className="flex justify-end">
         <ArrowBackIcon onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 text-text "
         sx={{
@@ -65,9 +69,9 @@ const JobApplicantsPage = ({
         role="button" aria-label="ArrowBack"
         />
         </div>
-        <div className="grid grid-cols-3 gap-4">
-        {isLoading ?( <p className="text-text text-xl text-semibold">Loading...</p> ) : ( Applicants.length === 0 ? (
-            <p className="text-text text-xl text-semibold">No Applicants yet</p> ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {isLoading ?( <p className="text-text text-xl text-semibold text-center col-span-full">Loading...</p> ) : ( Applicants.length === 0 ? (
+            <p className="text-text text-xl text-semibold text-center col-span-full">No Applicants yet</p> ) : (
                 Applicants.map((Applicant, index) => (
                  <ProfileCard
                     key={`${Applicant.id}-${index}`}
@@ -83,7 +87,7 @@ const JobApplicantsPage = ({
             )
         )}   
         </div>   
-        <div className="flex flex justify-between mt-2">
+        <div className="flex flex-wrap justify-center sm:justify-between items-center mt-2">
             {currentPage > 1 && (
                 <ArrowBackIos
                 role="button"
@@ -100,7 +104,7 @@ const JobApplicantsPage = ({
 
         )}
         {isLoading && Applicants.length>0 &&(
-            <p className="text-text text-xl text-semibold">Loading more...</p> )}
+            <p className="text-text text-xl text-semibold text-center mt-4">Loading more...</p> )}
           </div>
           {selectedApplicant && (
               <ViewApplicationDetailsContainer

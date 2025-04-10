@@ -7,6 +7,10 @@ import { deleteJob } from "@/app/services/admin";
 import { useToast } from "@/app/context/ToastContext";
 import { JobsTablePresentation } from "../presentation/JobsTablePresentation";
 /**
+ * @namespace admin
+ * @module admin
+ */
+/**
  * JobsTableContainer component is responsible for fetching and managing job listings data
  * for the admin panel. It handles pagination, deletion of jobs, and displays the data
  * using the JobsTablePresentation component.

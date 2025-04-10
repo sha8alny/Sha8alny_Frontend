@@ -10,6 +10,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "media.licdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "example.com",
+      },
+      {
+        protocol: "http",
+        hostname: "sha8alny.uaenorth.cloudapp.azure.com",
+      }
     ],
   },
 };

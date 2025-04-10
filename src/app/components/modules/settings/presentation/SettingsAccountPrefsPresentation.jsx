@@ -1,6 +1,10 @@
 import SettingsCard from "./SettingsCard";
 
 /**
+ * @namespace settings
+ * @module settings
+ */
+/**
  * SettingsAccountPrefsPresentation component renders the account preferences settings.
  *
  * @param {Object} props - The component props.
@@ -33,7 +37,7 @@ export default function SettingsAccountPrefsPresentation({ theme, handleNavigati
       <SettingsCard
         header="Subscriptions & payments"
         items={{
-          "Current plan": { label: "Basic", link: () => handleNavigation("/membership-page") },
+          "Current plan": { label: "", link: () => handleNavigation("/membership-page") },
         }}
       />
       <SettingsCard

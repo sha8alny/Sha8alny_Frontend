@@ -1,5 +1,12 @@
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import Image from "next/image";
+/**
+ * @namespace jobs
+ * @module jobs
+ */
 /**
  * JobHeader component displays the header section of a job listing.
+ * Pure presentation component that receives all data from container.
  *
  * @param {Object} props - The component props.
  * @param {Object} props.job - The normalized job data.
@@ -11,21 +18,24 @@
  * @param {boolean} props.isLoading - Flag indicating if the job data is still loading.
  * @returns {JSX.Element} The rendered JobHeader component.
  */
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import Image from "next/image";
+function JobHeader({ job, isLoading }) {
+  const defaultLogo = "https://picsum.photos/96/96";
+  const companyName = job?.company?.name || "";
+  const companyLocation = job?.company?.location || "";
+  const companyLogo = job?.company?.logo || defaultLogo;
+  const jobTitle = job?.title || "";
 
-export default function JobHeader({ job, isLoading }) {
   return (
     <div className="border-b pb-6 mb-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-text">
-          {isLoading ? "Loading job title..." : job?.title}
+          {isLoading ? "Loading job title..." : jobTitle}
         </h1>
         {!isLoading && (
           <div className="w-24 h-24 relative flex items-center justify-center border border-blue-300 mr-4 rounded-md">
             <Image
-              src={job.company?.logo || "https://picsum.photos/96/96"}
-              alt={`${job.company?.name} logo`}
+              src={companyLogo}
+              alt={`${companyName} logo`}
               width={96}
               height={96}
               className="object-contain"
@@ -36,16 +46,17 @@ export default function JobHeader({ job, isLoading }) {
 
       <div className="flex items-center flex-wrap gap-3 text-gray-700 dark:text-gray-300">
         <span className="font-semibold text-lg">
-          {isLoading ? "Loading company name..." : job?.company?.name}
+          {isLoading ? "Loading company name..." : companyName}
         </span>
-        <span className="text-gray-400">•</span>
+        {companyName && <span className="text-gray-400">•</span>}
         <span className="flex items-center text-lg">
-          <LocationOnOutlinedIcon className="h-6 w-6 text-blue-600 mr-1" />
-          {isLoading || !job.company?.location
+          <LocationOnOutlinedIcon className="h-6 w-6 text-blue-600 mr-1" aria-hidden="true" />
+          {isLoading || !companyLocation
             ? "Loading location..."
-            : job.company.location}
+            : companyLocation}
         </span>
       </div>
     </div>
   );
 }
+export default JobHeader;
