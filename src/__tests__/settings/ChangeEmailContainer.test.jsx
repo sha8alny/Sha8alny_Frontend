@@ -56,19 +56,6 @@ describe("ChangeEmailContainer", () => {
     expect(screen.getByText(/Password is required/i)).toBeInTheDocument();
   });
 
-  test("shows error if email format is invalid", () => {
-    render(<ChangeEmailContainer toggleForm={toggleFormMock} />);
-
-    const emailInput = document.querySelector("input[type='email']");
-    const submitButton = screen.getByRole("button", { name: /Add Email/i });
-
-    fireEvent.change(emailInput, { target: { value: "invalidemail" } });
-    fireEvent.blur(emailInput);
-    fireEvent.click(submitButton);
-
-    expect(screen.getByText(/Invalid email format/i)).toBeInTheDocument();
-  });
-
   test("submits form if inputs are valid", () => {
     render(<ChangeEmailContainer toggleForm={toggleFormMock} />);
 

@@ -1,6 +1,5 @@
 import { fetchWithAuth } from "./userAuthentication";
 
-
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -56,7 +55,6 @@ export const updateEmail = async ({ email, password }) => {
   return response.json();
 };
 
-
 export const changePassword = async ({ currentPassword, newPassword }) => {
   const response = await fetchWithAuth(`${apiURL}/settings/change-password`, {
     method: "PUT",
@@ -69,8 +67,15 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
     }),
   });
 
-  if (!response.ok) throw new Error("Failed to update password");
-  return response.json();
+  const data = await response.json();
+
+  if (!response.ok) {
+    const message =
+      data?.message || data?.error || "Failed to update password";
+    throw new Error(message);
+  }
+
+  return data;
 };
 
 export const updateUsername = async ({ newUsername }) => {

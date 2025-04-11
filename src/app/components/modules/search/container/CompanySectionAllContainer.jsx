@@ -19,20 +19,20 @@ import  CompanySectionAllPresentation  from "../presentation/CompanySectionAllPr
  * 
  * @returns {JSX.Element} The rendered `CompanySectionAllPresentation` component with the fetched data.
  */
- const CompanySectionAllContainer = (query) => {
+ const CompanySectionAllContainer = ({query}) => {
   const {
     data: companies,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["searchCompanies"],
-    queryFn:()=> searchCompany(query.query,1),
+    queryKey: ["searchCompanies", query],
+    queryFn: () => searchCompany(query, 1),
   });
 
   const router = useRouter();
 
   const handleViewMore = () => {
-    router.push("/search/companies");
+    router.push("/search/results?keyword=" + query + "&type=company");
   };
 
   return (

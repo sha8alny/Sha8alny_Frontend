@@ -63,30 +63,19 @@ export function JobCard({ job, onClick }) {
     }
   };
 
-  const formatSalary = (salary) => {
-    if (!salary) return "Salary: undisclosed";
-    return `Salary: ${new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(salary)}`;
-  };
-
   return (
     <div
-      className="flex space-x-4 p-4 rounded-lg hover:bg-hover transition-colors duration-200 cursor-pointer"
+      className="flex space-x-4 p-4 rounded-lg hover:shadow-md transition-shadow hover:bg-hover shadow-sm duration-200 cursor-pointer"
       onClick={() => onClick(job)}
     >
-      <div className="w-16 h-16 shrink-0 bg-background flex items-center justify-center rounded-sm">
-        <div className="w-12 h-12 relative">
-          <Image
-            src={job.company.logo || "https://picsum.photos/48/48"}
-            width={48}
-            height={48}
-            alt={job.company.name || "Company Logo"}
-            className="w-full h-full object-contain"
-          />
-        </div>
+      <div className="w-16 h-16 shrink-0 bg-background flex items-center justify-center rounded-sm ">
+        <Image
+          src={job.company.logo || "https://picsum.photos/48/48"}
+          width={48}
+          height={48}
+          alt={job.company.name || "Company Logo"}
+          className="w-full h-full object-cover rounded-sm"
+        />
       </div>
       <div className="flex-1">
         <h3 className="font-semibold text-text">{job.title}</h3>
@@ -97,12 +86,12 @@ export function JobCard({ job, onClick }) {
           employmentType={job.employmentType}
           workLocation={job.workLocation}
         />
-        <p className="text-sm dark:text-gray-300 text-gray-500 line-clamp-2">{job.description}</p>
+        <p className="text-sm dark:text-gray-300 text-gray-500 line-clamp-2">
+          {job.description}
+        </p>
         <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
           <span>Posted {getRelativeTimeString(job.createdAt)}</span>
-          <span className="font-medium">
-            {formatSalary(job.salary)}
-          </span>
+          <span className="font-medium">{job.salaryFormatted}</span>
         </div>
       </div>
     </div>
@@ -127,13 +116,17 @@ function JobsCard({ jobListings = [], handleJobClick = () => {} }) {
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-4 p-3 mb-4">
         {jobListings.map((job, index) => (
-          <JobCard  key={`${job._id}-${index}`} job={job} onClick={handleJobClick} />
+          <div className="mb-6" key={`${job._id}-${index}`}>
+          <JobCard
+            job={job}
+            onClick={handleJobClick}
+          />
+          </div>
         ))}
       </div>
     </>
   );
 }
-
 export default JobsCard;

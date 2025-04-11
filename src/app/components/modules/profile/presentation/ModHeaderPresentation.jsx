@@ -8,11 +8,12 @@ import {
 } from "@/app/components/ui/Tabs";
 import { Label } from "@/app/components/ui/Label";
 import { Input } from "@/app/components/ui/Input";
-import CancelIcon from '@mui/icons-material/Cancel';
+import CancelIcon from "@mui/icons-material/Cancel";
 import { Button } from "@/app/components/ui/Button";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { AlertDialogCancel } from "@/app/components/ui/AlertDialog";
-import { Upload, X } from "@mui/icons-material";
+import { Upload } from "@mui/icons-material";
+import { X, Loader2 } from "lucide-react";
 
 /**
  * @namespace profile
@@ -98,6 +99,12 @@ export const ModifyProfilePresentation = ({
   nameError,
   locationError,
   headlineError,
+  isProfilePictureLoading,
+  isCoverPictureLoading,
+  isResumeLoading,
+  profilePictureError,
+  coverPictureError,
+  resumeError,
 }) => {
   return (
     <>
@@ -113,7 +120,7 @@ export const ModifyProfilePresentation = ({
               <div className="space-y-2">
                 <Label htmlFor="coverPicture">Cover Picture</Label>
                 <div className="relative">
-                  {coverPicture && (
+                  {coverPicture && !isCoverPictureLoading && (
                     <div className="relative mb-2 rounded-md overflow-hidden h-32">
                       <img
                         src={coverPicture || "/placeholder.svg"}
@@ -122,21 +129,41 @@ export const ModifyProfilePresentation = ({
                       />
                       <Button
                         type="button"
-                        variant="destructive"
                         size="icon"
-                        className="absolute top-2 right-2"
-                        onClick={() => removeFile(setCoverPicture)}
+                        className="absolute top-2 right-2 hover:bg-destructive/80 bg-destructive text-primary cursor-pointer"
+                        onClick={() => removeFile("cover")}
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
                   )}
+
+                  {isCoverPictureLoading && (
+                    <div className="flex justify-center items-center h-32 mb-2 bg-muted rounded-md">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  )}
+
+                  {coverPictureError && (
+                    <p className="text-destructive text-sm mb-2">
+                      {coverPictureError}
+                    </p>
+                  )}
+
                   <div className="flex items-center gap-2">
                     <Label
                       htmlFor="coverPictureInput"
-                      className="cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted"
+                      className={`cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted ${
+                        isCoverPictureLoading
+                          ? "opacity-50 pointer-events-none"
+                          : ""
+                      }`}
                     >
-                      <Upload className="h-4 w-4" />
+                      {isCoverPictureLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="h-4 w-4" />
+                      )}
                       {coverPicture
                         ? "Change Cover Picture"
                         : "Upload Cover Picture"}
@@ -146,7 +173,8 @@ export const ModifyProfilePresentation = ({
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => handleFileChange(e, setCoverPicture)}
+                      onChange={(e) => handleFileChange(e, "cover")}
+                      disabled={isCoverPictureLoading}
                     />
                   </div>
                 </div>
@@ -155,30 +183,52 @@ export const ModifyProfilePresentation = ({
               <div className="space-y-2">
                 <Label htmlFor="profilePicture">Profile Picture</Label>
                 <div className="relative">
-                  {profilePicture && (
-                    <div className="relative mb-2 w-24 h-24 rounded-full overflow-hidden">
-                      <img
-                        src={profilePicture || "/placeholder.svg"}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
+                  {profilePicture && !isProfilePictureLoading && (
+                    <div className="relative flex">
+                      <div className="relative mb-2 w-24 h-24 rounded-full overflow-hidden">
+                        <img
+                          src={profilePicture || "/placeholder.svg"}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                       <Button
                         type="button"
-                        variant="destructive"
                         size="icon"
-                        className="absolute top-0 right-0"
-                        onClick={() => removeFile(setProfilePicture)}
+                        className="absolute left-0 hover:bg-destructive/80 bg-destructive text-primary cursor-pointer"
+                        onClick={() => removeFile("profile")}
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
                   )}
+
+                  {isProfilePictureLoading && (
+                    <div className="flex justify-center items-center w-24 h-24 mb-2 bg-muted rounded-full">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  )}
+
+                  {profilePictureError && (
+                    <p className="text-destructive text-sm mb-2">
+                      {profilePictureError}
+                    </p>
+                  )}
+
                   <div className="flex items-center gap-2">
                     <Label
                       htmlFor="profilePictureInput"
-                      className="cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted"
+                      className={`cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted ${
+                        isProfilePictureLoading
+                          ? "opacity-50 pointer-events-none"
+                          : ""
+                      }`}
                     >
-                      <Upload className="h-4 w-4" />
+                      {isProfilePictureLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="h-4 w-4" />
+                      )}
                       {profilePicture
                         ? "Change Profile Picture"
                         : "Upload Profile Picture"}
@@ -188,7 +238,8 @@ export const ModifyProfilePresentation = ({
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => handleFileChange(e, setProfilePicture)}
+                      onChange={(e) => handleFileChange(e, "profile")}
+                      disabled={isProfilePictureLoading}
                     />
                   </div>
                 </div>
@@ -236,7 +287,7 @@ export const ModifyProfilePresentation = ({
               <div className="space-y-2">
                 <Label htmlFor="resume">Resume</Label>
                 <div className="relative">
-                  {resume && (
+                  {resume && !isResumeLoading && (
                     <div className="flex items-center justify-between p-2 mb-2 border rounded-md">
                       <span className="text-sm truncate max-w-[400px]">
                         {typeof resume === "string"
@@ -247,18 +298,37 @@ export const ModifyProfilePresentation = ({
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeFile(setResume)}
+                        onClick={() => removeFile("resume")}
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
                   )}
+
+                  {isResumeLoading && (
+                    <div className="flex justify-center items-center h-12 mb-2 bg-muted rounded-md">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  )}
+
+                  {resumeError && (
+                    <p className="text-destructive text-sm mb-2">
+                      {resumeError}
+                    </p>
+                  )}
+
                   <div className="flex items-center gap-2">
                     <Label
                       htmlFor="resumeInput"
-                      className="cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted"
+                      className={`cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted ${
+                        isResumeLoading ? "opacity-50 pointer-events-none" : ""
+                      }`}
                     >
-                      <Upload className="h-4 w-4" />
+                      {isResumeLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="h-4 w-4" />
+                      )}
                       {resume ? "Change Resume" : "Upload Resume"}
                     </Label>
                     <Input
@@ -266,7 +336,8 @@ export const ModifyProfilePresentation = ({
                       type="file"
                       accept=".pdf,.doc,.docx"
                       className="hidden"
-                      onChange={(e) => handleFileChange(e, setResume)}
+                      onChange={(e) => handleFileChange(e, "resume")}
+                      disabled={isResumeLoading}
                     />
                   </div>
                 </div>
@@ -324,7 +395,6 @@ export const ModifyProfilePresentation = ({
                     {location || "Your Location"}
                   </p>
 
-
                   {resume && (
                     <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                       <svg
@@ -364,7 +434,7 @@ export const ModifyProfilePresentation = ({
       )}
       {currentStage === 1 && (
         <div className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center">
-          <div className="size-12 animate-spin border-t-1 rounded-full border-secondary" />
+          <div className="size-12 animate-spin border-2 border-t-transparent rounded-full border-secondary" />
           Modifying...
         </div>
       )}

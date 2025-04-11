@@ -25,7 +25,7 @@ import InputField from "../../company-page-form/presentation/InputField";
  */
 
 
-function EditInputFieldContainer({companyName,setCompanyName, companyIndustry,setCompanyIndustry, companyLocation, setCompanyLocation, companyURL,setCompanyURL, companyWebsite, setCompanyWebsite,errors={}, setErrors}){
+function EditInputFieldContainer({companyName,setCompanyName, companyIndustry,setCompanyIndustry, companyLocation, setCompanyLocation, companyURL,setCompanyURL, companyWebsite, setCompanyWebsite, companyDate, setCompanyDate, companyPhone, setCompanyPhone, errors={}, setErrors}){
     const handleNameError = (e) =>{
         const name = e.target.value.trim();
         setCompanyName(name);
@@ -70,6 +70,14 @@ function EditInputFieldContainer({companyName,setCompanyName, companyIndustry,se
         }
     };
 
+    const handleDateChange = (e) =>{
+        setCompanyDate(e.target.value);
+    };
+    
+    const handlePhoneChange = (e) =>{
+    setCompanyPhone(e.target.value);
+    };
+
     return(
         <div>
             <InputField label="Name" name="company-name" placeholder="Add your organization's name" maxLength={120} required selectedname={companyName} onChange={handleNameError}/>
@@ -84,6 +92,10 @@ function EditInputFieldContainer({companyName,setCompanyName, companyIndustry,se
             <InputField label="Location" name="company-location" placeholder="Add your organization's location" required selectedname={companyLocation} onChange={handleLocationChange}/>
 
             <InputField label="Industry" name="company-industry" placeholder="ex:Information Services" required selectedname={companyIndustry} onChange={handleIndustryError}/> 
+
+            <InputField label="Founding Date" type="date" name="company-date" placeholder="Select a date" required selectedname={companyDate} onChange={handleDateChange}/>
+      
+            <InputField label="Phone Number" type="tel" name="company-number" placeholder="Add your phone number" selectedname={companyPhone} onChange={handlePhoneChange}/>
         </div> 
     );
 

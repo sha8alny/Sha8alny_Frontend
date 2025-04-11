@@ -6,7 +6,7 @@ import NavbarContainer from "./NavBarContainer";
 
 function Navbar() {
   const pathName = usePathname();
-  if (pathName === "/signup" || pathName === "/signin") {
+  if (pathName === "/signup" || pathName === "/signin" || pathName === "/complete-profile") {
     return null;
   }
   return <NavbarContainer />;

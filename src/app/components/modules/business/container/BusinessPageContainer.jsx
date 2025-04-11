@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserCompanies } from "@/app/services/companyManagment";
 import { useRouter } from "next/navigation";
 import  BusinessPagePresentation  from "../presentation/BusinessPagePresentation";
+
 /**
  * @namespace business
  * @module business
@@ -29,6 +30,8 @@ import  BusinessPagePresentation  from "../presentation/BusinessPagePresentation
  * @prop {function} onPageChange - Callback function to handle page changes.
  * @prop {function} onCreateCompany - Callback function to navigate to the company creation form.
  */
+
+
 function BusinessPageContainer() {
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
@@ -50,10 +53,10 @@ function BusinessPageContainer() {
   const handleCreateCompany = () => {
     router.push("/company-page-form");
   };
-
+  
   return (
     <BusinessPagePresentation
-      companies={companies?.companies || []}
+      companies={companies}
       isLoading={isLoading}
       isError={isError}
       error={error?.message}

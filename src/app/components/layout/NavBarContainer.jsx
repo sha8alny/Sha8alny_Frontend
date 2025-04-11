@@ -67,7 +67,7 @@ function NavbarContainer() {
         />
       );
     }
-    console.log("userProfile", userProfile);
+    console.log("navbar", userProfile);
     return (
       <NavbarPresentation
         userInfo={userProfile}

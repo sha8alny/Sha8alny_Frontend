@@ -37,7 +37,7 @@ export default function SettingsAccountPrefsPresentation({ theme, handleNavigati
       <SettingsCard
         header="Subscriptions & payments"
         items={{
-          "Current plan": { label: "Basic", link: () => handleNavigation("/membership-page") },
+          "Current plan": { label: "", link: () => handleNavigation("/membership-page") },
         }}
       />
       <SettingsCard

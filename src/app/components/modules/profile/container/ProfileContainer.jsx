@@ -172,9 +172,26 @@ function ProfileContent({ username }) {
     hasConnections: userProfile?.connectionsCount > 0,
   };
 
+  const changeRelation = (relation) => {
+    switch (relation){
+      case 0:
+        return "3rd+";
+      case 1:
+        return "1st";
+      case 2:
+        return "2nd";
+      case 3:
+        return "3rd";
+      default:
+        return "";
+    }
+  }
+
+  console.log(userProfile)
+
   return (
     <ProfilePresentation
-      userProfile={userProfile}
+      userProfile={{...userProfile, relation: changeRelation(userProfile?.relation)}}
       profileStrength={profileStrength}
       isMyProfile={userProfile?.isMyProfile || false}
     />

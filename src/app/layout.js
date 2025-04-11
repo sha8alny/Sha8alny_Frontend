@@ -1,13 +1,15 @@
 import "./globals.css";
 import { ThemeProvider } from "./context/ThemeContext";
-
 import { ToastProvider } from "./context/ToastContext";
 import ReactQueryProvider from "./providers/ReactQueryProvider";
 import StripeProvider from "./providers/StripeProvider";
 import Navbar from "./components/layout/NavBar";
 import {AuthProvider} from "./context/AuthContext";
+import DynamicFavicon from "./utils/DynamicFavicon";
+
+
 export const metadata = {
-  title: "Shaغlny",
+  title: "Shaغalny",
   description: "i need job",
 };
 
@@ -19,6 +21,7 @@ export default function RootLayout({ children }) {
         <ReactQueryProvider>
           <StripeProvider>
             <ThemeProvider>
+              <DynamicFavicon />
               <div className="sticky top-0 z-50">
                 <header>
                   <Navbar />
