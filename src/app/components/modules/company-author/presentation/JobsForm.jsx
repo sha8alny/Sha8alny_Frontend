@@ -233,7 +233,7 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
                 <div>
                 <AlertDialog>
                 <AlertDialogTrigger asChild>
-                    <div className="relative flex flex-col items-center group cursor-pointer">
+                    <div data-testid="DeleteJob" className="relative flex flex-col items-center group cursor-pointer">
                     <DeleteIcon className="text-secondary" />
                     <span className="absolute top-8 text-sm text-secondary bg-none p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         Delete Job
