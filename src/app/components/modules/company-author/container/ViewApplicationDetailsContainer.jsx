@@ -63,6 +63,11 @@ const ViewApplicationDetailsContainer = ({jobId, applicantId, onClose}) => {
     }, [application]);
 
     const handleSave = async ()=>{
+        if (status === "pending" && notes === "") {
+            toast("Please select a status",false);
+            return;
+        }
+        console.log("Saving application with status:", status, "and notes:", notes);
         setIsUpdating(true);
         try {
             const applicationResponse=await updateApplication( jobId,applicantId, {status, notes});
