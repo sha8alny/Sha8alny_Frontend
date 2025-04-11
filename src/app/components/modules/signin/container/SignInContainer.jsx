@@ -6,6 +6,7 @@ import SignInForm from "../presentation/SignInForm";
 import { handleSignIn } from "../../../../services/userManagement";
 import { useToast } from "@/app/context/ToastContext";
 import { set } from "date-fns";
+import {useAuth} from "@/app/context/AuthContext";
 
 /**
  * @namespace signin
@@ -28,6 +29,7 @@ const SignInContainer = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const toast = useToast();
+  const Auth = useAuth();
 
   const loginMutation = useMutation({
     mutationFn: handleSignIn,
@@ -49,12 +51,14 @@ const SignInContainer = () => {
           if (data.success) {
           toast("Welcome back!");
           setTimeout(() => {
-            router.push("/");
-          }, 3000);}
+            const redirectPath = Auth.getRedirectPath();
+            Auth.clearRedirectPath();
+            router.push(redirectPath);
+            }, 3000);}
           else{
             toast("Incorrect email or password",false);}
         },
-        onError: (error) => alert(error.message),
+        onError: (error) => {toast(error.message, false);},
       }
     );
   };

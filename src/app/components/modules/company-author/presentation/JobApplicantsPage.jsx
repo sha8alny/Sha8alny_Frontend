@@ -59,6 +59,7 @@ const JobApplicantsPage = ({
     onCloseApplicationDetails
 }) => {
    console.log("Applicants",Applicants);
+   console.log("applicant id",selectedApplicant);
     return (
         <div className="bg-foreground flex-grow p-6 rounded-lg max-w-4xl m-5 relative grid grid-cols-1 gap-6">
         <div className="flex justify-end">
@@ -80,7 +81,9 @@ const JobApplicantsPage = ({
                     profilePic={Applicant.profilePic}
                     coverPic={Applicant.coverPhoto}
                     buttonText="View Application"
-                    buttonAction={() => onViewApplication(Applicant.id)}
+                    buttonAction={() =>
+                        
+                        onViewApplication(Applicant._id)}
                     showButton={true}
                     />
                 ))

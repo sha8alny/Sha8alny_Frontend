@@ -85,7 +85,7 @@ return(
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className=" w-3 h-3 accent-secondary"/>
                 <label htmlFor="rememberMe" className="ml-2 text-text text-sm">Remember Me</label>
-                <a href="#" className="ml-20 text-left text-secondary hover:underline text-sm">
+                <a href="/forget-password" className="ml-20 text-left text-secondary hover:underline text-sm">
                  Forget password?
                 </a>
                 </div>
