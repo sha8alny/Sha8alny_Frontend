@@ -17,12 +17,12 @@ import ModAbout from "../container/ModAbout";
 export default function About({ about, isMyProfile }) {
   return (
     (about || isMyProfile) && (
-    <Container className="border border-[#111] shadow-lg mt-4 p-8">
+    <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
       <h3 className="justify-between flex text-2xl mb-4 font-bold">
         About
         {isMyProfile && <ModAbout about={about} />}
       </h3>
-      <p className="text-muted break-all">{about ?? ""}</p>
+      <p className="text-muted break-words">{about ?? ""}</p>
       {((!about || about?.length === 0) && isMyProfile) && (
         <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
           <p>

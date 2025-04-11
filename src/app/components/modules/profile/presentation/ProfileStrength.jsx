@@ -24,7 +24,7 @@ import { Shield } from "lucide-react";
  */
 export default function ProfileStrength({ profileStrength }) {
   return (
-    <Container className="border border-[#111] shadow-lg p-4">
+    <Container className="dark:border dark:border-[#111] shadow-lg p-4">
       <h2 className="text-lg font-semibold mb-4 flex items-center">
         <Shield className="size-5 mr-2 fill-current" />
         Profile Strength

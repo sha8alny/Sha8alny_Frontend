@@ -38,7 +38,7 @@ import CloseIcon from '@mui/icons-material/Close';
  * Handles post submission. Prevents empty posts from being submitted.
  */
 
-function WritePostContainer({onPostSubmit, logoPreview}){
+function WritePostContainer({company, onPostSubmit, logo}){
     const [text, setText] = useState("");
     const [preview, setPreview]= useState(null);
     const [file, setFile]= useState(null);
@@ -49,49 +49,51 @@ function WritePostContainer({onPostSubmit, logoPreview}){
     
     const imageUpload = (e) => {
         const selectedFile=e.target.files[0];
+        console.log("Image selected", e.target.files[0]);
         if (selectedFile && selectedFile.type.startsWith("image/")){
-            setFile(selectedFile.name);
+            setFile(selectedFile);
             setPreview(URL.createObjectURL(selectedFile));
         }
     };
-
-    const videoUpload = (e)=>{
-        const selectedFile=e.target.files[0];
-        if (selectedFile && selectedFile.type.startsWith("video/")){
-            setFile(selectedFile.name);
-            setPreview(URL.createObjectURL(selectedFile));
-        }
-
-    }
 
     const triggerFileInput = (fileType) => {
         if (fileType === "image") imageInputRef.current?.click();
-        if (fileType === "video") videoInputRef.current?.click();
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         if (!text?.trim() && !file) return; 
+        const cleanedPreview = preview ? preview.replace(/^blob:/, '') : null;
         const newPost = {
-            text: text ||"",
-            imageUrl:preview,
-            videoUrl:preview,
+            text: text.trim(),
+            media: cleanedPreview || null,
+            time: new Date().toISOString(),
+            tags:[],
+            keywords:[],
         };
         onPostSubmit(newPost); 
         setText("");
         setPreview(null);
         setFile(null);
     };
-
-    const handleArticle =()=>{
-        if (!articleText.trim()) return;
-        onPostSubmit({ text: articleText, isArticle: true });
-        setArticleText("");
-        setModalOpen(false);
-    }
+    const handleArticle = () => {
+        if (!articleText.trim()) return; 
+        const newArticle = {
+            text: articleText,
+            media:null,
+            timePosted: new Date().toISOString(),
+            tags:[],
+            keywords:[],
+            isArticle: true,
+        };
+        onPostSubmit(newArticle); 
+        setArticleText(""); 
+        setModalOpen(false); 
+    };
     return(
         <div>
-            <WritePost text={text} setText={setText} onImageUpload={imageUpload} onVideoUpload={videoUpload} preview={preview} triggerFileInput={triggerFileInput}
-            imageInputRef={imageInputRef} videoInputRef={videoInputRef} onSubmit={handleSubmit} logoPreview={logoPreview} openArticleModal={() => setModalOpen(true)}/>
+            <WritePost company={company} text={text} setText={setText} onImageUpload={imageUpload} preview={preview} triggerFileInput={triggerFileInput}
+            imageInputRef={imageInputRef} onSubmit={handleSubmit} 
+            logo={logo} openArticleModal={() => setModalOpen(true)}/>
             <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
             <Box sx={{
                     position: "absolute",
@@ -120,7 +122,6 @@ function WritePostContainer({onPostSubmit, logoPreview}){
                 </div>
 
             </Box>
-
             </Modal>
         </div>
     );

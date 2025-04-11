@@ -2,7 +2,7 @@ import Container from "./Container";
 
 const Stats = ({ trackedStats, isPremium, determineStat }) => {
   return (
-    <Container className="flex flex-col w-full border-[#111] border shadow-sm p-4">
+    <Container className="flex flex-col w-full dark:border-[#111] dark:border shadow-lg p-4">
       <h2 className="text font-bold mb-4">
         Your Current Plan:{" "}
         <span

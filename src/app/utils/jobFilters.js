@@ -9,9 +9,11 @@
  */
 export function parseUrlToFilters(params) {
     // Only apply filters if we're on the jobs page
-    const pathname = window.location.pathname;
-    if (pathname !== '/jobs') {
-        return getDefaultFilters();
+    if (typeof window !== 'undefined') {
+        const pathname = window.location.pathname;
+        if (pathname !== '/jobs') {
+            return getDefaultFilters();
+        }
     }
     
     return {

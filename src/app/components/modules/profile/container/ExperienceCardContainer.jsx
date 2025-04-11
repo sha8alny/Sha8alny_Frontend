@@ -68,9 +68,9 @@ function calculateDate(from, to, isCurrent = false) {
       return "Invalid date range";
     }
 
-    if (years === 0) return `${months} mths`;
-    if (months === 0) return `${years} yrs`;
-    return `${years} yrs, ${months} mths`;
+    if (years === 0) return `${months} mth(s)`;
+    if (months === 0) return `${years} yr(s)`;
+    return `${years} yr(s), ${months} mth(s)`;
 
   } catch (error) {
     console.error("Error calculating date:", error, { from, to });
@@ -106,15 +106,13 @@ export default function ExperienceCardContainer({job}) {
     };
     
     const employmentType = jobTypes[job?.employmentType] || "Unknown";
-    
-    // Calculate the duration between start and end dates
+
     const duration = calculateDate(
         job?.startDate,
         job?.isCurrent ? null : job?.endDate,
         job?.isCurrent
     );
     
-    // Create a new object with all the required properties
     const updatedJob = {
         ...job,
         employmentType: employmentType,

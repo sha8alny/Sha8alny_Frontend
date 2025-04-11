@@ -16,7 +16,7 @@ import ModVisibility from "../container/ModVisibility";
  */
 export default function ChangeURL({ userInfo }) {
   return (
-    <Container className="border border-[#111] shadow-lg p-4">
+    <Container className="dark:border dark:border-[#111] shadow-lg p-4">
       <div className="flex justify-between">
         <h2 className="text-lg font-semibold mb-4 flex items-center">
           <User className="size-5 mr-2 fill-current" />

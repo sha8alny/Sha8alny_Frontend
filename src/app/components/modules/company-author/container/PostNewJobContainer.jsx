@@ -27,7 +27,7 @@ import { useToast } from "@/app/context/ToastContext";
  *   <PostNewJobContainer onBack={handleBack} />
  * )
  */
-const PostNewJobContainer = ({ onBack,username,logo }) => {
+const PostNewJobContainer = ({ onBack,username,logo, initialJobData=null }) => {
     const [logoPreview, setLogoPreview] = useState(logo ||null);
     const logoInputRef = useRef(null);
     const logoUpload = (e) => {
@@ -37,7 +37,7 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
             console.log("Current logoPreview:", logoPreview);
         }
     };
-    const [newJob, setNewJob] = useState({
+    const [newJob, setNewJob] = useState(initialJobData ||{
         title: "",
         location: "",
         workLocation: "",
@@ -126,12 +126,6 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
 
     return (
       <div className="flex w-full">
-        <SideBarContainer
-        username={username}
-        logoPreview={logoPreview}
-        logoInputRef={logoInputRef}
-        logoUpload={logoUpload}
-        />
         <PostNewJobForm
             newJob={newJob}
             handleChange={handleChange}
@@ -140,7 +134,6 @@ const PostNewJobContainer = ({ onBack,username,logo }) => {
             handleJobSubmit={handleJobSubmit}
             onBack={onBack}
         />  
-        <Analytics />
 
         </div>
     );

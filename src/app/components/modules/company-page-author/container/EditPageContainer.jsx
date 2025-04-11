@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
  */
 
 
-function EditPageContainer({username, logoPreview}){
+function EditPageContainer({username}){
     const [companyName, setCompanyName] = useState("");
     const [companyIndustry, setCompanyIndustry] = useState("");
     const [companyTagline, setCompanyTagline] = useState("");
@@ -40,6 +40,8 @@ function EditPageContainer({username, logoPreview}){
     const [companyLocation, setCompanyLocation] = useState("");
     const [companyURL, setCompanyURL]= useState("");
     const [companyWebsite, setCompanyWebsite] = useState("");
+    const [companyDate, setCompanyDate] = useState("");
+    const [companyPhone, setCompanyPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter(); 
@@ -48,36 +50,36 @@ function EditPageContainer({username, logoPreview}){
         setCompanyName("");
         setCompanyIndustry("");
         setCompanyTagline("");
-        setCompanySize("Select size");
-        setCompanyType("Select type");
+        setCompanySize("");
+        setCompanyType("");
         setCompanyLocation("");
         setCompanyURL("");
         setCompanyWebsite("");
+        setCompanyDate("");
+        setCompanyPhone("");
     }
 
     
     const handleSave = async()=>{
         setLoading(true);
-  
         const companyData = {
-            name: companyName ,
-            username :companyName.toLowerCase().replace(/\s+/g, "-") ,
-            URL: companyURL,
-            industry: companyIndustry ,
-            description: companyTagline ,
-            orgSize: companySize,
-            orgType: companyType,
-            logo: "", 
-            location: companyLocation
+            name: companyName || undefined,
+            username :companyURL || undefined,
+            URL: companyWebsite || undefined,
+            orgSize: companySize || undefined,
+            orgType: companyType || undefined,
+            logo: "" || undefined, 
+            cover:"" || undefined,
+            description: companyTagline || undefined ,
+            industry: companyIndustry || undefined ,
+            location: companyLocation || undefined,
+            phoneNumber: companyPhone || undefined,
+            foundingDate:companyDate || undefined,
         };
-        console.log("name: ", companyName);
-        console.log("type: ", companyType);
-
         try{
             const response = await updateCompany(username, companyData);
-            username = companyName;
-            handleDiscard();
-            router.push(`/company-page-author/${username}?logo=${encodeURIComponent(logoURL)}`);
+            const updatedUsername = companyURL || username;
+            window.location.reload();
         } 
         catch (err) {
             setErrors({ api: err.message || "Failed to update company" })
@@ -89,7 +91,18 @@ function EditPageContainer({username, logoPreview}){
 
     return(
         <div>
-            <EditPage companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyTagline={companyTagline} setCompanyTagline={setCompanyTagline} companySize={companySize} setCompanySize={setCompanySize} companyType={companyType} setCompanyType={setCompanyType} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation}companyURL={companyURL} setCompanyURL={setCompanyURL} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} onSave={handleSave} onDiscard={handleDiscard} loading={loading} logoPreview={logoPreview} errors={errors} setErrors={setErrors} />
+            <EditPage 
+            companyName={companyName} setCompanyName={setCompanyName} 
+            companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} 
+            companyTagline={companyTagline} setCompanyTagline={setCompanyTagline} 
+            companySize={companySize} setCompanySize={setCompanySize} 
+            companyType={companyType} setCompanyType={setCompanyType} 
+            companyLocation={companyLocation} setCompanyLocation={setCompanyLocation}
+            companyURL={companyURL} setCompanyURL={setCompanyURL} 
+            companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
+            companyDate={companyDate} setCompanyDate={setCompanyDate} 
+            companyPhone={companyPhone} setCompanyPhone={setCompanyPhone}
+            onSave={handleSave} onDiscard={handleDiscard} loading={loading} errors={errors} setErrors={setErrors} />
         </div>
     );
 }

@@ -5,7 +5,8 @@ const useUpdateProfile = () => {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: ({ api, data, method}) => updateProfile(api, data, method),
+        mutationFn: ({ api, data, method, isFormData = false }) => 
+            updateProfile(api, data, method, isFormData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["userProfile"] });
         }
