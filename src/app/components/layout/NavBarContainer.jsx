@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useState } from "react";
 import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
+import { handleLogout } from "@/app/services/userManagement";
 
 /**
  * @namespace layout
@@ -41,6 +42,10 @@ function NavbarContainer() {
     const handleNavigation = (path) => {
       router.push(path);
     };
+
+    const handleLogOut = () => {
+      handleLogout();
+    }
   
     if (isLoading) {
       return (
@@ -77,6 +82,7 @@ function NavbarContainer() {
         navigateTo={handleNavigation}
         open={open}
         setOpen={setOpen}
+        handleLogOut={handleLogOut}
       />
     );
   }

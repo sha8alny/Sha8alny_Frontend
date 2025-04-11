@@ -249,3 +249,10 @@ export const handleResetPassword = async (resetCode,newPassword)=>{
   }
 };
 
+export const handleLogout = async () => {
+  sessionStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("isAdmin");
+
+  window.location.href = "/signin";
+}

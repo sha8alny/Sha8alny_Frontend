@@ -131,12 +131,6 @@ const JobsFormContainer = ({username,logo}) => {
                 <JobApplicantsPageContainer jobId={selectedJob} onBack={() => setShowJobApplicants(false)} username={username} logo={logo}  />
               ) : (
                 <>
-                  <SideBarContainer
-                    username={username}
-                    logoPreview={logoPreview}
-                    logoInputRef={logoInputRef}
-                    logoUpload={logoUpload}
-                  />
                   <JobsForm
                     jobs={jobs || []}
                     isLoading={isLoading}
@@ -154,7 +148,6 @@ const JobsFormContainer = ({username,logo}) => {
                     setUpdatedJob={setUpdatedJob}
                     onEditJob={(jobId) => handleEditJob(jobId, username)}
                   />
-                  <Analytics />
                 </>
               )}
             </div>

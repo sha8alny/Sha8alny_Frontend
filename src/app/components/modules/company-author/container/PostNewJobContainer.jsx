@@ -126,12 +126,6 @@ const PostNewJobContainer = ({ onBack,username,logo, initialJobData=null }) => {
 
     return (
       <div className="flex w-full">
-        <SideBarContainer
-        username={username}
-        logoPreview={logoPreview}
-        logoInputRef={logoInputRef}
-        logoUpload={logoUpload}
-        />
         <PostNewJobForm
             newJob={newJob}
             handleChange={handleChange}
@@ -140,7 +134,6 @@ const PostNewJobContainer = ({ onBack,username,logo, initialJobData=null }) => {
             handleJobSubmit={handleJobSubmit}
             onBack={onBack}
         />  
-        <Analytics />
 
         </div>
     );
