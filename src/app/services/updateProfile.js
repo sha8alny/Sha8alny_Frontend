@@ -16,7 +16,6 @@ export const updateProfile = async (api, data, method = "PATCH", isFormData = fa
     body: isFormData ? data : JSON.stringify(data),
   };
 
-  // For GET and DELETE requests, remove the body
   if (method === "GET" || (method === "DELETE" && !data)) {
     delete options.body;
   }
@@ -29,7 +28,6 @@ export const updateProfile = async (api, data, method = "PATCH", isFormData = fa
     throw error;
   }
 
-  // For DELETE operations or others that might not return JSON
   if (method === "DELETE" || response.headers.get("content-length") === "0") {
     return { success: true };
   }

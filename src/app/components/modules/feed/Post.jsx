@@ -57,7 +57,7 @@ export function Post({ cardInfo }) {
     cardInfo.hasMedia && cardInfo.mediaItems && cardInfo.mediaItems.length > 1;
 
   return (
-    <div className="flex flex-col mb-2 gap-2 h-full items-center p-4 rounded-2xl border border-[#111] bg-foreground text-primary w-full">
+    <div className="flex flex-col mb-2 gap-2 h-full items-center p-4 rounded-2xl dark:border dark:border-[#111] bg-foreground text-primary w-full">
       <section className="flex gap-2 items-center justify-between w-full">
         <section className="flex gap-2">
           <div className="size-9 relative bg-gray-600 rounded-full">

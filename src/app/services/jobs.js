@@ -18,7 +18,7 @@ export const fetchJobListings = async ({
   sortBy = null,
   itemsPerPage = 10,
 }) => {
-  const url = new URL(`${apiURL}/jobs/search/${pageParam}`);
+  const url = new URL(`${apiURL}/jobs/search/${pageParam}/${itemsPerPage}`);
   
   // Add any filters from the filters object
   Object.entries(filters).forEach(([key, value]) => {
@@ -102,7 +102,59 @@ export const fetchFilterOptions = async () => {
 
 export const fetchAppliedJobs = async ({ pageParam = 1 }) => {
   const itemsPerPage = 5;
-  const url = new URL(`${apiURL}/jobs/applied/${pageParam}`);
+  const url = new URL(`${apiURL}/jobs/applied/${pageParam}/${itemsPerPage}`);
+
+  try {
+    const response = await fetchWithAuth(url.toString());
+
+    if (response.status === 204) {
+      return { data: [], nextPage: null };
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      data,
+      nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
+    };
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+    throw error;
+  }
+};
+export const fetchArchivedJobs = async ({ pageParam = 1 }) => {
+  const itemsPerPage = 5;
+  const url = new URL(`${apiURL}/jobs/archived/${pageParam}/${itemsPerPage}`);
+
+  try {
+    const response = await fetchWithAuth(url.toString());
+
+    if (response.status === 204) {
+      return { data: [], nextPage: null };
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      data,
+      nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
+    };
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+    throw error;
+  }
+};
+export const fetchInProgressJobs = async ({ pageParam = 1 }) => {
+  const itemsPerPage = 5;
+  const url = new URL(`${apiURL}/jobs/in_progress/${pageParam}/${itemsPerPage}`);
 
   try {
     const response = await fetchWithAuth(url.toString());
@@ -129,7 +181,7 @@ export const fetchAppliedJobs = async ({ pageParam = 1 }) => {
 
 export const fetchSavedJobs = async ({ pageParam = 1 }) => {
   const itemsPerPage = 5;
-  const url = new URL(`${apiURL}/jobs/saved/${pageParam}`);
+  const url = new URL(`${apiURL}/jobs/saved/${pageParam}/${itemsPerPage}`);
 
   //console.log(url.toString());
   const response = await fetchWithAuth(url.toString());
@@ -163,7 +215,7 @@ export const submitJobApplication = async (jobId, data, resume) => {
   // formData.append("name", data.name);
   // formData.append("email", data.email);
   // formData.append("jobId", jobId);
-  formData.append("phone", data.phone);
+  formData.append("phoneNumber", data.phone);
   if (data.coverLetter) {
     formData.append("coverLetter", data.coverLetter);
   }

@@ -2,12 +2,16 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SignUpContainer from '../../app/components/modules/signup/container/SignUpContainer';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
+import { useToast } from "../../app/context/ToastContext";
 import { useEffect } from 'react';
 import { setRecaptchaVerified } from 'react-google-recaptcha';
 import '@testing-library/jest-dom';
 
 console.log("✅ SignUpContainer test file");
 
+jest.mock('../../app/context/ToastContext', () => ({
+  useToast: jest.fn(),
+}));
 beforeAll(() => {
   jest.spyOn(window, 'alert').mockImplementation(() => {});
 });
@@ -42,12 +46,14 @@ jest.mock('react-google-recaptcha', () => {
 
 describe('SignUpContainer', () => {
   let mockMutate, mockPush;
+  const mockShowToast = jest.fn();
 
   beforeEach(() => {
     mockPush = jest.fn();
     mockMutate = jest.fn();
 
     useRouter.mockReturnValue({ push: mockPush });
+    useToast.mockReturnValue(mockShowToast);
 
     useMutation.mockReturnValue({
       mutate: mockMutate,
@@ -127,7 +133,7 @@ describe('SignUpContainer', () => {
     console.log("✅ mockMutate calls:", mockMutate.mock.calls);
   });
 
-  it('redirects to the Home page on successful registration', async () => {
+  it('show the success toast redirects to the complete profile on successful registration', async () => {
     const successMock = jest.fn((data, options) => {
       console.log('✅ Mutation data:', data);
       console.log('✅ Mutation options:', options);
@@ -151,10 +157,11 @@ describe('SignUpContainer', () => {
   
     await waitFor(() => {
       expect(successMock).toHaveBeenCalledTimes(1);
-      expect(mockPush).toHaveBeenCalledWith('/');
+      expect(mockShowToast).toHaveBeenCalledWith("Registration Successful & Auto-Login Successful!");
+      expect(mockPush).toHaveBeenCalledWith('/complete-profile');
     });
   });
-  it('shows an alert if reCAPTCHA is not verified', async () => {
+  it('shows an alert toast if reCAPTCHA is not verified', async () => {
     setRecaptchaVerified(false); // Simulate unverified reCAPTCHA
   
     render(<SignUpContainer />);
@@ -176,7 +183,7 @@ describe('SignUpContainer', () => {
   
     // Simulate the mutation throwing an error and trigger the onError callback
     const errorMock = jest.fn((_, { onError }) => {
-      onError(new Error('Invalid credentials'));
+      onError(new Error('Email or Username already taken!'));
     });
   
     useMutation.mockReturnValue({
@@ -195,8 +202,8 @@ describe('SignUpContainer', () => {
     // Wait for alert to be triggered
     await waitFor(() => {
       expect(errorMock).toHaveBeenCalledTimes(1);
-      expect(window.alert).toHaveBeenCalledWith('Invalid credentials');
-    });
+      expect(mockShowToast).toHaveBeenCalledWith("Email or Username already taken!", false);
+      });
   });
   it("shows error for invalid email format", async () => {
     render(<SignUpContainer />);

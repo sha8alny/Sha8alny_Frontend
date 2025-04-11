@@ -36,7 +36,7 @@ export default function ProfilePresentation({
 }) {
   return (
     <div>
-      <main className="flex flex-col md:flex-row gap-10 p-8 md:px-32 bg-background">
+      <main className="flex flex-col lg:flex-row gap-10 p-8 lg:px-32 bg-background">
         <section className="md:flex-[3_1_0]">
           <ProfileHeader userProfile={userProfile} isMyProfile={isMyProfile}/>
           <About about={userProfile.about} isMyProfile={isMyProfile}/>

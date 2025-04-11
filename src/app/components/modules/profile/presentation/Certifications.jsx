@@ -2,6 +2,7 @@ import Container from "@/app/components/layout/Container";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import ModCertificate from "../container/ModCertificate";
+import { Separator } from "@/app/components/ui/Separator";
 
 /**
  * @namespace profile
@@ -30,7 +31,7 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
       <div className="relative size-12 bg-gray-700 rounded-full">
         <Image
           src={
-            certificate?.issuingOrganisationLogo ?? "https://picsum.photos/200"
+            (certificate?.issuingOrganisationLogo) ?? "https://picsum.photos/200"
           }
           fill
           alt="Company Logo"
@@ -82,7 +83,7 @@ export default function Certifications({
 }) {
   return (
     (certifications.length > 0 || isMyProfile) && (
-      <Container className="border border-[#111] rounded-xl shadow-lg mt-4 p-8">
+      <Container className="dark:border dark:border-[#111] rounded-xl shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Certificates {isMyProfile && <ModCertificate adding />}
         </h3>
@@ -91,7 +92,7 @@ export default function Certifications({
             (exp, index) => (
               <div className="space-y-8" key={index}>
                 <CertificateCard certificate={exp} isMyProfile={isMyProfile} />
-                {index !== certifications.length - 1 && <hr />}
+                {index !== certifications.length - 1 && <Separator />}
               </div>
             )
           )}

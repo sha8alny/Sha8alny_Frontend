@@ -75,7 +75,7 @@ const RecentSearches = ({
           variant="ghost"
           size="sm"
           onClick={onClearAll}
-          className="text-xs text-gray-500 hover:text-gray-700"
+          className="text-xs text-gray-500 hover:text-text"
         >
           Clear all
         </Button>
@@ -90,7 +90,7 @@ const RecentSearches = ({
                   <Button
                     variant="outline"
                     onClick={() => onSearchClick(search.query)}
-                    className="border-blue-400 hover:bg-blue-50 text-sm rounded-full text-blue-600 flex items-center gap-1 group"
+                    className="bg-hover border-secondary hover:text-secondary text-sm rounded-full text-text flex items-center gap-1 group"
                     aria-label={`Search for ${search.label}`}
                   >
                     {search.filters &&
@@ -101,14 +101,19 @@ const RecentSearches = ({
                     <span className="text-xs text-gray-400 hidden sm:inline">
                       {formatTimestamp(search.timestamp)}
                     </span>
-                    <Clear
-                      className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    <div 
                       onClick={(e) => {
                         e.stopPropagation();
+                        e.preventDefault();
                         onClearOne(index);
                       }}
+                      className="cursor-pointer"
                       aria-label="Remove search"
-                    />
+                    >
+                      <Clear
+                        className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
+                    </div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
