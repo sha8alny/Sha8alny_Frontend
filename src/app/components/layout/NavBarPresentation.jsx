@@ -149,6 +149,7 @@ export default function NavbarPresentation({
   navigateTo,
   open,
   setOpen,
+  handleLogOut,
 }) {
   return (
     <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6">
@@ -266,7 +267,7 @@ export default function NavbarPresentation({
                 variant="ghost"
                 className="justify-start gap-3 cursor-pointer hover:bg-primary/10"
                 onClick={() => {
-                  navigateTo("/logout");
+                  handleLogOut();
                   setOpen(false);
                 }}
               >
@@ -376,7 +377,7 @@ export default function NavbarPresentation({
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigateTo("/logout")}>
+            <DropdownMenuItem onClick={() => handleLogOut()}>
               <LogOut sx={{ fontSize: 16 }} />
               <span>Log Out</span>
             </DropdownMenuItem>
