@@ -1,103 +1,99 @@
-// ViewApplicationDetailsContainer.test.js
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import ViewApplicationDetailsContainer from "../../app/components/modules/company-author/container/ViewApplicationDetailsContainer";
+import ViewApplicationDetailsModal from "../../app/components/modules/company-author/presentation/ViewApplicationDetailsModal";
+import { getApplication, updateApplication } from "../../app/services/companyManagment";
+import { useToast } from "../../app/context/ToastContext";
+import "@testing-library/jest-dom";
 
-import { render, screen, waitFor, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
-import ViewApplicationDetailsContainer from '../../app/components/modules/company-author/container/ViewApplicationDetailsContainer';
-import { getApplication } from '../../app/services/companyManagment';
-import '@testing-library/jest-dom';
+// Mock dependencies
+jest.mock("../../app/services/companyManagment", () => ({
+    getApplication: jest.fn(),
+    updateApplication: jest.fn(),
+}));
 
-// Mock the service function
-jest.mock('../../app/services/companyManagment');
+jest.mock("../../app/context/ToastContext", () => ({
+    useToast: jest.fn(),
+}));
 
-const mockApplication = {
-  jobTitle: 'Software Engineer',
-  fullName: 'John Doe',
-  email: 'john@example.com',
-  phoneNumber: '123-456-7890',
-  coverLetter: 'I am excited to join your team.',
-  resumeFile: { name: 'resume.pdf' },
-  resumeUrl: '/mock/resume.pdf',
-};
+describe("ViewApplicationDetailsContainer", () => {
+    const mockToast = jest.fn();
+    const mockOnClose = jest.fn();
+    const jobId = "job-123";
+    const applicantId = "applicant-456";
 
-describe('ViewApplicationDetailsContainer', () => {
-  const jobId = 'job-123';
-  const applicantId = 'applicant-456';
-  const onClose = jest.fn();
+    const mockApplication = {
+        avatar: "avatar.jpg",
+        name: "John Doe",
+        location: "New York",
+        email: "john@example.com",
+        phone: "123-456-7890",
+        applied_date: "2023-10-01",
+        resume_url: "/mock/resume.pdf",
+        status: "accepted",
+        notes: "Initial review completed.",
+    };
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('fetches and displays application details', async () => {
-    // Mock API response
-    getApplication.mockResolvedValue(mockApplication);
-
-    render(
-      <ViewApplicationDetailsContainer
-        jobId={jobId}
-        applicantId={applicantId}
-        onClose={onClose}
-      />
-    );
-
-    // Check loading state
-    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
-
-
-    // Wait for the data to load
-    await waitFor(() => {
-      expect(getApplication).toHaveBeenCalledWith(jobId, applicantId);
-      expect(screen.getByText(/Application for Software Engineer/i)).toBeInTheDocument();
-      expect(screen.getByTestId('fullName')).toBeInTheDocument();
-      expect(screen.getByTestId('emailAddress')).toBeInTheDocument();
-      expect(screen.getByTestId('phoneNumber')).toBeInTheDocument();
-      expect(screen.getByTestId('coverLetter')).toBeInTheDocument();
-
-    });
-  });
-
-it('renders application details on success', async () => {
-    getApplication.mockResolvedValueOnce({
-        fullName: 'John Doe',
-        email: 'john@example.com',
-        phoneNumber: '123-456-7890',
-        coverLetter: 'I am excited to join your team.',
-        resumeFile: { name: 'resume.pdf' },
-        resumeUrl: '/mock/resume.pdf',
+    beforeEach(() => {
+        jest.clearAllMocks();
+        useToast.mockReturnValue(mockToast);
+        getApplication.mockResolvedValue(mockApplication);
     });
 
-    render(<ViewApplicationDetailsContainer jobId="1" applicantId="123" onClose={jest.fn()} />);
+    test("fetches and displays application details", async () => {
+        getApplication.mockResolvedValue(mockApplication);
 
-    // Wait for modal content
-    await waitFor(() => expect(screen.getByText('Application for')).toBeInTheDocument());
-});
+        render(<ViewApplicationDetailsContainer jobId={jobId} applicantId={applicantId} onClose={mockOnClose} />);
 
-  it('closes the modal when the close button is clicked', async () => {
-    getApplication.mockResolvedValue(mockApplication);
+        expect(screen.getAllByText(/loading.../i).length).toBeGreaterThan(0);
 
-    render(
-      <ViewApplicationDetailsContainer
-        jobId={jobId}
-        applicantId={applicantId}
-        onClose={onClose}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/Application for Software Engineer/i)).toBeInTheDocument();
+        await waitFor(() => {
+            expect(getApplication).toHaveBeenCalledWith(jobId, applicantId);
+            expect(screen.getByText("John Doe")).toBeInTheDocument();
+            expect(screen.getByText("New York")).toBeInTheDocument();
+        });
     });
 
-    // Simulate closing the modal
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
-
-    // Ensure the modal is closed
-    await waitFor(() => {
-      expect(screen.queryByText(/Application for Software Engineer/i)).not.toBeInTheDocument();
+    test('calls updateApplication and shows success message when Save Changes is clicked', async () => {
+      // Mock the success behavior of the updateApplication
+      updateApplication.mockResolvedValue({}); // Simulate successful update
+    
+      // Render the component
+      render(
+        <ViewApplicationDetailsContainer
+          jobId={jobId}
+          applicantId={applicantId}
+          onClose={mockOnClose}
+        />
+      );
+    
+      // Ensure the component initially shows the expected values
+      await waitFor(() => {
+        expect(screen.getByText("John Doe")).toBeInTheDocument();
+        expect(screen.getByText("New York")).toBeInTheDocument();
+      });
+      // Now simulate the "Save Changes" button click
+      fireEvent.click(screen.getByText('Save Changes'));
+    
+      // Wait for the update function to be called with the correct parameters
+      await waitFor(() => {
+        expect(updateApplication).toHaveBeenCalledWith(jobId, applicantId, {
+          status: "accepted",  // Initial status value from mockApplication
+          notes: "Initial review completed.", // Initial notes value from mockApplication
+        });
+        expect(mockToast).toHaveBeenCalledWith('Application updated successfully');
+      });
     });
-  });
+    
 
-  it('does not call API if jobId or applicantId is missing', () => {
-    render(<ViewApplicationDetailsContainer jobId={null} applicantId={null} onClose={onClose} />);
-    expect(getApplication).not.toHaveBeenCalled();
-  });
+    test("handles API error gracefully", async () => {
+        getApplication.mockRejectedValue(new Error("API Error"));
+
+        render(<ViewApplicationDetailsContainer jobId={jobId} applicantId={applicantId} onClose={mockOnClose} />);
+
+        await waitFor(() => {
+            expect(getApplication).toHaveBeenCalledWith(jobId, applicantId);
+            expect(screen.queryByText("John Doe")).not.toBeInTheDocument();
+        });
+    });
 });

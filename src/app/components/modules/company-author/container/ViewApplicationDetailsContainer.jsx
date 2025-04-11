@@ -65,11 +65,16 @@ const ViewApplicationDetailsContainer = ({jobId, applicantId, onClose}) => {
     const handleSave = async ()=>{
         setIsUpdating(true);
         try {
-            await updateApplication( jobId,applicantId, {status, notes});
+            const applicationResponse=await updateApplication( jobId,applicantId, {status, notes});
             console.log("✅ Application updated successfully.");
-            toast("Application updated successfully");
+            if (applicationResponse){
+            toast("Application updated successfully");}
+            else{
+                toast("Failed to update application",false);
+            }
         } catch (error) {
             console.error("❌ Error updating application:", error);
+            toast("Failed to update application",false);
         } finally {
             setIsUpdating(false);
         }
