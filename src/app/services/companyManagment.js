@@ -125,6 +125,7 @@ export const JobApplicants = async (jobId, page = 1) => {
         const applicantsResponse = await fetchWithAuth(`${apiURL}/employers/${jobId}/applicants/${page}/${pageSize}`,{
             method: "GET",
             headers: { "Content-Type": "application/json" },
+            Authorization: `Bearer ${token.trim()}`,
         });
         if (!applicantsResponse.ok) {
             throw new Error("Failed to fetch applicants");}
@@ -169,8 +170,12 @@ export const updateApplication = async (jobId,applicantId, data) => {
       });
   
       if (!response.ok) throw new Error("Failed to update application");
+        const result = await response.json();
+        console.log("Application updated successfully:", result);
+        return result;
     } catch (error) {
       console.error("Error updating application:", error);
+        return false;
     }
   };
   

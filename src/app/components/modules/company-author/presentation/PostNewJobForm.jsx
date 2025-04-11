@@ -60,6 +60,7 @@ const PostNewJobForm =({
                 
                <Label className="text-text text-lg" htmlFor="title">Enter Job Title</Label>
                     <Input className="text-text text-md"
+                        data-testid="title"
                         id="title"
                         name="title"
                         value={newJob.title}
@@ -70,6 +71,7 @@ const PostNewJobForm =({
                 
                 <Label className="text-text text-lg" htmlFor="location">Enter Job Location</Label>
                     <Input className="text-text text-md"
+                        data-testid="location"
                         id="location"
                         name="location"
                         value={newJob.location}
@@ -80,6 +82,7 @@ const PostNewJobForm =({
 
                 <Label className="text-text text-lg" htmlFor="description">Enter Job Description</Label>
                     <Input className="text-text text-md"
+                        data-testid="description"
                         id="description"
                         name="description"
                         value={newJob.description}
@@ -90,6 +93,8 @@ const PostNewJobForm =({
 
                 <Label className="text-text text-lg" htmlFor="employmentType">Employment Type</Label>
                     <Select
+                        data-testid="employmentType"
+                        role="combobox"
                         id="employmentType"
                         name="employmentType"
                         value={newJob.employmentType}
@@ -108,9 +113,11 @@ const PostNewJobForm =({
                     </Select>
                     {errors.employmentType && <p className="text-red-500 text-sm">{errors.employmentType}</p>}
 
-                <Label className="text-text text-lg" htmlFor="workLocation">Work Location</Label>
+                <Label  className="text-text text-lg" htmlFor="work">Work Location</Label>
                     <Select
-                        id="workLocation"
+                        data-testid="work"
+                        role="combobox"
+                        id="work"
                         name="workLocation"
                         value={newJob.workLocation}
                         onValueChange={(value) => handleChange({ target: { name: "workLocation", value } })}
@@ -130,6 +137,7 @@ const PostNewJobForm =({
 
                 <Label className="text-text text-lg" htmlFor="industry">Enter Industry</Label>
                     <Input className="text-text text-md"
+                        data-testid="industry"
                         id="industry"
                         name="industry"
                         value={newJob.industry}
@@ -140,6 +148,8 @@ const PostNewJobForm =({
 
                 <Label className="text-text text-lg" htmlFor="experience">Experience</Label>
                     <Select
+                        data-testid="experience"
+                        role="combobox"
                         id="experience" 
                         name="experience"
                         value={newJob.experience}
@@ -161,6 +171,7 @@ const PostNewJobForm =({
 
                 <Label className="text-text text-lg" htmlFor="salary">Enter Salary</Label>
                     <Input className="text-text text-md"
+                        data-testid="salary"
                         id="salary"
                         name="salary"
                         type="number"
