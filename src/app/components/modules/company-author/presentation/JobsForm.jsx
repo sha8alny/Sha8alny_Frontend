@@ -50,8 +50,8 @@ import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@
 const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, onNextPage, onPrevPage, hasMore, onDeleteJob,onEditJob, setUpdatedJob}) => {
 
     return(
-        <div className="flex-grow">
-        <section className="flex-grow p-8 bg-foreground rounded-lg shadow-xl m-8 max-w-2xl mt-5 bottom-8 grid grid-cols-2">
+        <div className="flex-grow items-center">
+        <section className="w-full p-8 bg-foreground rounded-lg shadow-xl w-full grid grid-cols-2">
         <div>
         <h1 className="text-2xl text-semibold text-secondary">Jobs</h1>
         <p className="text-sm text-text">Manage your page's 
@@ -65,7 +65,7 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
 
             </div>
         </section> 
-        <section className="flex-grow p-10 bg-foreground rounded-lg shadow-xl m-8 max-w-2xl min-h-138 ">
+        <section className="flex-grow p-10 bg-foreground rounded-lg shadow-xl w-full mt-5 min-h-138 ">
         <h1 className="text-3xl justify-center text-semibold text-secondary">Posted Jobs</h1>
         <hr className="border-secondary  mt-4"/>
         {isLoading ?( <p className="text-text text-xl text-semibold">Loading...</p> ) : ( jobs.length === 0 ? (

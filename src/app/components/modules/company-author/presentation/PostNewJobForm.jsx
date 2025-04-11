@@ -44,7 +44,7 @@ const PostNewJobForm =({
     onBack
   })=>{
     return(
-        <div className="bg-foreground flex-grow p-6 rounded-lg  max-w-2xl m-5 relative grid grid-cols-1 gap-6">
+        <div className="bg-foreground flex-grow p-6 rounded-lg w-full relative grid grid-cols-1 gap-6">
         <div className="grid grid-cols-2">
         <h2 className="text-3xl text-secondary font-semibold mb-4">Post New Job</h2>
         <div className="flex justify-end">

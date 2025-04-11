@@ -2,8 +2,6 @@
 import { useState, useEffect } from "react";
 import JobApplicantsPage from "../presentation/JobApplicantsPage";
 import { JobApplicants } from "../../../../services/companyManagment";
-import Analytics from "../../company-page-author/presentation/Analytics";
-import SideBarContainer from "../../company-page-author/container/SideBarContainer";
 import { useRef } from "react";
 
 /**
@@ -131,12 +129,6 @@ const closeApplicationDetails = () => {
 
 return (
     <div className="flex w-full">
-    <SideBarContainer
-    username={username}
-    logoPreview={logoPreview}
-    logoInputRef={logoInputRef}
-    logoUpload={logoUpload}
-    />
     <JobApplicantsPage 
     Applicants={applicants || []}
      isLoading={isLoading} 
@@ -150,7 +142,6 @@ return (
      selectedApplicant={selectedApplicant}
     onCloseApplicationDetails={closeApplicationDetails}
      />
-     <Analytics />
     </div>
 );
 
