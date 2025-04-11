@@ -25,7 +25,6 @@ function PostPageContainer({ username, logo }) {
                     views: 0, 
                     logo: logo,
                 };
-                console.log("Post after adding logo:", createdPost); 
                 setPosts((prevPosts) => [createdPost, ...prevPosts]);
             }
         } catch (error) {

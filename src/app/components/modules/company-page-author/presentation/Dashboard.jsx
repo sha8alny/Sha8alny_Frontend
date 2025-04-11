@@ -1,11 +1,11 @@
 import { Button } from "@/app/components/ui/Button";
-export default function Dashboard({username, goToPostsPage}) {
+export default function Dashboard({company, goToPostsPage}) {
     return(
         <div className="mb-6 rounded-lg bg-[var(--foreground)] p-6 shadow-md">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <div>
                 <h2 className="text-xl font-bold text-zinc-100">Welcome back, 
-                    {username.charAt(0).toUpperCase() + username.slice(1)}
+                    {company?.name}
                 </h2>
                 <p className="text-zinc-400">Here's what's happening with your account today</p>
               </div>

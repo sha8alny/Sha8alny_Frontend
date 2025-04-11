@@ -32,7 +32,7 @@ function SelectFieldContainer({companySize, setCompanySize, companyType, setComp
 
            <SelectField label="Organization type" name="company-type" options={[
             {label:"Public company", value:"Public company"},
-            {label:"Self-employed", value:"Self-employed"},
+            {label:"Self employed", value:"Self employed"},
             {label:"Government agency", value:"Government agency"},
             {label:"Nonprofit", value:"Nonprofit"},
             {label:"Sole proprietorship", value:"Sole proprietorship"},

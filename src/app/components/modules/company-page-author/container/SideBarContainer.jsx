@@ -71,32 +71,16 @@ import { updateCompany } from "@/app/services/companyManagment";
  * @type {Array<{name: string, href: string, icon: JSX.Element, action?: Function}>}
  */
 
-function SideBarContainer({username, logo ,setLogo }){
+function SideBarContainer({company, username, logo ,setLogo }){
     const pathname= usePathname();
     const isActive = (href) => pathname.startsWith(href);
-    const [error, setError] = useState(null);
-    const [company, setCompany] = useState(null);
     const [isModalOpen, setModalOpen] = useState(false); 
     const [modalType, setModalType] = useState(null);
+    const [isCompany, setCompany] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
     const coverInputRef = useRef(null);
     const logoInputRef = useRef(null);
     const router = useRouter(); 
-
-    
-    useEffect(() => {
-        const fetchCompany = async () => {
-        try {
-            const data = await getCompany(username);
-            console.log("Fetched company:", data); 
-            setCompany(data);
-        } catch (err) {
-            setError(err.message);
-        } 
-        };
-
-        if (username) fetchCompany();
-    }, [username]);
 
     const coverUpload = async(e) => {
         const selectedFile=e.target.files[0];

@@ -62,10 +62,9 @@ function EditPageContainer({username}){
     
     const handleSave = async()=>{
         setLoading(true);
-        console.log("Sending Data:", { companySize, companyType });
         const companyData = {
             name: companyName || undefined,
-            username :companyName.toLowerCase().replace(/\s+/g, "-") || undefined,
+            username :companyURL || undefined,
             URL: companyWebsite || undefined,
             orgSize: companySize || undefined,
             orgType: companyType || undefined,
@@ -79,9 +78,8 @@ function EditPageContainer({username}){
         };
         try{
             const response = await updateCompany(username, companyData);
-            username = companyName;
-            handleDiscard();
-            router.push(`/company-admin/${username}/company-page-author/?logo=${encodeURIComponent(logoURL)}`);
+            const updatedUsername = companyURL || username;
+            window.location.reload();
         } 
         catch (err) {
             setErrors({ api: err.message || "Failed to update company" })

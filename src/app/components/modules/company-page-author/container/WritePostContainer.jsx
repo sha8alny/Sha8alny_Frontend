@@ -56,18 +56,8 @@ function WritePostContainer({company, onPostSubmit, logo}){
         }
     };
 
-    const videoUpload = (e)=>{
-        const selectedFile=e.target.files[0];
-        if (selectedFile && selectedFile.type.startsWith("video/")){
-            setFile(selectedFile.name);
-            setPreview(URL.createObjectURL(selectedFile));
-        }
-
-    }
-
     const triggerFileInput = (fileType) => {
         if (fileType === "image") imageInputRef.current?.click();
-        if (fileType === "video") videoInputRef.current?.click();
     };
 
     const handleSubmit = async() => {
@@ -101,8 +91,8 @@ function WritePostContainer({company, onPostSubmit, logo}){
     };
     return(
         <div>
-            <WritePost company={company} text={text} setText={setText} onImageUpload={imageUpload} onVideoUpload={videoUpload} preview={preview} triggerFileInput={triggerFileInput}
-            imageInputRef={imageInputRef} videoInputRef={videoInputRef} onSubmit={handleSubmit} 
+            <WritePost company={company} text={text} setText={setText} onImageUpload={imageUpload} preview={preview} triggerFileInput={triggerFileInput}
+            imageInputRef={imageInputRef} onSubmit={handleSubmit} 
             logo={logo} openArticleModal={() => setModalOpen(true)}/>
             <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
             <Box sx={{

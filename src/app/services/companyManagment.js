@@ -280,7 +280,6 @@ export const updateCompany = async (companyUsername, companyData) => {
             throw new Error(`Failed to update company: ${response.status} ${responseText}`);
         }
         try {
-            const parsedResponse = JSON.parse(responseText);
             return JSON.parse(responseText);
         } catch {
             return { message: responseText };

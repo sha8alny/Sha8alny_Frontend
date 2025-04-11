@@ -25,6 +25,9 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
 
   const handleNameError = (e) =>{
     const name = e.target.value;
+    if (!isCompanyURLEdited && name !== "") {
+      setCompanyURL(name); // set URL BEFORE companyName so it reflects instantly
+    }
     setCompanyName(name);
     const nameRegex = /^[A-Za-z\s]{2,50}$/; //Allow only letters and spaces, Minimum length:2 , Maximum length:50
     if (name===""){
@@ -36,17 +39,16 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
     else{
       setErrors((prev) => ({ ...prev, companyName: "" }));
     }
-    if(!isCompanyURLEdited){
-      setCompanyURL(name);
-    }
   };
 
   const handleURlChange=(e)=>{
     const url = e.target.value;
+    if (!isCompanyURLEdited && url !== companyName) {
+      setIsCompanyURLEdited(true);
+    }
     setCompanyURL(url);
-    setIsCompanyURLEdited(true);
     const URLRegex= /^[a-zA-Z0-9-]{3,}$/;  //Allowed characters are letters, numbers and hyphens 
-    if(!URLRegex.test(url)){
+    if(!URLRegex.test(url) && url !== ""){
       setErrors((prev) => ({ ...prev, companyURL: "Only letters, numbers and hyphens are allowed." }));
     }
     else{
@@ -89,9 +91,20 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
     }
   };
 
-  const handleDateChange = (e) =>{
-    setCompanyDate(e.target.value);
+  const handleDateChange = (e) => {
+    const rawDate = e.target.value; // "2025-04-09"
+    const currentTime = new Date();
+    const dateWithTime = new Date(`${rawDate}T${currentTime.toTimeString().split(" ")[0]}Z`);
+    const isoDate = dateWithTime.toISOString(); // Convert to ISO 8601 format
+    setCompanyDate(isoDate); // Save the ISO-formatted date
+    console.log("ISO Date:", isoDate);
   };
+
+  const formatDateForInput = (isoDate) => {
+    if (!isoDate) return ""; // Handle empty date
+    const date = new Date(isoDate);
+    return date.toISOString().split("T")[0]; // Extract "yyyy-MM-dd" part
+};
 
   const handlePhoneChange = (e) =>{
     setCompanyPhone(e.target.value);
@@ -99,11 +112,11 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
 
   return (
     <div>
-      <InputField label="Name" type="text" name="company-name" placeholder="Add your organization's name" maxLength={120} required selectedname={companyName} onChange={handleNameError}/>
+      <InputField label="Name" name="company-name" type="text"  placeholder="Add your organization's name" required selectedname={companyName} maxLength={120} onChange={handleNameError}/>
       {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
 
       <div>
-        <InputField label="shaغalny.com/company/" type="text"  name="company-url" placeholder="Add your unique shaغalny address" required selectedname={companyURL || companyName} onChange={handleURlChange} />
+        <InputField label="shaغalny.com/company/"  name="company-url" type="text" placeholder="Add your unique shaغalny address" required selectedname={companyURL} onChange={handleURlChange} />
         <a href="#" className="mt-4 hover:underline font-bold text-[var(--secondary)]">Learn more about the Page Public URL </a>  
         {setErrors && <p className="text-red-500 text-sm mt-1">{errors.companyURL}</p> }
       </div>
@@ -116,7 +129,7 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
       <InputField label="Industry" type="text" name="company-industry" placeholder="ex:Information Services" required selectedname={companyIndustry} onChange={handleIndustryError}/> 
       {setErrors && <p className="text-red-500 text-sm mt-1">{errors.companyIndustry}</p>}
 
-      <InputField label="Founding Date" type="date" name="company-date" placeholder="Select a date" required selectedname={companyDate} onChange={handleDateChange}/>
+      <InputField label="Founding Date" type="date" name="company-date" placeholder="Select a date" required selectedname={formatDateForInput(companyDate)} onChange={handleDateChange}/>
       
       <InputField label="Phone Number" type="tel" name="company-number" placeholder="Add your phone number" selectedname={companyPhone} onChange={handlePhoneChange}/>
     </div> 

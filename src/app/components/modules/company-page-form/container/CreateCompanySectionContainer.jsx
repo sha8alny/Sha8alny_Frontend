@@ -81,8 +81,8 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         setLoading(true);
         setError(null);
         setErrors({}); 
-        let logoURL= null;
-        let coverURL = null;
+        let logoURL= undefined;
+        let coverURL = undefined;
 
         if (file) {
             const formData = new FormData();
@@ -97,23 +97,22 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         }
 
         const companyData = {
-            username: companyName.toLowerCase().replace(/\s+/g, "-"),
+            username: companyURL,
             name: companyName,
-            URL: companyWebsite || null, 
+            URL: companyWebsite || undefined, 
             orgSize: companySize,
             orgType: companyType, 
-            logo: null || logoURL, 
-            cover: null || coverURL, 
-            description: companyTagline,
+            logo: undefined || logoURL, 
+            cover: undefined || coverURL, 
+            description: companyTagline || undefined,
             industry: companyIndustry,
             location: companyLocation,
-            phoneNumber:companyPhone,
+            phoneNumber:companyPhone || undefined,
             foundingDate:companyDate,
         };
 
         try {
-            logoURL=null;
-           await createCompany(companyData);
+            const response = await createCompany(companyData);
             router.push(`/company-admin/${companyData.username}/company-page-author/?logo=${encodeURIComponent(logoURL||'')}`);
         } catch (err) {
             console.log(err.message);
