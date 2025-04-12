@@ -9,7 +9,9 @@ function PostPage(){
     const logo = searchParams.get("logo");
     return(
         <div className="space-y-6">
-            <PostPageContainer username={username} logo={logo}/>
+            <Suspense fallback={<div>Loading...</div>}>
+                <PostPageContainer username={username} logo={logo}/>
+            </Suspense>
         </div>
     );
 }
