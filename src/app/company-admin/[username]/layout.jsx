@@ -98,7 +98,9 @@ export default function CompanyAdminLayout({ children }) {
                 
                 {/* Main content */}
                 <main className="flex-1 overflow-auto p-4 md:p-6 flex flex-col">
-                    {children && React.cloneElement(children, { logo })}
+                    <Suspense fallback={<div>Loading...</div>}>
+                        {children && React.cloneElement(children, { logo })}
+                    </Suspense>
                 </main>
                 
                 {/* Analytics*/}
