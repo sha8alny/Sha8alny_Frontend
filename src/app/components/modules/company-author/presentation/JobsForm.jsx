@@ -84,14 +84,14 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
                 onShowApplicants(job._id)}}
            className="mt-2 md:mt-0 text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 px-4 py-1 ">Show Applicants</Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
             <div>
             <p className="text-text">{job.location}</p>
             <p className="text-text">{job.industry}</p>
             <p className="text-secondary">{job.employmentType}</p>
             <p className="text-secondary font-bold">${job.salary}</p>
             </div>
-            <div className="hidden lg:flex relative ml-8 flex items-center justify-center h-20"> 
+            <div className="hidden lg:flex relative  flex items-center justify-center h-20"> 
             <div className="w-[4px] h-17 bg-text"></div>
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-text w-3 h-3 rounded-full"></div>
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-text w-3 h-3 rounded-full"></div>
