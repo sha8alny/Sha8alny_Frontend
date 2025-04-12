@@ -2,7 +2,7 @@ import SettingsAccountPrefsContainer from "../container/SettingsAccountPrefsCont
 import SettingsSecurityContainer from "../container/SettingsSecurityContainer";
 import SettingsSidebarContainer from "../container/SettingsSidebarContainer";
 import SettingsNavbarContainer from "../container/SettingsNavbarContainer";
-
+import { Suspense } from "react";
 /**
  * @namespace settings
  * @module settings
@@ -24,7 +24,15 @@ export default function SettingsPresentation({
     <div className="flex flex-col h-screen w-screen bg-background overflow-x-hidden overflow-y-scroll">
       {/* <SettingsNavbarContainer /> */}
       <div className="flex flex-col md:flex-row h-full">
-        <SettingsSidebarContainer setActiveSetting={setActiveSetting} />
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-full w-full">
+              Loading...
+            </div>
+          }
+        >
+          <SettingsSidebarContainer setActiveSetting={setActiveSetting} />
+        </Suspense>
         <div className="flex flex-col gap-4 p-8 rounded-lg h-full w-full">
           {activeSetting === "Account Preferences" && (
             <SettingsAccountPrefsContainer />
