@@ -181,7 +181,8 @@ describe('JobDetailsContainer', () => {
       id: 4, 
       title: 'Senior Developer', 
       employmentType: 'Full-time',
-      salary: '120000',
+      salary : 120000,
+      salaryFormatted: 120000,
       createdAt: new Date('2023-05-15'),
       workLocation: 'Remote'
     };
@@ -202,7 +203,7 @@ describe('JobDetailsContainer', () => {
     );
 
     expect(screen.getByText('Full-time')).toBeInTheDocument();
-    expect(screen.getByText('$120000')).toBeInTheDocument();
+    expect(screen.getByText('120000')).toBeInTheDocument();
     expect(screen.getByText('Remote')).toBeInTheDocument();
     expect(screen.getByText(/Posted:/)).toBeInTheDocument();
   });
