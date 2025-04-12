@@ -42,6 +42,10 @@ import { useMutation } from "@tanstack/react-query";
 function WritePostContainer({company, onPostSubmit, logo}){
     const [text, setText] = useState("");
     const [preview, setPreview]= useState(null);
+    const [tags, setTags]= useState([]);
+    const [taggedUsers, setTaggedUsers]= useState([]);
+    const [images, setImages]= useState([]);
+    const [videos, setVideos]= useState(null);
     const [error, setError]= useState(null);
     const [file, setFile]= useState(null);
     const [isModalOpen, setModalOpen] = useState(false);
@@ -81,6 +85,7 @@ function WritePostContainer({company, onPostSubmit, logo}){
             formData.append("media", videos);
         }
         console.log(formData);
+        onPostSubmit(formData);
     };
 
     const handleArticle = () => {
@@ -98,7 +103,7 @@ function WritePostContainer({company, onPostSubmit, logo}){
         setModalOpen(false); 
     };
     return(
-        <div>
+        <div className="max-w-2xl mx-auto mb-10">
             <WritePost company={company} text={text} setText={setText} onImageUpload={imageUpload} preview={preview} triggerFileInput={triggerFileInput}
             imageInputRef={imageInputRef} onSubmit={handleSubmit} 
             logo={logo} openArticleModal={() => setModalOpen(true)}/>

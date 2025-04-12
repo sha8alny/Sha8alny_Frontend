@@ -38,8 +38,8 @@ function LeftSidebar({ addButton = false }) {
     { name: "Plan Expiry Date", icon: CalendarMonth },
   ];
 
-  const isExpired = new Date(sideBar?.expiryDate) < new Date();
-  const isPremium = sideBar?.isPremium;
+  const isExpired = new Date(sideBar?.planDetails?.expiryDate) < new Date();
+  const isPremium = sideBar?.planDetails?.isPremium;
 
   const determineStat = (stat) => {
     const getColor = (value, limit) => {

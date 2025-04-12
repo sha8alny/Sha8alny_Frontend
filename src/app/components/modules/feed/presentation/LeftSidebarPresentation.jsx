@@ -15,9 +15,9 @@ function LeftSidebarPresentation({
     <aside className="w-full flex flex-col gap-2 drop-shadow-sm">
       <ProfileCard userInfo={sideBar} navigateTo={navigateTo} />
       <QuickAccess navigateTo={navigateTo} />
-      {!sideBar?.isPremium && <TryPremium navigateTo={navigateTo} />}
+      {!sideBar?.planDetails?.isPremium && <TryPremium navigateTo={navigateTo} />}
       <Stats
-        isPremium={sideBar?.isPremium}
+        isPremium={sideBar?.planDetails?.isPremium}
         trackedStats={trackedStats}
         determineStat={determineStat}
       />

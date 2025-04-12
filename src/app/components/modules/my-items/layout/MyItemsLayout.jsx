@@ -37,8 +37,8 @@ const MyItemsLayout = ({ children, activeContent }) => {
                   href="/my-items/applications"
                   className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
                     isActive("applications")
-                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                      ? "bg-blue-100 text-secondary dark:bg-secondary dark:text-primary"
+                      : "text-gray-700 hover:bg-primary/10 dark:text-gray-300 dark:hover:bg-background/30"
                   }`}
                 >
                   <JobsIcon className="h-5 w-5 mr-3" />
@@ -49,8 +49,8 @@ const MyItemsLayout = ({ children, activeContent }) => {
                   href="/my-items/saved-jobs"
                   className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
                     isActive("saved-jobs")
-                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                      ? "bg-blue-100 text-secondary dark:bg-secondary dark:text-primary"
+                      : "text-gray-700 hover:bg-primary/10 dark:text-gray-300 dark:hover:bg-background/30"
                   }`}
                 >
                   <SavedIcon className="h-5 w-5 mr-3" />
@@ -61,8 +61,8 @@ const MyItemsLayout = ({ children, activeContent }) => {
                   href="/my-items/saved-posts"
                   className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
                     isActive("saved-posts")
-                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                      ? "bg-blue-100 text-secondary dark:bg-secondary dark:text-primary"
+                      : "text-gray-700 hover:bg-primary/10 dark:text-gray-300 dark:hover:bg-background/30"
                   }`}
                 >
                   <PostsIcon className="h-5 w-5 mr-3" />

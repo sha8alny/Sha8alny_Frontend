@@ -56,7 +56,7 @@ export default function CompanyAdminContent({ children }) {
     };
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen mx-16 min-w-[80%]">
             <div className="lg:hidden flex justify-between items-center px-4 py-2 bg-background border-b">
                 <button 
                     onClick={toggleSidebar}
