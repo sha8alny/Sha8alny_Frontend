@@ -146,7 +146,7 @@ const SignUpForm = ({
                 </button>
             </form>
             <p className="text-center text-sm text-text mt-4">
-                Already A Member?{""}
+                Already A Member?{" "}
                 <a href="/signin" className="text-secondary hover:underline">
                  sign in 
                 </a>

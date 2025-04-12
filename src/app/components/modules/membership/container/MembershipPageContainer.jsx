@@ -111,12 +111,12 @@ const MembershipPageContainer = () => {
   if(statusIsLoading || isPlansLoading) {
     return (<MembershipStatusSkeleton />)
   }
- 
-
-  const { maxConnections, jobApplications, dailyMessages } = sub?.limits;
+ console.log("Subscription Data:", sub);
+  const maxConnections = sub?.limits?.maxConnections || 0;
+  const {  jobsApplied, messagesSent } = sub;
   const limits = {
-    dailyJobApplications: jobApplications,
-    dailyMessageRequests: dailyMessages,
+    dailyJobApplications: jobsApplied,
+    dailyMessageRequests: messagesSent,
     monthlyConnectionRequests: maxConnections,
   };
  

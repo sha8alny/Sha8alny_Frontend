@@ -45,15 +45,14 @@ export const fetchUserProfile = async (username) => {
 };
 
 export const fetchUsername = async () => {
-  return "mock-username"; // Replace with actual logic to fetch username
-  // const response = await fetch(`${apiURL}/profile/username`, {
-  //   method: "GET",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //     Authorization: `Bearer ${getToken()}`,
-  //   },
-  // });
+  // return "mock-username"; 
+  const response = await fetchWithAuth(`${apiURL}/profile/username`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-  // if (!response.ok) throw new Error("Failed to fetch user username");
-  // return response.json();
+  if (!response.ok) throw new Error("Failed to fetch user username");
+  return response.json();
 }
