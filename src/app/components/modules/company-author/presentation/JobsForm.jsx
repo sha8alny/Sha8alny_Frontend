@@ -61,7 +61,7 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
         <div className="flex justify-end">
             <Button 
             onClick={onShowPostJobForm}
-            className="  border border-secondary bg-secondary text-xl text-foreground rounded-full px-8 py-2 hover:bg-foreground hover:text-secondary transition duration-300">Post new job</Button>
+            className=" text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200">Post new job</Button>
 
             </div>
         </section> 
@@ -82,7 +82,7 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
             onClick={()=>
                 {console.log("Job ID:", job._id); 
                 onShowApplicants(job._id)}}
-           className="mt-2 md:mt-0 border border-secondary text-md bg-secondary  text-foreground rounded-full  hover:bg-foreground hover:text-secondary transition duration-300 px-4 py-1 ">Show Applicants</Button>
+           className="mt-2 md:mt-0 text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 px-4 py-1 ">Show Applicants</Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>

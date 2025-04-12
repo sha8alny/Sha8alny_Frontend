@@ -21,7 +21,8 @@ return(
         className="w-full h-full object-cover"
         />
         {/* // remove button */}
-        <Button className="absolute top-2 right-2 hover:bg-secondary hover:text-background text-secondary bg-background border-1 border-secondary p-1 h-8 w-8 rounded-full  mt-2">✖</Button>
+        <Button className="absolute top-2 right-2 text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 border-1 border-secondary p-1 h-8 w-8 rounded-full  mt-2">✖</Button>
+        
     </div>
     </div>
 
@@ -39,7 +40,8 @@ return(
         {showButton && (
         <Button 
         onClick={buttonAction}
-        className="bg-background text-secondary hover:bg-secondary hover:text-secondary border-1 border-secondary p-2 rounded-lg mt-2 transition duration-300">{buttonText}</Button>
+        className="text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 mt-2">{buttonText}</Button>
+        
         )}
     </div>         
     </div> 
