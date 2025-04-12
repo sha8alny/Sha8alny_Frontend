@@ -58,7 +58,7 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
       <div className="py-4 px-8 flex flex-col">
         <div>
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold">{userProfile}</h1>
+            <h1 className="text-2xl font-bold">{company?.name}</h1>
             <p className="text-muted">{company?.industry} , {company?.location}</p>
           </div>
           <div className="flex flex-row gap-2 items-center mb-3">
@@ -85,13 +85,7 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
 
           <Link href={`/company-user-admin/${userProfile}/about-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("about-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>About</Link>
 
-          <Link href={`/company-user-admin/${userProfile}/jobs-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("jobs-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>Jobs</Link>
-
           <Link href={`/company-user-admin/${userProfile}/posts-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("posts-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>Posts</Link>
-
-          <Link href={`/company-user-admin/${userProfile}/life-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("life-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>Life</Link>
-
-          <Link href={`/company-user-admin/${userProfile}/people-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("people-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>People</Link>
         </div>
       </div>
     </Container>
