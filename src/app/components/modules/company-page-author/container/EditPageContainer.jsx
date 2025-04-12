@@ -77,8 +77,9 @@ function EditPageContainer({username}){
             foundingDate:companyDate || undefined,
         };
         try{
-            const response = await updateCompany(username, companyData);
             const updatedUsername = companyURL || username;
+            const response = await updateCompany(username, companyData);
+
             // window.location.reload();
             router.push(`/company-admin/${updatedUsername}/edit-page`);
         } 

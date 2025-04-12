@@ -109,7 +109,11 @@ export default function PostPresentation({
       >
         <Avatar
           className="cursor-pointer size-10"
-          onClick={() => navigateTo(`/u/${post?.username}`)}
+          onClick={() =>
+            post?.isCompany
+              ? navigateTo(`company-user-admin/${post?.username}/about-page`)
+              : navigateTo(`/u/${post?.username}`)
+          }
         >
           <AvatarImage src={post?.profilePicture} alt={post?.fullName} />
           <AvatarFallback>
@@ -121,10 +125,19 @@ export default function PostPresentation({
           <div className="flex items-center gap-2">
             <div
               className="font-semibold flex items-center gap-2 cursor-pointer hover:underline"
-              onClick={() => navigateTo(`/u/${post?.username}`)}
+              onClick={() =>
+                post?.isCompany
+                  ? navigateTo(`company-user-admin/${post?.username}/about-page`)
+                  : navigateTo(`/u/${post?.username}`)
+              }
             >
               {post?.fullName}
-              {post?.isCompany && <Verified className="text-secondary" sx={{ fontSize: "1rem" }} />}
+              {post?.isCompany && (
+                <Verified
+                  className="text-secondary"
+                  sx={{ fontSize: "1rem" }}
+                />
+              )}
             </div>
             {post?.relation && (
               <div className="text-muted text-xs space-x-2 flex items-center">
