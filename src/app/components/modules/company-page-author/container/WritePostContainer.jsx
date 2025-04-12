@@ -3,6 +3,7 @@ import { useState, useRef} from "react";
 import WritePost from "../presentation/WritePost";
 import { Modal, Box, Button, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import { useMutation } from "@tanstack/react-query";
 
 
 /**
@@ -61,20 +62,26 @@ function WritePostContainer({company, onPostSubmit, logo}){
     };
 
     const handleSubmit = async() => {
-        if (!text?.trim() && !file) return; 
-        const cleanedPreview = preview ? preview.replace(/^blob:/, '') : null;
-        const newPost = {
-            text: text.trim(),
-            media: cleanedPreview || null,
-            time: new Date().toISOString(),
-            tags:[],
-            keywords:[],
-        };
-        onPostSubmit(newPost); 
-        setText("");
-        setPreview(null);
-        setFile(null);
+        if (text.trim() === "" && images.length === 0 && !videos) {
+            setError("Please add text or media to your post.");
+            return;
+        }
+        setError(null);
+        const formData = new FormData();
+        formData.append("text", text);
+        formData.append("keywords", tags);
+        formData.append("tags", taggedUsers);
+        if (images.length > 0) {
+        images.forEach((image) => {
+            formData.append("media", image);
+        });
+        }
+        if (videos) {
+            formData.append("media", videos);
+        }
+        console.log(formData);
     };
+
     const handleArticle = () => {
         if (!articleText.trim()) return; 
         const newArticle = {
