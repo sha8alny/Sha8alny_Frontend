@@ -1,6 +1,5 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useSearchParams } from "next/navigation";
 import EditContainer from "@/app/components/modules/company-page-author/container/EditContainer";
 
 function EditCompanyPage(){

@@ -4,6 +4,7 @@ import WritePostContainer from "./WritePostContainer";
 import { createPost } from "@/app/services/post";
 import { getCompanyId, getCompany} from "@/app/services/companyManagment";
 import { Post } from "./PostContainer";
+import PostContainer from "../../feed/container/PostContainer";
 
 function PostPageContainer({ username, logo }) {
 
@@ -49,8 +50,23 @@ function PostPageContainer({ username, logo }) {
             <div className="space-y-6">
                 {posts.length > 0 ? (
                     posts.map((post, index) => (
-                        <Post company={company} username ={username} logo={logo} key={post.id || `post-${index}`} cardInfo={{ ...post, username, logo, hasMedia: !!(post.image || post.video),
-                        description: post.text || "No content",}} />
+                        <PostContainer  key={post.id || `post-${index}`} 
+                        post={{
+                            ...post,
+                            postId: post.id, // Ensure postId is included
+                            text: post.text || "No content", // Default text if missing
+                            media: post.media || [], // Default to an empty array if no media
+                            reaction: post.reaction || null, // Default to null if no reaction
+                            isSaved: post.isSaved || false, // Default to false if not saved
+                            numLikes: post.numLikes || 0,
+                            numCelebrates: post.numCelebrates || 0,
+                            numLoves: post.numLoves || 0,
+                            numSupports: post.numSupports || 0,
+                            numFunnies: post.numFunnies || 0,
+                            numInsightfuls: post.numInsightfuls || 0,
+                            time: post.time || new Date().toISOString(), // Default to current time
+                            connectionDegree: post.connectionDegree || 0, // Default to 0 if missing
+                        }} />
                     ))
                 ) : (
                     <p className="flex justify-center mt-2 text-gray-400">No posts available</p>
