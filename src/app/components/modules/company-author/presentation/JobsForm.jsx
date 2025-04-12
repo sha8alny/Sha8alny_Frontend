@@ -265,6 +265,7 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
                 ))
             )
         )}
+
         </section>
         <div className="flex justify-between items-center mt-4">
             <Button

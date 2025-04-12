@@ -27,16 +27,7 @@ import { useToast } from "@/app/context/ToastContext";
  *   <PostNewJobContainer onBack={handleBack} />
  * )
  */
-const PostNewJobContainer = ({ onBack,username,logo, initialJobData=null }) => {
-    const [logoPreview, setLogoPreview] = useState(logo ||null);
-    const logoInputRef = useRef(null);
-    const logoUpload = (e) => {
-        const selectedFile=e.target.files[0];
-        if (selectedFile){
-            setLogoPreview(prev => URL.createObjectURL(selectedFile));
-            console.log("Current logoPreview:", logoPreview);
-        }
-    };
+const PostNewJobContainer = ({ onBack,username, initialJobData=null }) => {
     const [newJob, setNewJob] = useState(initialJobData ||{
         title: "",
         location: "",

@@ -27,7 +27,7 @@ import { useToast } from "@/app/context/ToastContext";
  *   <JobsFormContainer />
  * )
  */
-const JobsFormContainer = ({username,logo}) => {
+const JobsFormContainer = ({username}) => {
     const [jobs, setJobs] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -105,14 +105,6 @@ const JobsFormContainer = ({username,logo}) => {
       };
 
     
-        const [logoPreview, setLogoPreview] = useState(logo ||null);
-        const logoInputRef = useRef(null);
-        const logoUpload = (e) => {
-            const selectedFile=e.target.files[0];
-            if (selectedFile){
-                setLogoPreview(prev => URL.createObjectURL(selectedFile));
-            }
-        };
         const nextPage = () => {
           if (hasMore) {
             setPage((prev) => prev + 1);
@@ -126,9 +118,9 @@ const JobsFormContainer = ({username,logo}) => {
         return (
             <div className="flex">
               {showPostJobForm ? (
-                <PostNewJobContainer onBack={() => setShowPostJobForm(false)} username={username} logo={logo} initialJobData={null}  />
+                <PostNewJobContainer onBack={() => setShowPostJobForm(false)} username={username} initialJobData={null}  />
               ) : showJobApplicants && selectedJob ? (
-                <JobApplicantsPageContainer jobId={selectedJob} onBack={() => setShowJobApplicants(false)} username={username} logo={logo}  />
+                <JobApplicantsPageContainer jobId={selectedJob} onBack={() => setShowJobApplicants(false)} username={username}  />
               ) : (
                 <>
                   <JobsForm
