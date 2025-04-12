@@ -51,6 +51,9 @@ import { Suspense } from "react";
 const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, onNextPage, onPrevPage, hasMore, onDeleteJob,onEditJob, setUpdatedJob}) => {
 
     return(
+        <Suspense
+        fallback={<div className="animate-pulse">Loading...</div>}
+        >
         <div className="flex-grow items-center">
         <section className="w-full p-8 bg-foreground rounded-lg shadow-xl w-full grid grid-cols-2">
         <div>
@@ -69,9 +72,6 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
         <section className="flex-grow p-10 bg-foreground rounded-lg shadow-xl w-full mt-5 min-h-138 ">
         <h1 className="text-3xl justify-center text-semibold text-secondary">Posted Jobs</h1>
         <hr className="border-secondary  mt-4"/>
-        <Suspense
-            fallback={<div className="animate-pulse">Loading...</div>}
-            >
         {isLoading ?( <p className="text-text text-xl text-semibold">Loading...</p> ) : ( jobs.length === 0 ? (
             <p className="text-text text-xl text-semibold">No jobs posted yet</p> ) : (
                 jobs.map((job,index) => (
@@ -269,7 +269,6 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
                 ))
             )
         )}
-        </Suspense>
 
         </section>
         <div className="flex justify-between items-center mt-4">
@@ -291,6 +290,7 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
             </Button>
         </div>
         </div>
+        </Suspense>
     );
 };
 export default JobsForm;
