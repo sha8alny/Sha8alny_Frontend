@@ -1,5 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import PostPageContainer from "@/app/components/modules/company-page-author/container/PostPageContainer";
 
