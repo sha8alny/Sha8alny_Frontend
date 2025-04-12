@@ -23,6 +23,14 @@ export const getMyPosts = async (pageNum, companyId) => {
         `Failed to update post: ${response.status} ${responseText}`
       );
     }
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      return { message: responseText };
+    }
+  }catch(error){
+    throw new Error(error.message);
+  }
 };
 
 export const getProfilePosts = async(pageNum, profileId,isCompany )=>{
@@ -52,36 +60,36 @@ export const getProfilePosts = async(pageNum, profileId,isCompany )=>{
 
 };
 
-export const updateMyPosts = async (postId,postData ) => {
-    try{
-        const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`,{
-            method:"PATCH",
-            headers: {"Content-Type": "application/json",
-                "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify(postData)
-        });
-        const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
+// export const updateMyPosts = async (postId,postData ) => {
+//     try{
+//         const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`,{
+//             method:"PATCH",
+//             headers: {"Content-Type": "application/json",
+//                 "Authorization": `Bearer${sessionStorage.getItem("accessToken")}`
+//             },
+//             body: JSON.stringify(postData)
+//         });
+//         const responseText = await response.text(); 
+//         console.log("Raw response text:", responseText); 
     
-        if (!response.ok) {
-            console.error("Error response:", responseText);
-            throw new Error(`Failed to update post: ${response.status} ${responseText}`);
-        }
-        try {
-            return JSON.parse(responseText);
-        } catch {
-            return { message: responseText };
-        }
+//         if (!response.ok) {
+//             console.error("Error response:", responseText);
+//             throw new Error(`Failed to update post: ${response.status} ${responseText}`);
+//         }
+//         try {
+//             return JSON.parse(responseText);
+//         } catch {
+//             return { message: responseText };
+//         }
 
-    }catch(error){
-        throw new Error(error.message);
+//     }catch(error){
+//         throw new Error(error.message);
 
-    }
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+//     }
+//   } catch (error) {
+//     throw new Error(error.message);
+//   }
+// };
 
 export const updateMyPosts = async (postId, postData) => {
   try {
