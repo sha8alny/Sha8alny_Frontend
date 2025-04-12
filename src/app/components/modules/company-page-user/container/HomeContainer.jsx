@@ -2,9 +2,9 @@
 import Home from "../presentation/Home";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCompany } from "@/app/services/companyManagment";
+import { getCompany } from "@/app/services/companyManagement";
 import { getProfilePosts } from "@/app/services/post";
-import { getCompanyId } from "@/app/services/companyManagment";
+import { getCompanyId } from "@/app/services/companyManagement";
 
 /**
  * HomeContainer component - Handles data fetching and navigation for the Home page.

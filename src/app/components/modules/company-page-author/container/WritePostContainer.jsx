@@ -42,6 +42,7 @@ import { useMutation } from "@tanstack/react-query";
 function WritePostContainer({company, onPostSubmit, logo}){
     const [text, setText] = useState("");
     const [preview, setPreview]= useState(null);
+    const [error, setError]= useState(null);
     const [file, setFile]= useState(null);
     const [isModalOpen, setModalOpen] = useState(false);
     const [articleText, setArticleText] = useState("");

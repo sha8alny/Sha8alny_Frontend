@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SideBarContainer from "../../app/components/modules/company-page-author/container/SideBarContainer";
-import { deleteCompany } from "../../app/services/companyManagment";
+import { deleteCompany } from "../../app/services/companyManagement";
 
-jest.mock("../../app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagement", () => ({
     deleteCompany: jest.fn(),
 }));
 

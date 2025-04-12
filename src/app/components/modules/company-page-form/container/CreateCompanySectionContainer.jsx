@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CreateCompanySection from "../presentation/CreateCompanySection";
-import { createCompany } from "@/app/services/companyManagment";
+import { createCompany } from "@/app/services/companyManagement";
 
 /**
  * @namespace company-page-form

@@ -4,7 +4,7 @@ import SideBarContainer from "@/app/components/modules/company-page-author/conta
 import Analytics from "@/app/components/modules/company-page-author/presentation/Analytics";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getCompany } from "@/app/services/companyManagment";
+import { getCompany } from "@/app/services/companyManagement";
 
 export default function CompanyAdminContent({ children }) {
     const { username } = useParams();

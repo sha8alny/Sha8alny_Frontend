@@ -3,11 +3,11 @@ import JobsFormContainer from "../../app/components/modules/company-author/conta
 import JobsForm from "../../app/components/modules/company-author/presentation/JobsForm";
 import "@testing-library/jest-dom";
 import { useMutation } from "@tanstack/react-query";
-import { postedJobs, deleteJob, editJob } from "../../app/services/companyManagment";
+import { postedJobs, deleteJob, editJob } from "../../app/services/companyManagement";
 import { useToast } from "@/app/context/ToastContext";
 
 // Mocking the service and react-query hook
-jest.mock("../../app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagement", () => ({
   postedJobs: jest.fn(),
   deleteJob:jest.fn(),
   editJob:jest.fn(),

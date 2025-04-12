@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { followCompany } from "@/app/services/companyManagment";
+import { followCompany } from "@/app/services/companyManagement";
 import  CompanyCardPresentation  from "@/app/components/modules/search/presentation/CompanyCardPresentation";
 /**
  * @namespace search

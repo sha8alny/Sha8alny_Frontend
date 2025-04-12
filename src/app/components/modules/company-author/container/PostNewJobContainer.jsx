@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import PostNewJobForm from "../presentation/PostNewJobForm";
-import { postJob } from "../../../../services/companyManagment";
+import { postJob } from "../../../../services/companyManagement";
 import { useMutation } from "@tanstack/react-query";
 import SideBarContainer from "../../company-page-author/container/SideBarContainer";
 import Analytics from "../../company-page-author/presentation/Analytics";

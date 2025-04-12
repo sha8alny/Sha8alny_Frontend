@@ -2,7 +2,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getUserCompanies } from "@/app/services/companyManagment";
+import { getUserCompanies } from "@/app/services/companyManagement";
 import CompanyListPresentation from "../presentation/CompanyListPresentation";
 /**
  * @namespace business

@@ -17,9 +17,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import BadgeIcon from "@mui/icons-material/Badge"; 
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import { Modal, Box, Button, Typography } from "@mui/material";
-import { deleteCompany } from "@/app/services/companyManagment";
-import { getCompany } from "@/app/services/companyManagment";
-import { updateCompany } from "@/app/services/companyManagment";
+import { deleteCompany } from "@/app/services/companyManagement";
+import { getCompany } from "@/app/services/companyManagement";
+import { updateCompany } from "@/app/services/companyManagement";
 
 
 /**

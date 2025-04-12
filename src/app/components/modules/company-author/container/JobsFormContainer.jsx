@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import JobsForm from "../presentation/JobsForm";
 import PostNewJobContainer from "./PostNewJobContainer";
 import JobApplicantsPageContainer from "./JobApplicantsPageContainer";
-import { postedJobs, deleteJob, editJob } from "../../../../services/companyManagment";
+import { postedJobs, deleteJob, editJob } from "../../../../services/companyManagement";
 import { useMutation } from "@tanstack/react-query";
 import SideBarContainer from "../../company-page-author/container/SideBarContainer";
 import Analytics from "../../company-page-author/presentation/Analytics";
