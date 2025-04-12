@@ -20,7 +20,6 @@ import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
 import { Label } from "@/app/components/ui/Label";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/app/components/ui/Select";
-import { Suspense } from "react";
 
 /**
  * @namespace company-author
@@ -51,9 +50,6 @@ import { Suspense } from "react";
 const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, onNextPage, onPrevPage, hasMore, onDeleteJob,onEditJob, setUpdatedJob}) => {
 
     return(
-        <Suspense
-        fallback={<div className="animate-pulse">Loading...</div>}
-        >
         <div className="flex-grow items-center">
         <section className="w-full p-8 bg-foreground rounded-lg shadow-xl w-full grid grid-cols-2">
         <div>
@@ -290,7 +286,6 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
             </Button>
         </div>
         </div>
-        </Suspense>
     );
 };
 export default JobsForm;
