@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import JobsForm from "../presentation/JobsForm";
 import PostNewJobContainer from "./PostNewJobContainer";
 import JobApplicantsPageContainer from "./JobApplicantsPageContainer";
@@ -42,8 +42,7 @@ const JobsFormContainer = ({username}) => {
           mutationFn: postedJobs,
       }); 
 
-    useEffect(() => {
-       const fetchJobs = async () => {
+  const fetchJobs = useCallback( () => {
          getJobs({ page, companyUsername: username },{
           onSuccess: (jobsData) => {
             console.log("jobsData", jobsData);
@@ -65,10 +64,10 @@ const JobsFormContainer = ({username}) => {
             setHasMore(false);
           }
           });
-
-        };
-        fetchJobs();
     }, [page, username, getJobs]);
+    useEffect(() => {
+        fetchJobs();
+      }, [fetchJobs]);
 
     const handleDeleteJob = async ( jobId, username) => {
          try{
@@ -118,7 +117,7 @@ const JobsFormContainer = ({username}) => {
         return (
             <div className="flex">
               {showPostJobForm ? (
-                <PostNewJobContainer onBack={() => setShowPostJobForm(false)} username={username} initialJobData={null}  />
+                <PostNewJobContainer onBack={() => {setShowPostJobForm(false); fetchJobs();}} username={username} initialJobData={null}  />
               ) : showJobApplicants && selectedJob ? (
                 <JobApplicantsPageContainer jobId={selectedJob} onBack={() => setShowJobApplicants(false)} username={username}  />
               ) : (

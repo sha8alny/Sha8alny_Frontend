@@ -222,8 +222,8 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
                     />
 
                     <AlertDialogFooter>
-                        <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
-                        <AlertDialogAction type="submit" className={"bg-secondary text-text"}>Save</AlertDialogAction>
+                        <AlertDialogCancel type="button" className="flex-1 bg-red-700 rounded-2xl font-semibold cursor-pointer hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300 hover:text-background text-primary-foreground">Cancel</AlertDialogCancel>
+                        <AlertDialogAction type="submit" className={"flex-1 rounded-2xl bg-secondary hover:bg-secondary/80 font-semibold text-primary-foreground"}>Save</AlertDialogAction>
                     </AlertDialogFooter>
                     </form>
                 </AlertDialogContent>
@@ -249,8 +249,8 @@ const JobsForm = ({ jobs, isLoading, onShowPostJobForm, onShowApplicants, page, 
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => onDeleteJob(job._id)} className="bg-red-600 text-white hover:bg-red-700">
+                    <AlertDialogCancel className=" bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text">Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => onDeleteJob(job._id)} className="bg-red-600 rounded-2xl text-white hover:bg-red-700">
                         Confirm Delete
                     </AlertDialogAction>
                     </AlertDialogFooter>
