@@ -57,8 +57,8 @@ export default function CommentPresentation({
       <div className="flex gap-3">
         <div className="size-10 relative flex-shrink-0">
           <Image
-            src={comment?.profilePicture || "https://picsum.photos/200/200"}
-            alt={comment?.fullName || "User"}
+            src={comment?.profilePicture}
+            alt={comment?.fullName}
             fill
             className="rounded-full border"
           />
@@ -69,7 +69,11 @@ export default function CommentPresentation({
               <div className="flex flex-col items-start">
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={() => navigateTo(comment?.username)}
+                     onClick={() =>
+                      comment?.connectionDegree === -1
+                        ? navigateTo(`company-user-admin/${post?.username}/about-page`)
+                        : navigateTo(`/u/${post?.username}`)
+                    }
                     className="text-sm font-semibold hover:underline cursor-pointer"
                   >
                     {comment?.fullName}
