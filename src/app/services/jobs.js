@@ -49,7 +49,6 @@ export const fetchJobListings = async ({
       data: data.jobs || data, // Handle different API response formats
       nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
       currentPage: pageParam,
-      totalCount: data.totalCount || data.length || 0
     };
   } catch (error) {
     console.error("Error fetching job listings:", error);

@@ -205,7 +205,7 @@ function PostCard({ post, onPostClick, formatPostTime }) {
                   {post.headline}
                 </p>
                 <div className="flex items-center text-xs text-muted-foreground mt-1">
-                  <CalendarTodayIcon className="h-3 w-3 mr-1" />
+                  <CalendarTodayIcon fontSize="0.75rem" className=" mr-1" />
                   <span>{formattedTime}</span>
                 </div>
               </div>
@@ -213,7 +213,7 @@ function PostCard({ post, onPostClick, formatPostTime }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizIcon className="h-4 w-4" />
+                  <MoreHorizIcon fontSize="1rem" className="h-4 w-4" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -260,17 +260,17 @@ function PostCard({ post, onPostClick, formatPostTime }) {
             className="flex items-center gap-1.5"
             onClick={() => onPostClick(post.postId, post.username)}
           >
-            <LaunchIcon className="h-3.5 w-3.5" />
+            <LaunchIcon fontSize="0.875rem" className="h-3.5 w-3.5" />
             <span>Read post</span>
           </Button>
           
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <div className="flex items-center">
-              <ThumbUpOutlinedIcon className="h-3 w-3 mr-1" />
+              <ThumbUpOutlinedIcon  className="h-3 w-3 mr-1" />
               <span>{totalReactions}</span>
             </div>
             <div className="flex items-center">
-              <ChatBubbleOutlineIcon className="h-3 w-3 mr-1" />
+              <ChatBubbleOutlineIcon  className="h-3 w-3 mr-1" />
               <span>{post.numComments}</span>
             </div>
           </div>
