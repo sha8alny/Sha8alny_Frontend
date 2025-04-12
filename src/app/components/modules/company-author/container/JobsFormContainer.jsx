@@ -9,7 +9,6 @@ import SideBarContainer from "../../company-page-author/container/SideBarContain
 import Analytics from "../../company-page-author/presentation/Analytics";
 import { useRef } from "react";
 import { useToast } from "@/app/context/ToastContext";
-import { Suspense } from "react";
 
 
 /**
@@ -124,9 +123,6 @@ const JobsFormContainer = ({username}) => {
                 <JobApplicantsPageContainer jobId={selectedJob} onBack={() => setShowJobApplicants(false)} username={username}  />
               ) : (
                 <>
-                    <Suspense
-                    fallback={<div className="animate-pulse">Loading...</div>}
-                    >
                   <JobsForm
                     jobs={jobs || []}
                     isLoading={isLoading}
@@ -144,7 +140,6 @@ const JobsFormContainer = ({username}) => {
                     setUpdatedJob={setUpdatedJob}
                     onEditJob={(jobId) => handleEditJob(jobId, username)}
                   />
-                  </Suspense>
                 </>
               )}
             </div>

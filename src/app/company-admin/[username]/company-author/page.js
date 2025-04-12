@@ -1,10 +1,18 @@
 "use client";
 import JobsFormContainer from "@/app/components/modules/company-author/container/JobsFormContainer";
 import { useParams } from "next/navigation";
+import { Suspense } from "react";
 const CompanyJobs = () => {
       const { username } = useParams();
 
-  return <JobsFormContainer username={username} />;
+  return (
+    <Suspense
+      fallback={
+        <div className="animate-pulse">Loading...</div>
+      }>
+  <JobsFormContainer username={username} />
+    </Suspense>
+  );
 }
 
 export default CompanyJobs;
