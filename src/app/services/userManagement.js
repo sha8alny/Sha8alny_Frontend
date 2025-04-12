@@ -198,4 +198,61 @@ export const handleSignIn = async ({email,password, rememberMe})=>{
 
 };
 
+export const handleForgetPassword = async (email) => {
+  console.log("email",email);
+  try {
+    const response = await fetch(`${apiURL}/settings/forgot-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify( {email} ),
+    });
+    if (!response.ok) throw new Error("Failed to send reset link");
+    console.log("response",response);
+    sessionStorage.setItem("resetEmail", email);
+    return { success:true};
+  }
+  catch (error) {
+    console.error("Error sending reset link:", error);
+    return { success: false, message: error.message };
+  }
+};
 
+export const handleResetPassword = async (resetCode,newPassword)=>{
+  const email = sessionStorage.getItem("resetEmail");
+  try{
+    const response = await fetch(`${apiURL}/settings/reset-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ resetCode, newPassword, email }),
+    });
+    if (!response.ok) {
+      let errorMessage = "An unknown error occurred";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || "Unknown error in response";
+      } catch (jsonError) {
+        const errorText = await response.text();
+        errorMessage = errorText || "Unknown error occurred";
+      }
+
+      throw new Error(errorMessage);
+    }    sessionStorage.removeItem("resetEmail");
+    return { success:true};
+  }
+  catch (error) {
+    console.error("Error resetting password:", error);
+    return { success: false, message: error.message };
+  }
+};
+
+export const handleLogout = async () => {
+  sessionStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("isAdmin");
+
+  window.location.href = "/signin";
+}

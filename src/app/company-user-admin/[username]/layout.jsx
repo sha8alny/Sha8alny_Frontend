@@ -8,11 +8,6 @@ export default function CompanyUserAdminLayout({children}){
     const { username } = useParams();
     return(
         <div>
-            <div className="sticky top-0 z-50">
-                <header>
-                    <Navbar />
-                </header>
-            </div>
             <div className="flex flex-1 font-sans">
                 <div className="w-full p-4">
                     <ProfileHeaderContainer userProfile={username}/>

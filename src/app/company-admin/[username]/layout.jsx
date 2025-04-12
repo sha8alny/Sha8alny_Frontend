@@ -58,11 +58,6 @@ export default function CompanyAdminLayout({ children }) {
 
     return (
         <div className="flex flex-col h-screen">
-            <div className="sticky top-0 z-50">
-                <header>
-                    <Navbar />
-                </header>
-            </div>
             <div className="lg:hidden flex justify-between items-center px-4 py-2 bg-background border-b">
                 <button 
                     onClick={toggleSidebar}

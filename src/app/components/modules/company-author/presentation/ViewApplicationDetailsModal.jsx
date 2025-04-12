@@ -88,11 +88,18 @@ const ViewApplicationDetailsModal = ({
                             <span>{isLoading ? "Loading..." : application?.location || "N/A"}</span>
                         </div>
                     </div>
-                    <Badge className="ml-auto" varient={status === "approved"? "success" : status === "rejected" ? "destructive": "outline"}>
+                    <Badge   
+                        className={`ml-auto ${
+                        status === "accepted"
+                        ? "bg-green-500 text-white"
+                        : status === "rejected"
+                        ? "bg-red-500 text-white"
+                        : "bg-gray-200 text-black"
+                    }`}>
                     {status === "review"
                     ? "Under Review"
-                    : status === "approved"
-                    ? "Approved"
+                    : status === "accepted"
+                    ? "Accepted"
                     : status === "rejected"
                     ? "Rejected"
                     : "Pending"}
@@ -107,15 +114,15 @@ const ViewApplicationDetailsModal = ({
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                     <Phone className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-muted-foreground font-thin">{isLoading ? "Loading..." : application?.phone || "N/A"}</span>
+                    <span className="text-muted-foreground font-thin">{isLoading ? "Loading..." : application?.phoneNumber || "N/A"}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground font-thin">{isLoading ? "Loading..." : application?.applied_date || "N/A"}</span>
+                <span className="text-muted-foreground font-thin">{isLoading ? "Loading..." : application?.createdAt || "N/A"}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                     <FileText className="w-4 h-4 text-muted-foreground" />
-                    <a href={isLoading ? "Loading..." : application?.resume_url || "#"} className="text-primary hover-underline">
+                    <a href={isLoading ? "Loading..." : application?.resume || "#"} className="text-primary hover-underline">
                         View Resume
                     </a>
                 </div>
@@ -135,7 +142,7 @@ const ViewApplicationDetailsModal = ({
                 <TabsContent value="profile" className="space-y-4 pt-4">
                     <div>
                     <h3 className="text-sm text-text font-medium mb-2">About</h3>
-                    <p className="text-sm text-muted-foreground">{application.about}||"N/A"</p>
+                    <p className="text-sm text-muted-foreground">{application.about ||"N/A"}</p>
                     </div>
                     <div>
                     <h3 className="text-sm text-text font-medium mb-2">Skills</h3>
@@ -155,7 +162,7 @@ const ViewApplicationDetailsModal = ({
                     <ul className="list-disc pl-4">
                         {application.experience?.map((exp, index) => (
                         <li key={index} className="text-muted-foreground">
-                            <strong className="text-text">{exp.title}</strong> at {exp.company} ({exp.duration})
+                            <strong className="text-text">{exp}</strong>
                             <ul className="list-disc pl-6">
                             {exp.responsibilities.map((task, i) => (
                                 <li key={i}>{task}</li>
@@ -174,12 +181,26 @@ const ViewApplicationDetailsModal = ({
                     <ul className="list-disc pl-4">
                         {application.education?.map((edu, index) => (
                         <li key={index} className="text-muted-foreground">
-                            <strong className="text-text">{edu.degree}</strong> - {edu.institution} ({edu.year})
+                            <strong className="text-text">{edu}</strong> 
                         </li>
                     )) || "Loading..."}
                     </ul>
                     )}         
                </div>
+                <div>
+                    <h3 className="text-sm text-text font-medium mb-2">Certifications</h3>
+                    {isLoading ? (
+                    <p className="text-sm text-muted-foreground">Loading...</p>
+                    ) : (
+                    <ul className="list-disc pl-4">
+                        {application.certificates?.map((cert, index) => (
+                        <li key={index} className="text-muted-foreground">
+                            <strong className="text-text">{cert}</strong>
+                        </li>
+                        ))}
+                    </ul>
+                    )}
+                </div>
                 </TabsContent>
                 <TabsContent value="evaluation" className="space-y-4 pt-4">
                     <div>
@@ -189,9 +210,7 @@ const ViewApplicationDetailsModal = ({
                     <SelectValue placeholder="Select status"/>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="review" >Under Review</SelectItem>
-                    <SelectItem value="interview">Schedule Interview</SelectItem>
-                    <SelectItem value="approved">Approve</SelectItem>
+                    <SelectItem value="accepted">Approve</SelectItem>
                     <SelectItem value="rejected">Reject</SelectItem>
                   </SelectContent>
                 </Select>
@@ -212,12 +231,6 @@ const ViewApplicationDetailsModal = ({
                 <DialogFooter className="gap-2 sm:gap-0 mt-4">
                 <Button onClick={onSave} disabled={isUpdating}>
                     {isUpdating ? "Saving..." : "Save Changes"}
-                </Button>
-                <Button variant="destructive" onClick={() => onStatusChange("rejected")} disabled={isUpdating} className="flex-1 sm:flex-none">
-                {isUpdating && status === "rejected" ? "Rejecting..." : "Reject"}
-                </Button>
-                <Button variant="secondary" onClick={() => onStatusChange("approved")} disabled={isUpdating} className="flex-1 sm:flex-none">
-                {isUpdating && status === "approved" ? "Approving..." : "Approve"}
                 </Button>
                 </DialogFooter>
             </DialogContent>

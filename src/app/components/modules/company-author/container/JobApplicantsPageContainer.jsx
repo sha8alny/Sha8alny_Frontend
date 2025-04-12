@@ -2,8 +2,6 @@
 import { useState, useEffect } from "react";
 import JobApplicantsPage from "../presentation/JobApplicantsPage";
 import { JobApplicants } from "../../../../services/companyManagment";
-import Analytics from "../../company-page-author/presentation/Analytics";
-import SideBarContainer from "../../company-page-author/container/SideBarContainer";
 import { useRef } from "react";
 
 /**
@@ -39,7 +37,6 @@ const [applicants, setApplicants] = useState([]);
 const [isLoading, setIsLoading] = useState(false);
 const [page, setPage] = useState(1);
 const [hasMore, setHasMore] = useState(true);
-const [pageData, setPageData] = useState([]);
 const [selectedApplicant, setSelectedApplicant] = useState(null);
 useEffect(() => {
     if (!jobId) return;
@@ -52,23 +49,28 @@ useEffect(() => {
     setApplicants([]);
     setPage(1);
     setHasMore(true);
-    setPageData({});
     setSelectedApplicant(null);
   };
 
 
 const getApplicants = async (pageNumber) => {
         console.log("fetching page",pageNumber);
-        if (isLoading || pageData[pageNumber]|| !jobId) return;
+        if (isLoading || !jobId) return;
         setIsLoading(true);
         try {
             const applicantsData = await JobApplicants(jobId,pageNumber);
             console.log("applicantsData",applicantsData);
-            setPageData((prev) => ({ ...prev, [pageNumber]: applicantsData }));
+            if (applicantsData && applicantsData.length > 0) 
             setApplicants(applicantsData);
-            if(applicantsData.length === 0 || !applicantsData){
+            const nextData = await JobApplicants(jobId,pageNumber + 1);
+            if (nextData && nextData.length > 0) {
+                setHasMore(true);
+            }
+            else {
                 setHasMore(false);
             }
+
+         console.log("hasMore",hasMore);
         }catch (error) {
             console.error("Error fetching applicants:", error);
         }finally {
@@ -110,13 +112,12 @@ const prevPage = () => {
  */
 
 const viewApplication = (applicantId) => {
-    if (selectedApplicant === applicantId) {
-        setSelectedApplicant(null);
-        setTimeout(() => setSelectedApplicant(applicantId), 0);
-    } else {
+    setSelectedApplicant(null);
+    setTimeout(() => {
         setSelectedApplicant(applicantId);
-    }
+    }, 100);
 };
+
 
 /**
  * Handles closing the application details modal.
@@ -128,12 +129,6 @@ const closeApplicationDetails = () => {
 
 return (
     <div className="flex w-full">
-    <SideBarContainer
-    username={username}
-    logoPreview={logoPreview}
-    logoInputRef={logoInputRef}
-    logoUpload={logoUpload}
-    />
     <JobApplicantsPage 
     Applicants={applicants || []}
      isLoading={isLoading} 
@@ -147,7 +142,6 @@ return (
      selectedApplicant={selectedApplicant}
     onCloseApplicationDetails={closeApplicationDetails}
      />
-     <Analytics />
     </div>
 );
 

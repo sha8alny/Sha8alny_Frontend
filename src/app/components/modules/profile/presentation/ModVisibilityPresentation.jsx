@@ -64,7 +64,7 @@ export default function ModVisibilityPresentation({
                 </SelectContent>
               </Select>
               {modifyingVisibility && (
-                <div className="size-8 animate-spin border-t-1 border-secondary rounded-full" />
+                <div className="size-8 animate-spin border-t-transparent border-2 border-secondary rounded-full" />
               )}
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function ModVisibilityPresentation({
       )}
       {currentStage === 1 && (
         <div className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center">
-          <div className="size-12 animate-spin border-t-1 rounded-full border-secondary" />
+          <div className="size-12 animate-spin border-t-transparent border-2 rounded-full border-secondary" />
           Modifying...
         </div>
       )}
