@@ -2,13 +2,20 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import JobsExploreContainer from '@/app/components/modules/jobs/container/JobsExploreContainer';
-import useJobListings from '@/app/hooks/useJobListings';
-import { useRouter } from 'next/navigation';
+import { fetchJobListings } from '@/app/services/jobs';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 jest.mock('../../app/hooks/useJobDetails');
-jest.mock('../../app/hooks/useJobListings', () => jest.fn());
+jest.mock('../../app/services/jobs', () => ({
+  fetchJobListings: jest.fn(),
+}));
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+}));
+jest.mock('@tanstack/react-query', () => ({
+  useInfiniteQuery: jest.fn(),
 }));
 jest.mock('../../app/utils/normalizeJob', () => ({
   normalizeJob: jest.fn(data => data),
@@ -16,6 +23,7 @@ jest.mock('../../app/utils/normalizeJob', () => ({
 
 describe('JobsExploreContainer', () => {
   const mockRouter = { push: jest.fn() };
+  const mockSearchParams = new URLSearchParams();
   const mockJobData = {
     pages: [
       {
@@ -28,7 +36,8 @@ describe('JobsExploreContainer', () => {
             workLocation: 'Remote',
             description: 'A great job opportunity',
             createdAt: new Date(Date.now() - 8640500), // 1 day ago
-            salary: '100000'
+            salary: '100000',
+            salaryFormatted: 'Salary: 100000 $',
           },
           { 
             id: '2', 
@@ -38,6 +47,7 @@ describe('JobsExploreContainer', () => {
             employmentType: 'Part-time',
             description: 'Product management role',
             createdAt: new Date(Date.now() - 86400000 * 7), // 7 days ago
+            salaryFormatted:"Salary: undisclosed",
           }
         ]
       }
@@ -46,14 +56,17 @@ describe('JobsExploreContainer', () => {
 
   beforeEach(() => {
     useRouter.mockReturnValue(mockRouter);
-    useJobListings.mockReturnValue({
+    useSearchParams.mockReturnValue(mockSearchParams);
+    useInfiniteQuery.mockReturnValue({
       data: mockJobData,
       error: null,
       isLoading: false,
       fetchNextPage: jest.fn(),
       hasNextPage: true,
       isFetchingNextPage: false,
+      refetch: jest.fn(),
     });
+    fetchJobListings.mockResolvedValue({ data: mockJobData.pages[0].data, nextPage: 2 });
   });
 
   afterEach(() => {
@@ -73,7 +86,7 @@ describe('JobsExploreContainer', () => {
 
   test('calls fetchNextPage when load more is clicked', () => {
     const mockFetchNextPage = jest.fn();
-    useJobListings.mockReturnValue({
+    useInfiniteQuery.mockReturnValue({
       data: mockJobData,
       error: null,
       isLoading: false,
@@ -97,7 +110,7 @@ describe('JobsExploreContainer', () => {
   });
 
   test('displays loading state', () => {
-    useJobListings.mockReturnValue({
+    useInfiniteQuery.mockReturnValue({
       data: null,
       error: null,
       isLoading: true,
@@ -111,7 +124,7 @@ describe('JobsExploreContainer', () => {
   });
 
   test('handles errors correctly', () => {
-    useJobListings.mockReturnValue({
+    useInfiniteQuery.mockReturnValue({
       data: null,
       error: new Error('Failed to fetch'),
       isLoading: false,
@@ -123,8 +136,6 @@ describe('JobsExploreContainer', () => {
     render(<JobsExploreContainer />);
     expect(screen.getByText(/failed to fetch/i)).toBeInTheDocument();
   });
-  
-  // New test cases focusing on JobTag, JobCard, and JobsCard components
   
   test('renders job tags correctly', () => {
     render(<JobsExploreContainer />);
@@ -175,7 +186,7 @@ describe('JobsExploreContainer', () => {
   });
   
   test('shows "No job listings" message when no jobs are available', () => {
-    useJobListings.mockReturnValue({
+    useInfiniteQuery.mockReturnValue({
       data: { pages: [{ data: [] }] },
       error: null,
       isLoading: false,
@@ -204,7 +215,7 @@ describe('JobsExploreContainer', () => {
       ]
     };
     
-    useJobListings.mockReturnValue({
+    useInfiniteQuery.mockReturnValue({
       data: jobWithNoDate,
       error: null,
       isLoading: false,
@@ -239,6 +250,7 @@ describe('JobsExploreContainer', () => {
               industry: 'Technology',
               experience: '3-5 years',
               salary: 85000,
+              salaryFormatted: 'Salary: 85000 $',
               isSavedByUser: true,
               createdAt: '2023-04-15T10:30:00Z',
               updatedAt: '2023-04-16T14:20:00Z'
@@ -248,7 +260,7 @@ describe('JobsExploreContainer', () => {
       ]
     };
     
-    useJobListings.mockReturnValue({
+    useInfiniteQuery.mockReturnValue({
       data: mockRawData,
       error: null,
       isLoading: false,

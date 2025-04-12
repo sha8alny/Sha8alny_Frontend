@@ -95,16 +95,16 @@ const JobApplicationModalPresenter = ({
               id="phone"
               type="tel"
               className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 dark:text-white"
-              {...register("phone")}
-              onKeyDown={(e) => {
-                if (
-                  !/[0-9]/.test(e.key) &&
-                  e.key !== "Backspace" &&
-                  e.key !== "Delete"
-                ) {
-                  e.preventDefault();
-                }
-              }}
+              {...register("phone", {
+                onChange: (e) => {
+                  // Filter out non-numeric characters
+                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
+                  // Set the input value directly for immediate feedback
+                  e.target.value = numericValue;
+                },
+                // This ensures the actual value in the form state is numeric
+                setValueAs: (v) => v.replace(/[^0-9]/g, ""),
+              })}
             />
             {errors.phone && (
               <p className="text-sm text-red-500">{errors.phone.message}</p>
