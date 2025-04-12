@@ -185,7 +185,7 @@ const PostNewJobForm =({
             <Button
             type="submit"
             aria-label="Post"
-             className=" border border-secondary bg-secondary text-xl text-foreground rounded-full px-8 py-2 hover:bg-foreground hover:text-secondary transition duration-300"
+             className=" text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
             disabled={isLoading}
             >            {isLoading ? "Posting..." : "Post"}</Button>
             </div>

@@ -15,7 +15,7 @@ export const searchCompany = async (text, pageNum) => {
 
 
 export const searchUser = async(text,industry,company, pageNum) => {
-    const response = await fetchWithAuth(`${apiURL}/search/user?text=${encodeURIComponent(text)}&industry=${encodeURIComponent(industry)}&company=${encodeURIComponent(company)}&pageNum=${pageNum}`, {
+    const response = await fetchWithAuth(`http://localhost:5000/search/user?text=${encodeURIComponent(text)}&industry=${encodeURIComponent(industry)}&company=${encodeURIComponent(company)}&pageNum=${pageNum}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export const searchUser = async(text,industry,company, pageNum) => {
 }
 
 export const fetchJobListings = async (text, pageNum) => {
-    const response = await fetchWithAuth(`${apiURL}/jobs/search/${pageNum}?keyword=${encodeURIComponent(text)}`, {
+    const response = await fetchWithAuth(`${apiURL}/jobs/search/${pageNum}/${3}?keyword=${encodeURIComponent(text)}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

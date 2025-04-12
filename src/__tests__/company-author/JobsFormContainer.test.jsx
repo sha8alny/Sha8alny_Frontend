@@ -239,9 +239,8 @@ describe("JobsFormContainer", () => {
   
     const jobId = '1';
     const username = 'testCompany';
-    const logo = '/test-logo.png';
   
-    render(<JobsFormContainer username={username} logo={logo} />);
+    render(<JobsFormContainer username={username}  />);
   
     // Wait for the job cards to load
     const editIcons = await screen.findAllByTestId('EditJob');
@@ -279,9 +278,8 @@ describe("JobsFormContainer", () => {
   
     const jobId = '1';
     const username = 'testCompany';
-    const logo = '/test-logo.png';
   
-    render(<JobsFormContainer username={username} logo={logo} />);
+    render(<JobsFormContainer username={username} />);
   
     // Wait for the job cards to load
     const deleteIcons = await screen.findAllByTestId('DeleteJob');

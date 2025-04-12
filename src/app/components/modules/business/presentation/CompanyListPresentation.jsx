@@ -22,10 +22,10 @@ import CompanyCardContainer from "../container/CompanyCardContainer";
  * @function CompanyListPresentation
  * @param {Object} props - The props object.
  * @param {Object} props.companies - The companies data object.
- * @param {boolean} props.companies.isLoading - Indicates if the companies data is loading.
- * @param {boolean} props.companies.isError - Indicates if there was an error fetching companies data.
- * @param {string} [props.companies.error] - The error message, if any.
- * @param {Array} [props.companies.companies] - The list of company objects.
+ * @param {boolean} props.companies?.isLoading - Indicates if the companies data is loading.
+ * @param {boolean} props.companies?.isError - Indicates if there was an error fetching companies data.
+ * @param {string} [props.companies?.error] - The error message, if any.
+ * @param {Array} [props.companies?.companies] - The list of company objects.
  * @param {boolean} isError - Indicates if there was an error in the parent component.
  * @param {string} error - The error message to display.
  * @returns {JSX.Element} A grid of company cards, a loading skeleton, or an error/empty state message.
@@ -44,7 +44,7 @@ function SkeletonCard() {
 }
 
 function CompanyListPresentation({ companies, isError, error }) {
-  if (companies.isLoading) {
+  if (companies?.isLoading) {
     return (
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
@@ -53,7 +53,7 @@ function CompanyListPresentation({ companies, isError, error }) {
       </div>
     );
   }
-  if (companies.isError && companies.error !== "No companies found for the given query.") {
+  if (companies?.isError && companies?.error !== "No companies found for the given query.") {
     return (
       <div className="w-1/2 mx-auto flex flex-col text-text items-center justify-center rounded-lg border border-dashed p-8 text-center">
         <h3 className="mt-2 text-lg font-semibold">Error</h3>
@@ -61,8 +61,7 @@ function CompanyListPresentation({ companies, isError, error }) {
       </div>
     );
   }
-  console.log(companies.companies, "companies in presentation");
-  if (companies.length === 0 || companies.error === "No companies found for the given query.") {
+  if (companies?.length === 0 || companies?.error === "No companies found for the given query.") {
     return (
       <div className="w-1/2 mx-auto flex flex-col text-text items-center justify-center rounded-lg border border-dashed p-8 text-center">
         <h3 className="mt-2 text-lg font-semibold">No companies yet</h3>
