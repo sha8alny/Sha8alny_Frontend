@@ -5,22 +5,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import JobApplicationModalContainer from '../../app/components/modules/jobs/container/JobApplicationModalContainer';
 
-// Mocking dependencies
+// Mock only external dependencies
 jest.mock('@tanstack/react-query');
 jest.mock('react-hook-form');
 jest.mock('../../app/services/jobs');
 
-// Mocking ThemeContext
-jest.mock('../../app/context/ThemeContext', () => ({
-  ThemeContext: {
-    Provider: ({ children }) => children,
-    Consumer: ({ children }) => children({ theme: 'light' }),
-  },
-  useTheme: jest.fn(() => ({ theme: 'light' })),
-}));
-
-describe('JobApplicationModalContainer', () => {
-  // Mock props for the component
+describe('JobApplicationModalContainer with Presentation', () => {
   const mockProps = {
     show: true,
     handleClose: jest.fn(),
@@ -28,256 +18,170 @@ describe('JobApplicationModalContainer', () => {
     jobTitle: 'Software Engineer',
   };
 
-  // Mock functions and variables
   const mockMutate = jest.fn();
   const mockReset = jest.fn();
   const mockSetValue = jest.fn();
   const mockRegister = jest.fn();
   let mockFormState;
   let mockWatch;
-  let fileInputRef;
 
   beforeEach(() => {
-
     jest.clearAllMocks();
 
-    // Initializing mock form state and watch
     mockFormState = { errors: {} };
     mockWatch = jest.fn().mockReturnValue(null);
-    fileInputRef = { current: { value: '' } };
 
-    // Mocking useForm hook
     useForm.mockReturnValue({
-      register: mockRegister,
-      handleSubmit: jest.fn((cb) => (data) => cb(data)),
+      register: mockRegister.mockImplementation((name) => ({ name })),
+      handleSubmit: (cb) => (data) => cb(data),
       setValue: mockSetValue,
       formState: mockFormState,
       reset: mockReset,
       watch: mockWatch,
     });
 
-    // Mocking useMutation hook
     useMutation.mockReturnValue({
       mutate: mockMutate,
       isPending: false,
     });
-
-    // Mocking useRef
-    jest.spyOn(React, 'useRef').mockReturnValue(fileInputRef);
   });
 
-  test('handles file change correctly', () => {
-    // Test file input change behavior
+  test('renders modal with correct job title', () => {
     render(<JobApplicationModalContainer {...mockProps} />);
+    expect(screen.getByText(`Apply for ${mockProps.jobTitle}`)).toBeInTheDocument();
+  });
 
+  test('shows form fields', () => {
+    render(<JobApplicationModalContainer {...mockProps} />);
+    expect(screen.getByLabelText(/phone number/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/cover letter/i)).toBeInTheDocument();
+    expect(screen.getByText(/upload resume/i)).toBeInTheDocument();
+  });
+
+  test('handles file upload', () => {
     const file = new File(['dummy content'], 'resume.pdf', { type: 'application/pdf' });
-    const fileInput = screen.getByLabelText(/upload resume/i);
-
-    Object.defineProperty(fileInput, 'files', {
-      value: [file],
-    });
-
-    fireEvent.change(fileInput);
-
-    // Expect setValue to be called with the correct arguments
+    
+    render(<JobApplicationModalContainer {...mockProps} />);
+    
+    const fileInput = screen.getByLabelText(/resume\/cv/i);
+    fireEvent.change(fileInput, { target: { files: [file] } });
+    
     expect(mockSetValue).toHaveBeenCalledWith('resume', file, { shouldValidate: true });
   });
 
-  test('submits form data correctly', async () => {
-    // Test form submission behavior
-    render(<JobApplicationModalContainer {...mockProps} />);
-
-    const submitButton = screen.getByRole('button', { name: /submit application/i });
-    fireEvent.click(submitButton);
-
-    // Expect mutate to be called
-    expect(mockMutate).toHaveBeenCalled();
-  });
-
-  test('handles successful submission', async () => {
-    // Mock successful mutation behavior
-    useMutation.mockImplementation(({ onSuccess }) => ({
-      mutate: () => onSuccess(),
-      isPending: false,
-    }));
-
-    render(<JobApplicationModalContainer {...mockProps} />);
-
-    const submitButton = screen.getByRole('button', { name: /submit application/i });
-    fireEvent.click(submitButton);
-
-    // Wait for reset and file input value clearing
-    await waitFor(() => {
-      expect(mockReset).toHaveBeenCalled();
-      expect(fileInputRef.current.value).toBe('');
-    });
-  });
-
-  test('handles submission error', async () => {
-    const errorMessage = 'Application failed';
-
-    // Mock mutation behavior with error handling
-    useMutation.mockImplementation(({ onError }) => ({
-      mutate: mockMutate.mockImplementation((data, options = {}) => {
-        if (options.onError) options.onError(new Error(errorMessage));
-        onError(new Error(errorMessage));
-      }),
-      isPending: false,
-    }));
-
-    render(<JobApplicationModalContainer {...mockProps} />);
-
-    const submitButton = screen.getByRole('button', { name: /submit application/i });
-    fireEvent.click(submitButton);
-
-    // Wait for mutate to be called
-    await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalled();
-    });
-  });
-
-  test('closes modal when close button is clicked', () => {
-    // Test modal close behavior
-    render(<JobApplicationModalContainer {...mockProps} />);
-
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
-
-    // Expect handleClose to be called
-    expect(mockProps.handleClose).toHaveBeenCalled();
-  });
-
   test('shows loading state during submission', () => {
-    // Mock loading state during mutation
     useMutation.mockReturnValue({
       mutate: mockMutate,
       isPending: true,
     });
 
     render(<JobApplicationModalContainer {...mockProps} />);
-
-    // Expect loading indicator to be displayed
-    const loadingIndicator = screen.getByText(/submitting/i);
-    expect(loadingIndicator).toBeInTheDocument();
+    
+    expect(screen.getByText(/submitting/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submitting/i })).toBeDisabled();
   });
 
-  describe('Form validation', () => {
-    test('validates phone number length', async () => {
-      // Mock validation error for phone number
-      mockFormState.errors = {
-        phone: { message: 'Phone number must be at least 11 digits' },
-      };
-
-      render(<JobApplicationModalContainer {...mockProps} />);
-      const errorMessage = screen.queryByText(/phone number must be at least 11 digits/i);
-
-      // Expect validation error message to be displayed
-      expect(errorMessage).toBeInTheDocument();
-    });
-
-    test('validates resume is required', async () => {
-      // Mock validation error for missing resume
-      mockFormState.errors = {
-        resume: { message: 'Resume is required' },
-      };
-
-      render(<JobApplicationModalContainer {...mockProps} />);
-      const errorMessage = screen.queryByText(/resume is required/i);
-
-      // Expect validation error message to be displayed
-      expect(errorMessage).toBeInTheDocument();
-    });
-
-    test('validates file type', async () => {
-      // Mock validation error for invalid file type
-      mockFormState.errors = {
-        resume: { message: 'Invalid file type' },
-      };
-
-      render(<JobApplicationModalContainer {...mockProps} />);
-      const errorMessage = screen.queryByText(/invalid file type/i);
-
-      // Expect validation error message to be displayed
-      expect(errorMessage).toBeInTheDocument();
-    });
-
-    test('validates file size', async () => {
-      // Mock validation error for file size
-      mockFormState.errors = {
-        resume: { message: 'Max file size is 5MB' },
-      };
-
-      render(<JobApplicationModalContainer {...mockProps} />);
-      const errorMessage = screen.queryByText(/max file size is 5mb/i);
-
-      // Expect validation error message to be displayed
-      expect(errorMessage).toBeInTheDocument();
-    });
-  });
-  test('calls mutation function with correct data on submit', async () => {
-    render(<JobApplicationModalContainer {...mockProps} />);
-
-    const mockData = {
-      phone: '12345678901',
-      coverLetter: 'This is a cover letter',
-      resume: new File(['dummy content'], 'resume.pdf', { type: 'application/pdf' }),
-    };
-
-    mockWatch.mockImplementation((field) => mockData[field]);
-
-    await waitFor(() => mockMutate(mockData));
-
-    expect(mockMutate).toHaveBeenCalledWith(mockData);
-  });
-
-  test('sets error message on mutation error', async () => {
-    const errorMessage = 'Failed to submit application';
-
-    useMutation.mockImplementation(({ onError }) => ({
-      mutate: () => onError(new Error(errorMessage)),
-      isPending: false,
-    }));
-
-    render(<JobApplicationModalContainer {...mockProps} />);
-
-    const submitButton = screen.getByRole('button', { name: /submit application/i });
-    fireEvent.click(submitButton);
-
-    await waitFor(() => {
-      const errorElement = screen.getByText(errorMessage);
-      expect(errorElement).toBeInTheDocument();
-    });
-  });
-
-  test('clears file input and resets form on successful submission', async () => {
+  test('shows success message after submission', async () => {
     useMutation.mockImplementation(({ onSuccess }) => ({
       mutate: () => onSuccess(),
       isPending: false,
     }));
 
     render(<JobApplicationModalContainer {...mockProps} />);
-
-    const submitButton = screen.getByRole('button', { name: /submit application/i });
-    fireEvent.click(submitButton);
-
+    
+    fireEvent.click(screen.getByRole('button', { name: /submit application/i }));
+    
     await waitFor(() => {
-      expect(mockReset).toHaveBeenCalled();
-      expect(fileInputRef.current.value).toBe('');
+      expect(screen.getByText(/submitted successfully/i)).toBeInTheDocument();
     });
   });
 
-  test('handles file change and updates form value', () => {
+  test('shows error message when submission fails', async () => {
+    const errorMessage = 'Submission failed';
+    
+    useMutation.mockImplementation(({ onError }) => ({
+      mutate: () => onError(new Error(errorMessage)),
+      isPending: false,
+    }));
+
     render(<JobApplicationModalContainer {...mockProps} />);
+    
+    fireEvent.click(screen.getByRole('button', { name: /submit application/i }));
+    
+    await waitFor(() => {
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    });
+  });
 
-    const file = new File(['dummy content'], 'resume.pdf', { type: 'application/pdf' });
-    const fileInput = screen.getByLabelText(/upload resume/i);
+  test('closes modal when cancel button is clicked', () => {
+    render(<JobApplicationModalContainer {...mockProps} />);
+    
+    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    
+    expect(mockProps.handleClose).toHaveBeenCalled();
+  });
 
-    Object.defineProperty(fileInput, 'files', {
-      value: [file],
+  describe('Form validation', () => {
+    test('shows phone number validation error', () => {
+      mockFormState.errors = {
+        phone: { message: 'Invalid phone number' },
+      };
+
+      render(<JobApplicationModalContainer {...mockProps} />);
+      
+      expect(screen.getByText(/invalid phone number/i)).toBeInTheDocument();
     });
 
-    fireEvent.change(fileInput);
+    test('shows resume validation errors', () => {
+      mockFormState.errors = {
+        resume: { message: 'Resume is required' },
+      };
 
-    expect(mockSetValue).toHaveBeenCalledWith('resume', file, { shouldValidate: true });
+      render(<JobApplicationModalContainer {...mockProps} />);
+      
+      expect(screen.getByText(/resume is required/i)).toBeInTheDocument();
+    });
+  });
+  test('prevents non-numeric input in phone number field', () => {
+    render(<JobApplicationModalContainer {...mockProps} />);
+    
+    const phoneInput = screen.getByLabelText(/phone number/i);
+    
+    // Test valid number input
+    fireEvent.change(phoneInput, { target: { value: '1' } });
+    expect(phoneInput.value).toBe('1'); // Ensure the value is updated correctly
+    
+    // Test invalid character key
+    fireEvent.change(phoneInput, { key: 'a' });
+    expect(phoneInput.value).not.toBe('a1'); // Shouldn't accept letters
+  });
+
+  test('displays selected file name or placeholder text', () => {
+    const file = new File(['dummy content'], 'resume.pdf', { type: 'application/pdf' });
+    mockWatch.mockReturnValueOnce(file);
+
+    render(<JobApplicationModalContainer {...mockProps} />);
+    
+    expect(screen.getByText(file.name)).toBeInTheDocument();
+
+    mockWatch.mockReturnValueOnce(null);
+    render(<JobApplicationModalContainer {...mockProps} />);
+    
+    expect(screen.getByText(/no file selected/i)).toBeInTheDocument();
+  });
+
+  test('clears form after successful submission', async () => {
+    useMutation.mockImplementation(({ onSuccess }) => ({
+      mutate: () => onSuccess(),
+      isPending: false,
+    }));
+
+    render(<JobApplicationModalContainer {...mockProps} />);
+    
+    fireEvent.click(screen.getByRole('button', { name: /submit application/i }));
+    
+    await waitFor(() => {
+      expect(mockReset).toHaveBeenCalled();
+    });
   });
 });

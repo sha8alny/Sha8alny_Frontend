@@ -1,4 +1,3 @@
-// filepath: c:\Users\Hussein Essam\OneDrive\Desktop\Senior-1B\Mats\Software\Repo\sha8alny_frontend\jest.config.js
 const nextJest = require('next/jest')
 
 /** @type {import('jest').Config} */
@@ -20,7 +19,8 @@ const config = {
     "/src/utils/",
     "/src/app/services/",
   ],
-  // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+    // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  detectOpenHandles: true,
 }
 
 module.exports = createJestConfig(config)

@@ -116,14 +116,14 @@ const JobsForm = ({
                     Show Applicants
                   </Button>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
                   <div>
                     <p className="text-text">{job.location}</p>
                     <p className="text-text">{job.industry}</p>
                     <p className="text-secondary">{job.employmentType}</p>
                     <p className="text-secondary font-bold">${job.salary}</p>
                   </div>
-                  <div className="hidden lg:flex relative ml-8 items-center justify-center h-20">
+                  <div className="hidden lg:flex relative  items-center justify-center h-20">
                     <div className="w-[4px] h-17 bg-text"></div>
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-text w-3 h-3 rounded-full"></div>
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-text w-3 h-3 rounded-full"></div>

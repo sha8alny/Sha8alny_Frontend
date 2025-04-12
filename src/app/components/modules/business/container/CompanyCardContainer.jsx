@@ -26,7 +26,7 @@ function CompanyCardContainer({ company }) {
   };
 
   const handleViewPageClick = () => {
-    router.push(`/company/${company?.companyUsername}/`);
+    router.push(`company-user-admin/${company?.companyUsername}/about-page`);
   };
 
   return (
