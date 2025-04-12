@@ -106,7 +106,7 @@ function MyJobsPresentation({
           </TabsList>
           <div className="flex space-x-2 order-first md:order-last">
             <button
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="flex items-center px-4 py-2 bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200 rounded-md "
               onClick={onMoreJobsClick}
             >
               <AddIcon className="h-4 w-4 mr-2" />
@@ -258,10 +258,10 @@ function JobsTable({
               </td>
               <td className="p-4">
                 <div className="text-gray-800 dark:text-gray-400">
-                  {formatDate(job.createdAt)}
+                  {formatDate(job.appliedAt)}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {formatTime(job.createdAt)}
+                  {formatTime(job.appliedAt)}
                 </div>
               </td>
               <td className="p-4">

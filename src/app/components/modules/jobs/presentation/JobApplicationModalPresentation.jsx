@@ -187,7 +187,7 @@ const JobApplicationModalPresenter = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="gap-2 bg-blue-500 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 text-white"
+              className="gap-2 bg-secondary hover:bg-secondary/80  text-background transition-colors duration-200"
             >
               {isSubmitting ? (
                 <>
