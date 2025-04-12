@@ -402,3 +402,20 @@ export const followCompany = async (companyUsername) => {
     if (!response.ok) throw new Error("Failed to follow company");
     return await response.json();
 }
+export const getUserCompanies = async (page) => {
+    const response = await fetchWithAuth(`${apiURL}/company?pageNum=${page}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (errorData.error === "Companies not found") {
+        throw new Error("No companies found for the given query.");
+      }
+      throw new Error("Failed to fetch companies.");
+    }
+    return await response.json();
+  };
