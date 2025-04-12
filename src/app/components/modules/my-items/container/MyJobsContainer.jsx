@@ -127,7 +127,8 @@ function MyJobsContainer() {
     ...appliedJobs.data,
     ...archivedJobs.data,
     ...inProgressJobs.data
-  ];
+  ].sort((a, b) => new Date(a.appliedAt) - new Date(b.appliedAt));
+  
 
   // Combined loading state
   if (isLoading) {

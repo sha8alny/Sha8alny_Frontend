@@ -57,7 +57,7 @@ const JobsExplorePresentation = ({
 
       {isFetchingNextPage && (
         <div className="flex justify-center items-center py-4">
-          <div className="ease-linear rounded-full border-4 border-t-4 border-gray-200 border-t-secondary h-8 w-8 animate-spin"></div>
+          <div className="ease-linear rounded-full border-4 border-t-4  border-gray-200 border-t-secondary h-8 w-8 animate-spin"></div>
           <span className="ml-3 text-text text-sm">Loading more...</span>
         </div>
       )}
@@ -66,7 +66,7 @@ const JobsExplorePresentation = ({
         <div className="flex justify-center">
           <button
             onClick={() => fetchNextPage()}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+            className="px-4 py-2 rounded-md bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"
             disabled={isFetchingNextPage}
           >
             {isFetchingNextPage ? "Loading..." : "Load More"}

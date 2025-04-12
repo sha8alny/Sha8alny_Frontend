@@ -45,7 +45,7 @@ function SavedJobsPresentation({
 
       <div className="flex justify-between items-center mb-6">
         <div className="flex space-x-2">
-          <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onClick={handleMoreJobsClick}>
+          <button className="flex items-center px-4 py-2 bg-secondary text-background hover:bg-secondary/80 transition-colors duration-20 rounded-md " onClick={handleMoreJobsClick}>
             Browse More Jobs
           </button>
         </div>
@@ -68,7 +68,7 @@ function SavedJobsPresentation({
               <button
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
+                className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary/80 disabled:bg-blue-400 transition-colors duration-200"
               >
                 {isFetchingNextPage ? "Loading more..." : "Load More Jobs"}
               </button>
@@ -84,7 +84,7 @@ function SavedJobsPresentation({
             Save jobs you're interested in to keep track of opportunities that
             catch your eye
           </p>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onClick={handleMoreJobsClick}>
+          <button className="px-4 py-2 bg-secondary text-background rounded-md hover:bg-secondary/80 transition-colors duration-200" onClick={handleMoreJobsClick}>
             Explore Jobs
           </button>
         </div>
