@@ -4,5 +4,5 @@ import { useParams } from "next/navigation";
 
 export default function Posts() {
   const { username } = useParams();
-  return <PostsContainer/>;
+  return <PostsContainer companyUsername={username}/>;
 }

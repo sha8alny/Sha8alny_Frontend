@@ -161,6 +161,22 @@ export const deletePost = async (postId) => {
   return "Post deleted successfully";
 };
 
+export const repostPost = async (postId) => {
+  const response = await fetchWithAuth(
+    `${apiURL}/posts/${postId}/share`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to repost post");
+  }
+  return response.json();
+};
+
 /**
  * Get comments or replies for a post with pagination
  * @param {string} postId - The ID of the post

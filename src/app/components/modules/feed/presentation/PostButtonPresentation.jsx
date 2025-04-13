@@ -33,6 +33,7 @@ export default function PostButtonPresentation({
   fileInputRef,
   videoInputRef,
   userInfo,
+  isLoading,
 }) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -83,7 +84,7 @@ export default function PostButtonPresentation({
           {/* For single video file */}
           {videos && (
             <div
-              className="relative w-24 h-24 bg-gray-700 rounded-lg mb-4"
+              className="relative w-24 min-h-24 bg-gray-700 rounded-lg mb-4"
             >
               <video
                 src={URL.createObjectURL(videos)}
@@ -151,10 +152,11 @@ export default function PostButtonPresentation({
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <Button
           variant="ghost"
+          disabled={isLoading}
           className="w-full mt-2 h-12 cursor-pointer rounded-2xl bg-secondary hover:bg-secondary/90 hover:text-background dark:hover:bg-secondary/90 dark:hover:text-background text-background font-bold"
           onClick={onPost}
         >
-          Post
+          {isLoading ? "Posting..." : "Post"}
         </Button>
       </div>
 

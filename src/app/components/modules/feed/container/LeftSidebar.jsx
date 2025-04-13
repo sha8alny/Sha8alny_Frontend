@@ -106,7 +106,7 @@ function LeftSidebar({ addButton = false }) {
           }
           return (
             <span className="text-green-500 dark:text-green-400 text-sm font-bold">
-              {sideBar.planDetails?.expiryDate}
+              {sideBar.planDetails?.expiryDate || "N/A"}
             </span>
           );
         }

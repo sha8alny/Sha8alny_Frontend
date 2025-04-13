@@ -109,9 +109,9 @@ return(
                 </button>
             </form>
             <p className="text-center text-sm text-text mt-4">
-                New shaغalny member?{""}
+                New shaغalny member?{" "}
                 <a href="/signup" className="text-secondary hover:underline">
-                 join the community 
+                 Join the community 
                 </a>
             </p>
         </div>
