@@ -38,8 +38,8 @@ function LeftSidebar({ addButton = false }) {
     { name: "Plan Expiry Date", icon: CalendarMonth },
   ];
 
-  const isExpired = new Date(sideBar?.expiryDate) < new Date();
-  const isPremium = sideBar?.isPremium;
+  const isExpired = new Date(sideBar?.planDetails?.expiryDate) < new Date();
+  const isPremium = sideBar?.planDetails?.isPremium;
 
   const determineStat = (stat) => {
     const getColor = (value, limit) => {
@@ -106,7 +106,7 @@ function LeftSidebar({ addButton = false }) {
           }
           return (
             <span className="text-green-500 dark:text-green-400 text-sm font-bold">
-              {sideBar.planDetails?.expiryDate}
+              {sideBar.planDetails?.expiryDate || "N/A"}
             </span>
           );
         }

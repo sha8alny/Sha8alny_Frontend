@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import JobApplicantsPageContainer from "../../app/components/modules/company-author/container/JobApplicantsPageContainer";
-import { JobApplicants } from "../../app/services/companyManagment";
+import { JobApplicants } from "../../app/services/companyManagement";
 import JobApplicantsPage from "../../app/components/modules/company-author/presentation/JobApplicantsPage";
 import "@testing-library/jest-dom";
-jest.mock("../../app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagement", () => ({
   JobApplicants: jest.fn(),
 }));
 

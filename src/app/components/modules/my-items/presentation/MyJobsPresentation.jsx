@@ -287,24 +287,24 @@ function JobsTable({
   );
 }
 const employerFeedback = (job) => {
-  if (job.feedback) {
+  if (job.notes) {
     return (
       <HoverCard>
         <HoverCardTrigger asChild>
           <button
-            className="p-1 text-gray-600 hover:text-gray-900"
+            className="p-1 text-gray-600 hover:text-secondary transition-colors duration-200"
             title="View feedback"
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the row click event
             }}
           >
-            <FeedbackIcon className="h-5 w-5" />
+            <FeedbackIcon sx={{ fontSize: "1.75rem" }} />
           </button>
         </HoverCardTrigger>
         <HoverCardContent className="w-80">
           <div className="space-y-2">
             <h4 className="text-sm font-semibold">Employer Feedback</h4>
-            <p className="text-sm text-gray-500">{job?.feedback}</p>
+            <p className="text-sm text-gray-500">{job?.notes}</p>
           </div>
         </HoverCardContent>
       </HoverCard>
@@ -312,11 +312,11 @@ const employerFeedback = (job) => {
   }
   return (
     <button
-      className="p-1 text-gray-300 cursor-not-allowed"
+      className="p-1 text-gray-300 cursor-not-allowed disabled:dark:text-background/80"
       disabled
       title="No feedback available"
     >
-      <FeedbackIcon className="h-5 w-5" />
+      <FeedbackIcon sx={{ fontSize: "1.75rem" }} />
     </button>
   );
 };

@@ -2,12 +2,12 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ViewApplicationDetailsContainer from "../../app/components/modules/company-author/container/ViewApplicationDetailsContainer";
 import ViewApplicationDetailsModal from "../../app/components/modules/company-author/presentation/ViewApplicationDetailsModal";
-import { getApplication, updateApplication } from "../../app/services/companyManagment";
+import { getApplication, updateApplication } from "../../app/services/companyManagement";
 import { useToast } from "../../app/context/ToastContext";
 import "@testing-library/jest-dom";
 
 // Mock dependencies
-jest.mock("../../app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagement", () => ({
     getApplication: jest.fn(),
     updateApplication: jest.fn(),
 }));

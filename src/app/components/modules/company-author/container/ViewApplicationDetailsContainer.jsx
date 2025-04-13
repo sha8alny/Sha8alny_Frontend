@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/app/context/ToastContext";
 import  ViewApplicationDetailsModal  from "../presentation/ViewApplicationDetailsModal";
-import { getApplication, updateApplication } from "../../../../services/companyManagment";
+import { getApplication, updateApplication } from "../../../../services/companyManagement";
 
 /**
  * @namespace company-author

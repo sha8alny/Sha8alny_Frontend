@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import JobApplicantsPage from "../presentation/JobApplicantsPage";
-import { JobApplicants } from "../../../../services/companyManagment";
+import { JobApplicants } from "../../../../services/companyManagement";
 import { useRef } from "react";
 
 /**

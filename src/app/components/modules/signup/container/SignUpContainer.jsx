@@ -53,6 +53,12 @@ const SignUpContainer = () => {
         if (name==="password") {
             newErrors.password = value.length >= 6 ? "" : "Password must be 6 characters or more.";
         }
+        if (name==="username") {
+            const usernameRegex = /^[a-zA-Z0-9_]+$/;
+            newErrors.username = value.length >= 3 && usernameRegex.test(value) 
+            ? "" 
+            : "Username must be at least 3 characters and contain only letters, numbers, and underscores.";
+        }
       return newErrors;
     });
     };

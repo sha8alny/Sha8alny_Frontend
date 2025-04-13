@@ -1,11 +1,8 @@
 "use client";
 
 // TODO: Implement Multiple Images Case
-import { Post } from "./components/modules/feed/Post";
-import { useState } from "react";
 import LeftSidebar from "./components/modules/feed/container/LeftSidebar";
 import RightSidebarPresentation from "./components/modules/feed/presentation/RightSidebarPresentation";
-import PostButton from "./components/modules/feed/container/PostButton";
 import PostsContainer from "./components/modules/feed/container/PostsContainer";
 
 

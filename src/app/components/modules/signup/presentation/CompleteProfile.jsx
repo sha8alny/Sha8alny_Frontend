@@ -30,7 +30,7 @@ const CompleteProfile = ({
                     />
                 <input
                     type="file"
-                    accept="image/png, image/jpg, image/jpeg"
+                    accept="image/png, image/jpg, image/jpeg, image/webp, image/gif"
                     onChange={(e) => handleImageChange(e, "cover")}
                     className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
                     title="Upload Cover Pic"
@@ -50,7 +50,7 @@ const CompleteProfile = ({
                     />
                 <input
                     type="file"
-                    accept="image/png, image/jpg, image/jpeg"
+                    accept="image/png, image/jpg, image/jpeg, image/webp, image/gif"
                     onChange={(e) => handleImageChange(e, "profile")}
                     className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
                     title="Upload Profile Pic"

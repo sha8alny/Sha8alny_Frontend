@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import About from "../presentation/About";
-import { getCompany } from "@/app/services/companyManagment";
+import { getCompany } from "@/app/services/companyManagement";
 
 /**
  * AboutContainer component

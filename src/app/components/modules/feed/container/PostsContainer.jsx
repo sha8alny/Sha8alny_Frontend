@@ -1,11 +1,11 @@
 "use client";
-import { getPosts } from "@/app/services/post";
+import { getPosts, getProfilePosts, getSavedPosts } from "@/app/services/post";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import PostsPresentation from "../presentation/PostsPresentation";
 import { PostSkeleton } from "../presentation/PostPresentation";
 
-function PostsContainer() {
+function PostsContainer({ companyUsername }) {
   const observerRef = useRef(null);
 
   const {
@@ -17,8 +17,8 @@ function PostsContainer() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts"],
-    queryFn: ({ pageParam = 1 }) => getPosts(pageParam),
+    queryKey: companyUsername ? ["posts", companyUsername] : ["posts"],
+    queryFn: ({ pageParam = 1 }) => companyUsername ? getProfilePosts(pageParam,companyUsername,true) : getPosts(pageParam),
     getNextPageParam: (lastPage, allPages) => {
       if (Array.isArray(lastPage) && lastPage.length > 0) {
         return allPages.length + 1;

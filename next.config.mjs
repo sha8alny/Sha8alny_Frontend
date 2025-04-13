@@ -15,6 +15,10 @@ const nextConfig = {
         hostname: "example.com",
       },
       {
+        protocol: "https",
+        hostname: "testcompany.com"
+      },
+      {
         protocol: "http",
         hostname: "sha8alny.uaenorth.cloudapp.azure.com"
       }

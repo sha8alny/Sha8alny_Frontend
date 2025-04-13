@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import EditPage from "../presentation/EditPage";
-import { updateCompany } from "@/app/services/companyManagment";
+import { updateCompany } from "@/app/services/companyManagement";
 import { useRouter } from "next/navigation";
 
 

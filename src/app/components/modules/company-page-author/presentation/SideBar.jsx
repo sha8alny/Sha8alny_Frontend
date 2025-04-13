@@ -50,7 +50,7 @@ function SideBar({company, menuItems=[], isActive, isModalOpen, setModalOpen, on
             <div>
                 <div className="text-[var(--text)] mb-1 border-b border-[var(--secondary)] pb-2 w-full">
                     <p className="text-2xl font-bold w-full">{company?.name}</p>
-                    <p className="text-xs"> {company?.numFollowers}</p>
+                    <p className="text-xs"> {company?.numFollowers} followers</p>
                 </div>
                 <div className="border-b border-[var(--secondary)] pb-2 flex flex-row justify-between items-center">
                     <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all relative" onClick={()=>setModalOpen("create")}>

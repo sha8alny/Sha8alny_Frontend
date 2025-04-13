@@ -4,7 +4,7 @@ import SideBarContainer from "@/app/components/modules/company-page-author/conta
 import Analytics from "@/app/components/modules/company-page-author/presentation/Analytics";
 import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getCompany } from "@/app/services/companyManagment";
+import { getCompany } from "@/app/services/companyManagement";
 
 export default function CompanyAdminContent({ children }) {
     const { username } = useParams();
@@ -56,7 +56,7 @@ export default function CompanyAdminContent({ children }) {
     };
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen mx-16 min-w-[80%]">
             <div className="lg:hidden flex justify-between items-center px-4 py-2 bg-background border-b">
                 <button 
                     onClick={toggleSidebar}

@@ -11,9 +11,9 @@ import {
   savePost,
   deletePost,
   reactToContent,
+  repostPost,
 } from "@/app/services/post";
 import { useState } from "react";
-import { repostPost } from "@/app/services/repostPost";
 import { reportPost } from "@/app/services/reportPost";
 import { Reactions } from "@/app/utils/Reactions";
 import { followUser } from "@/app/services/connectionManagement";
