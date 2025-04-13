@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getCompany } from "@/app/services/companyManagment";
+import { getCompany } from "@/app/services/companyManagement";
 import Dashboard from "../presentation/Dashboard";
 
 export default function DashboardContainer({username}){

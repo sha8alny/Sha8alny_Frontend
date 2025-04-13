@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUserCompanies } from "@/app/services/companyManagment";
+import { getUserCompanies } from "@/app/services/companyManagement";
 import { useRouter } from "next/navigation";
 import  BusinessPagePresentation  from "../presentation/BusinessPagePresentation";
 

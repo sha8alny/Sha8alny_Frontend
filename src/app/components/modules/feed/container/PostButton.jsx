@@ -17,6 +17,7 @@ export default function PostButton({ userInfo }) {
   const [videos, setVideos] = useState(null);
   const [error, setError] = useState(null);
   const [currentState, setCurrentState] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
@@ -37,6 +38,7 @@ export default function PostButton({ userInfo }) {
   const handlePostMutation = useMutation({
     mutationFn: (formData) => createPost(formData),
     onSuccess: () => {
+      setIsLoading(false);
       setCurrentState(2);
       setText("");
       setImages([]);
@@ -67,6 +69,7 @@ export default function PostButton({ userInfo }) {
       return;
     }
     setError(null);
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("text", text);
     formData.append("keywords", tags);
@@ -199,6 +202,7 @@ export default function PostButton({ userInfo }) {
           fileInputRef={fileInputRef}
           videoInputRef={videoInputRef}
           userInfo={userInfo}
+          isLoading={isLoading}
         />
       }
     />

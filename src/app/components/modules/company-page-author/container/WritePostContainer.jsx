@@ -3,6 +3,7 @@ import { useState, useRef} from "react";
 import WritePost from "../presentation/WritePost";
 import { Modal, Box, Button, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import { useMutation } from "@tanstack/react-query";
 
 
 /**
@@ -41,6 +42,11 @@ import CloseIcon from '@mui/icons-material/Close';
 function WritePostContainer({company, onPostSubmit, logo}){
     const [text, setText] = useState("");
     const [preview, setPreview]= useState(null);
+    const [tags, setTags]= useState([]);
+    const [taggedUsers, setTaggedUsers]= useState([]);
+    const [images, setImages]= useState([]);
+    const [videos, setVideos]= useState(null);
+    const [error, setError]= useState(null);
     const [file, setFile]= useState(null);
     const [isModalOpen, setModalOpen] = useState(false);
     const [articleText, setArticleText] = useState("");
@@ -61,20 +67,27 @@ function WritePostContainer({company, onPostSubmit, logo}){
     };
 
     const handleSubmit = async() => {
-        if (!text?.trim() && !file) return; 
-        const cleanedPreview = preview ? preview.replace(/^blob:/, '') : null;
-        const newPost = {
-            text: text.trim(),
-            media: cleanedPreview || null,
-            time: new Date().toISOString(),
-            tags:[],
-            keywords:[],
-        };
-        onPostSubmit(newPost); 
-        setText("");
-        setPreview(null);
-        setFile(null);
+        if (text.trim() === "" && images.length === 0 && !videos) {
+            setError("Please add text or media to your post.");
+            return;
+        }
+        setError(null);
+        const formData = new FormData();
+        formData.append("text", text);
+        formData.append("keywords", tags);
+        formData.append("tags", taggedUsers);
+        if (images.length > 0) {
+        images.forEach((image) => {
+            formData.append("media", image);
+        });
+        }
+        if (videos) {
+            formData.append("media", videos);
+        }
+        console.log(formData);
+        onPostSubmit(formData);
     };
+
     const handleArticle = () => {
         if (!articleText.trim()) return; 
         const newArticle = {
@@ -90,7 +103,7 @@ function WritePostContainer({company, onPostSubmit, logo}){
         setModalOpen(false); 
     };
     return(
-        <div>
+        <div className="max-w-2xl mx-auto mb-10">
             <WritePost company={company} text={text} setText={setText} onImageUpload={imageUpload} preview={preview} triggerFileInput={triggerFileInput}
             imageInputRef={imageInputRef} onSubmit={handleSubmit} 
             logo={logo} openArticleModal={() => setModalOpen(true)}/>

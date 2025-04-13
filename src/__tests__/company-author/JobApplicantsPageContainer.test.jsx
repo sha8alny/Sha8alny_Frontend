@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import JobApplicantsPageContainer from "../../app/components/modules/company-author/container/JobApplicantsPageContainer";
-import { JobApplicants } from "../../app/services/companyManagment";
+import { JobApplicants } from "../../app/services/companyManagement";
 import JobApplicantsPage from "../../app/components/modules/company-author/presentation/JobApplicantsPage";
 import "@testing-library/jest-dom";
-jest.mock("../../app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagement", () => ({
   JobApplicants: jest.fn(),
 }));
 
@@ -81,7 +81,7 @@ describe("JobApplicantsPageContainer", () => {
     JobApplicants.mockResolvedValueOnce([]);
 
     render(<JobApplicantsPageContainer jobId={mockJobId} onBack={mockOnBack}         username="testCompany"
-      logo="/test-logo.png"/>);
+      />);
 
     // Check if "No Applicants yet" text is shown
     await waitFor(() => {
@@ -94,7 +94,7 @@ describe("JobApplicantsPageContainer", () => {
     .mockResolvedValueOnce(mockApplicantsPage1) // page 1
     .mockResolvedValueOnce(mockApplicantsPage2); // for hasMore check
     render(<JobApplicantsPageContainer jobId={mockJobId} onBack={mockOnBack}         username="testCompany"
-      logo="/test-logo.png"/>);
+      />);
 
     // Wait for applicants to be rendered
     await waitFor(() => {
@@ -121,7 +121,7 @@ describe("JobApplicantsPageContainer", () => {
   
   
     render(<JobApplicantsPageContainer jobId={mockJobId} onBack={mockOnBack}         username="testCompany"
-      logo="/test-logo.png"/>);
+      />);
   
     // Wait for applicants from page 1 to be rendered
     await waitFor(() => {
@@ -155,7 +155,7 @@ describe("JobApplicantsPageContainer", () => {
     JobApplicants.mockResolvedValueOnce(mockApplicantsPage1);
 
     render(<JobApplicantsPageContainer jobId={mockJobId} onBack={mockOnBack}         username="testCompany"
-      logo="/test-logo.png"/>);
+      />);
 
     // Wait for applicants to be rendered
     await waitFor(() => {
@@ -215,7 +215,7 @@ describe("JobApplicantsPageContainer", () => {
     JobApplicants.mockResolvedValueOnce(mockApplicantsPage1);
 
     render(<JobApplicantsPageContainer jobId={mockJobId} onBack={mockOnBack}         username="testCompany"
-      logo="/test-logo.png"/>);
+      />);
 
     // Wait for applicants to be rendered
     await waitFor(() => {

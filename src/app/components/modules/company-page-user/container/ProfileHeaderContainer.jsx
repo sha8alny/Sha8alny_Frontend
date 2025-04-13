@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getCompany } from "@/app/services/companyManagment";
+import { getCompany } from "@/app/services/companyManagement";
 import ProfileHeader from "../presentation/ProfileHeader";
 
 /**

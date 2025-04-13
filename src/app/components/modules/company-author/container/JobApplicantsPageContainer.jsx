@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import JobApplicantsPage from "../presentation/JobApplicantsPage";
-import { JobApplicants } from "../../../../services/companyManagment";
+import { JobApplicants } from "../../../../services/companyManagement";
 import { useRef } from "react";
 
 /**
@@ -24,15 +24,7 @@ import { useRef } from "react";
  *   <JobApplicantsPageContainer jobId={jobId} onBack={handleBack} />
  * )
  */
-const JobApplicantsPageContainer = ({jobId,onBack, username, logo}) => {
-const [logoPreview, setLogoPreview] = useState(logo ||null);
-const logoInputRef = useRef(null);
-const logoUpload = (e) => {
-    const selectedFile=e.target.files[0];
-    if (selectedFile){
-        setLogoPreview(prev => URL.createObjectURL(selectedFile));
-    }
-};
+const JobApplicantsPageContainer = ({jobId,onBack, username}) => {
 const [applicants, setApplicants] = useState([]);
 const [isLoading, setIsLoading] = useState(false);
 const [page, setPage] = useState(1);

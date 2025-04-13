@@ -46,7 +46,7 @@ export default function JobActions({
     <div className="mt-8 flex space-x-4">
       <button
         onClick={handleOpenModal}
-        className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow-md hover:bg-blue-700 transition duration-300"
+        className="flex items-center gap-2 px-6 py-2 text-white dark:text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200  text-sm font-medium rounded-md shadow-md"
         aria-label="Apply for this job"
       >
         <CheckCircleIcon className="h-5 w-5" />
@@ -65,8 +65,8 @@ export default function JobActions({
       <button
         className={`flex items-center gap-2 px-6 py-2 text-sm font-medium rounded-md transition duration-300 ${
           isSaved
-            ? "bg-blue-600 text-white hover:bg-blue-700"
-            : "border border-blue-600 text-blue-600 hover:bg-blue-100"
+            ? "text-white dark:text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+            : "border border-secondary text-secondary  hover:bg-secondary/80"
         }`}
         onClick={handleSaveClick}
         disabled={isSaving}
@@ -75,7 +75,7 @@ export default function JobActions({
       >
         <BookmarkIcon
           className={`h-5 w-5 ${
-            isSaved ? "text-white" : "text-blue-600"
+            isSaved ? "text-background" : "text-secondary"
           }`}
         />
         {isSaving ? "Loading..." : isSaved ? "Saved" : "Save Job"}

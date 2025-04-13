@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import EditPageContainer from "../../app/components/modules/company-page-author/container/EditPageContainer";
-import { updateCompany } from "../../app/services/companyManagment";
+import { updateCompany } from "../../app/services/companyManagement";
 
-jest.mock("../../app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagement", () => ({
     updateCompany: jest.fn()
 }));
 

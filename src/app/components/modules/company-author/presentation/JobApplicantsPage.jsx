@@ -2,7 +2,7 @@
 import ProfileCard from "../../../ui/ProfileCard";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ViewApplicationDetailsContainer from "../container/ViewApplicationDetailsContainer";
-import { ArrowForwardIos,ArrowBackIos } from "@mui/icons-material";
+import { ArrowForwardIos, ArrowBackIos } from "@mui/icons-material";
 
 /**
  * @namespace company-author
@@ -10,10 +10,10 @@ import { ArrowForwardIos,ArrowBackIos } from "@mui/icons-material";
  */
 /**
  * JobApplicantsPage component
- * 
+ *
  * This component renders a page displaying the list of job applicants. It includes navigation buttons
  * to paginate through the applicants and a button to view detailed application information.
- * 
+ *
  * @component
  * @param {Object} props - The properties object.
  * @param {Array} props.Applicants - The array of applicant objects to display.
@@ -27,7 +27,7 @@ import { ArrowForwardIos,ArrowBackIos } from "@mui/icons-material";
  * @param {Function} props.onViewApplication - The function to call when viewing an applicant's details.
  * @param {Object} props.selectedApplicant - The currently selected applicant's details.
  * @param {Function} props.onCloseApplicationDetails - The function to call when closing the application details modal.
- * 
+ *
  * @example
  * return (
  *   <JobApplicantsPage
@@ -46,79 +46,93 @@ import { ArrowForwardIos,ArrowBackIos } from "@mui/icons-material";
  * )
  */
 const JobApplicantsPage = ({
-    Applicants,
-    isLoading,
-    onBack,
-    onNext,
-    onPrev,
-    hasMore,
-    currentPage,
-    jobId,
-    onViewApplication,
-    selectedApplicant,
-    onCloseApplicationDetails
+  Applicants,
+  isLoading,
+  onBack,
+  onNext,
+  onPrev,
+  hasMore,
+  currentPage,
+  jobId,
+  onViewApplication,
+  selectedApplicant,
+  onCloseApplicationDetails,
 }) => {
-   console.log("Applicants",Applicants);
-   console.log("applicant id",selectedApplicant);
-    return (
-        <div className="bg-foreground flex-grow p-6 rounded-lg w-full relative grid grid-cols-1 gap-6">
+  console.log("Applicants", Applicants);
+  console.log("applicant id", selectedApplicant);
+return (
+    <div className="bg-foreground flex-grow p-6 rounded-lg w-full relative grid grid-cols-1 gap-6">
         <div className="flex justify-end">
-        <ArrowBackIcon onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 text-text "
-        sx={{
-        color: "text", // Replace with your desired color (e.g., red-orange)
-        }}
-        role="button" aria-label="ArrowBack"
+            <ArrowBackIcon
+                onClick={onBack}
+                className="border border-secondary rounded-full hover:bg-background transition duration-300 text-text "
+          sx={{
+            color: "text", // Replace with your desired color (e.g., red-orange)
+          }}
+          role="button"
+          aria-label="ArrowBack"
         />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {isLoading ?( <p className="text-text text-xl text-semibold text-center col-span-full">Loading...</p> ) : ( Applicants.length === 0 ? (
-            <p className="text-text text-xl text-semibold text-center col-span-full">No Applicants yet</p> ) : (
-                Applicants.map((Applicant, index) => (
-                 <ProfileCard
-                    key={`${Applicant.id}-${index}`}
-                    name={Applicant.username}
-                    title={Applicant.headline}
-                    profilePic={Applicant.profilePic}
-                    coverPic={Applicant.coverPhoto}
-                    buttonText="View Application"
-                    buttonAction={() =>
-                        
-                        onViewApplication(Applicant._id)}
-                    showButton={true}
-                    />
-                ))
-            )
-        )}   
-        </div>   
-        <div className="flex flex-wrap justify-center sm:justify-between items-center mt-2">
-            {currentPage > 1 && (
-                <ArrowBackIos
-                role="button"
-                aria-label="ArrowBackIos"
-                onClick={onPrev}
-                className="text-secondary"/>
-            )}
-        {hasMore && !isLoading &&(
-            <ArrowForwardIos
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {isLoading ? (
+          <div className="col-span-full w-full flex justify-center items-center min-h-[200px]">
+            <div className="flex flex-col items-center gap-2">
+              <div className="size-12 border-2 border-t-transparent rounded-full animate-spin border-secondary" />
+              <span className="text-primary">Loading...</span>
+            </div>
+          </div>
+        ) : Applicants.length === 0 ? (
+          <p className="text-text text-xl text-semibold text-center col-span-full">
+            No Applicants yet
+          </p>
+        ) : (
+          Applicants.map((Applicant, index) => (
+            <ProfileCard
+              key={`${Applicant.id}-${index}`}
+              name={Applicant.username}
+              title={Applicant.headline}
+              profilePic={Applicant.profilePicture}
+              coverPic={Applicant.coverPhoto}
+              buttonText="View Application"
+              buttonAction={() => onViewApplication(Applicant._id)}
+              showButton={true}
+            />
+          ))
+        )}
+      </div>
+      <div className="flex flex-wrap justify-center sm:justify-between items-center mt-2">
+        {currentPage > 1 && (
+          <ArrowBackIos
+            role="button"
+            aria-label="ArrowBackIos"
+            onClick={onPrev}
+            className="text-secondary"
+          />
+        )}
+        {hasMore && !isLoading && (
+          <ArrowForwardIos
             role="button"
             aria-label="ArrowForwardIos"
             onClick={onNext}
-            className=" text-secondary "/>
-
+            className=" text-secondary "
+          />
         )}
-        {isLoading && Applicants.length>0 &&(
-            <p className="text-text text-xl text-semibold text-center mt-4">Loading more...</p> )}
-          </div>
-          {selectedApplicant && (
-              <ViewApplicationDetailsContainer
-              key={selectedApplicant}
-              applicantId={selectedApplicant}
-              jobId={jobId}
-              onClose={onCloseApplicationDetails}
-              />
-          )}
+        {/* {isLoading && Applicants.length > 0 && (
+          <p className="text-text text-xl text-semibold text-center mt-4">
+            Loading more...
+          </p>
+        )} */}
+      </div>
+      {selectedApplicant && (
+        <ViewApplicationDetailsContainer
+          key={selectedApplicant}
+          applicantId={selectedApplicant}
+          jobId={jobId}
+          onClose={onCloseApplicationDetails}
+        />
+      )}
     </div>
-    );
+  );
 };
 
 export default JobApplicantsPage;

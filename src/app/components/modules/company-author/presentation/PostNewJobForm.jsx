@@ -4,6 +4,7 @@ import { Input } from "@/app/components/ui/Input";
 import { Label } from "@/app/components/ui/Label";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/app/components/ui/Select";
 import { Button } from "@/app/components/ui/Button";
+import { Textarea } from "@/app/components/ui/Textarea";
 /**
  * @namespace company-author
  * @module company-author
@@ -57,40 +58,49 @@ const PostNewJobForm =({
                       
          <form onSubmit={handleJobSubmit} className="space-y-4">
             <div className="flex flex-col gap-4">
-                
-               <Label className="text-text text-lg" htmlFor="title">Enter Job Title</Label>
-                    <Input className="text-text text-md"
+            <div className="flex flex-row gap-4 justify-between">
+                <div className="flex flex-col gap-2 w-full">
+            <Label className="text-text text-lg" htmlFor="title"> Job Title</Label>
+                    <Input className="text-text text-md "
                         data-testid="title"
                         id="title"
                         name="title"
+                        placeholder="Enter Job Title"
                         value={newJob.title}
                         onChange={handleChange}
                         error={errors.title}
                     />
                     {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
-                
-                <Label className="text-text text-lg" htmlFor="location">Enter Job Location</Label>
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+            <Label className="text-text text-lg" htmlFor="location"> Location</Label>
                     <Input className="text-text text-md"
                         data-testid="location"
                         id="location"
                         name="location"
+                        placeholder="Enter Location"
                         value={newJob.location}
                         onChange={handleChange}
                         error={errors.location}
                     />
                     {errors.location && <p className="text-red-500 text-sm">{errors.location}</p>}
-
-                <Label className="text-text text-lg" htmlFor="description">Enter Job Description</Label>
-                    <Input className="text-text text-md"
+                    </div>  
+                 </div>
+                <Label className="text-text text-lg" htmlFor="description"> Job Description</Label>
+                    <Textarea className="text-text text-md"
                         data-testid="description"
                         id="description"
                         name="description"
+                        placeholder="Enter Job Description"
                         value={newJob.description}
                         onChange={handleChange}
                         error={errors.description}
+                        rows={4}
+                        style={{ resize: "none" }} // Disable resizing
                     />
                     {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
-
+                <div className="flex flex-row gap-4 justify-between">
+                    <div className="flex flex-col gap-2 w-full">
                 <Label className="text-text text-lg" htmlFor="employmentType">Employment Type</Label>
                     <Select
                         data-testid="employmentType"
@@ -112,7 +122,8 @@ const PostNewJobForm =({
                         </SelectContent>
                     </Select>
                     {errors.employmentType && <p className="text-red-500 text-sm">{errors.employmentType}</p>}
-
+                </div>
+                <div className="flex flex-col gap-2 w-full">
                 <Label  className="text-text text-lg" htmlFor="work">Work Location</Label>
                     <Select
                         data-testid="work"
@@ -134,18 +145,23 @@ const PostNewJobForm =({
                         </SelectContent>
                     </Select>
                     {errors.workLocation && <p className="text-red-500 text-sm">{errors.workLocation}</p>}
-
+                </div>
+                </div>
+                <div className="flex flex-row gap-4 justify-between">
+                    <div className="flex flex-col gap-2 w-full">
                 <Label className="text-text text-lg" htmlFor="industry">Enter Industry</Label>
                     <Input className="text-text text-md"
                         data-testid="industry"
                         id="industry"
                         name="industry"
+                        placeholder="Enter Industry"
                         value={newJob.industry}
                         onChange={handleChange}
                         error={errors.industry}
                     />  
                     {errors.industry && <p className="text-red-500 text-sm">{errors.industry}</p>}
-
+                    </div>
+                    <div className="flex flex-col gap-2 w-full">
                 <Label className="text-text text-lg" htmlFor="experience">Experience</Label>
                     <Select
                         data-testid="experience"
@@ -168,13 +184,16 @@ const PostNewJobForm =({
                         </SelectContent>
                     </Select>
                     {errors.experience && <p className="text-red-500 text-sm">{errors.experience}</p>}
-
+               </div>
+                </div>
                 <Label className="text-text text-lg" htmlFor="salary">Enter Salary</Label>
                     <Input className="text-text text-md"
                         data-testid="salary"
                         id="salary"
                         name="salary"
                         type="number"
+                        placeholder="Enter Salary"
+                        min="0"
                         value={newJob.salary}
                         onChange={handleChange}
                         error={errors.salary}
@@ -185,7 +204,7 @@ const PostNewJobForm =({
             <Button
             type="submit"
             aria-label="Post"
-             className=" border border-secondary bg-secondary text-xl text-foreground rounded-full px-8 py-2 hover:bg-foreground hover:text-secondary transition duration-300"
+             className="text-xl text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 px-6 py-2  mt-4 "
             disabled={isLoading}
             >            {isLoading ? "Posting..." : "Post"}</Button>
             </div>

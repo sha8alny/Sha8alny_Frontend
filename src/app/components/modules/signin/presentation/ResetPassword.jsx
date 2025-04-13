@@ -79,8 +79,8 @@ const ResetPassword =({
                 >
                     {loading ? "Resetting..." : "Reset Password"}
                 </button>
-                <p className="text-center text-text text-sm mt-4">
-                    Reset Code Expired Or Incorrect Email?{""}
+                <p className="text-center flex flex-col text-text text-sm mt-4">
+                    Reset Code Expired Or Incorrect Email?
                     <a href="/forget-password" className="text-secondary font-semibold hover:underline">
                       Try Again 
                     </a>

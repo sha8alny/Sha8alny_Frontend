@@ -42,7 +42,6 @@ describe("PostNewJobContainer - Extended Tests", () => {
       <PostNewJobContainer
         onBack={mockOnBack}
         username="testCompany"
-        logo="/test-logo.png"
         {...props}
       />
     );
@@ -112,22 +111,8 @@ describe("PostNewJobContainer - Extended Tests", () => {
     });
   });
 
-  test("renders logo preview when file is uploaded", async () => {
-    renderComponent();
-    const file = new File(["dummy content"], "logo.png", { type: "image/png" });
-
-    const input = screen.getByTestId("mock-sidebar").querySelector("input[type='file']");
-    if (input) {
-      fireEvent.change(input, { target: { files: [file] } });
-    }
-
-    // Since logoPreview is used in the sidebar only (mocked), we can only assert no errors occur
-    expect(screen.getByTestId("mock-sidebar")).toBeInTheDocument();
-  });
 
   test("renders correctly with empty initial data", () => {
     renderComponent();
-    expect(screen.getByTestId("mock-sidebar")).toBeInTheDocument();
-    expect(screen.getByTestId("mock-analytics")).toBeInTheDocument();
   });
 });

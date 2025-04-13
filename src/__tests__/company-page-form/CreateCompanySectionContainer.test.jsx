@@ -1,7 +1,7 @@
 import { render, screen , fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CreateCompanySectionContainer from "../../app/components/modules/company-page-form/container/CreateCompanySectionContainer";
-import { createCompany } from "../../app/services/companyManagment";
+import { createCompany } from "../../app/services/companyManagement";
 import { useRouter } from "next/navigation";
 
 const mockPush = jest.fn();
@@ -12,7 +12,7 @@ jest.mock("next/navigation", () => ({
     }),
 }));
 
-jest.mock("../../app/services/companyManagment", () => ({
+jest.mock("../../app/services/companyManagement", () => ({
     createCompany: jest.fn(),
 }));
 

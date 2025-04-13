@@ -71,7 +71,7 @@ const ResetPasswordContainer = () => {
             if (response.success) {
                 toast("Password reset successfully");
                 setTimeout(() => {
-                    router.push("/");
+                    router.push("/signin");
                 }, 3000);
             } else {
                 toast(response.message, false);}

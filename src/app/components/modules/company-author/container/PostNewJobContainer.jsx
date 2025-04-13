@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import PostNewJobForm from "../presentation/PostNewJobForm";
-import { postJob } from "../../../../services/companyManagment";
+import { postJob } from "../../../../services/companyManagement";
 import { useMutation } from "@tanstack/react-query";
 import SideBarContainer from "../../company-page-author/container/SideBarContainer";
 import Analytics from "../../company-page-author/presentation/Analytics";
@@ -27,16 +27,7 @@ import { useToast } from "@/app/context/ToastContext";
  *   <PostNewJobContainer onBack={handleBack} />
  * )
  */
-const PostNewJobContainer = ({ onBack,username,logo, initialJobData=null }) => {
-    const [logoPreview, setLogoPreview] = useState(logo ||null);
-    const logoInputRef = useRef(null);
-    const logoUpload = (e) => {
-        const selectedFile=e.target.files[0];
-        if (selectedFile){
-            setLogoPreview(prev => URL.createObjectURL(selectedFile));
-            console.log("Current logoPreview:", logoPreview);
-        }
-    };
+const PostNewJobContainer = ({ onBack,username, initialJobData=null }) => {
     const [newJob, setNewJob] = useState(initialJobData ||{
         title: "",
         location: "",

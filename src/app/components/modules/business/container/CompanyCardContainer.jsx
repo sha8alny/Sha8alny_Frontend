@@ -14,7 +14,7 @@ import  CompanyCardPresentation  from "../presentation/CompanyCardPresentation";
  * 
  * @param {Object} props - The props object.
  * @param {Object} props.company - The company object containing details about the company.
- * @param {string} props.company.companyUsername - The unique username of the company used for navigation.
+ * @param {string} props.company?.companyUsername - The unique username of the company used for navigation.
  * 
  * @returns {JSX.Element} The rendered `CompanyCardPresentation` component with the appropriate props.
  */
@@ -22,11 +22,11 @@ function CompanyCardContainer({ company }) {
   const router = useRouter();
 
   const handleManageClick = () => {
-    router.push(`/company-page-author/${company.companyUsername}`);
+    router.push(`/company-admin/${company?.companyUsername}/company-page-author/`);
   };
 
   const handleViewPageClick = () => {
-    router.push(`/company/${company.companyUsername}/`);
+    router.push(`company-user-admin/${company?.companyUsername}/about-page`);
   };
 
   return (

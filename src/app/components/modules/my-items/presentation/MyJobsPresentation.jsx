@@ -106,7 +106,7 @@ function MyJobsPresentation({
           </TabsList>
           <div className="flex space-x-2 order-first md:order-last">
             <button
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="flex items-center px-4 py-2 bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200 rounded-md "
               onClick={onMoreJobsClick}
             >
               <AddIcon className="h-4 w-4 mr-2" />
@@ -258,10 +258,10 @@ function JobsTable({
               </td>
               <td className="p-4">
                 <div className="text-gray-800 dark:text-gray-400">
-                  {formatDate(job.createdAt)}
+                  {formatDate(job.appliedAt)}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {formatTime(job.createdAt)}
+                  {formatTime(job.appliedAt)}
                 </div>
               </td>
               <td className="p-4">
@@ -287,24 +287,24 @@ function JobsTable({
   );
 }
 const employerFeedback = (job) => {
-  if (job.feedback) {
+  if (job.notes) {
     return (
       <HoverCard>
         <HoverCardTrigger asChild>
           <button
-            className="p-1 text-gray-600 hover:text-gray-900"
+            className="p-1 text-gray-600 hover:text-secondary transition-colors duration-200"
             title="View feedback"
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the row click event
             }}
           >
-            <FeedbackIcon className="h-5 w-5" />
+            <FeedbackIcon sx={{ fontSize: "1.75rem" }} />
           </button>
         </HoverCardTrigger>
         <HoverCardContent className="w-80">
           <div className="space-y-2">
             <h4 className="text-sm font-semibold">Employer Feedback</h4>
-            <p className="text-sm text-gray-500">{job?.feedback}</p>
+            <p className="text-sm text-gray-500">{job?.notes}</p>
           </div>
         </HoverCardContent>
       </HoverCard>
@@ -312,11 +312,11 @@ const employerFeedback = (job) => {
   }
   return (
     <button
-      className="p-1 text-gray-300 cursor-not-allowed"
+      className="p-1 text-gray-300 cursor-not-allowed disabled:dark:text-background/80"
       disabled
       title="No feedback available"
     >
-      <FeedbackIcon className="h-5 w-5" />
+      <FeedbackIcon sx={{ fontSize: "1.75rem" }} />
     </button>
   );
 };
