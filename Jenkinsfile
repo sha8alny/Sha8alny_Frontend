@@ -1,13 +1,6 @@
-pipeline {
-    agent any
-
-    environment {
-        DOCKER_CONTAINER = "front-sha8alny"
-        DOCKER_IMAGE_FRONT = "sha8alny-front"
-        GIT_REPO = "https://github.com/sha8alny/Sha8alny_Frontend.git"
-    }
-    triggers {
-        genericTrigger(
+properties([
+    pipelineTriggers([
+        [$class: 'GenericTrigger',
             genericVariables: [
                 [key: 'ref', value: '$.ref'],
                 [key: 'repository', value: '$.repository.full_name']
@@ -16,7 +9,17 @@ pipeline {
             token: 'yla-fRont-w785',
             printPostContent: true,
             silentResponse: false
-        )
+        ]
+    ])
+])
+
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_CONTAINER = "front-sha8alny"
+        DOCKER_IMAGE_FRONT = "sha8alny-front"
+        GIT_REPO = "https://github.com/sha8alny/Sha8alny_Frontend.git"
     }
     stages {
         stage('Validate Webhook Source') {
