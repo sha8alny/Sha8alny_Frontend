@@ -32,7 +32,7 @@ const MembershipCardPresentation = ({
   currentPlan,
 }) => {
   const buttonTextMap = {
-    oneTimePremium: "Upgrade to monthly plan",
+    oneTimePremium: "Upgrade Plan",
     cancelling: "Pending...",
     expired: "Renew Plan",
     downgrade: "Downgrade Plan",
@@ -41,9 +41,9 @@ const MembershipCardPresentation = ({
   };
 
   const buttonText =
-    currentPlan === "oneTimePremium" && isPremium
+    currentPlan === "monthlyPremium" && isPremium
       ? buttonTextMap.oneTimePremium
-      : currentPlan === "monthlyPremium" && isPremium
+      : currentPlan === "oneTimePremium" && isPremium
       ? buttonTextMap.currentPlan
       : currentPlan === "free" && !isPremium
       ? buttonTextMap.currentPlan
@@ -82,8 +82,9 @@ const MembershipCardPresentation = ({
       </ul>
 
       <button
+      data-testid = {`membership-button-${plan}`} // either: membership-button-Basic or membership-button-Premium
         className={`mt-16 rounded-full p-4 w-11/12 mx-auto transition text-white ${
-          (currentPlan === "monthlyPremium" && isPremium) ||
+          (currentPlan === "oneTimePremium" && isPremium) ||
           (currentPlan === "free" && !isPremium)
             ? "bg-gray-400 cursor-not-allowed"
             : isCancelling && isPremium == false
@@ -93,7 +94,7 @@ const MembershipCardPresentation = ({
             : "bg-black hover:bg-gray-900 cursor-pointer"
         }`}
         disabled={
-          (currentPlan === "monthlyPremium" && isPremium) || isCancelling
+          (currentPlan === "oneTimePremium" && isPremium) || isCancelling
         }
         onClick={() => handler()}
       >

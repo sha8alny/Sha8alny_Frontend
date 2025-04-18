@@ -5,6 +5,7 @@ import {
   CardNumberElement,
   CardExpiryElement,
   CardCvcElement,
+  PaymentElement,
 } from "@stripe/react-stripe-js";
 import countries from "../../../../../../public/data/countries";
 import { Input } from "@/app/components/ui/Input";
@@ -62,13 +63,13 @@ const PaymentFormPresentation = ({
   premiumType,
   setPremiumType,
   monthlyCost,
-  annualCost,
+  oneTimeCost,
   monthlyCostIfPaidAnnually,
   savingsPercentage,
-  textColor
+  textColor,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div className="flex flex-col items-center justify-center h-full p-4">
       <h1 className="flex items-center justify-center font-bold text-3xl mb-4 w-full">
         <span className="text-primary font-sans">SHA</span>
         <span className="text-secondary">غ</span>
@@ -86,6 +87,7 @@ const PaymentFormPresentation = ({
               <Label>Choose your plan</Label>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <div
+                  data-testid="monthly-premium-plan"
                   className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                     premiumType === "monthlyPremium"
                       ? "border-primary bg-primary/10"
@@ -110,6 +112,7 @@ const PaymentFormPresentation = ({
                 </div>
 
                 <div
+                  datatype="onetime-premium-plan"
                   className={`flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                     premiumType === "oneTimePremium"
                       ? "border-primary bg-primary/10"
@@ -125,9 +128,27 @@ const PaymentFormPresentation = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold">${monthlyCost}</div>
+                      <div
+                        className={`font-bold text-text ${
+                          premiumType === "oneTimePremium"
+                            ? "dark:text-text text-white"
+                            : ""
+                        }`}
+                      >
+                        ${oneTimeCost}
+                      </div>
+                      <div
+                        className={`text-sm text-gray-400 ${
+                          premiumType === "oneTimePremium"
+                            ? "dark:text-gray-500 text-white"
+                            : ""
+                        }`}
+                      >
+                        ${monthlyCostIfPaidAnnually.toFixed(2)}/mo
+                      </div>
                     </div>
                   </div>
+          
                 </div>
               </div>
             </div>
@@ -137,6 +158,7 @@ const PaymentFormPresentation = ({
               <Input
                 id="name"
                 value={name}
+                data-testid="cardholder-name-input"
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
                 className={errors.name ? "border-destructive" : ""}
@@ -150,20 +172,21 @@ const PaymentFormPresentation = ({
               <Label>Credit Card Number</Label>
               <div className="">
                 <div className="border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg px-1 py-[0.16rem] ">
-                <CreditCard className="text-muted-foreground text-2xl mr-2" />
+                  <CreditCard className="text-muted-foreground text-2xl" />
                   <CardNumberElement
+                    data-testid="card-number-element"
                     className="w-full px-3 py-2 focus:outline-none bg-transparent"
                     options={{ style: stripeStyle }}
                   />
                 </div>
               </div>
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Expiration Date</Label>
                 <div className="p-2 border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg ">
                   <CardExpiryElement
+                    data-testid="card-expiry-element"
                     className="w-full focus:outline-none bg-transparent"
                     options={{ style: stripeStyle }}
                   />
@@ -174,6 +197,7 @@ const PaymentFormPresentation = ({
                 <Label>CVC</Label>
                 <div className="p-2 border-1 border-solid border-text w-full bg-input/30 flex items-center rounded-lg  text-text">
                   <CardCvcElement
+                    data-testid="card-cvc-element"
                     className="w-full focus:outline-none bg-transparent"
                     options={{ style: stripeStyle }}
                   />
@@ -185,6 +209,7 @@ const PaymentFormPresentation = ({
               <Label htmlFor="country">Country</Label>
               <Select
                 value={country}
+                data-testid="country-select"
                 onValueChange={setCountry}
                 className="w-full"
               >
@@ -210,6 +235,7 @@ const PaymentFormPresentation = ({
 
             <Button
               type="submit"
+              data-testid="payment-submit-button"
               className="w-full bg-secondary cursor-pointer hover:bg-secondary/80 text-white"
               disabled={loading}
             >
@@ -222,7 +248,7 @@ const PaymentFormPresentation = ({
                 `Pay ${
                   premiumType === "monthlyPremium"
                     ? `$${monthlyCost}/month`
-                    : `$${monthlyCost}`
+                    : `$${oneTimeCost}`
                 }`
               )}
             </Button>
