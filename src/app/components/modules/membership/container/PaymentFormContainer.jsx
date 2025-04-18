@@ -60,8 +60,8 @@ const PaymentFormContainer = () => {
   // price calculations logic
   const prices = { monthly: 9.99, annual: 99.99 };
   const monthlyCost = prices.monthly;
-  const annualCost = prices.annual;
-  const monthlyCostIfPaidAnnually = annualCost / 12;
+  const oneTimeCost = prices.annual;
+  const monthlyCostIfPaidAnnually = oneTimeCost / 12;
   const savingsPercentage = Math.round(
     (1 - monthlyCostIfPaidAnnually / monthlyCost) * 100
   );
@@ -107,7 +107,11 @@ const PaymentFormContainer = () => {
     }
 
     const { token, error } = await stripe.createToken(
-      elements.getElement(CardNumberElement)
+      elements.getElement(CardNumberElement),
+      {
+        name: name,
+        address_country: country,
+      }
     );
     setLoading(true);
 
@@ -169,7 +173,7 @@ const PaymentFormContainer = () => {
       premiumType={premiumType}
       setPremiumType={setPremiumType}
       monthlyCost={monthlyCost}
-      annualCost={annualCost}
+      oneTimeCost={oneTimeCost}
       monthlyCostIfPaidAnnually={monthlyCostIfPaidAnnually}
       savingsPercentage={savingsPercentage}
     />

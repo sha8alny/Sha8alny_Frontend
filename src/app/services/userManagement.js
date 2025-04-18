@@ -36,9 +36,14 @@ export const deleteAccount = async (password) => {
     },
     body: JSON.stringify({ password }),
   });
+  const data = await response.json();
 
-  if (!response.ok) throw new Error("Failed to delete account");
-  return response.json();
+  if (!response.ok) {
+    const message = data?.message || data?.error || "Failed to update username";
+    throw new Error(message);
+  }
+
+  return data;
 };
 
 
@@ -51,8 +56,14 @@ export const updateEmail = async ({ email, password }) => {
     body: JSON.stringify({ email, password }),
   });
 
-  if (!response.ok) throw new Error("Failed to update email");
-  return response.json();
+  const data = await response.json();
+
+  if (!response.ok) {
+    const message = data?.message || data?.error || "Failed to update username";
+    throw new Error(message);
+  }
+
+  return data;
 };
 
 export const changePassword = async ({ currentPassword, newPassword }) => {
@@ -87,8 +98,14 @@ export const updateUsername = async ({ newUsername }) => {
     body: JSON.stringify({ username: newUsername }),
   });
 
-  if (!response.ok) throw new Error("Failed to update username");
-  return response.json();
+  const data = await response.json();
+
+  if (!response.ok) {
+    const message = data?.message || data?.error || "Failed to update username";
+    throw new Error(message);
+  }
+
+  return data;
 };
 
 

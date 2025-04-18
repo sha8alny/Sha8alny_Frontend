@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SettingsSidebarPresentation from "../presentation/SettingsSidebarPresentation";
 import PersonIcon from "@mui/icons-material/Person";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -23,6 +23,8 @@ export default function SettingsSidebarContainer({setActiveSetting }) {
   const searchParams = useSearchParams();
   const [highlight, setHighlight] = useState(0);
   const router = useRouter();
+  const carouselRef = useRef(null);
+  
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["userProfile"],
     queryFn: () => fetchUserProfile(data.username),
@@ -53,6 +55,19 @@ export default function SettingsSidebarContainer({setActiveSetting }) {
     }
   }, [searchParams]);
   
+  useEffect(() => {
+    if (carouselRef.current && window.innerWidth < 1024) {
+      const activeElement = carouselRef.current.children[highlight];
+      if (activeElement) {
+        activeElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'nearest',
+          inline: 'center' 
+        });
+      }
+    }
+  }, [highlight]);
+  
   const handleSetActiveSetting = (setting) => {
     setActiveSetting(setting);
     router.push(`/settings?section=${encodeURIComponent(setting)}`);
@@ -69,6 +84,7 @@ export default function SettingsSidebarContainer({setActiveSetting }) {
       settings={settings}
       highlight={highlight}
       handleChangeSetting={handleChangeSetting}
+      carouselRef={carouselRef}
     />
   );
 }

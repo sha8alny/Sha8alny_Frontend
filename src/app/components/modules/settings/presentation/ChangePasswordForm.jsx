@@ -1,4 +1,3 @@
-import { useState, useRef, useEffect } from "react";
 import { Shield, Close } from "@mui/icons-material";
 import SettingsFormLayout from "./SettingsFormLayout";
 import BackButton from "./BackButton";
@@ -40,7 +39,7 @@ const ChangePasswordForm = ({
     <SettingsFormLayout>
       <BackButton handler={toggleForm} />
       <div className="flex flex-col gap-1">
-        <h1 className="text-text text-xl font-semibold">Change Password</h1>
+        <h1 className="text-text text-lg font-semibold">Change Password</h1>
         <p className="text-sm">
           Create a new password that is at least 8 characters long.
         </p>
@@ -91,6 +90,7 @@ const ChangePasswordForm = ({
               <span className="text-destructive ml-1">*</span>
             </Label>
             <Input
+            data-testid="currentPassword-input"
               type="password"
               id="currentPassword"
               name="currentPassword"
@@ -111,6 +111,7 @@ const ChangePasswordForm = ({
             </Label>
             <Input
               type="password"
+              data-testid="newPassword-input"
               id="newPassword"
               name="newPassword"
               value={passwords.newPassword}
@@ -130,6 +131,7 @@ const ChangePasswordForm = ({
             </Label>
             <Input
               type="password"
+              data-testid="confirmPassword-input"
               id="confirmPassword"
               name="confirmPassword"
               value={passwords.confirmPassword}
@@ -146,6 +148,7 @@ const ChangePasswordForm = ({
 
           <Button
             type="submit"
+            data-testid="new-password-submit-button"
             className="w-full bg-secondary text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
             disabled={
               !passwords.currentPassword ||
@@ -157,6 +160,7 @@ const ChangePasswordForm = ({
           </Button>
         </form>
         <button
+          data-testid="forgot-password-button"
           onClick={handleForgetPassword}
           className="cursor-pointer w-max hover:text-secondary p-2 rounded-lg"
         >

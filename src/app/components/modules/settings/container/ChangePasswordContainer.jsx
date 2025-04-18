@@ -105,7 +105,7 @@ const ChangePasswordContainer = ({ toggleForm }) => {
   };
 
   const handleForgetPassword = () => {
-    router.push("/forgot-password");
+    router.push("/forget-password");
   };
 
   const handleSubmit = (e) => {
