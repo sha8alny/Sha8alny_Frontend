@@ -35,8 +35,13 @@ const DeleteAccountPresentation = ({
   setPassword,
   password,
 }) => {
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching user data.</p>;
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-full">
+      <div className="w-10 h-10 border-4 border-t-transparent border-secondary rounded-full animate-spin" role="status" aria-label="Loading" />
+    </div>
+  );
+  
+  if (error) return <p className="flex justify-center items-center h-full text-red">Error fetching user data.</p>;
 
   return (
     <SettingsFormLayout>
@@ -50,7 +55,7 @@ const DeleteAccountPresentation = ({
         />
       ) : (
         <>
-          <BackButton handler={handleDeleteAccountForm} />
+          <BackButton data-testid="back-delete" handler={handleDeleteAccountForm} />
           <div className="flex flex-col gap-2">
             <h1 className="text-primary text-xl font-semibold">
               Delete account
@@ -63,7 +68,7 @@ const DeleteAccountPresentation = ({
             Are you sure you want to close your account? You’ll lose your
             connections, messages, endorsements, and recommendations.
           </p>
-          <Button className="w-25 bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200" onClick={handleContinueForm}>Continue</Button>
+          <Button data-testid="continue-delete" className="w-25 bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200" onClick={handleContinueForm}>Continue</Button>
         </>
       )}
     </SettingsFormLayout>

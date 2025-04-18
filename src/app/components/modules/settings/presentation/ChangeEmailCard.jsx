@@ -28,14 +28,15 @@ const ChangeEmailCard = ({ toggleForm, email }) => {
       ) : (
         <>
           <BackButton handler={toggleForm} />
-          <h1 className="text-text text-xl font-semibold">Change email</h1>
+          <h1 className="text-text text-lg font-semibold">Change email</h1>
           <div className="flex flex-col gap-2">
-            <p className="text-text text-lg ">Emails you've added</p>
-            <p>{email}</p>
+            <p className="text-text text-md  ">Your current email:</p>
+            <p className="text-sm ">{email}</p>
           </div>
           <div className="-ml-2">
             <Button
               type="submit"
+              data-testid="update-email-button"
               className="ml-2 w-25 text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
               onClick={handleContinueForm}
             >

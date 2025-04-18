@@ -46,7 +46,7 @@ const ChangeEmailContainer = ({ toggleForm }) => {
       toggleForm();
     },
     onError: (error) => {
-      showToast("Failed to update email", false);
+      showToast(error.message, false);
     },
   });
 
