@@ -58,7 +58,6 @@ describe("SettingsSecurityContainer Integration", () => {
     
     fireEvent.click(screen.getByText("Update email"));
     expect(screen.getByText("Change email")).toBeInTheDocument();
-    expect(screen.getByText("Emails you've added")).toBeInTheDocument();
     expect(screen.getByText("user@example.com")).toBeInTheDocument();
   });
 

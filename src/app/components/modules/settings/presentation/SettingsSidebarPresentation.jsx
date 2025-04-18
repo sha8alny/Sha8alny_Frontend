@@ -83,9 +83,8 @@ const SettingsSidebarPresentation = ({
             Settings
           </h1>
         </div>
-        <Separator className="my-9" />
 
-        <div className="flex flex-col gap-8 -mt-4 items-start w-full">
+        <div className="flex flex-col gap-8 mt-9 items-start w-full">
           {settings.map((setting) => (
             <div
               key={setting.id}
