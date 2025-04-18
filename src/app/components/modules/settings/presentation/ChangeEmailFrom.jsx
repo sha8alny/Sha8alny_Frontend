@@ -44,6 +44,7 @@ const ChangeEmailForm = ({
           </Label>
           <Input
             type="email"
+            data-testid="new-email-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             
@@ -60,6 +61,7 @@ const ChangeEmailForm = ({
           </Label>
           <Input
             type="password"
+            data-testid="password-input-email"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             
@@ -72,6 +74,7 @@ const ChangeEmailForm = ({
 
         <Button 
           type="submit" 
+          data-testid="update-email-button"
           disabled={isLoading}
           className="w-full bg-secondary text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
         >

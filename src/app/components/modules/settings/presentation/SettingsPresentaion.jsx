@@ -21,8 +21,7 @@ export default function SettingsPresentation({
   setActiveSetting,
 }) {
   return (
-    <div className="flex flex-col h-screen w-screen bg-background overflow-x-hidden overflow-y-scroll">
-      {/* <SettingsNavbarContainer /> */}
+    <div className="flex flex-col h-screen w-full bg-background overflow-x-hidden overflow-y-scroll scrollbar-hide">
       <div className="flex flex-col md:flex-row h-full">
         <Suspense
           fallback={

@@ -28,8 +28,8 @@ const ChangeUsernameContainer = ({ handleUsernameForm }) => {
       handleUsernameForm();
     },
     onError: (err) => {
-      showToast("Failed to update user name", false);
-      setError("Failed to update username.");
+      showToast(err.message, false);
+      setError(err.message);
     },
   });
 

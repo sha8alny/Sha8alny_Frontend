@@ -38,9 +38,8 @@ const MembershipPage = ({
   return (
     
     <MembershipPageLayout>
-      <div className="flex p-4 flex-col gap-4">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-
+      <div className="flex p-4 flex-col gap-4 mt-10">
+       
         <MembershipStatus
           plan={currentPlan}
           limits={limits}
