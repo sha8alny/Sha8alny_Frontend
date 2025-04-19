@@ -25,12 +25,17 @@ pipeline {
         stage('Validate Webhook Source') {
             steps {
                 script {
-                    if (env.repository == 'sha8alny/Sha8alny_Frontend') {
-                        echo "Webhook received from the correct repository. Proceeding..."
+                    if (env.GIT_URL == null || env.GIT_URL.trim() == "") {
+                        echo "GIT_URL is not set. Skipping webhook validation."
                     } else {
-                        echo "Webhook received from an unknown repository: ${env.repository}. Aborting build."
-                        currentBuild.result = 'ABORTED'
-                        error("Stopping pipeline execution.")
+                        echo "Webhook received from ${env.GIT_URL}"
+                        if (env.repository == 'sha8alny/Sha8alny_Frontend') {
+                            echo "Webhook received from the correct repository. Proceeding..."
+                        } else {
+                            echo "Webhook received from an unknown repository: ${env.repository}. Aborting build."
+                            currentBuild.result = 'ABORTED'
+                            error("Stopping pipeline execution.")
+                        }
                     }
                 }
             }
