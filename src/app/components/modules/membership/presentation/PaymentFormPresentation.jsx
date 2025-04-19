@@ -67,6 +67,8 @@ const PaymentFormPresentation = ({
   monthlyCostIfPaidAnnually,
   savingsPercentage,
   textColor,
+  monthlyCurrency,
+  oneTimeCurrency,
 }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full p-4">
@@ -103,7 +105,7 @@ const PaymentFormPresentation = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold">${monthlyCost}</div>
+                      <div className="font-bold">{monthlyCurrency == "USD"? "$" : monthlyCurrency}{monthlyCost}</div>
                       <div className="text-sm text-muted-foreground">
                         per month
                       </div>
@@ -135,7 +137,7 @@ const PaymentFormPresentation = ({
                             : ""
                         }`}
                       >
-                        ${oneTimeCost}
+                        {oneTimeCurrency == "USD"? "$" : oneTimeCurrency}{oneTimeCost}
                       </div>
                       <div
                         className={`text-sm text-gray-400 ${

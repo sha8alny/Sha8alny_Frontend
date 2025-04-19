@@ -12,7 +12,7 @@ export const fetchSubscription = async () => {
 };
 
 export const fetchPlansDetails = async () => {
-  const response = await fetchWithAuth(`${API_URL}/plans`, {
+  const response = await fetchWithAuth(`${API_URL}/subscriptions/plans`, {
     method: "GET",
   });
 

@@ -12,6 +12,7 @@ import MembershipPage from "../presentation/MembershipPage";
 import { useToast } from "@/app/context/ToastContext";
 import { useRouter } from "next/navigation";
 import MembershipStatusSkeleton from "../presentation/MembershipStatusSkeleton";
+import { useState } from "react";
 
 /**
  * @namespace membership
@@ -29,53 +30,38 @@ const MembershipPageContainer = () => {
   const showToast = useToast();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  
   let {
     data: sub,
-    isLoading:statusIsLoading,
+    isLoading: statusIsLoading,
     error: statusError,
   } = useQuery({
     queryKey: ["membershipStatus"],
     queryFn: fetchSubscription,
   });
 
-  // const {
-  //   data: plansDetails,
-  //   isLoading: isPlansLoading,
-  //   error: plansError,
-  // } = useQuery({
-  //   queryKey: ["plansDetails"],
-  //   queryFn: fetchPlansDetails,
-  // });
-
-  const isPlansLoading = false;
-  const plansError = null;
+  const {
+    data: plansDetails,
+    isLoading: isPlansLoading,
+    error: plansError,
+  } = useQuery({
+    queryKey: ["plansDetails"],
+    queryFn: fetchPlansDetails,
+  });
+  
+  console.log("Plans Details:", plansDetails);
+  const plansDetailsList = plansDetails?.Plans;
+  
   sub = {
     ...sub?.subscription,
     limits: {
       createProfile: true,
-      maxConnections:sub?.connectionCount,
+      maxConnections: sub?.connectionCount,
       jobApplications: sub?.jobsApplied,
       dailyMessages: sub?.messagesSent,
     },
   };
-  //   const sub = {
-  //     _id: "67e7370936ea56d6f82b70ca",
-  //     planId: "free",
-  //     status: "active",
-  //     renewalDate: null,
-  //     canceledAt: null,
-  //     stripeCustomerId: null,
-  //     stripeSubscriptionId: null,
-  //     createdAt: "2025-03-28T23:55:53.906Z",
-  //     updatedAt: "2025-03-28T23:55:53.906Z",
-  //     __v: 0,
-  //     limits: {
-  //         createProfile: true,
-  //         maxConnections: 50,
-  //         jobApplications: 5,
-  //         dailyMessages: 5
-  //     }
-  // };
 
   const cancelMutation = useMutation({
     mutationFn: async () => {
@@ -99,19 +85,27 @@ const MembershipPageContainer = () => {
     }
   });
 
-  const handleCancelSubscription = () => {
+  const handleOpenConfirmModal = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleCloseConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+  };
+
+  const handleConfirmCancel = () => {
     cancelMutation.mutate();
+    setIsConfirmModalOpen(false);
   };
 
   const handleUpgrade = () => {
     router.push("/membership-page/payment");
   };
   
-  
   if(statusIsLoading || isPlansLoading) {
     return (<MembershipStatusSkeleton />)
   }
- console.log("Subscription Data:", sub);
+  
   const maxConnections = sub?.limits?.maxConnections || 0;
   const {  jobsApplied, messagesSent } = sub;
   const limits = {
@@ -120,41 +114,13 @@ const MembershipPageContainer = () => {
     monthlyConnectionRequests: maxConnections,
   };
  
-  const plansDetailsList = [
-    {
-      planId: "premium",
-      name: "Premium Plan",
-      description: "Full access with unlimited features",
-      price: 9.99,
-      currency: "USD",
-      features: {
-        createProfile: true,
-        maxConnections: 500,
-        jobApplications: null,
-        dailyMessages: null,
-      },
-    },
-    {
-      planId: "free",
-      name: "Basic Plan",
-      description: "get a job",
-      price: 0,
-      currency: "USD",
-      features: {
-        createProfile: true,
-        maxConnections: 50,
-        jobApplications: 5,
-        dailyMessages: 5,
-      },
-    },
-  ];
-
-  const premiumPlanDetails = plansDetailsList.find(
-    (plan) => plan.planId === "premium"
+  const premiumPlanDetails = plansDetailsList?.find(
+    (plan) => plan.plan_id === "oneTimePremium"
   );
-  const freePlanDetails = plansDetailsList.find(
-    (plan) => plan.planId === "free"
+  const freePlanDetails = plansDetailsList?.find(
+    (plan) => plan.plan_id === "free"
   );
+  
   return (
     <MembershipPage
       currentPlan={sub?.planId}
@@ -163,11 +129,15 @@ const MembershipPageContainer = () => {
       freePlanDetails={freePlanDetails}
       renewalDate={sub?.renewalDate}
       isMissed={sub?.isMissed}
-      handleCancelSubscription={handleCancelSubscription}
+      handleCancelSubscription={handleOpenConfirmModal}
       isCancelling={cancelMutation.isPending}
       handleUpgrade={handleUpgrade}
       statusIsLoading={statusIsLoading}
       statusError={statusError}
+      isPlansLoading={isPlansLoading}
+      isConfirmModalOpen={isConfirmModalOpen}
+      handleCloseConfirmModal={handleCloseConfirmModal}
+      handleConfirmCancel={handleConfirmCancel}
     />
   );
 };
