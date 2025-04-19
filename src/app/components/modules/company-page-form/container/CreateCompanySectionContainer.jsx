@@ -43,7 +43,8 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
 
     const isFormValid = companyName.trim() !== "" || companyIndustry.trim() !== "" ||
                         companySize.trim() !== "" || companyType.trim() !== "" ||
-                        companyLocation.trim() !== "";
+                        companyLocation.trim() !== ""||
+                        companyDate.trim() !== ""; 
 
     const handleInputChange = (field, value) => {
         setErrors((prevErrors) => ({
@@ -71,6 +72,7 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         if (!companyType.trim()) newErrors.companyType = "Company type is required";
         if (!companyLocation.trim()) newErrors.companyLocation = "Location is required";
         if (!companyURL.trim()) newErrors.companyURL = "URL is required";
+        if (!companyDate.trim()) newErrors.companyDate = "Founding date is required";
         if (!isChecked) newErrors.terms = "You must agree to the terms.";
 
         if (Object.keys(newErrors).length > 0) {
@@ -81,41 +83,25 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         setLoading(true);
         setError(null);
         setErrors({}); 
-        let logoURL= undefined;
-        let coverURL = undefined;
-
-        if (file) {
-            const formData = new FormData();
-            formData.append("file", file);
-            logoURL = URL.createObjectURL(file);
-        }
-
-        if(file){
-            const formData = new FormData();
-            formData.append("file", file);
-            coverURL = URL.createObjectURL(file);
-        }
-
-        const companyData = {
-            username: companyURL,
-            name: companyName,
-            URL: companyWebsite || undefined, 
-            orgSize: companySize,
-            orgType: companyType, 
-            logo: undefined || logoURL, 
-            cover: undefined || coverURL, 
-            description: companyTagline || undefined,
-            industry: companyIndustry,
-            location: companyLocation,
-            phoneNumber:companyPhone || undefined,
-            foundingDate:companyDate,
-        };
 
         try {
+            const companyData = new FormData();
+            companyData.append("name", companyName);
+            companyData.append("username", companyURL);
+            companyData.append("URL", companyWebsite);
+            companyData.append("orgSize", companySize);
+            companyData.append("orgType", companyType);
+            companyData.append("tagline", companyTagline);
+            companyData.append("industry", companyIndustry);
+            companyData.append("location", companyLocation);
+            companyData.append("phoneNumber", companyPhone);
+            companyData.append("foundingDate", companyDate);
+            if (file) {
+                companyData.append("logo", file);
+            }
             const response = await createCompany(companyData);
-            router.push(`/company-admin/${companyData.username}/company-page-author/?logo=${encodeURIComponent(logoURL||'')}`);
+            router.push(`/company/${companyURL}/admin/dashboard`);
         } catch (err) {
-            console.log(err.message);
             setError(err.message || "Failed to create company");
         } finally {
             setLoading(false);

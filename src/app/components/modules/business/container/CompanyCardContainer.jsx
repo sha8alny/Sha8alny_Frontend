@@ -22,11 +22,11 @@ function CompanyCardContainer({ company }) {
   const router = useRouter();
 
   const handleManageClick = () => {
-    router.push(`/company-admin/${company?.companyUsername}/company-page-author/`);
+    router.push(`/company/${company?.companyUsername}/admin/dashboard/`);
   };
 
   const handleViewPageClick = () => {
-    router.push(`company-user-admin/${company?.companyUsername}/about-page`);
+    router.push(`company/${company?.companyUsername}/user/about`);
   };
 
   return (

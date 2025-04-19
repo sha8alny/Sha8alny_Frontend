@@ -1,7 +1,3 @@
-/**
- * @namespace company-page-form
- * @module company-page-form
- */
 import EmergencyRoundedIcon from '@mui/icons-material/EmergencyRounded';
 import InputFieldContainer from '../container/InputFieldContainer';
 import SelectFieldContainer from "../container/SelectFieldContainer";
@@ -32,12 +28,14 @@ function CreateCompanySection({companyName, setCompanyName,companyIndustry, setC
                 <a href="#" className="hover:underline font-bold text-[var(--secondary)]">Read the Shaغalny Pages Terms </a>   
             </form>
             <div className="flex justify-end">
-                {error && <p role="alert" className="text-red-500">{error}</p>}
-
-                {console.log(error)}
-                <button className={`bg-[var(--secondary)] text-[var(--background)] rounded-full cursor-pointer py-2 px-3  mt-2 ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
-                onClick={onCreateCompany} disabled={!isFormValid || loading}>
-                {loading ? "Creating..." : "Create Page"}</button>            
+                {error && <p role="alert" className="text-red-500" data-testid="create-company-error">{error}</p>}
+                <button 
+                className={`bg-[var(--secondary)] text-[var(--background)] rounded-full cursor-pointer py-2 px-3  mt-2 ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={onCreateCompany} 
+                disabled={!isFormValid || loading} 
+                data-testid="create-company-button">
+                    {loading ? "Creating..." : "Create Page"}
+                </button>            
             </div>
         </div>
     );
