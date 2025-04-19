@@ -59,10 +59,11 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
         <div>
           <div className="flex flex-col">
             <h1 className="text-2xl font-bold">{company?.name}</h1>
+            <p>{company?.tagline}</p>
             <p className="text-muted">{company?.industry} , {company?.location}</p>
           </div>
           <div className="flex flex-row gap-2 items-center mb-3">
-            <button className={`rounded-full cursor-pointer py-1 px-4 mt-2 transition-all ${isFollowing ? "bg-[var(--foreground)] border border-[var(--secondary)] text-[var(--text)]" : "bg-[var(--secondary)] text-[var(--text)]"}`} onClick={handleFollowClick}>
+            <button className={`rounded-full cursor-pointer py-1 px-4 mt-2 transition-all ${isFollowing ? "bg-[var(--foreground)] border border-[var(--secondary)] text-[var(--text)]" : "bg-[var(--secondary)] text-[var(--text)]"}`} onClick={handleFollowClick} data-testid="follow-button">
               {isFollowing ? (
                 <div>
                   <CheckIcon className="mr-1" fontSize="small" />
@@ -75,17 +76,21 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
                 </div>
               )}
             </button>
-            <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity">
+            <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity" data-testid="visit-website-button">
               Visit website
             </button>
           </div>
         </div>
         <div className="border-t border-[var(--text)] flex flex-row space-x-6  cursor-pointer ">
-          <Link href={`/company-user-admin/${userProfile}/home-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("home-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>Home</Link>
+          <Link href={`/company/${userProfile}/user/home`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("home") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="home-page-link">Home</Link>
 
-          <Link href={`/company-user-admin/${userProfile}/about-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("about-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>About</Link>
+          <Link href={`/company/${userProfile}/user/about`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("about") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="about-page-link">About</Link>
 
-          <Link href={`/company-user-admin/${userProfile}/posts-page`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("posts-page") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`}>Posts</Link>
+          <Link href={`/company/${userProfile}/user/posts`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("posts") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="posts-page-link">Posts</Link>
+          
+          <Link href={`/company/${userProfile}/user/jobs`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("jobs") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="jobs-page-link">Jobs</Link>
+
+          <Link href={`/company/${userProfile}/user/people`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("people") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="people-page-link">People</Link>
         </div>
       </div>
     </Container>

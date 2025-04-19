@@ -1,5 +1,5 @@
 "use client";
-import CompanyPageFormContainer from "../components/modules/company-page-form/container/CompanyPageFormContainer";
+import CompanyPageFormContainer from "@/app/components/modules/company-page-form/container/CompanyPageFormContainer";
 
 function CompanyPageForm() {
   return (

@@ -1,10 +1,11 @@
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import AddIcon from '@mui/icons-material/Add';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+
 /**
  * @namespace company-page-form
  * @module company-page-form
  */
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import AddIcon from '@mui/icons-material/Add';
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
 function CompanyPreviewSection({companyName, companyTagline, companyIndustry, preview}){
     return (

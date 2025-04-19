@@ -1,10 +1,10 @@
+'use client';
+import SuggestedPages from "../presentation/SuggestedPages";
+import { useRouter } from "next/navigation";
 /**
  * @namespace profile
  * @module profile
  */
-'use client';
-import SuggestedPages from "../presentation/SuggestedPages";
-import { useRouter } from "next/navigation";
 
 export default function SuggestedPagesContainer({ title }) {
   // TODO : Fetch data from API

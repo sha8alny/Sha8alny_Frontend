@@ -37,6 +37,7 @@ function FileUploadContainer({file, setFile}){
 
     const removeFile = ()=>{
         setFile(null);
+        setPreview(null);
     }
 
     return (

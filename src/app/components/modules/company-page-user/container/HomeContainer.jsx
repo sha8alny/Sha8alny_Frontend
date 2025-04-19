@@ -22,11 +22,11 @@ export default function HomeContainer({ username }) {
     const router = useRouter();
 
     const goToAboutPage = () => {
-        router.push(`/company-user-admin/${username}/about-page`);
+        router.push(`/company/${username}/user/about`);
     };
 
     const goToPostsPage = () => {
-        router.push(`/company-user-admin/${username}/posts-page`);
+        router.push(`/company/${username}/user/posts`);
     };
     useEffect(() => {
         const fetchCompany = async () => {
@@ -44,12 +44,9 @@ export default function HomeContainer({ username }) {
     useEffect(() => {
         const fetchPosts = async () => {
         const response = await getCompanyId(username);
-        console.log("Response from getCompanyId:", response); // Debugging line
         const { companyId } = response;
-        console.log("Company ID:", companyId);
             try {
-                const myPosts = await getProfilePosts(1, companyId, true); // assuming page 1 for now
-                console.log("Fetched posts:", myPosts); 
+                const myPosts = await getProfilePosts(1, companyId, true); 
                 setPosts(myPosts);
             } catch (err) {
                 setError(err.message);
