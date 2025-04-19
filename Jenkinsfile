@@ -1,17 +1,8 @@
-// properties([
-//     pipelineTriggers([
-//         [$class: 'GenericTrigger',
-//             genericVariables: [
-//                 [key: 'ref', value: '$.ref'],
-//                 [key: 'repository', value: '$.repository.full_name']
-//             ],
-//             causeString: 'Triggered by a webhook from $repository',
-//             token: 'yla-fRont-w785',
-//             printPostContent: true,
-//             silentResponse: false
-//         ]
-//     ])
-// ])
+properties([
+    pipelineTriggers([
+        [$class: 'GitHubPushTrigger']
+    ])
+])
 
 pipeline {
     agent any
@@ -21,52 +12,23 @@ pipeline {
         DOCKER_IMAGE_FRONT = "sha8alny-front"
         GIT_REPO = "https://github.com/sha8alny/Sha8alny_Frontend.git"
     }
-    triggers {
-        genericTrigger(
-            genericVariables: [
-                [key: 'ref', value: '$.ref'],
-                [key: 'repository', value: '$.repository.full_name']
-            ],
-            causeString: 'Triggered by a webhook from $repository',
-            token: 'yla-fRont-w785',
-            printPostContent: true,
-            silentResponse: false
-        )
-    }
     stages {
-        stage('Validate Webhook Source') {
-            steps {
-                script {
-                    if (env.GIT_URL == null || env.GIT_URL.trim() == "") {
-                        echo "GIT_URL is not set. Skipping webhook validation."
-                    } else {
-                        echo "Webhook received from ${env.GIT_URL}"
-                        if (env.repository == 'sha8alny/Sha8alny_Frontend') {
-                            echo "Webhook received from the correct repository. Proceeding..."
-                        } else {
-                            echo "Webhook received from an unknown repository: ${env.repository}. Aborting build."
-                            currentBuild.result = 'ABORTED'
-                            error("Stopping pipeline execution.")
-                        }
-                    }
-                }
-            }
-        }
         stage('Clone Repository') {
             steps {
                 echo "Cloning repository..."
                 sh '''
                 rm -rf ./*         # Removes all files
                 rm -rf .??*        # Removes hidden files like .git
-                git clone -b main ${GIT_REPO} .
                 '''
+                withCredentials([usernamePassword(credentialsId: 'Github_Token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                sh '''
+                    git clone -b main https://${GIT_USER}:${GIT_TOKEN}@github.com/sha8alny/Sha8alny_Frontend.git .
+                '''
+                }
             }
         }
 
         stage('ENV Variables') {
-            // environment {
-            //     API_URL = credentials('MY_ENV_IP')
-            // }
             steps{
                 withCredentials([file(credentialsId: 'sha8alny_ENV_FRONT', variable: 'ENV_FILE')]) {
                     sh 'cp $ENV_FILE ./.env'
