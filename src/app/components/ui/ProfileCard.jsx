@@ -23,7 +23,9 @@ return(
         />
         {/* // remove button */}
         {showRemoveButton && (
-        <Button className="absolute top-2 right-2 text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 border-1 border-secondary p-1 h-8 w-8 rounded-full  mt-2">✖</Button>
+        <Button className="absolute top-2 right-2 text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 border-1 border-secondary p-1 h-8 w-8 rounded-full  mt-2"
+        data-testid="x-button"
+        >✖</Button>
         )}
         
     </div>
@@ -42,6 +44,7 @@ return(
         <p className="text-sm sm:text-md font-thin text-text break-words whitespace-normal max-w-xs sm:max-w-sm ">{title}</p>
         {showButton && (
         <Button 
+        data-testid="action-button"
         onClick={buttonAction}
         className="text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 mt-2">{buttonText}</Button>
         

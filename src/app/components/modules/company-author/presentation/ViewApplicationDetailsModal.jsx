@@ -135,7 +135,9 @@ const ViewApplicationDetailsModal = ({
                 : "N/A"}
                </span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-2 text-sm"
+                data-testid="resume-link"
+                >
                     <FileText className="w-4 h-4 text-muted-foreground" />
                     <a href={isLoading ? "Loading..." : application?.resume || "#"} className="text-primary hover-underline hover:text-secondary" target="_blank" rel="noopener noreferrer">
                         View Resume
@@ -144,13 +146,13 @@ const ViewApplicationDetailsModal = ({
             </div>
             <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="profile" className="col-span-1">
+                    <TabsTrigger value="profile" className="col-span-1" data-testid="profile-tab">
                         Profile
                     </TabsTrigger>
-                    <TabsTrigger value="experience" className="col-span-1">
+                    <TabsTrigger value="experience" className="col-span-1" data-testid="experience-tab">
                         Experience
                     </TabsTrigger>
-                    <TabsTrigger value="evaluation" className="col-span-1">
+                    <TabsTrigger value="evaluation" className="col-span-1" data-testid="evaluation-tab">
                         Evaluation
                     </TabsTrigger>
                 </TabsList>
@@ -345,7 +347,7 @@ const ViewApplicationDetailsModal = ({
                     </div>
                     <div>
                     <h3 className="text-sm text-text font-medium mb-2">Application Status</h3>
-                    <Select value={status} onValueChange={onStatusChange} disabled={isUpdating} >
+                    <Select value={status} onValueChange={onStatusChange} disabled={isUpdating}  data-testid="status-select">
                   <SelectTrigger className="text-text">
                     <SelectValue placeholder="Select status"/>
                   </SelectTrigger>
@@ -358,6 +360,7 @@ const ViewApplicationDetailsModal = ({
                 <div>
                     <h3 className="text-sm text-text font-medium mb-2">Interviewer Notes</h3>
                     <Textarea
+                    data-testid="notes"
                     value={notes}
                     onChange={(e) => onNotesChange(e.target.value)}
                     placeholder="Add your notes about this candidate..."
@@ -369,7 +372,7 @@ const ViewApplicationDetailsModal = ({
                 </div>
                 <Separator />
                 <DialogFooter className="gap-2 sm:gap-0 mt-4">
-                <Button onClick={onSave} disabled={isUpdating}>
+                <Button onClick={onSave} disabled={isUpdating} data-testid="save-button">
                     {isUpdating ? "Saving..." : "Save Changes"}
                 </Button>
                 </DialogFooter>
