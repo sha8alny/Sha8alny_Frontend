@@ -1,17 +1,17 @@
-properties([
-    pipelineTriggers([
-        [$class: 'GenericTrigger',
-            genericVariables: [
-                [key: 'ref', value: '$.ref'],
-                [key: 'repository', value: '$.repository.full_name']
-            ],
-            causeString: 'Triggered by a webhook from $repository',
-            token: 'yla-fRont-w785',
-            printPostContent: true,
-            silentResponse: false
-        ]
-    ])
-])
+// properties([
+//     pipelineTriggers([
+//         [$class: 'GenericTrigger',
+//             genericVariables: [
+//                 [key: 'ref', value: '$.ref'],
+//                 [key: 'repository', value: '$.repository.full_name']
+//             ],
+//             causeString: 'Triggered by a webhook from $repository',
+//             token: 'yla-fRont-w785',
+//             printPostContent: true,
+//             silentResponse: false
+//         ]
+//     ])
+// ])
 
 pipeline {
     agent any
@@ -20,6 +20,18 @@ pipeline {
         DOCKER_CONTAINER = "front-sha8alny"
         DOCKER_IMAGE_FRONT = "sha8alny-front"
         GIT_REPO = "https://github.com/sha8alny/Sha8alny_Frontend.git"
+    }
+    triggers {
+        genericTrigger(
+            genericVariables: [
+                [key: 'ref', value: '$.ref'],
+                [key: 'repository', value: '$.repository.full_name']
+            ],
+            causeString: 'Triggered by a webhook from $repository',
+            token: 'yla-fRont-w785',
+            printPostContent: true,
+            silentResponse: false
+        )
     }
     stages {
         stage('Validate Webhook Source') {
