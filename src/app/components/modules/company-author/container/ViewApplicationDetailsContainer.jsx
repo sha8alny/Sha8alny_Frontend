@@ -45,6 +45,10 @@ const ViewApplicationDetailsContainer = ({jobId, applicantId, onClose}) => {
             console.log("applicationData",applicationData);
             setApplication(applicationData);
             setStatus(applicationData.status || "");
+            if (applicationData.status === "pending") {
+                setStatus("viewed")
+                await updateApplication (jobId, applicantId, { status: "viewed" });
+            }
         } catch (error) {
             console.error("Error fetching application:", error);
         } finally {

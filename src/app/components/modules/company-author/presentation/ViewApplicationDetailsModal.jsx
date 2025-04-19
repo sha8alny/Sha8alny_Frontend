@@ -90,14 +90,17 @@ const ViewApplicationDetailsModal = ({
                     </div>
                     <Badge   
                         className={`ml-auto ${
+                        status === "viewed"
+                        ? "bg-yellow-500 text-white"
+                        :
                         status === "accepted"
                         ? "bg-green-500 text-white"
                         : status === "rejected"
                         ? "bg-red-500 text-white"
                         : "bg-gray-200 text-black"
                     }`}>
-                    {status === "review"
-                    ? "Under Review"
+                    {status === "viewed"
+                    ? "Viewed"
                     : status === "accepted"
                     ? "Accepted"
                     : status === "rejected"
@@ -118,11 +121,23 @@ const ViewApplicationDetailsModal = ({
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground font-thin">{isLoading ? "Loading..." : application?.createdAt || "N/A"}</span>
+                <span className="text-muted-foreground font-thin">
+                {isLoading ? "Loading..."    
+                : application?.createdAt
+                ? new Date(application.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                })
+                : "N/A"}
+               </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                     <FileText className="w-4 h-4 text-muted-foreground" />
-                    <a href={isLoading ? "Loading..." : application?.resume || "#"} className="text-primary hover-underline">
+                    <a href={isLoading ? "Loading..." : application?.resume || "#"} className="text-primary hover-underline hover:text-secondary" target="_blank" rel="noopener noreferrer">
                         View Resume
                     </a>
                 </div>
@@ -152,38 +167,61 @@ const ViewApplicationDetailsModal = ({
                         ))||"N/A"}
                     </div>
                     </div>
-                </TabsContent>
-                <TabsContent value="experience" className="space-y-4 pt-4">
-                    <div>
-                    <h3 className="text-sm text-text font-medium mb-2">Work Experience</h3>
-                    {isLoading ? (
-                    <p className="text-sm text-muted-foreground">Loading...</p>
-                    ) : (
-                    <ul className="list-disc pl-4">
-                        {application.experience?.map((exp, index) => (
-                        <li key={index} className="text-muted-foreground">
-                            <strong className="text-text">{exp}</strong>
-                            <ul className="list-disc pl-6">
-                            {exp.responsibilities.map((task, i) => (
-                                <li key={i}>{task}</li>
-                            ))}
-                            </ul>
-                        </li>
-                        ))}
-                    </ul>
-                    )}
-                    </div>
                     <div>
                     <h3 className="text-sm text-text font-medium mb-2">Education</h3>
                     {isLoading ? (
                     <p className="text-sm text-muted-foreground">Loading...</p>
                     ) : (
                     <ul className="list-disc pl-4">
-                        {application.education?.map((edu, index) => (
+                        {application.education?.length > 0 ? (
+                        application.education?.map((edu, index) => (
                         <li key={index} className="text-muted-foreground">
-                            <strong className="text-text">{edu}</strong> 
+                            <strong className="text-text">{edu.degree || "N/A"} - {edu.fieldOfStudy} </strong>
+                            {edu.school && (
+                
+                                <div className="text-text">{edu.school} </div>
+                            )}
+                            {edu.startDate && edu.endDate && (
+                                <div className="text-muted-foreground text-sm flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-text" />
+                                <span>
+                                {edu.startDate.month} {edu.startDate.year} - {edu.endDate.month} {edu.endDate.year}
+                                </span>
+                                </div>
+                            )}
+                            {edu.grade && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Grade:</strong> {edu.grade}
+                                </div>
+                            )}
+                            {edu.activities && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Activities:</strong> {edu.activities}
+                                </div>
+                            )}
+                            {edu.description && (
+                                <div   className="text-muted-foreground text-sm">
+                                <strong className="text-text">Description:</strong> {edu.description}
+                                </div>
+                            )}
+                            {edu.skills && (
+                                <div className="text-muted-foreground">
+                                <strong className="text-text text-sm">Skills:</strong>
+                                <div className="flex flex-wrap gap-2">
+                                 {edu.skills.length>0 ?(edu.skills.map((skill) => (
+                                    <Badge key={skill} varient="secondary" >{skill}</Badge>
+                                )) 
+                            ):(
+                                    <p className="text-sm text-muted-foreground">No Skills Mentioned</p>
+                                )}
+                                </div>
+                                </div>
+                            )}
                         </li>
-                    )) || "Loading..."}
+                        ))
+                        ) : (
+                        <p className="text-sm text-muted-foreground">No Education Found</p>
+                        )}
                     </ul>
                     )}         
                </div>
@@ -193,16 +231,118 @@ const ViewApplicationDetailsModal = ({
                     <p className="text-sm text-muted-foreground">Loading...</p>
                     ) : (
                     <ul className="list-disc pl-4">
-                        {application.certificates?.map((cert, index) => (
+                        {application.certificates?.length > 0 ? (
+                        application.certificates?.map((cert, index) => (
                         <li key={index} className="text-muted-foreground">
-                            <strong className="text-text">{cert}</strong>
+                            <strong className="text-text">{cert.name || "N/A"} </strong>
+                            {cert.issuingOrganization && (
+                                <div className="text-text">{cert.issuingOrganization} -                                     <a href={cert.certificationUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover-underline hover:text-secondary">
+                                View Certification
+                            </a></div>
+                            )}
+                            {cert.issueDate && cert.expirationDate && (
+                                <div className="text-muted-foreground text-sm flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-text" />
+                                {cert.issueDate.month} {cert.issueDate.year} - {cert.expirationDate.month} {cert.expirationDate.year}
+                                </div>
+                            )}
+                            {cert.description && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Description:</strong> {cert.description}
+                                </div>
+                            )}
+                                                     
+                            {cert.skills && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Skills:</strong> 
+                                <div className="flex flex-wrap gap-2">
+                                {cert.skills.length>0 ?(cert.skills.map((skill) => (
+                                    <Badge key={skill} varient="secondary" >{skill}</Badge>
+                                ))
+                                ):(
+                                    <p className="text-sm text-muted-foreground">No Skills Mentioned</p>
+                                )}
+                                </div>
+                                </div>
+                            )}
+                            
                         </li>
-                        ))}
+                        ))
+                        ) : (
+                        <p className="text-sm text-muted-foreground">No Certifications Found</p>
+                        )}
                     </ul>
                     )}
                 </div>
                 </TabsContent>
+                <TabsContent value="experience" className="space-y-4 pt-4">
+                    <div>
+                    {isLoading ? (
+                    <p className="text-sm text-muted-foreground">Loading...</p>
+                    ) : (
+                    <ul className="list-disc pl-4">
+                        {application.experience?.length > 0 ? (
+                        application.experience?.map((exp, index) => (
+                        <li key={index} className="text-muted-foreground">
+                            <strong className="text-text">{exp.title || "N/A"} - {exp.employmentType}</strong>
+                            {exp.company && (
+                                <div className="text-text">{exp.company} - {exp.location}</div>
+                            )}
+                            {exp.startDate && exp.endDate && (
+                                <div className="text-muted-foreground text-sm flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-text" />
+                                {exp.startDate.month} {exp.startDate.year} - {exp.endDate.month} {exp.endDate.year}
+                                </div>
+                            )}
+                            {exp.description && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Description:</strong> {exp.description}
+                                </div>
+                            )}
+
+                            {exp.locationType && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Work Location:</strong> {exp.locationType}
+                                </div>
+                            )}
+                            {exp.foundJobSource && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Found Job Source:</strong> {exp.foundJobSource}
+                                </div>
+                            )}
+                            {exp.skills && (
+                                <div className="text-muted-foreground text-sm">
+                                <strong className="text-text">Skills:</strong> 
+                                <div className="flex flex-wrap gap-2">
+                                {exp.skills.length>0 ?(exp.skills.map((skill) => (
+                                    <Badge key={skill} varient="secondary" >{skill}</Badge>
+                                ))
+                                ):(
+                                    <p className="text-sm text-muted-foreground">No Skills Mentioned</p>
+                                )}
+                                </div>
+                                </div>
+                            )}
+                            
+                        </li>
+                        ))
+                        ) : (
+                        <p className="text-sm text-muted-foreground text-center">No Experience Found</p>
+                        )}
+                    </ul>
+                    )}
+                    </div>
+                </TabsContent>
                 <TabsContent value="evaluation" className="space-y-4 pt-4">
+                    <div>
+                    <h3 className="text-sm text-text font-medium mb-2">Cover Letter</h3>
+                    {application.coverLetter? (
+                    <p className="text-muted-foreground">{application.coverLetter}</p>
+                    ):(
+                        <p className="text-sm text-muted-foreground">No Cover Letter Provided</p>
+                    )
+                    }
+                    </div>
                     <div>
                     <h3 className="text-sm text-text font-medium mb-2">Application Status</h3>
                     <Select value={status} onValueChange={onStatusChange} disabled={isUpdating} >
