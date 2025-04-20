@@ -42,7 +42,7 @@ const SignUpContainer = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     
     const signupMutation = useMutation({
-        mutationFn: handleSignupCross,
+        mutationFn: handleSignup,
     });
 
     const validateField = (name,value) => {
