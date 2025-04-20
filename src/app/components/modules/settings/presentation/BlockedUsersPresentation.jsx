@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/app/components/ui/Dialog";
+
 const BlockedUserItem = ({ user, onUnblockClick, navigateToProfile }) => {
   return (
     <div
@@ -38,6 +39,7 @@ const BlockedUserItem = ({ user, onUnblockClick, navigateToProfile }) => {
             <h3
               className="text-sm font-medium cursor-pointer hover:underline"
               onClick={() => navigateToProfile(user?.username)}
+              data-testid="blocked-user-name"
             >
               {user.name}
             </h3>
@@ -54,10 +56,10 @@ const BlockedUserItem = ({ user, onUnblockClick, navigateToProfile }) => {
           className="rounded-full text-xs h-7 px-3 bg-secondary text-background hover:bg-secondary/80 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
-            onUnblockClick(user.id);
+            onUnblockClick(user.id, user.name);
           }}
+          data-testid="unblock-button"
         >
-          {" "}
           Unblock
         </Button>
       </div>
@@ -126,18 +128,46 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, name }) => {
             className="text-text cursor-pointer"
             variant="outline"
             onClick={onClose}
+            data-testid="cancel-unblock-button"
           >
             Keep Blocked
           </Button>
           <Button
             className="cursor-pointer bg-red-700 font-semibold hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300"
             onClick={onConfirm}
+            data-testid="confirm-unblock-button"
           >
             Yes, I am sure
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const PaginationControls = ({ currentPage, onPageChange,pageSize ,length}) => {
+  return (
+    <div className="flex justify-between items-center mt-6">
+      <Button
+        variant="outline"
+        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
+        className="disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Previous
+      </Button>
+      <span className="text-sm text-text">
+        Page {currentPage}
+      </span>
+      <Button
+        variant="outline"
+        disabled={length < pageSize}
+        onClick={() => onPageChange(currentPage + 1)}
+        className="disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Next
+      </Button>
+    </div>
   );
 };
 
@@ -154,12 +184,17 @@ const BlockedUsersPresentation = ({
   closeModal,
   confirmUnblock,
   navigateToProfile,
+  currentPage,
+  onPageChange,
+  totalCount,
+  pageSize,
 }) => {
   return (
     <div className="p-6 bg-background text-text border border-gray-200 rounded-lg shadow">
-      <div className="flex flex-row  mb-6">
+      <div className="flex flex-row mb-6">
         <button
           onClick={onBackClick}
+          data-testid="back-button-blocked"
           className="mb-3 sm:mb-0 sm:mr-3 p-2 rounded-full cursor-pointer"
           aria-label="Go back"
         >
@@ -172,8 +207,7 @@ const BlockedUsersPresentation = ({
             </h1>
           </div>
           <div className="text-sm text-gray-500 text-center sm:text-right mt-2 sm:mt-0">
-            {blockedUsers.length} {blockedUsers.length === 1 ? "user" : "users"}{" "}
-            blocked
+            {totalCount} {totalCount === 1 ? "user" : "users"} blocked
           </div>
         </div>
       </div>
@@ -184,8 +218,9 @@ const BlockedUsersPresentation = ({
         </div>
         <input
           type="text"
+          data-testid="search-blocked-input"
           placeholder="Search blocked users"
-          className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
           value={searchTerm}
           onChange={onSearchChange}
         />
@@ -198,16 +233,24 @@ const BlockedUsersPresentation = ({
           Error loading blocked users. Please try again.
         </div>
       ) : blockedUsers.length > 0 ? (
-        <div className="space-y-4">
-          {blockedUsers.map((user) => (
-            <BlockedUserItem
-              key={user.id}
-              user={user}
-              onUnblockClick={onUnblockClick}
-              navigateToProfile={navigateToProfile}
-            />
-          ))}
-        </div>
+        <>
+          <div className="space-y-4">
+            {blockedUsers.map((user) => (
+              <BlockedUserItem
+                key={user.id}
+                user={user}
+                onUnblockClick={onUnblockClick}
+                navigateToProfile={navigateToProfile}
+              />
+            ))}
+          </div>
+          <PaginationControls
+            currentPage={currentPage}
+            onPageChange={onPageChange}
+            pageSize={pageSize}
+            length={blockedUsers.length}
+          />
+        </>
       ) : (
         <EmptyState />
       )}

@@ -27,8 +27,9 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
   return (
     <>
       <button
-        className="fixed bottom-4 right-6 z-50 md:hidden p-2 border-2 rounded-full transition-all bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-background cursor-pointer"
+        className="fixed bottom-4 right-6 z-50 lg:hidden p-2 border-2 rounded-full transition-all bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-background cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
+        data-testid="toggle-sidebar"
       >
         {isOpen ? (
           <CloseIcon fontSize="small" />
@@ -38,10 +39,10 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
       </button>
 
       <div
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-foreground text-text shadow-lg transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0
+        className={`h-auto fixed inset-y-0 left-0 z-40 w-64 bg-foreground text-text shadow-lg transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col sticky top-16">
           <div className="p-4 border-b flex gap-2 items-center justify-center">
             <h2 className="text-xl font-bold flex-grow">
               {" "}
@@ -54,6 +55,7 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
               <Link
                 key={route.path}
                 href={route.path}
+                data-testid={route.name}
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center px-4 py-3 text-sm rounded-md transition-colors cursor-pointer
                   ${
@@ -67,12 +69,7 @@ export function SidebarPresentation({ pathname, isOpen, setIsOpen, routes }) {
               </Link>
             ))}
           </nav>
-          <div className="p-4 border-t">
-            <button className="flex flex-row items-center w-full justify-start p-2 border-2 rounded-md transition-all bg-transparent border-secondary text-secondary hover:bg-secondary hover:text-background cursor-pointer">
-              <LogoutIcon className="mr-2" fontSize="small" />
-              Logout
-            </button>
-          </div>
+        
         </div>
       </div>
     </>
