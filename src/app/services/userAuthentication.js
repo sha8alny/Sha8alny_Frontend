@@ -18,7 +18,7 @@ export const fetchWithAuth = async (url, options = {}) => {
     const urlObj = new URL(url, window.location.origin);
     const pageNum = urlObj.searchParams.get("pageNum");
   
-    if (pageNum) {
+    
       const page = parseInt(pageNum, 10);
       console.log("page", page);
   
@@ -31,7 +31,7 @@ export const fetchWithAuth = async (url, options = {}) => {
         urlObj.searchParams.set("sessionTime", sessionTime);
         url = urlObj.toString();
       }
-    }
+    
   } catch (err) {
     console.error("Invalid URL passed to fetchWithAuth:", url);
   }
