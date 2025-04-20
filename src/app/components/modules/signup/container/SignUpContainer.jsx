@@ -28,8 +28,6 @@ const SignUpContainer = () => {
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [verifyCode, setVerifyCode] = useState("");
     const [verifyCodeError, setVerifyCodeError] = useState("");
-    const [isFormValid, setIsFormValid] = useState(false);
-    const [token, setToken] = useState("");
     const toast = useToast();
     const router = useRouter();
     const [formData, setFormData] = useState({
@@ -82,6 +80,25 @@ const SignUpContainer = () => {
         validateField("confirmPassword",confirmPassword);
         return !error.email && !error.password && !error.username && !error.confirmPassword;
     };
+
+   const performSignupMutation = async () => { 
+    const { username, email, password, isAdmin, recaptcha, rememberMe } = formData;
+    
+    signupMutation.mutate(
+        { username, email, password, isAdmin, recaptcha, rememberMe },
+        {
+            onSuccess: () => {
+                toast("Registration Successful & Auto-Login Successful!");
+                router.push('/complete-profile');
+            },
+            onError: (error) => {
+                toast("Error during registration. Please try again.", false);
+                console.error("Error during registration:", error);
+                router.push('/signup');
+            },
+        }
+    );
+    }
     /**
      * Handles the form submission.
      * Checks if the reCAPTCHA is verified before proceeding with the signup mutation.
@@ -124,24 +141,12 @@ const SignUpContainer = () => {
     };
     const handleEmailVerification = async () => {
         try{
-            const  isVerified = await verifyEmail(formData.email, verifyCode, token);
+            const  isVerified = await verifyEmail(formData.email, verifyCode);
             console.log("isVerified", isVerified);
             if(isVerified){
                 setIsEmailVerified(true);
                 toast("Email verified successfully!");
-                const {username, email, password, isAdmin, recaptcha, rememberMe}=formData;
-                console.log("🚀 Calling Mutation with:", { username, email, password, isAdmin, recaptcha, rememberMe });
-            
-                signupMutation.mutate({username,email,password, isAdmin, recaptcha, rememberMe }, 
-                    {onSuccess: () =>
-                      {toast("Registration Successful & Auto-Login Successful!");
-                        router.push('/complete-profile');},
-                     onError: (error) => {
-                        toast("Error during registration. Please try again.", false);
-                        console.error("Error during registration:", error);
-                        router.push('/signup');
-
-                    },});
+                performSignupMutation();
                 }else{
                     setVerifyCodeError("Invalid verification code. Please try again.");
                     toast("Email verification failed. Please try again.", false);
@@ -163,23 +168,7 @@ const SignUpContainer = () => {
                         clearInterval(intervalId);
                         setIsEmailVerified(true);
                         toast("Email verified successfully Via Link!");
-    
-                        const { username, email, password, isAdmin, recaptcha, rememberMe } = formData;
-    
-                        signupMutation.mutate(
-                            { username, email, password, isAdmin, recaptcha, rememberMe },
-                            {
-                                onSuccess: () => {
-                                    toast("Registration Successful & Auto-Login Successful!");
-                                    router.push('/complete-profile');
-                                },
-                                onError: (error) => {
-                                    toast("Error during registration. Please try again.", false);
-                                    console.error("Error during registration:", error);
-                                    router.push('/signup');
-                                },
-                            }
-                        );
+                        performSignupMutation();
                     }
                 } catch (error) {
                     console.error("Error during periodic verification check:", error);
@@ -192,7 +181,7 @@ const SignUpContainer = () => {
                 clearInterval(intervalId);
             }
         };
-    }, [isEmailSent, isEmailVerified, formData]);
+    }, [isEmailSent, isEmailVerified, formData, performSignupMutation]);
     
     
     const handleChange = (e) => {
