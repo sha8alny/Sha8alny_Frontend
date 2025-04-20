@@ -38,7 +38,7 @@ const SettingsSidebarPresentation = ({
 
   return (
     <>
-      <div className="md:hidden w-full bg-foreground sticky top-0 z-10 shadow-md ">
+      <div className="md:hidden h-fit w-full bg-foreground sticky top-0 z-10 shadow-md">
         <div className="flex items-center px-4 py-3">
           <img
             src={profilePictureUrl}
@@ -52,11 +52,12 @@ const SettingsSidebarPresentation = ({
         
         <div 
           ref={carouselRef}
-          className="flex overflow-x-auto scrollbar-hide py-3 px-4 gap-3 "
+          className="flex overflow-x-auto scrollbar-hide py-3 px-4 gap-3"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {settings.map((setting) => (
             <button
+             data-testid={setting.name + "-mobile"}
               key={setting.id}
               className={`flex items-center whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 highlight === setting.id
@@ -72,7 +73,7 @@ const SettingsSidebarPresentation = ({
         </div>
       </div>
 
-      <aside className="hidden md:flex flex-col h-full min-w-[290px] bg-foreground">
+      <aside className="hidden md:flex flex-col h-auto sticky top-0 min-w-[290px] bg-foreground max-h-screen overflow-y-auto">
         <div className="flex flex-row gap-2 mt-3 items-center ml-4 p-2">
           <img
             src={profilePictureUrl}
@@ -84,7 +85,7 @@ const SettingsSidebarPresentation = ({
           </h1>
         </div>
 
-        <div className="flex flex-col gap-8 mt-9 items-start w-full">
+        <div className="flex flex-col gap-8 mt-9 items-start w-full pb-8">
           {settings.map((setting) => (
             <div
               key={setting.id}
@@ -114,8 +115,6 @@ const SettingsSidebarPresentation = ({
     </>
   );
 };
-
-
 
 SettingsSidebarPresentation.displayName = "SettingsSidebarPresentation";
 

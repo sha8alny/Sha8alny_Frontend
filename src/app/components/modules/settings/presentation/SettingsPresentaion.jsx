@@ -2,7 +2,9 @@ import SettingsAccountPrefsContainer from "../container/SettingsAccountPrefsCont
 import SettingsSecurityContainer from "../container/SettingsSecurityContainer";
 import SettingsSidebarContainer from "../container/SettingsSidebarContainer";
 import SettingsNavbarContainer from "../container/SettingsNavbarContainer";
+import SettingsPrivacyContainer from "../container/SettingsPrivacyContainer";
 import { Suspense } from "react";
+
 /**
  * @namespace settings
  * @module settings
@@ -11,9 +13,8 @@ import { Suspense } from "react";
  * SettingsPresentation component renders the main settings page layout.
  *
  * @param {Object} props - The component props.
- * @param {string} props.profilePictureUrl - The URL of the profile picture.
  * @param {string} props.activeSetting - The currently active setting.
- * @param {function} props.handleSetActiveSetting - Function to handle setting the active setting.
+ * @param {function} props.setActiveSetting - Function to handle setting the active setting.
  * @returns {JSX.Element} The rendered component.
  */
 export default function SettingsPresentation({
@@ -21,18 +22,19 @@ export default function SettingsPresentation({
   setActiveSetting,
 }) {
   return (
-    <div className="flex flex-col h-screen w-full bg-background overflow-x-hidden overflow-y-scroll scrollbar-hide">
-      <div className="flex flex-col md:flex-row h-full">
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center h-full w-full">
-              Loading...
-            </div>
-          }
-        >
-          <SettingsSidebarContainer setActiveSetting={setActiveSetting} />
-        </Suspense>
-        <div className="flex flex-col gap-4 p-8 rounded-lg h-full w-full">
+    <div className="flex flex-col md:flex-row min-h-screen w-full bg-background">
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-full w-full">
+            Loading...
+          </div>
+        }
+      >
+        <SettingsSidebarContainer setActiveSetting={setActiveSetting} />
+      </Suspense>
+
+      <main className="flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-4 p-8 rounded-lg w-full">
           {activeSetting === "Account Preferences" && (
             <SettingsAccountPrefsContainer />
           )}
@@ -40,10 +42,12 @@ export default function SettingsPresentation({
             <SettingsSecurityContainer />
           )}
           {activeSetting === "Notifications" && "Notifications"}
-          {activeSetting === "Privacy" && "Privacy"}
+          {activeSetting === "Privacy & Permissions" && (
+            <SettingsPrivacyContainer />
+          )}
           {activeSetting === "Help" && "Help"}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

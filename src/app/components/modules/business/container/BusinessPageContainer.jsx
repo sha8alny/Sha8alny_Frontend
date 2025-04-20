@@ -44,6 +44,7 @@ function BusinessPageContainer() {
   } = useQuery({
     queryKey: ["userCompanies", currentPage],
     queryFn: () => getUserCompanies(currentPage),
+    retry: false,
   });
 
   const handlePageChange = (newPage) => {

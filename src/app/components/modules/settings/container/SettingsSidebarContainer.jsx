@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SettingsSidebarPresentation from "../presentation/SettingsSidebarPresentation";
 import PersonIcon from "@mui/icons-material/Person";
 import SecurityIcon from "@mui/icons-material/Security";
-import { useSearchParams, useRouter } from "next/navigation";
+import LockIcon from '@mui/icons-material/Lock';import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile,fetchUsername } from "@/app/services/userProfile";
 /**
@@ -42,7 +42,8 @@ export default function SettingsSidebarContainer({setActiveSetting }) {
 
   const settings = [
     { name: "Account Preferences", id: 0, icon: <PersonIcon /> },
-    { name: "Sign in & Security", id: 1, icon: <SecurityIcon /> },
+    { name: "Sign in & Security", id: 1, icon: < LockIcon /> },
+    { name:"Privacy & Permissions", id: 2, icon: <SecurityIcon /> },  
   ];
 
   useEffect(() => {
