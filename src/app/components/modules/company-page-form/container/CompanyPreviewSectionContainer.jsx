@@ -24,12 +24,12 @@ function CompanyPreviewSectionContainer({companyName,companyTagline,companyIndus
     const [preview, setPreview] = useState(null);
     useEffect(() => {
         if (file) {
-        const objectURL = URL.createObjectURL(file);
-        setPreview(objectURL);
+            const objectURL = URL.createObjectURL(file);
+            setPreview(objectURL);
 
-        return () => URL.revokeObjectURL(objectURL); // Cleanup to avoid memory leaks
+            return () => URL.revokeObjectURL(objectURL);
         } else {
-        setPreview(null);
+            setPreview(null);
         }
     }, [file]);
     return(

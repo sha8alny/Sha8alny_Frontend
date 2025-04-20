@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import FlagIcon from "@mui/icons-material/Flag";
 import { SidebarPresentation } from "../presentation/SidebarPresentation";
 import WorkIcon from '@mui/icons-material/Work';
+import ReportIcon from '@mui/icons-material/Report';
 /**
  * @namespace admin
  * @module admin
@@ -33,6 +34,11 @@ export function SidebarContainer() {
       name: "Manage Jobs",
       path: "/admin/job-posts",
       icon: WorkIcon,
+    },
+    {
+      name: "Manage Inappropriate Content",
+      path: "/admin/inappropriate-content",
+      icon: ReportIcon,
     },
   ];
 

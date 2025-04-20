@@ -6,7 +6,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { redirectToSignIn, refreshAccessToken } from "../services/userAuthentication";
 
 // Define public paths that don't require authentication
-const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/complete-profile','/api/verify-email'];
+
+const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password','/api/verify-email'];
+
 
 const AuthContext = createContext({
   authenticated: false,
@@ -34,8 +36,14 @@ export const AuthProvider = ({ children }) => {
 
     const accessToken = sessionStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
+    const isProfileComplete = localStorage.getItem("isProfileComplete");
 
-    if (!accessToken && !refreshToken) {
+    if (isProfileComplete=== "false" && pathname !== "/complete-profile" && accessToken) {
+      router.push('/complete-profile');
+      return;
+    }
+
+    if (!accessToken && !refreshToken ) {
       sessionStorage.setItem('redirectPath', pathname);
       redirectToSignIn();
       return;

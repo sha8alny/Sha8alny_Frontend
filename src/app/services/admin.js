@@ -14,10 +14,11 @@ export const fetchReports = async ({
   posts = false,
   sortByTime ,
   statuses = [],
+  TypeFilter = [],
 }) => {
   const authToken = getToken();
   const itemsPerPage = 10;
-  const url = new URL(`${apiURL}/admin/reports/${pageParam}`);
+  const url = new URL(`http://localhost:5000/admin/reports/${pageParam}`);
 
   url.searchParams.append("users", users.toString());
   url.searchParams.append("jobs", jobs.toString());
@@ -28,6 +29,9 @@ export const fetchReports = async ({
   console.log(sortByTime)
   if (sortByTime) {
     url.searchParams.append("sortByTime", sortByTime);
+  }
+  if (TypeFilter.length > 0) {
+    TypeFilter.forEach((type) => url.searchParams.append("TypeFilter", type));
   }
 
   const response = await fetch(url.toString(), {
@@ -42,6 +46,7 @@ export const fetchReports = async ({
   }
 
   const data = await response.json();
+  console.log("data", data);
   return {
     data,
     nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
@@ -70,12 +75,42 @@ export const deleteJob = async (jobId) => {
     },
   });
 };
+export const deleteComment = async (commentId) => {
+  const authToken = getToken();
+
+  const response = await fetch(`${apiURL}/admin/comments/${commentId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+};
+export const deletePost = async (postId) => {
+  const authToken = getToken();
+
+  const response = await fetch(`${apiURL}/admin/posts/${postId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+};
+export const deleteUser = async (userId) => {
+  const authToken = getToken();
+
+  const response = await fetch(`${apiURL}/admin/users/${userId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+};
 
 export const updateStatusReport = async (reportId, status) => {
   const authToken = getToken();
 
   const response = await fetch(`${apiURL}/admin/reports/`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${authToken}`,
       "Content-Type": "application/json",

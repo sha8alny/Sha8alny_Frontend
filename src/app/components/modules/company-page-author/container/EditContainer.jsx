@@ -1,6 +1,4 @@
 "use client"
-import { useState } from "react";
-import { useRef } from "react";
 import EditPageContainer from "./EditPageContainer";
 /**
  * @namespace company-page-author

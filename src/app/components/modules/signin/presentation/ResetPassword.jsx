@@ -33,6 +33,7 @@ const ResetPassword =({
             </div>
              <div className="flex items-center justify-center w-70 h-15  text-text rounded-full mx-auto">
             <InputOTP 
+            data-testid="otp-input"
             maxLength={6}
             value={resetCode}
             onChange={(value) => handleChange("resetCode",value )}
@@ -56,6 +57,7 @@ const ResetPassword =({
                 </p>
             )}
                 <input
+                    data-testid="new-password-input"
                     type="password"
                     placeholder="New Password"
                     name="newPassword"
@@ -71,6 +73,7 @@ const ResetPassword =({
                 )}
 
                 <button
+                    data-testid="reset-password-button"
                     type="submit"
                     className={`bg-secondary text-background rounded-md px-4 py-2 hover:bg-secondary-light transition duration-300 ${
                         loading ? "opacity-50 cursor-not-allowed" : ""

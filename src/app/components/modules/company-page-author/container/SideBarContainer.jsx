@@ -1,6 +1,5 @@
 "use client";
 import { useState, useRef} from "react";
-import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import SideBar from "../presentation/SideBar";
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
@@ -18,7 +17,6 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import { Modal, Box, Button, Typography } from "@mui/material";
 import { deleteCompany } from "@/app/services/companyManagement";
-import { getCompany } from "@/app/services/companyManagement";
 import { updateCompany } from "@/app/services/companyManagement";
 
 
@@ -71,12 +69,11 @@ import { updateCompany } from "@/app/services/companyManagement";
  * @type {Array<{name: string, href: string, icon: JSX.Element, action?: Function}>}
  */
 
-function SideBarContainer({company, username, logo ,setLogo }){
+function SideBarContainer({company,setCompany, username, logo ,setLogo }){
     const pathname= usePathname();
     const isActive = (href) => pathname.startsWith(href);
     const [isModalOpen, setModalOpen] = useState(false); 
     const [modalType, setModalType] = useState(null);
-    const [isCompany, setCompany] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
     const coverInputRef = useRef(null);
     const logoInputRef = useRef(null);
@@ -87,17 +84,17 @@ function SideBarContainer({company, username, logo ,setLogo }){
         if (selectedFile){
             const newCoverURL = URL.createObjectURL(selectedFile);
             setCoverPreview(newCoverURL);
-            if (company) {
-                const updatedCompany = {
-                    ...company,
-                    cover: newCoverURL
-                };
-                setCompany(updatedCompany);
-                try {
-                    await updateCompany(username, { cover: newCoverURL });
-                } catch (err) {
-                    console.error("Failed to update logo:", err);
-                }
+            try{
+                const formData = new FormData();
+                formData.append("cover", selectedFile);
+                const response = await updateCompany(username, formData);
+                setCompany((prev) => ({
+                    ...prev,
+                    cover: response.cover || newCoverURL, 
+                })); 
+
+            }catch (err) { 
+                console.error("Failed to upload cover:", err);
             }
         }
     };
@@ -107,17 +104,17 @@ function SideBarContainer({company, username, logo ,setLogo }){
         if (file) {
             const newLogoURL = URL.createObjectURL(file);
             setLogo(newLogoURL);
-            if (company) {
-                const updatedCompany = {
-                    ...company,
-                    logo: newLogoURL
-                };
-                setCompany(updatedCompany);
-                try {
-                    await updateCompany(username, { logo: newLogoURL });
-                } catch (err) {
-                    console.error("Failed to update logo:", err);
-                }
+            try{
+                const formData = new FormData();
+                formData.append("logo", file);
+                const response = await updateCompany(username, formData);
+                setCompany((prev) => ({
+                    ...prev,
+                    logo: response.logo || newLogoURL, 
+                }));    
+            }
+            catch (err) {
+                console.error("Failed to upload logo:", err);
             }
         }
     };
@@ -139,29 +136,29 @@ function SideBarContainer({company, username, logo ,setLogo }){
         try {
             await deleteCompany(username);
             setModalOpen(false); 
-            router.push("/company-page-form");
+            router.push("/business");
         } catch (error) {
             console.error("Error deactivating company:", error);
         }
     };
 
     const OpenCompanyUserPage=()=>{
-        router.push(`/company-user-admin/${username}/about-page`);
+        router.push(`/company/${username}/user/about`);
     };
 
     const OpenPostsPage=()=>{
-        router.push(`/company-admin/${username}/posts-page`);
+        router.push(`/company/${username}/admin/posts`);
         setModalOpen(false);
     }
 
     const menuItems =[
-        {name: "Dashboard", href:`/company-admin/${username}/company-page-author`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
-        {name: "Page Posts", href:`/company-admin/${username}/posts-page` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Dashboard", href:`/company/${username}/admin/dashboard`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
+        {name: "Page Posts", href:`/company/${username}/admin/posts` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Feed",href:"#", icon: <DynamicFeedOutlinedIcon style={{fontSize:"20px"}} />},
         {name: "Activity",href:"#", icon: <NotificationsOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
-        {name: "Edit Page", href:`/company-admin/${username}/edit-page`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Jobs", href:`/company-admin/${username}/company-author`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Jobs", href:`/company/${username}/admin/company-job`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(
