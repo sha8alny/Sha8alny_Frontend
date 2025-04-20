@@ -32,7 +32,6 @@ const MembershipCardContainer = ({
   isCancelling,
 }) => {
   // card's display logic
-  // card's display logic
   const isPremium = plan.toLowerCase() === "premium";
   let isCurrentPlan = false;
   // user's current plan related logic

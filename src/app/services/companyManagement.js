@@ -229,11 +229,7 @@ export const createCompany = async (companyData) => {
     try {
         const response = await fetchWithAuth(`${apiURL}/company`, {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json", 
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
-            },
-            body: JSON.stringify(companyData),
+            body: companyData,
         });
         const responseText = await response.text(); 
         console.log("Raw response text:", responseText); 
@@ -266,6 +262,9 @@ export const getCompany = async (companyUsername) => {
 
         if (!response.ok) {
             console.error("Error response:", responseText);
+            if (response.status === 400 || responseText.includes("Company not found")) {
+                return { notFound: true }; 
+            }
             throw new Error(`Failed to view company profile: ${response.status} ${responseText}`);
         }
         try {
@@ -284,11 +283,7 @@ export const updateCompany = async (companyUsername, companyData) => {
         console.log("received username: ", companyUsername);
         const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
             method: "PATCH",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
-            },
-            body: JSON.stringify(companyData),
+            body: companyData,
         });
         const responseText = await response.text(); 
         console.log("Raw response text:", responseText); 

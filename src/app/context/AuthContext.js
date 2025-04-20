@@ -8,6 +8,7 @@ import { redirectToSignIn, refreshAccessToken } from "../services/userAuthentica
 // Define public paths that don't require authentication
 const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/api/verify-email', '/api/error'];
 
+
 const AuthContext = createContext({
   authenticated: false,
   loading: true,

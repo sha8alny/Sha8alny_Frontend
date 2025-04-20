@@ -44,6 +44,7 @@ function BusinessPageContainer() {
   } = useQuery({
     queryKey: ["userCompanies", currentPage],
     queryFn: () => getUserCompanies(currentPage),
+    retry: false,
   });
 
   const handlePageChange = (newPage) => {
@@ -51,7 +52,7 @@ function BusinessPageContainer() {
   };
 
   const handleCreateCompany = () => {
-    router.push("/company-page-form");
+    router.push("/company/setup");
   };
   
   return (

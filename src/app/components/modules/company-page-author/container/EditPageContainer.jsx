@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import EditPage from "../presentation/EditPage";
 import { updateCompany } from "@/app/services/companyManagement";
-import { useRouter } from "next/navigation";
+import { Tag } from "@mui/icons-material";
 
 
 /**
@@ -38,6 +39,7 @@ function EditPageContainer({username}){
     const [companySize, setCompanySize] = useState("");
     const [companyType, setCompanyType] = useState("");
     const [companyLocation, setCompanyLocation] = useState("");
+    const [companyDescription, setCompanyDescription] = useState("");
     const [companyURL, setCompanyURL]= useState("");
     const [companyWebsite, setCompanyWebsite] = useState("");
     const [companyDate, setCompanyDate] = useState("");
@@ -57,30 +59,28 @@ function EditPageContainer({username}){
         setCompanyWebsite("");
         setCompanyDate("");
         setCompanyPhone("");
+        setCompanyDescription("");
     }
 
     
     const handleSave = async()=>{
         setLoading(true);
-        const companyData = {
-            name: companyName || undefined,
-            username :companyURL || undefined,
-            URL: companyWebsite || undefined,
-            orgSize: companySize || undefined,
-            orgType: companyType || undefined,
-            logo: "" || undefined, 
-            cover:"" || undefined,
-            description: companyTagline || undefined ,
-            industry: companyIndustry || undefined ,
-            location: companyLocation || undefined,
-            phoneNumber: companyPhone || undefined,
-            foundingDate:companyDate || undefined,
-        };
+        const companyData = new FormData();
+        if (companyName) companyData.append("name", companyName);
+        if (companyURL) companyData.append("username", companyURL);
+        if (companyWebsite) companyData.append("URL", companyWebsite);
+        if (companySize) companyData.append("orgSize", companySize);
+        if (companyType) companyData.append("orgType", companyType);
+        if (companyTagline) companyData.append("tagline", companyTagline);
+        if (companyDescription) companyData.append("description", companyDescription);
+        if (companyIndustry) companyData.append("industry", companyIndustry);
+        if (companyLocation) companyData.append("location", companyLocation);
+        if (companyPhone) companyData.append("phoneNumber", companyPhone);
+        if (companyDate) companyData.append("foundingDate", companyDate);
         try{
             const updatedUsername = companyURL || username;
             const response = await updateCompany(username, companyData);
-
-            // window.location.reload();
+            handleDiscard();
             router.push(`/company-admin/${updatedUsername}/edit-page`);
         } 
         catch (err) {
@@ -104,7 +104,9 @@ function EditPageContainer({username}){
             companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
             companyDate={companyDate} setCompanyDate={setCompanyDate} 
             companyPhone={companyPhone} setCompanyPhone={setCompanyPhone}
-            onSave={handleSave} onDiscard={handleDiscard} loading={loading} errors={errors} setErrors={setErrors} />
+            companyDescription={companyDescription} setCompanyDescription={setCompanyDescription}
+            onSave={handleSave} onDiscard={handleDiscard} loading={loading}
+            errors={errors} setErrors={setErrors} />
         </div>
     );
 }

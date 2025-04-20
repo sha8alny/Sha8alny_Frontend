@@ -19,7 +19,7 @@ function SideBar({company, menuItems=[], isActive, isModalOpen, setModalOpen, on
             <div className="relative mb-0 max-h-[160px]">
                 <div className="w-[250px] h-[120px] bg-gray-700 rounded-lg flex justify-center items-center overflow-hidden  relative">
                     {company?.cover ? (
-                        <img src={company?.cover} alt="cover" className="w-full h-full object-cover" />
+                        <img src={company?.cover} alt="cover" className="w-full h-full" />
                     ) : (
                         <ImageOutlinedIcon style={{ width: "100%", height: "100px", color: "gray" }} />
                     )}
@@ -53,11 +53,11 @@ function SideBar({company, menuItems=[], isActive, isModalOpen, setModalOpen, on
                     <p className="text-xs"> {company?.numFollowers} followers</p>
                 </div>
                 <div className="border-b border-[var(--secondary)] pb-2 flex flex-row justify-between items-center">
-                    <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all relative" onClick={()=>setModalOpen("create")}>
+                    <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all relative" onClick={()=>setModalOpen("create")} data-testid="create-button">
                         <AddIcon className="transition-transform duration-200 group-hover:scale-110"/>
                         <span className="absolute left-full ml-2 text-[var(--text)] text-xs px-2 py-1  opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm">Create </span>
                     </button>
-                    <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all" onClick={OpenCompanyUserPage}>
+                    <button className="flex items-center gap-2 group cursor-pointer w-fit px-2 py-1 rounded-md transition-all" onClick={OpenCompanyUserPage} data-testid="view-as-member-button">
                         <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-xs">View as member</span>
                         <VisibilityIcon className="transition-transform duration-200 group-hover:scale-110"/>
                     </button>
@@ -69,14 +69,15 @@ function SideBar({company, menuItems=[], isActive, isModalOpen, setModalOpen, on
                     <Link
                     key={item.name}
                     href={item.href}
-                    className={`group flex items-center rounded-lg gap-2 p-2 mb-1 transition-colors duration-200 ${isActive(item.href)? "bg-[var(--secondary)] text-white": "hover:bg-[var(--secondary)]"}`} onClick={item.action ? item.action : undefined}>
+                    className={`group flex items-center rounded-lg gap-2 p-2 mb-1 transition-colors duration-200 ${isActive(item.href)? "bg-[var(--secondary)] text-white": "hover:bg-[var(--secondary)]"}`} onClick={item.action ? item.action : undefined}
+                    data-testid={`${item.name}-link`}>
                         {item.icon} {item.name}
                     </Link>))
                 }
                 <div>
                     <button
                     className="w-full cursor-pointer flex items-center space-x-2 rounded-lg p-2 text-[var(--text)] hover:bg-[var(--secondary)] transition-colors mt-2"
-                    onClick={() => console.log("Logout clicked")}
+                    onClick={() => console.log("Logout clicked")} data-testid="logout-button"
                     >
                     <LogoutIcon className="text-[var(--text)]" />
                     <span>Logout</span>

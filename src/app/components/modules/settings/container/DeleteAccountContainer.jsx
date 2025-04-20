@@ -46,7 +46,8 @@ const DeleteAccountContainer = ({ handleDeleteAccountForm }) => {
       handleDeleteSucess();
     },
     onError: (error) => {
-      showToast("Failed to delete account", false);
+       console.log(error);
+      showToast(error.message, false);
     },
   });
 

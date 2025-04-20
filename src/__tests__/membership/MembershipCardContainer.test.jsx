@@ -80,7 +80,7 @@ describe('Premium Card', () => {
 
 
   test('shows current plan button when isCurrentPlan is true', () => {
-    render(<MembershipCardPresentation {...baseProps} isPremium={true} currentPlan={"monthlyPremium"}  />);
+    render(<MembershipCardPresentation {...baseProps} isPremium={true} currentPlan={"oneTimePremium"}  />);
     const button = screen.getByText('Current Plan');
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute('disabled');
