@@ -13,6 +13,7 @@ import SideBarContainer from "../../company-page-author/container/SideBarContain
 import Analytics from "../../company-page-author/presentation/Analytics";
 import { useRef } from "react";
 import { useToast } from "@/app/context/ToastContext";
+import { set } from "date-fns";
 
 /**
  * @namespace company-author
@@ -38,6 +39,10 @@ const JobsFormContainer = ({ username }) => {
   const [showJobApplicants, setShowJobApplicants] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [updatedJob, setUpdatedJob] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [openDialogForJobId, setOpenDialogForJobId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [openDeleteDialogForId, setOpenDeleteDialogForId] = useState(false);
   const toast = useToast();
 
   const { mutate: getJobs, isPending: isLoading } = useMutation({
@@ -78,11 +83,17 @@ const JobsFormContainer = ({ username }) => {
   }, [fetchJobs]);
 
   const handleDeleteJob = async (jobId, username) => {
+    setIsDeleting(true);
     try {
       const response = await deleteJob({ companyUsername: username, jobId });
       if (response) {
         toast("Job deleted successfully!");
         setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+        fetchJobs();
+        setIsDeleting(false);
+        setTimeout(() => {
+          setOpenDeleteDialogForId(null);
+        }, 5000);
       } else {
         toast("Error deleting job", false);
       }
@@ -93,6 +104,11 @@ const JobsFormContainer = ({ username }) => {
   };
 
   const handleEditJob = async (jobId, username) => {
+    if (!updatedJob) {
+      toast("No job data to update", false);
+      return;
+    }
+    setIsEditing(true);
     try {
       const response = await editJob({
         companyUsername: username,
@@ -110,6 +126,12 @@ const JobsFormContainer = ({ username }) => {
             job._id === jobId ? { ...job, ...updatedJob } : job
           )
         );
+        setIsEditing(false);
+        setTimeout(() => {
+        setOpenDialogForJobId(null);
+        setUpdatedJob(null);
+        }
+        , 1000);
       } else {
         toast("Error updating job", false);
       }
@@ -163,6 +185,12 @@ const JobsFormContainer = ({ username }) => {
             onDeleteJob={(jobId) => handleDeleteJob(jobId, username)}
             setUpdatedJob={setUpdatedJob}
             onEditJob={(jobId) => handleEditJob(jobId, username)}
+            isEditing={isEditing}
+            openDialogForJobId={openDialogForJobId}
+            setOpenDialogForJobId={setOpenDialogForJobId}
+            isDeleting={isDeleting}
+            openDeleteDialogForId={openDeleteDialogForId}
+            setOpenDeleteDialogForId={setOpenDeleteDialogForId}
           />
         </>
       )}

@@ -47,10 +47,10 @@ export default function ProfileHeaderContainer({ userProfile }) {
     useEffect(() => {
         const fetchCompany = async () => {
         try {
-            const data = await getCompany(userProfile);
-            setCompany(data);
+          const data = await getCompany(userProfile);
+          setCompany(data);
         } catch (err) {
-            setError(err.message);
+          setError(err.message);
         }
         };
         if (userProfile) fetchCompany();

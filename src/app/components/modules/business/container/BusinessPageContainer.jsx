@@ -52,7 +52,7 @@ function BusinessPageContainer() {
   };
 
   const handleCreateCompany = () => {
-    router.push("/company-page-form");
+    router.push("/company/setup");
   };
   
   return (

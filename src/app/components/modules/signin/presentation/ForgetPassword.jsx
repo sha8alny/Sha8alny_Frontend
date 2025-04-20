@@ -17,6 +17,7 @@ return (
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
                 <input
+                    data-testid="email-input"
                     type="email"
                     placeholder="Enter your email"
                     name="email"
@@ -33,6 +34,7 @@ return (
                 )}
                 
                 <button
+                        data-testid="submit-button"
                         type="submit"
                         className={`bg-secondary text-background rounded-md px-4 py-2 hover:bg-secondary-light transition duration-300 ${
                             loading ? "opacity-50 cursor-not-allowed" : ""
