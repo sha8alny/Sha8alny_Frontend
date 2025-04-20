@@ -155,6 +155,7 @@ export const completeProfile = async ({formData, profilePic, coverPic})=>{
   try{
     const profileFormData = new FormData();
     profileFormData.append("profilePicture", profilePic);
+    console.log("profileFormData",profileFormData);
     const profileResponse = await fetchWithAuth(`${apiURL}/profile/profile-picture`, {
       method: "PUT",
       body: profileFormData,
@@ -163,6 +164,7 @@ export const completeProfile = async ({formData, profilePic, coverPic})=>{
 
     const coverFormData = new FormData();
     coverFormData.append("coverPhoto", coverPic);
+    console.log("coverFormData",coverFormData);
     const coverResponse = await fetchWithAuth(`${apiURL}/profile/cover-photo`, {
       method: "PUT",
       body: coverFormData,
@@ -177,7 +179,14 @@ export const completeProfile = async ({formData, profilePic, coverPic})=>{
       body: JSON.stringify(formData),
     });
     if (!data.ok) throw new Error("Failed to complete profile");
-
+    const isCompleteProfile = await fetchWithAuth(`${apiURL}/complete-profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!isCompleteProfile.ok) throw new Error("Failed to complete profile");
+    localStorage.setItem("isProfileComplete",true);
     return true;
 
   }catch(error){
@@ -196,7 +205,7 @@ export const handleSignIn = async ({email,password, rememberMe})=>{
     });
     if (!loginResponse.ok) throw new Error("Login failed");
 
-    const {accessToken, refreshToken, isAdmin}=await loginResponse.json()
+    const {accessToken, refreshToken, isAdmin, isComplete}=await loginResponse.json()
      if (accessToken){
       sessionStorage.setItem("accessToken",accessToken);
      
@@ -204,7 +213,9 @@ export const handleSignIn = async ({email,password, rememberMe})=>{
       localStorage.setItem("refreshToken",refreshToken);
       }
       localStorage.setItem("isAdmin",isAdmin);
+      localStorage.setItem("isProfileComplete",isComplete);
       console.log("accessToken",sessionStorage.getItem("accessToken"));
+      console.log("isComplete",localStorage.getItem("isProfileComplete"));
       return {success:true};
     }
     return {success:false, message:"Login failed"};
@@ -270,6 +281,7 @@ export const handleLogout = async () => {
   sessionStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("isAdmin");
+  localStorage.removeItem("isProfileComplete");
 
   window.location.href = "/signin";
 }
