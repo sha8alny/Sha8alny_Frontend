@@ -28,13 +28,36 @@ const SignInContainer = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState({
+    email: "",
+    password: "",
+  });
   const toast = useToast();
   const Auth = useAuth();
+  const isCompleteProfile = localStorage.getItem("isProfileComplete");
 
   const loginMutation = useMutation({
     mutationFn: handleSignIn,
   });
+  const validateField = (name,value) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    setError((prev)=>{
+    const newErrors = {...prev};
+    if (name==="email") {
+        newErrors.email = emailRegex.test(value) ? "" : "Please enter a valid email address.";
+    }
+    if (name==="password") {
+        newErrors.password = value.length >= 8 ? "" : "Password must be 8 characters or more.";
+    }
+  return newErrors;
+});
+};
 
+const validateForm = () => {
+    validateField("email",email);
+    validateField("password",password);
+    return !error.email && !error.password;
+};
   /**
    * Handles the form submission.
    * @param {string} email - The email entered by the user.
@@ -43,6 +66,10 @@ const SignInContainer = () => {
    */
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      toast("Please fill in all fields correctly", false);
+      return;
+    }
 
     loginMutation.mutate(
       { email, password, rememberMe },
@@ -50,7 +77,12 @@ const SignInContainer = () => {
         onSuccess: (data) => {
           if (data.success) {
           toast("Welcome back!");
+          console.log("isCompleteProfile",isCompleteProfile);
           setTimeout(() => {
+            if (isCompleteProfile === "false") {
+              router.push("/complete-profile");
+              return;
+            }
             const redirectPath = Auth.getRedirectPath();
             Auth.clearRedirectPath();
             router.push(redirectPath);
@@ -63,17 +95,29 @@ const SignInContainer = () => {
     );
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "email") {
+      setEmail(value);
+      validateField(name,value);
+    }
+    if (name === "password") {
+      setPassword(value);
+      validateField(name,value);
+    }
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background ">
       <SignInForm
         email={email}
-        setEmail={setEmail}
         password={password}
-        setPassword={setPassword}
         rememberMe={rememberMe}
         setRememberMe={setRememberMe}
         handleSubmit={handleSubmit}
         isSubmitting={loginMutation.isPending}
+        error={error}
+        handleChange={handleChange}
       />
     </div>
   );

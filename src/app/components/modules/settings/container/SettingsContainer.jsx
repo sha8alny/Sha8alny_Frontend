@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 
 import SettingsPresentation from "../presentation/SettingsPresentaion";
+import { useSearchParams } from "next/navigation";
 
 /**
  * @namespace settings
@@ -14,7 +15,9 @@ import SettingsPresentation from "../presentation/SettingsPresentaion";
  * @returns {JSX.Element} The rendered component.
  */
 export default function SettingsContainer() {
-  const [activeSetting, setActiveSetting] = useState("Account Preferences");
+  const activeURL = useSearchParams();
+  const section = activeURL.get("section");
+  const [activeSetting, setActiveSetting] = useState(section  ||"Account Preferences");
 
 
 

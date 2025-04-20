@@ -34,9 +34,7 @@ const MembershipStatus = ({
   statusIsLoading,
   statusError,
 }) => {
-  console.log("current plan", plan);
   const isPremium = plan === "monthlyPremium" || plan === "oneTimePremium";
-  console.log("isPremium", isPremium);
   const isExpiredPremium = isMissed;
   const goldText = "text-[#F0A24F]";
   const greenText = "text-green-500";
@@ -77,7 +75,7 @@ const MembershipStatus = ({
                 <>
                   {limits.monthlyConnectionRequests + " "}/
                   <span className={greenText}>
-                    {freePlanDetails.features.maxConnections}
+                    {freePlanDetails.features.max_connections}
                   </span>
                 </>
               )}
@@ -91,7 +89,7 @@ const MembershipStatus = ({
                 <>
                   {limits.dailyMessageRequests + " "}/
                   <span className={greenText}>
-                    {freePlanDetails.features.dailyMessages}
+                    {freePlanDetails.features.daily_messages}
                   </span>
                 </>
               )}
@@ -108,7 +106,7 @@ const MembershipStatus = ({
                 <>
                   {limits.dailyJobApplications + " "}/
                   <span className={greenText}>
-                    {freePlanDetails.features.jobApplications}
+                    {freePlanDetails.features.job_applications}
                   </span>
                 </>
               )}

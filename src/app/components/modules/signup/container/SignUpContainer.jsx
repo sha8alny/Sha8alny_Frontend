@@ -36,11 +36,13 @@ const SignUpContainer = () => {
     const [error, setError] = useState({
         email: "",
         password: "",
+        username: "",
     }
     );
+    const [confirmPassword, setConfirmPassword] = useState("");
     
     const signupMutation = useMutation({
-        mutationFn: handleSignupCross,
+        mutationFn: handleSignup,
     });
 
     const validateField = (name,value) => {
@@ -51,13 +53,16 @@ const SignUpContainer = () => {
             newErrors.email = emailRegex.test(value) ? "" : "Please enter a valid email address.";
         }
         if (name==="password") {
-            newErrors.password = value.length >= 6 ? "" : "Password must be 6 characters or more.";
+            newErrors.password = value.length >= 8 ? "" : "Password must be 8 characters or more.";
         }
         if (name==="username") {
             const usernameRegex = /^[a-zA-Z0-9_]+$/;
             newErrors.username = value.length >= 3 && usernameRegex.test(value) 
             ? "" 
             : "Username must be at least 3 characters and contain only letters, numbers, and underscores.";
+        }
+        if (name==="confirmPassword") {
+            newErrors.confirmPassword = value === formData.password ? "" : "Passwords do not match.";
         }
       return newErrors;
     });
@@ -66,7 +71,9 @@ const SignUpContainer = () => {
     const validateForm = () => {
         validateField("email",formData.email);
         validateField("password",formData.password);
-        return !error.email && !error.password;
+        validateField("username",formData.username);
+        validateField("confirmPassword",confirmPassword);
+        return !error.email && !error.password && !error.username && !error.confirmPassword;
     };
     /**
      * Handles the form submission.
@@ -80,7 +87,7 @@ const SignUpContainer = () => {
         
 
         if(!formData.recaptcha || typeof formData.recaptcha !== "string"){
-            alert("Please verify that you are not a robot");
+            toast("Please verify that you are not a robot", false);
             console.log("🚫 Recaptcha not verified");
             return;
         }
@@ -105,6 +112,9 @@ const SignUpContainer = () => {
             ...prev,
             [name]: type === "checkbox" ? checked : value
         }));
+        if(name === "confirmPassword") {
+            setConfirmPassword(value);
+        }
         validateField(name,value);
     };
     const handleRecaptchaChange = (token) => {
@@ -115,6 +125,7 @@ const SignUpContainer = () => {
         <div className="flex flex-col h-screen bg-background overflow-x-hidden overflow-y-scroll">
                 <SignUpForm 
                 formData={formData}
+                confirmPassword={confirmPassword}
                 handleChange={handleChange}
                 error={error}
                 handleSubmit={handleSubmit} 

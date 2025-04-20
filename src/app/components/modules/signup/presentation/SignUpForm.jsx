@@ -34,6 +34,7 @@ import ReCAPTCHA from "react-google-recaptcha";
  */
 const SignUpForm = ({
     formData,
+    confirmPassword,
     error,
     handleSubmit,
     handleChange,
@@ -52,6 +53,7 @@ const SignUpForm = ({
             <div className="mb-4">
                 <label htmlFor="username" className="block text-text text-sm font-semibold mb-2"> Username </label>
                 <input
+                    data-testid="username-input"
                     id="username"
                     type="text"
                     name="username"
@@ -61,10 +63,12 @@ const SignUpForm = ({
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
+                {error.username && <p className="text-red-500 mt-1">{error.username}</p>}
                 </div>
                 <div className="mb-4">
                 <label htmlFor="email" className="block text-text text-sm font-semibold mb-2"> Email </label>
                 <input
+                    data-testid="email-input"
                     id="email"
                     type="email"
                     name="email"
@@ -80,22 +84,40 @@ const SignUpForm = ({
                 <div className="mb-4">
                 <label htmlFor="password" className="block text-text text-sm font-semibold mb-2"> Password </label>
                 <input
+                    data-testid="password-input"
                     id="password"
                     type="password"
                     name="password"
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    minLength={6}
+                    minLength={8}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
                  {error.password && <p className="text-red-500 mt-1">{error.password}</p>}
            
                 </div>
+                <div className="mb-4">
+                <label htmlFor="confirmPassword" className="block text-text text-sm font-semibold mb-2"> Confirm Password </label>
+                <input
+                    data-testid="confirm-password-input"
+                    id="confirmPassword"
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={handleChange}
+                    minLength={8}
+                    required
+                    className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
+                />
+                {error.confirmPassword && <p className="text-red-500 mt-1">{error.confirmPassword}</p>}
+                </div>
                 <div className="flex justify-between items-center">
                 <div className="w-1/3">
                 <input
+                    data-testid="isAdmin-input"
                     id="isAdmin"
                     type="checkbox"
                     name="isAdmin"
@@ -106,6 +128,7 @@ const SignUpForm = ({
                 </div>
                 <div className="w-1/3">
                 <input
+                    data-testid="remember-me-input"
                     id="rememberMe"
                     type="checkbox"
                     name="rememberMe"
@@ -116,6 +139,7 @@ const SignUpForm = ({
                 </div>
                 </div>
                 <ReCAPTCHA
+                    data-testid="recaptcha-input"
                     title="recaptcha"
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
                     onChange={(token) => {
@@ -124,6 +148,7 @@ const SignUpForm = ({
                     />
 
                 <button
+                    data-testid="submit-button"
                     name="Register"
                     type="submit"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
@@ -137,6 +162,7 @@ const SignUpForm = ({
                 <div className="flex-grow h-px bg-gray-300"></div>
                 </div>
                 <button
+                    data-testid="google-signup-button"
                     type="button"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
                     onClick={()=>alert("Google Sign In coming soon")}>

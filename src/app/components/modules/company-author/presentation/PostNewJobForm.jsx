@@ -52,7 +52,9 @@ const PostNewJobForm =({
         <ArrowBackIcon onClick={onBack} className="border border-secondary rounded-full hover:bg-background transition duration-300 text-text "
         sx={{
         color: "text", // Replace with your desired color (e.g., red-orange)
-        }}  role="button" aria-label="ArrowBack"></ArrowBackIcon>
+        }}  role="button" aria-label="ArrowBack"
+        data-testid="back-button"
+        ></ArrowBackIcon>
         </div>
             </div>
                       
@@ -202,6 +204,7 @@ const PostNewJobForm =({
             </div>
             <div className="flex justify-center">
             <Button
+            data-testid="submit-button"
             type="submit"
             aria-label="Post"
              className="text-xl text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 px-6 py-2  mt-4 "

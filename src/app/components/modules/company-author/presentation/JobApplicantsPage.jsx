@@ -64,10 +64,11 @@ return (
     <div className="bg-foreground flex-grow p-6 rounded-lg w-full relative grid grid-cols-1 gap-6">
         <div className="flex justify-end">
             <ArrowBackIcon
+                data-testid="back-button"
                 onClick={onBack}
                 className="border border-secondary rounded-full hover:bg-background transition duration-300 text-text "
           sx={{
-            color: "text", // Replace with your desired color (e.g., red-orange)
+            color: "text",
           }}
           role="button"
           aria-label="ArrowBack"
@@ -96,6 +97,7 @@ return (
               buttonText="View Application"
               buttonAction={() => onViewApplication(Applicant._id)}
               showButton={true}
+              showRemoveButton={false}
             />
           ))
         )}
@@ -103,6 +105,7 @@ return (
       <div className="flex flex-wrap justify-center sm:justify-between items-center mt-2">
         {currentPage > 1 && (
           <ArrowBackIos
+            data-testid="prev-button"
             role="button"
             aria-label="ArrowBackIos"
             onClick={onPrev}
@@ -111,6 +114,7 @@ return (
         )}
         {hasMore && !isLoading && (
           <ArrowForwardIos
+            data-testid="next-button"
             role="button"
             aria-label="ArrowForwardIos"
             onClick={onNext}

@@ -65,9 +65,15 @@ const JobsForm = ({
   onDeleteJob,
   onEditJob,
   setUpdatedJob,
+  isEditing,
+    setOpenDialogForJobId,
+    openDialogForJobId,
+    isDeleting,
+    setOpenDeleteDialogForId,
+  openDeleteDialogForId,
 }) => {
   return (
-    <div className="flex-grow items-center">
+    <div className="flex-grow items-center ">
       <section className="w-full p-8 bg-foreground rounded-lg shadow-xl grid grid-cols-2">
         <div>
           <h1 className="text-2xl text-semibold text-secondary">Jobs</h1>
@@ -75,6 +81,7 @@ const JobsForm = ({
         </div>
         <div className="flex justify-end">
           <Button
+            data-testid="PostNewJob"
             onClick={onShowPostJobForm}
             className=" text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
           >
@@ -102,10 +109,11 @@ const JobsForm = ({
             >
               <div>
                 <div className="flex flex-col md:flex-row justify-between mb-6">
-                  <h1 className="text-secondary text-2xl text-semibold">
+                  <h1 className="text-secondary text-2xl text-semibold break-words whitespace-normal w-xs sm:w-sm lg:max-w-lg">
                     {job.title}
                   </h1>
                   <Button
+                    data-testid="ShowApplicants"
                     type="button"
                     onClick={() => {
                       console.log("Job ID:", job._id);
@@ -149,11 +157,12 @@ const JobsForm = ({
                     </span>
                   </div>
                   <div>
-                    <AlertDialog>
+                    <AlertDialog open={openDialogForJobId === job._id}>
                       <AlertDialogTrigger asChild>
                         <div
                           data-testid="EditJob"
                           className="relative flex flex-col items-center group cursor-pointer"
+                          onClick={() => setOpenDialogForJobId(job._id)}
                         >
                           <EditIcon className="text-secondary" />
                           <span className="absolute top-8 text-sm text-secondary bg-none p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -180,6 +189,7 @@ const JobsForm = ({
                             Title
                           </Label>
                           <Input
+                            data-testid="edit-title"
                             id="title"
                             defaultValue={job.title}
                             className={"text-text"}
@@ -198,6 +208,7 @@ const JobsForm = ({
                             Location
                           </Label>
                           <Input
+                            data-testid="edit-location"
                             id="location"
                             defaultValue={job.location}
                             className={"text-text"}
@@ -216,6 +227,7 @@ const JobsForm = ({
                             Work Location
                           </Label>
                           <Select
+                            data-testid="edit-workLocation"
                             defaultValue={job.workLocation}
                             className={"text-text"}
                             onValueChange={(value) =>
@@ -242,6 +254,7 @@ const JobsForm = ({
                             Employment Type
                           </Label>
                           <Select
+                            data-testid="edit-employmentType"
                             defaultValue={job.employmentType}
                             className={"text-text"}
                             onValueChange={(value) =>
@@ -274,6 +287,7 @@ const JobsForm = ({
                             Description
                           </Label>
                           <Textarea
+                            data-testid="edit-description"
                             id="description"
                             defaultValue={job.description}
                             className={"text-text"}
@@ -292,6 +306,7 @@ const JobsForm = ({
                             Industry
                           </Label>
                           <Input
+                            data-testid="edit-industry"
                             id="industry"
                             defaultValue={job.industry}
                             className={"text-text"}
@@ -310,6 +325,7 @@ const JobsForm = ({
                             Experience
                           </Label>
                           <Select
+                            data-testid="edit-experience"
                             defaultValue={job.experience}
                             className={"text-text"}
                             onValueChange={(value) =>
@@ -339,6 +355,7 @@ const JobsForm = ({
                             Salary
                           </Label>
                           <Input
+                            data-testid="edit-salary"
                             id="salary"
                             type="number"
                             className={"text-text"}
@@ -353,30 +370,35 @@ const JobsForm = ({
 
                           <AlertDialogFooter>
                             <AlertDialogCancel
+                              data-testid="cancel-edit"
                               type="button"
                               className="flex-1 bg-red-700 rounded-2xl font-semibold cursor-pointer hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300 hover:text-background text-primary-foreground"
+                                onClick={() => setOpenDialogForJobId(null)}
                             >
                               Cancel
                             </AlertDialogCancel>
-                            <AlertDialogAction
+                            <button
+                              data-testid="save-edit"
                               type="submit"
+                              disabled={isEditing}
                               className={
                                 "flex-1 rounded-2xl bg-secondary hover:bg-secondary/80 font-semibold text-primary-foreground"
                               }
                             >
-                              Save
-                            </AlertDialogAction>
+                             {isEditing? "Saving..." : "Save"}{" "}
+                            </button>
                           </AlertDialogFooter>
                         </form>
                       </AlertDialogContent>
                     </AlertDialog>
                   </div>
                   <div>
-                    <AlertDialog>
+                    <AlertDialog open={openDeleteDialogForId === job._id}>
                       <AlertDialogTrigger asChild>
                         <div
                           data-testid="DeleteJob"
                           className="relative flex flex-col items-center group cursor-pointer"
+                            onClick={() => setOpenDeleteDialogForId(job._id)}
                         >
                           <DeleteIcon className="text-secondary" />
                           <span className="absolute top-8 text-sm text-secondary bg-none p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -396,15 +418,19 @@ const JobsForm = ({
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel className=" bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text">
+                          <AlertDialogCancel className=" bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text" onClick={() => setOpenDeleteDialogForId(null)}
+                            data-testid="cancel-delete">
                             Cancel
                           </AlertDialogCancel>
-                          <AlertDialogAction
+                          <button
+                            data-testid="confirm-delete"
                             onClick={() => onDeleteJob(job._id)}
-                            className="bg-red-600 rounded-2xl text-white hover:bg-red-700"
+                            disabled={isDeleting}
+                            className="bg-red-600 rounded-2xl text-white hover:bg-red-700 text-sm font-semibold p-2"
                           >
-                            Confirm Delete
-                          </AlertDialogAction>
+                            {isDeleting ? "Deleting..." : "Confirm Delete"}
+                            
+                          </button>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -417,6 +443,7 @@ const JobsForm = ({
       </section>
       <div className="flex justify-between items-center mt-4">
         <Button
+          data-testid="prev-page"
           aria-label="Previous"
           onClick={onPrevPage}
           disabled={page === 1}
@@ -428,6 +455,7 @@ const JobsForm = ({
         </Button>
         <p className="text-text">Page {page}</p>
         <Button
+         data-testid="next-page"
           aria-label="Next"
           onClick={onNextPage}
           disabled={!hasMore}

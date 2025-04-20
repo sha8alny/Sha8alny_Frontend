@@ -38,13 +38,14 @@
 
 const SignInForm = ({
     email,
-    setEmail,
     password,
-    setPassword,
     rememberMe,
     setRememberMe,
     handleSubmit,
-    isSubmitting}) => {
+    isSubmitting,
+    error,
+    handleChange,
+}) => {
 
 return(
     <div className="flex items-center justify-center min-h-screen bg-background ">
@@ -56,29 +57,37 @@ return(
                 <div className="mb-4">
                 <label htmlFor="email" className="block text-text text-sm font-semibold mb-2"> Email </label>
                 <input
+                    data-testid="email-input"
                     id="email"
                     type="email"
+                    name="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleChange}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
+                {error.email && <p className="text-red-500 mt-1">{error.email}</p>}
+
                 </div>
                 <div className="mb-4">
                 <label htmlFor="password" className="block text-text text-sm font-semibold mb-2"> Password </label>
                 <input
+                    data-testid="password-input"
                     id="password"
                     type="password"
+                    name="password"
                     placeholder="Password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handleChange}
                     required
                     className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
                 />
+                {error.password && <p className="text-red-500 mt-1">{error.password}</p>}
                 </div>
                 <div>
                 <input
+                    data-testid="remember-me-checkbox"
                     id="rememberMe" 
                     type="checkbox"
                     value={rememberMe}
@@ -90,6 +99,7 @@ return(
                 </a>
                 </div>
                 <button
+                    data-testid="submit-button"
                     type="submit"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
                     disabled={isSubmitting}>
@@ -101,6 +111,7 @@ return(
                 <div className="flex-grow h-px bg-gray-300"></div>
                 </div>
                 <button
+                    data-testid="google-signin-button"
                     type="submit"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300">
                   <img src="/google-color-svgrepo-com.svg" alt="Google Logo" className="w-6 h-6 inline-block mr-2.5" />
