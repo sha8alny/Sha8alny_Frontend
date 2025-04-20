@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { redirectToSignIn, refreshAccessToken } from "../services/userAuthentication";
 
 // Define public paths that don't require authentication
-const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/complete-profile'];
+const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/complete-profile','/api/verify-email'];
 
 const AuthContext = createContext({
   authenticated: false,
