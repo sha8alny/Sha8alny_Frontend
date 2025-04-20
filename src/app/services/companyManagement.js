@@ -262,9 +262,6 @@ export const getCompany = async (companyUsername) => {
 
         if (!response.ok) {
             console.error("Error response:", responseText);
-            if (response.status === 400 || responseText.includes("Company not found")) {
-                return { notFound: true }; 
-            }
             throw new Error(`Failed to view company profile: ${response.status} ${responseText}`);
         }
         try {
@@ -279,8 +276,6 @@ export const getCompany = async (companyUsername) => {
 
 export const updateCompany = async (companyUsername, companyData) => {
     try{
-        console.log("Updating company with data:", companyData);
-        console.log("received username: ", companyUsername);
         const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
             method: "PATCH",
             body: companyData,

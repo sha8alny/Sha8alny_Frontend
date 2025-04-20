@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import EditPage from "../presentation/EditPage";
 import { updateCompany } from "@/app/services/companyManagement";
-import { Tag } from "@mui/icons-material";
 
 
 /**

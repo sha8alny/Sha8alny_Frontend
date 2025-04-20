@@ -3,18 +3,35 @@ import SideBarContainer from "@/app/components/modules/company-page-author/conta
 import Analytics from "@/app/components/modules/company-page-author/presentation/Analytics";
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
+import ClearIcon from '@mui/icons-material/Clear';
+import DensityMediumIcon from '@mui/icons-material/DensityMedium';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import React from "react";
 
-export default function CompanyAdminContent({ company,setCompany, username,logo,setLogo,isSidebarOpen, isAnalyticsOpen, setIsSidebarOpen, setIsAnalyticsOpen,loading,error,children, onClick}) {
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-        if (!isSidebarOpen) setIsAnalyticsOpen(false); 
-    };
+/**
+ * `CompanyAdminContent` is a React functional component that displays a company's admin page.
+ * It includes dynamic loading states, error handling, and toggles for sidebar and analytics components.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.company - The company object or a string that represents the company's state.
+ * @param {Function} props.setCompany - A function to update the company state.
+ * @param {string} props.username - The username of the logged-in user.
+ * @param {string} props.logo - The logo URL or the company logo.
+ * @param {Function} props.setLogo - A function to update the logo state.
+ * @param {boolean} props.isSidebarOpen - A boolean indicating whether the sidebar is open.
+ * @param {boolean} props.isAnalyticsOpen - A boolean indicating whether the analytics view is open.
+ * @param {Function} props.setIsSidebarOpen - A function to toggle the sidebar open state.
+ * @param {Function} props.setIsAnalyticsOpen - A function to toggle the analytics view state.
+ * @param {boolean} props.loading - A boolean indicating whether the component is in a loading state.
+ * @param {ReactNode} props.children - The children to render inside the main content area.
+ * @param {Function} props.onClick - A function to handle the "Go Back" button click.
+ * @param {Function} props.toggleSidebar - A function to toggle the sidebar visibility.
+ * @param {Function} props.toggleAnalytics - A function to toggle the analytics visibility.
+ * 
+ * @returns {JSX.Element} - The rendered JSX for the company admin page.
+ */
 
-    const toggleAnalytics = () => {
-        setIsAnalyticsOpen(!isAnalyticsOpen);
-        if (!isAnalyticsOpen) setIsSidebarOpen(false); 
-    };
+export default function CompanyAdminContent({ company,setCompany, username,logo,setLogo,isSidebarOpen, isAnalyticsOpen, setIsSidebarOpen, setIsAnalyticsOpen,loading,children, onClick, toggleSidebar, toggleAnalytics }) {
 
     if (loading) {
         return (
@@ -36,9 +53,6 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                     <Button variant="default" className="bg-secondary cursor-pointer" onClick={onClick}>
                         Go Back
                     </Button>
-                    <Button variant="outline" className="border-foreground text-text cursor-pointer">
-                        Contact Support
-                    </Button>
                 </div>
             </div>
         );
@@ -56,9 +70,6 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                     <Button variant="default" className="bg-secondary cursor-pointer" onClick={onClick}>
                         Go Back
                     </Button>
-                    <Button variant="outline" className="border-foreground text-text cursor-pointer">
-                        Contact Support
-                    </Button>
                 </div>
             </div>
         );
@@ -72,7 +83,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                     className="p-2 rounded-md text-text cursor-pointer"
                     aria-label="Toggle Sidebar"
                 >
-                    {isSidebarOpen ? "✕" : "☰"}
+                    {isSidebarOpen ? <ClearIcon/> : <DensityMediumIcon/>}
                 </button>
                 <h1 className="text-lg font-medium text-text">{company?.name}</h1>
                 <button 
@@ -80,7 +91,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                     className="p-2 rounded-md text-text cursor-pointer"
                     aria-label="Toggle Analytics"
                 >
-                    {isAnalyticsOpen ? "✕" : "📊"}
+                    {isAnalyticsOpen ? <ClearIcon/> : <BarChartIcon/>}
                 </button>
             </div>
             {/* SideBar content */}

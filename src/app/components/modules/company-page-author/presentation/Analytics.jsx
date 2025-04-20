@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/app/components/ui/Card"
 import { ArrowUp, BarChart2, MessageSquare, Repeat, Eye, TrendingUp } from "lucide-react"
 
-export default function Analytics() {
+export default function Analytics({company}) {
   // Sample data - in a real app, this would come from your API
   const overviewData = {
     reposts: { total: 1248, change: 12.5 },
@@ -36,20 +36,20 @@ export default function Analytics() {
       <h1 className="text-2xl text-[var(--text)] font-bold">Analytics</h1>
       <div className="grid grid-cols-1 gap-4 ">
         <MetricCard
-          title="Reposts"
-          value={overviewData.reposts.total}
+          title="Shares"
+          value={company?.numShares}
           change={overviewData.reposts.change}
           icon={<Repeat className="h-4 w-4" />}
         />
         <MetricCard
           title="Comments"
-          value={overviewData.comments.total}
+          value={company?.numComment}
           change={overviewData.comments.change}
           icon={<MessageSquare className="h-4 w-4" />}
         />
         <MetricCard
           title="Reactions"
-          value={overviewData.reactions.total}
+          value={company?.numReactions}
           change={overviewData.reactions.change}
           icon={<TrendingUp className="h-4 w-4" />}
         />
@@ -61,7 +61,7 @@ export default function Analytics() {
         />
         <MetricCard
           title="Page Views"
-          value={overviewData.pageViews.total}
+          value={company?.views}
           change={overviewData.pageViews.change}
           icon={<BarChart2 className="h-4 w-4" />}
         />

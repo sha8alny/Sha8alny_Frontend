@@ -1,7 +1,3 @@
-/**
- * @namespace company-page-author
- * @module company-page-author
- */
 "use client";
 import Link from 'next/link'
 import AddIcon from '@mui/icons-material/Add';
@@ -11,8 +7,34 @@ import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
+/**
+ * `SideBar` is a React functional component that displays the sidebar navigation for a company page,
+ * including the company's logo, cover image, name, follower count, and menu items. It also allows the user 
+ * to edit the company's logo and cover image and includes actions such as creating a post and logging out.
+ * 
+ * @namespace company-page-author
+ * @module company-page-author
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object} props.company - The company object containing the company's details.
+ * @param {string} props.company.name - The name of the company.
+ * @param {string} props.company.cover - The URL of the company's cover image.
+ * @param {string} props.company.logo - The URL of the company's logo.
+ * @param {number} props.company.numFollowers - The number of followers the company has.
+ * @param {Array} [props.menuItems] - A list of menu items to display in the sidebar.
+ * @param {boolean} props.isActive - A function that checks whether a given menu item is active.
+ * @param {Function} props.setModalOpen - Function to open or close the modal.
+ * @param {Function} props.onChangeCover - Function to handle cover image file changes.
+ * @param {Function} props.onChangeLogo - Function to handle logo file changes.
+ * @param {Object} props.coverInputRef - A ref for the cover image file input element.
+ * @param {Object} props.logoInputRef - A ref for the logo file input element.
+ * @param {Function} props.OpenCompanyUserPage - Function to navigate to the company user page.
+ * 
+ * @returns {JSX.Element} - The rendered JSX for the sidebar component.
+ */
 
-function SideBar({company, menuItems=[], isActive, isModalOpen, setModalOpen, onChangeCover,  onChangeLogo, coverInputRef,  logoInputRef,fileusername, OpenCompanyUserPage}){
+
+function SideBar({company, menuItems=[], isActive, setModalOpen, onChangeCover,  onChangeLogo, coverInputRef,  logoInputRef, OpenCompanyUserPage, handleLogout}){
     return (
         <aside className="bg-[var(--foreground)] text-text w-70px flex flex-col mt-5 mx-3 space-y-4 border rounded-lg p-4">
             {/*Logo and cover image for company*/}
@@ -77,7 +99,7 @@ function SideBar({company, menuItems=[], isActive, isModalOpen, setModalOpen, on
                 <div>
                     <button
                     className="w-full cursor-pointer flex items-center space-x-2 rounded-lg p-2 text-[var(--text)] hover:bg-[var(--secondary)] transition-colors mt-2"
-                    onClick={() => console.log("Logout clicked")} data-testid="logout-button"
+                    onClick={handleLogout} data-testid="logout-button"
                     >
                     <LogoutIcon className="text-[var(--text)]" />
                     <span>Logout</span>

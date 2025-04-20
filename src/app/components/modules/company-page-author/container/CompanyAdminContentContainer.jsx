@@ -81,6 +81,16 @@ export default function CompanyAdminContentContainer({ children }) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+        if (!isSidebarOpen) setIsAnalyticsOpen(false); 
+    };
+
+    const toggleAnalytics = () => {
+        setIsAnalyticsOpen(!isAnalyticsOpen);
+        if (!isAnalyticsOpen) setIsSidebarOpen(false); 
+    };
+
     const goToBusinessPage = () => {
         router.push(`/business/`);
     }
@@ -101,6 +111,8 @@ export default function CompanyAdminContentContainer({ children }) {
                 error={error}
                 children={children}
                 onClick={goToBusinessPage}
+                toggleSidebar={toggleSidebar}
+                toggleAnalytics={toggleAnalytics}
             />
         </>
     )

@@ -3,11 +3,15 @@
  * @module company-page-author
  */
 "use client";
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import PollOutlinedIcon from '@mui/icons-material/PollOutlined';
-import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
+import {
+  AccessTimeOutlined,
+  ImageOutlined,
+  LocalOfferOutlined,
+  PersonAddOutlined,
+  VideocamOutlined,
+} from "@mui/icons-material";
 
-function WritePost({company, text, setText,onImageUpload, preview, triggerFileInput,imageInputRef,onSubmit, openArticleModal, openPollModal}) {
+function WritePost({company, text, setText,onImageUpload, preview, triggerFileInput,imageInputRef,onSubmit}) {
   return (
     <div className="text-text">
         <div className="bg-[var(--foreground)] border rounded-lg p-4">
@@ -28,14 +32,18 @@ function WritePost({company, text, setText,onImageUpload, preview, triggerFileIn
             <div className="flex items-center gap-4 mt-4 justify-between">
                 <div htmlFor="upload-image" className="relative group">
                     <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-image-button">
-                        <ImageOutlinedIcon className="cursor-pointer group"/>
+                        <ImageOutlined className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload Image</span>
                     </div>
-                    <input id="upload-file" data-testid="upload-file" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={imageInputRef} onChange={onImageUpload}/>
+                    <input id="upload-image" data-testid="upload-image" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={imageInputRef} onChange={onImageUpload}/>
                 </div>
-                <div className="relative group" onClick={openArticleModal} data-testid="write-post-modal">
-                    <FeedOutlinedIcon className="cursor-pointer group"/>
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Write Article</span>
+                <div htmlFor="upload-video" className="relative group">
+                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-video-button">
+                        <VideocamOutlined className="cursor-pointer group"/>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload video</span>
+                    </div>
+                    <input id="upload-video" data-testid="upload-video" type="file" className="hidden" 
+                    accept="video/mp4, video/webm, video/mov, video/avi, video/wmv, video/mkv" ref={imageInputRef} onChange={onImageUpload}/>
                 </div>
                 <button className={`bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity ${!text.trim() && !preview ? "opacity-50 cursor-not-allowed" : "" }`} onClick={onSubmit} disabled={!text.trim() && !preview}
                 data-testid="post-button">
