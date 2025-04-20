@@ -73,8 +73,8 @@ const SettingsSidebarPresentation = ({
         </div>
       </div>
 
-      <aside className="hidden md:flex flex-col h-auto sticky top-0 min-w-[290px] bg-foreground max-h-screen overflow-y-auto">
-        <div className="flex flex-row gap-2 mt-3 items-center ml-4 p-2">
+      <aside className="hidden md:flex flex-col h-auto sticky top-16 min-w-[290px] bg-foreground max-h-screen overflow-y-auto">
+        <div className="flex flex-row gap-2 mt-3 items-center ml-4 p-2 ">
           <img
             src={profilePictureUrl}
             alt="profile"
