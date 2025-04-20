@@ -59,8 +59,8 @@ const CompleteProfileContainer = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 if(type === "profile"){
-                    setProfilePicture(reader.result);}
-                    setSaveProfilePic(file);
+                    setProfilePicture(reader.result);
+                    setSaveProfilePic(file);}
                 if (type === "cover"){
                     setCoverPicture(reader.result);
                     setSaveCoverPic(file);
