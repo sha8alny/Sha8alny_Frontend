@@ -111,11 +111,10 @@ export const updateUsername = async ({ newUsername }) => {
 
 export const handleSignup = async ({ username,email,password, isAdmin, recaptcha, rememberMe }) => {
   try{
-    const type = isAdmin ? "Admin" : "User";
     const signupResponse = await fetch(`${apiURL}/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({username,email,password, type, recaptcha}),
+      body: JSON.stringify({username,email,password, isAdmin, captcha: recaptcha }),
     });
 
     if (!signupResponse.ok) throw new Error("Failed to signup");
@@ -132,11 +131,11 @@ export const handleSignup = async ({ username,email,password, isAdmin, recaptcha
 
 export const handleSignupCross = async ({ username,email,password, isAdmin, recaptcha, rememberMe }) => {
   try{
-    const type = isAdmin ? "Admin" : "User";
+   // const type = isAdmin ? "Admin" : "User";
     const signupResponse = await fetch(`${apiURL}/signup_cross`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({username,email,password, type}),
+      body: JSON.stringify({username,email,password, isAdmin}),
     });
 
     if (!signupResponse.ok) throw new Error("Failed to signup");

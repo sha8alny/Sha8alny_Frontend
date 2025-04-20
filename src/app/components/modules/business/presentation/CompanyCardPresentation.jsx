@@ -1,9 +1,13 @@
-
 "use client";
 
 import Image from "next/image";
 import { Button } from "@/app/components/ui/Button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/app/components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/app/components/ui/Card";
 import { MapPin, ExternalLink } from "lucide-react";
 /**
  * @namespace business
@@ -23,9 +27,11 @@ import { MapPin, ExternalLink } from "lucide-react";
  *
  * @returns {JSX.Element} A card component displaying company details with options to manage or view the company page.
  */
- function CompanyCardPresentation({ company, onManageClick, onViewPageClick }) {
+function CompanyCardPresentation({ company, onManageClick, onViewPageClick }) {
   const truncateText = (text, maxLength) => {
-    return text?.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+    return text?.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
   };
 
   return (
@@ -43,7 +49,9 @@ import { MapPin, ExternalLink } from "lucide-react";
             </div>
             <div>
               <h3 className="font-semibold text-lg">{company?.name}</h3>
-              <p className="text-sm text-muted-foreground">{company?.industry}</p>
+              <p className="text-sm text-muted-foreground">
+                {company?.industry}
+              </p>
             </div>
           </div>
         </div>
@@ -54,7 +62,9 @@ import { MapPin, ExternalLink } from "lucide-react";
             <MapPin className="mr-2 h-4 w-4" />
             <span>{company?.location}</span>
           </div>
-          <p className="text-sm mt-2">{truncateText(company?.description, 60)}</p>
+          <p className="text-sm mt-2">
+            {truncateText(company?.description, 60)}
+          </p>
           <p className="text-sm text-muted-foreground">
             {company?.numFollowers.toLocaleString()} followers
           </p>
@@ -66,10 +76,16 @@ import { MapPin, ExternalLink } from "lucide-react";
             className="bg-secondary hover:cursor-pointer text-background hover:bg-secondary/80 transition-colors duration-200"
             size="sm"
             onClick={onManageClick}
+            data-testid="manage-company-button"
           >
             Manage
           </Button>
-          <Button variant="ghost" size="sm" onClick={onViewPageClick}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onViewPageClick}
+            data-testid="view-page-button"
+          >
             <ExternalLink className="mr-2 h-4 w-4" />
             View Page
           </Button>
