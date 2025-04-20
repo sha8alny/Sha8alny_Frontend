@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import {
   useStripe,
   useElements,
@@ -10,6 +12,8 @@ import {
 import {
   processPaymentMonthly,
   processPaymentOneTime,
+   fetchPlansDetails,
+  
 } from "@/app/services/payment";
 import PaymentFormPresentation from "../presentation/PaymentFormPresentation";
 import SuccessPaymentPresentation from "../presentation/SuccessPaymentPresentation";
@@ -56,14 +60,33 @@ const PaymentFormContainer = () => {
   const [loading, setLoading] = useState(false);
   const [premiumType, setPremiumType] = useState("monthlyPremium");
   const [success, setSuccess] = useState(false);
+  const {
+    data: plansDetails,
+    isLoading: isPlansLoading,
+    error: plansError,
+  } = useQuery({
+    queryKey: ["plansDetails"],
+    queryFn: fetchPlansDetails,
+  });
+
+  const plansDetailsList = plansDetails?.Plans;
+  const monthlyPlan = plansDetailsList?.find(
+    (plan) => plan.plan_id === "monthlyPremium"
+  );
+  const oneTimePlan = plansDetailsList?.find(
+    (plan) => plan.plan_id === "oneTimePremium"
+  );
+  const monthlyPlanPrice = monthlyPlan?.price;
+  const oneTimePlanPrice = oneTimePlan?.price;
+ 
+  const monthlyPlanCurrency = monthlyPlan?.currency;
+  const oneTimePlanCurrency = oneTimePlan?.currency;
 
   // price calculations logic
-  const prices = { monthly: 9.99, annual: 99.99 };
-  const monthlyCost = prices.monthly;
-  const annualCost = prices.annual;
-  const monthlyCostIfPaidAnnually = annualCost / 12;
+
+  const monthlyCostIfPaidAnnually = oneTimePlanPrice / 12;
   const savingsPercentage = Math.round(
-    (1 - monthlyCostIfPaidAnnually / monthlyCost) * 100
+    (1 - monthlyCostIfPaidAnnually / monthlyPlanPrice) * 100
   );
   // stripe element styling logic
   useEffect(() => {
@@ -107,7 +130,11 @@ const PaymentFormContainer = () => {
     }
 
     const { token, error } = await stripe.createToken(
-      elements.getElement(CardNumberElement)
+      elements.getElement(CardNumberElement),
+      {
+        name: name,
+        address_country: country,
+      }
     );
     setLoading(true);
 
@@ -168,10 +195,12 @@ const PaymentFormContainer = () => {
       textColor={textColor}
       premiumType={premiumType}
       setPremiumType={setPremiumType}
-      monthlyCost={monthlyCost}
-      annualCost={annualCost}
+      monthlyCost={monthlyPlanPrice}
+      oneTimeCost={oneTimePlanPrice}
       monthlyCostIfPaidAnnually={monthlyCostIfPaidAnnually}
       savingsPercentage={savingsPercentage}
+      monthlyCurrency={monthlyPlanCurrency}
+      oneTimeCurrency={oneTimePlanCurrency}
     />
   );
 };

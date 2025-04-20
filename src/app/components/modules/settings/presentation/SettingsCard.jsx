@@ -1,4 +1,6 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Separator } from "@/app/components/ui/Separator";
+
 /**
  * @namespace settings
  * @module settings
@@ -27,22 +29,23 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 const SettingsCard = ({ header, items }) => {
   return (
     <div className="flex flex-col gap-4 bg-foreground rounded-lg w-full max-w-[725px] mx-auto font-sans">
-      <h1 className="text-primary text-xl font-semibold pt-4 pl-4">{header}</h1>
+      <h1 className="text-primary text-md font-semibold pt-4 pl-4">{header}</h1>
       <div className="flex flex-col gap-2 ">
         {Object.entries(items).map(([key, value], index) => (
           <button
             key={key}
             onClick={value.link}
-            className={`flex flex-row justify-between items-center pl-4 pb-4 pr-2 cursor-pointer  ${
+            data-testid={key} // key examples: Dark mode, Change username, Delete Account, etc.
+            className={`flex flex-row justify-between items-center pl-4 pb-4 pr-2 cursor-pointer ${
               index !== Object.entries(items).length - 1
                 ? "border-b-[1px] border-gray-600"
                 : ""
             }`}
           >
-            <span className="text-primary text-lg">{key}</span>
+            <span className="text-primary text-sm">{key}</span>
 
             <div className=" flex flex-row items-center gap-4 cursor-pointer">
-              <span className="text-gray-500 text-[1rem]">{value.label}</span>
+              <span className="text-gray-500 text-sm">{value.label}</span>
               <ArrowForwardIcon className="text-primary" />
             </div>
           </button>

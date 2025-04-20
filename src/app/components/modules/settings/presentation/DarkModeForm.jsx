@@ -30,6 +30,7 @@ const DarkModeForm = ({ handleDarkModeForm }) => {
         <RadioBtn
           label="Light Mode"
           name="theme"
+          data-testid="light-mode-radio"
           value="light"
           checked={theme === "light"}
           onChange={toggleTheme}
@@ -38,6 +39,7 @@ const DarkModeForm = ({ handleDarkModeForm }) => {
           label="Dark Mode"
           name="theme"
           value="dark"
+          data-testid="dark-mode-radio"
           checked={theme === "dark"}
           onChange={toggleTheme}
         />

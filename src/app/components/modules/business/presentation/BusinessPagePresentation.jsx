@@ -42,6 +42,7 @@ return (
         </h1>
         <Button
           onClick={onCreateCompany}
+          data-testid="create-company-button-business"
           className="text-base bg-secondary p-2 px-4 rounded-lg text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200 w-full sm:w-auto"
         >
           <Add className="mr-2" /> Create Company
@@ -63,6 +64,7 @@ return (
         }`}
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
+        data-testid="previous-page-button-business"
       >
         Previous
       </button>
@@ -73,6 +75,7 @@ return (
           }`}
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!companies ||companies.length < 5} 
+        data-testid="next-page-button-business"
       >
         Next
       </button>
