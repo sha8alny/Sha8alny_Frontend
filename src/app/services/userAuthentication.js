@@ -1,58 +1,78 @@
+import { getOrCreateSessionTime, getSessionTime } from "../utils/sessionTime";
 
-const apiURL= process.env.NEXT_PUBLIC_API_URL;
+const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-
-export const fetchWithAuth = async (url, options={}) => {
-    const accessToken = sessionStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (!accessToken && !refreshToken) {
-        redirectToSignIn();
-        return;
+export const fetchWithAuth = async (url, options = {}) => {
+  const accessToken = sessionStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!accessToken && !refreshToken) {
+    redirectToSignIn();
+    return;
+  }
+  const headers = {
+    ...options.headers,
+    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+  };
+  // session time logic
+  try {
+    const urlObj = new URL(url, window.location.origin);
+    const pageNum = urlObj.searchParams.get("pageNum");
+  
+    if (pageNum) {
+      const page = parseInt(pageNum, 10);
+      console.log("page", page);
+  
+      let sessionTime =
+        page === 1 || !getSessionTime()
+          ? getOrCreateSessionTime()
+          : getSessionTime();
+  
+      if (sessionTime) {
+        urlObj.searchParams.set("sessionTime", sessionTime);
+        url = urlObj.toString();
+      }
     }
-    const headers = {
-        ...options.headers,
-        ...(accessToken &&
-       { Authorization: `Bearer ${accessToken}`,}),
-    };
+  } catch (err) {
+    console.error("Invalid URL passed to fetchWithAuth:", url);
+  }
 
-    let response = await fetch(url, { ...options, headers });
+  let response = await fetch(url, { ...options, headers });
 
-    if (response.status === 401) {
-        const newAccessToken = await refreshAccessToken();
-        
-        if (!newAccessToken) {
-            redirectToSignIn();
-            return;
-        }
-        headers.Authorization = `Bearer ${newAccessToken}`;
-        response = await fetch(url, { ...options, headers });
+  if (response.status === 401) {
+    const newAccessToken = await refreshAccessToken();
+
+    if (!newAccessToken) {
+      redirectToSignIn();
+      return;
     }
-    return response;
+    headers.Authorization = `Bearer ${newAccessToken}`;
+    response = await fetch(url, { ...options, headers });
+  }
+  return response;
 };
 
 export const refreshAccessToken = async () => {
-    try{
-      const refreshToken = localStorage.getItem("refreshToken");
-      if(!refreshToken) throw new Error("No refresh token found");
-  
-      const response = await fetch(`${apiURL}/refresh-token`,{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({refreshToken}),
-      });
-      if (!response.ok) throw new Error("Failed to refresh access token");
-      const {accessToken}=await response.json();
-      sessionStorage.setItem("accessToken",accessToken);
-      return accessToken;
-    }catch(error){
-      console.error("Token refresh error:", error.message);
-      return null;
-  
-    }
-  };
+  try {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) throw new Error("No refresh token found");
+
+    const response = await fetch(`${apiURL}/refresh-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!response.ok) throw new Error("Failed to refresh access token");
+    const { accessToken } = await response.json();
+    sessionStorage.setItem("accessToken", accessToken);
+    return accessToken;
+  } catch (error) {
+    console.error("Token refresh error:", error.message);
+    return null;
+  }
+};
 
 export const redirectToSignIn = () => {
-    localStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("accessToken");
-    window.location.href = "/signin";
-}
+  localStorage.removeItem("refreshToken");
+  sessionStorage.removeItem("accessToken");
+  window.location.href = "/signin";
+};
