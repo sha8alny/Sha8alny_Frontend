@@ -108,6 +108,92 @@ export const updateUsername = async ({ newUsername }) => {
   return data;
 };
 
+export const checkSignupData = async ({ username, email, password }) => {
+
+  try{
+  const response = await fetch(`${apiURL}/check-signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, email, password }),
+  }
+  );
+  const data = await response.json();
+  if (response.status === 400){
+    return { success: false, message: data.error };
+  };
+  if (!response.ok) {
+    return { success: false, message: "Something went wrong. Please try again later." };
+  }
+
+   return { success: true, message: "Data is valid" };
+
+  }catch(error){
+    console.error("Error checking signup data:", error);
+    return { success: false, message: "Something went wrong! Try Again Later" };
+
+  }
+};  
+
+export const sendVerificationEmail = async (email) => {
+  
+  try{
+  const response = await fetch(`${apiURL}/send-verification-email`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+  if (!response.ok) throw new Error("Failed to send verification email");
+  const data = await response.json();
+  return true;
+  }
+  catch(error){
+    console.error("Error sending verification email:", error);
+    return false;
+  }
+};
+    
+
+export const verifyEmail = async (email, verificationCode, token) => {
+  try{
+  const response = await fetch(`${apiURL}/verify-email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, token, code: verificationCode }),
+  });
+  if (!response.ok) throw new Error("Failed to verify email");
+  return true;
+  }catch(error){
+    console.error("Error verifying email:", error);
+    return false;
+  }
+};
+
+export const checkVerifiedEmail = async (email) => {
+  try{
+  const response = await fetch(`${apiURL}/check-verified-email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+  if (!response.ok) throw new Error("Failed to check verified email");
+  const data = await response.json();
+  if (data.status === 400) {
+    return false;
+  }
+  return true;
+  }catch(error){
+    console.error("Error checking verified email:", error);
+  }
+};
+
 
 export const handleSignup = async ({ username,email,password, isAdmin, recaptcha, rememberMe }) => {
   try{
