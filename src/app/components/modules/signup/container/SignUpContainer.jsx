@@ -40,7 +40,7 @@ const SignUpContainer = () => {
     );
     
     const signupMutation = useMutation({
-        mutationFn: handleSignupCross,
+        mutationFn: handleSignup,
     });
 
     const validateField = (name,value) => {
