@@ -6,7 +6,7 @@ import NavbarContainer from "./NavBarContainer";
 
 function Navbar() {
   const pathName = usePathname();
-  const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/complete-profile'];
+  const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/api/verify-email'];
   if (PUBLIC_PATHS.some(path => pathName.startsWith(path))) {
     return null;
   }
