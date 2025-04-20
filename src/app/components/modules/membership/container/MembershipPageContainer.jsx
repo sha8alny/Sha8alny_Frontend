@@ -108,11 +108,6 @@ const MembershipPageContainer = () => {
   
   const maxConnections = sub?.limits?.maxConnections || 0;
   const {  jobsApplied, messagesSent } = sub;
-  const limits = {
-    dailyJobApplications: jobsApplied,
-    dailyMessageRequests: messagesSent,
-    monthlyConnectionRequests: maxConnections,
-  };
  
   const premiumPlanDetails = plansDetailsList?.find(
     (plan) => plan.plan_id === "oneTimePremium"
@@ -121,6 +116,15 @@ const MembershipPageContainer = () => {
     (plan) => plan.plan_id === "free"
   );
   
+
+  const limits = {
+    dailyJobApplications: jobsApplied,
+    dailyMessageRequests: messagesSent,
+    monthlyConnectionRequests: maxConnections,
+  };
+ 
+
+
   return (
     <MembershipPage
       currentPlan={sub?.planId}
