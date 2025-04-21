@@ -33,7 +33,7 @@ export default function PostContainer({ post }) {
   const handleLikeMutation = useMutation({
     mutationFn: (params) => {
       const { postId, reaction } = params;
-      isLiked ? setIsLiked(false) : setIsLiked(reaction); // Optimistic update
+      (isLiked && post?.reaction === reaction) ? setIsLiked(false) : setIsLiked(reaction); // Optimistic update
       return isLiked && post?.reaction === reaction
         ? reactToContent(postId, null, null, true)
         : reactToContent(postId, null, reaction);

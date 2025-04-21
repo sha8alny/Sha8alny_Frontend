@@ -69,7 +69,7 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
 export default function Skills({ skills, isMyProfile }) {
   return (
     (skills?.length > 0 || isMyProfile) && (
-    <Container className="dark:border dark:border-[#111] shadow-lg p-8 mt-4">
+    <Container className="border dark:border-[#111] shadow-lg p-8 mt-4">
       <h3 className="flex justify-between text-2xl mb-4 font-bold">
         Skills
         {isMyProfile && <ModSkill skills={skills} />}

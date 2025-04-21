@@ -35,7 +35,7 @@ export default function ProfileHeader({
 }) {
   return (
     <>
-      <Container className="dark:border-[#111] dark:border shadow-lg">
+      <Container className="dark:border-[#111] border shadow-lg">
         <div className="w-full h-max rounded-xl">
           <div className="relative w-full flex">
             {/* Cover photo with hover effect */}
@@ -133,7 +133,7 @@ export default function ProfileHeader({
             onClick={(e) => e.stopPropagation()}
           >
             <button 
-              className="absolute -top-12 right-0 text-white bg-black/60 rounded-full cursor-pointer p-2.5 hover:bg-black/20 transition-colors duration-200 shadow-lg"
+              className="absolute -top-12 right-0 text-white dark:text-black dark:bg-white dark:hover:bg-white/70 bg-black/60 rounded-full cursor-pointer p-2.5 hover:bg-black/20 transition-colors duration-200 shadow-lg"
               onClick={closeFullscreen}
               aria-label="Close fullscreen image"
             >

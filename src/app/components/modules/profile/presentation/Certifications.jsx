@@ -79,7 +79,7 @@ export default function Certifications({
 }) {
   return (
     (certifications?.length > 0 || isMyProfile) && (
-      <Container className="dark:border dark:border-[#111] rounded-xl shadow-lg mt-4 p-8">
+      <Container className="border dark:border-[#111] rounded-xl shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Certificates {isMyProfile && <ModCertificate adding />}
         </h3>
