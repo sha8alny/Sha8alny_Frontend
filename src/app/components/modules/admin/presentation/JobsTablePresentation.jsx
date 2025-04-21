@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   Table,
   TableBody,
@@ -25,6 +24,7 @@ import {
 
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Delete } from "@mui/icons-material";
+import { Input } from "@/app/components/ui/Input";
 
 /**
  * @namespace admin
@@ -51,103 +51,124 @@ export function JobsTablePresentation({
   setPage,
   isFetching,
   data,
+  handleJobClick,
+  setQuery,
 }) {
-
-
   return (
     <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Job Details</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Work Location</TableHead>
-              <TableHead>Employment Type</TableHead>
-              <TableHead>Posted Date</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
+      <div className="h-screen">
+        <Input
+          placeholder="Search"
+          data-testid="search-jobs-admin"
+          className="sm:w-1/3 mb-4"
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={6} className="text-center">
-                  Loading jobs...
-                </TableCell>
+                <TableHead>Job Details</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Work Location</TableHead>
+                <TableHead>Employment Type</TableHead>
+                <TableHead>Posted Date</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ) : isError ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center text-red-500">
-                  Failed to load jobs.
-                </TableCell>
-              </TableRow>
-            ) : (
-              jobs.map((job) => (
-                <TableRow key={job._id}>
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage
-                          src={job.companyData.logo}
-                          alt={job.companyData.name}
-                        />
-                        <AvatarFallback>
-                          {job.companyData.name.substring(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">{job.title}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {job.companyData.name}
-                        </div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{job.location}</TableCell>
-                  <TableCell>{job.workLocation}</TableCell>
-                  <TableCell>{job.employmentType}</TableCell>
-                  <TableCell>
-                    {new Date(job.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="w-full flex items-center justify-center">
-                          <MoreHorizIcon className="w-6" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => handleDeleteJob(job._id)}
-                        >
-                          <Delete className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">
+                    Loading jobs...
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className="flex justify-between mt-4">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((prev) => prev - 1)}
-          className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-        >
-          Previous
-        </button>
-        <button
-          disabled={!data?.nextPage || isFetching}
-          onClick={() => setPage((prev) => prev + 1)}
-          className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-        >
-          {isFetching ? "Loading..." : "Next"}
-        </button>
+              ) : isError ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-red-500">
+                    Failed to load jobs.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                jobs.map((job) => (
+                  <TableRow
+                    className="cursor-pointer"
+                    key={job._id}
+                    onClick={() => handleJobClick(job._id)}
+                    data-testid={`job-admin-${job._id}`}
+                  >
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={job.companyData.logo}
+                            alt={job.companyData.name}
+                          />
+                          <AvatarFallback>
+                            {job.companyData.name.substring(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{job.title}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {job.companyData.name}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{job.location}</TableCell>
+                    <TableCell>{job.workLocation}</TableCell>
+                    <TableCell>{job.employmentType}</TableCell>
+                    <TableCell>
+                      {new Date(job.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            data-testid="dropdown-manage-jobs"
+                            className="w-full flex items-center justify-center"
+                          >
+                            <MoreHorizIcon className="w-6" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            data-testid="delete-job"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteJob(job._id);
+                            }}
+                          >
+                            <Delete className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex justify-between mt-4">
+          <button
+            disabled={page === 1}
+            data-testid="manage-jobs-prev"
+            onClick={() => setPage((prev) => prev - 1)}
+            className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <button
+            data-testid="manage-jobs-next"
+            disabled={!data?.nextPage || isFetching}
+            onClick={() => setPage((prev) => prev + 1)}
+            className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          >
+            {isFetching ? "Loading..." : "Next"}
+          </button>
+        </div>
       </div>
     </>
   );

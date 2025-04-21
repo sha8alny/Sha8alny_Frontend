@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignUpForm from "../presentation/SignUpForm";
-import { handleSignup, handleSignupCross } from "../../../../services/userManagement";
+import { handleSignup, sendVerificationEmail, verifyEmail, checkSignupData,checkVerifiedEmail } from "../../../../services/userManagement";
 import { RememberMe } from "@mui/icons-material";
 import { useToast } from "@/app/context/ToastContext";
+import VerifyEmail from "../presentation/VerifyEmail";
 
 /**
  * @namespace signup
@@ -23,6 +24,10 @@ import { useToast } from "@/app/context/ToastContext";
  * )
  */
 const SignUpContainer = () => {
+    const [isEmailSent, setIsEmailSent] = useState(false);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [verifyCode, setVerifyCode] = useState("");
+    const [verifyCodeError, setVerifyCodeError] = useState("");
     const toast = useToast();
     const router = useRouter();
     const [formData, setFormData] = useState({
@@ -75,6 +80,25 @@ const SignUpContainer = () => {
         validateField("confirmPassword",confirmPassword);
         return !error.email && !error.password && !error.username && !error.confirmPassword;
     };
+
+   const performSignupMutation = async () => { 
+    const { username, email, password, isAdmin, recaptcha, rememberMe } = formData;
+    
+    signupMutation.mutate(
+        { username, email, password, isAdmin, recaptcha, rememberMe },
+        {
+            onSuccess: () => {
+                toast("Registration Successful & Auto-Login Successful!");
+                router.push('/complete-profile');
+            },
+            onError: (error) => {
+                toast("Error during registration. Please try again.", false);
+                console.error("Error during registration:", error);
+                router.push('/signup');
+            },
+        }
+    );
+    }
     /**
      * Handles the form submission.
      * Checks if the reCAPTCHA is verified before proceeding with the signup mutation.
@@ -82,7 +106,7 @@ const SignUpContainer = () => {
      * @param {Object} formData - The data submitted from the signup form.
      * @param {boolean} formData.recaptcha - The reCAPTCHA verification status.
      */
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         
 
@@ -92,20 +116,74 @@ const SignUpContainer = () => {
             return;
         }
         if(validateForm()){
-            const {username, email, password, isAdmin, recaptcha, rememberMe}=formData;
-            console.log("🚀 Calling Mutation with:", { username, email, password, isAdmin, recaptcha, rememberMe });
-
-            signupMutation.mutate({username,email,password, isAdmin, recaptcha, rememberMe }, 
-                {onSuccess: () =>
-                  {toast("Registration Successful & Auto-Login Successful!");
-                    router.push('/complete-profile');},
-                 onError: (error) => {
-                        toast("Email or Username already taken!", false);
-                },});
+            try{
+                const {username, email, password, }=formData;
+                const {success, message}= await checkSignupData({username, email, password});
+                console.log("error",message)
+                if(!success){
+                    toast(message, false);
+                    return;
+                }
+                const emailSent =await sendVerificationEmail (email);
+                if(emailSent){
+                    setIsEmailSent(true);
+                    toast("Verification email sent! Please check your inbox.");
+                }
+                else{
+                    toast("Error sending verification email. Please try again.", false);
+                }
+            } catch(error){
+                console.error("Error sending verification email:", error);
+                toast("Error sending verification email. Please try again.", false);
+            }
         }
 
     };
-
+    const handleEmailVerification = async () => {
+        try{
+            const  isVerified = await verifyEmail(formData.email, verifyCode);
+            console.log("isVerified", isVerified);
+            if(isVerified){
+                setIsEmailVerified(true);
+                toast("Email verified successfully!");
+                performSignupMutation();
+                }else{
+                    setVerifyCodeError("Invalid verification code. Please try again.");
+                    toast("Email verification failed. Please try again.", false);
+                }
+            }
+            catch(error){
+                console.error("Error verifying email:", error);
+                setVerifyCodeError("Invalid verification code. Please try again.");
+            }
+    }
+    useEffect(() => {
+        let intervalId;
+        if (isEmailSent && !isEmailVerified) {
+            intervalId = setInterval(async () => {
+                console.log("🔁 Checking if email is verified...");
+                try {
+                    const isVerified = await checkVerifiedEmail(formData.email);
+                    if (isVerified) {
+                        clearInterval(intervalId);
+                        setIsEmailVerified(true);
+                        toast("Email verified successfully Via Link!");
+                        performSignupMutation();
+                    }
+                } catch (error) {
+                    console.error("Error during periodic verification check:", error);
+                }
+            }, 30000); 
+        }
+    
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
+    }, [isEmailSent, isEmailVerified, formData, performSignupMutation]);
+    
+    
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData((prev)=>({
@@ -121,8 +199,25 @@ const SignUpContainer = () => {
         setFormData((prev) => ({ ...prev, recaptcha: token }));
     }
 
+    const handleResendEmail = async () => {
+        try {
+            const emailSent = await sendVerificationEmail(formData.email);
+            if (emailSent) {
+                toast("Verification email resent! Please check your inbox.");
+            }
+            else {
+                toast("Error resending verification email. Please try again.", false);
+            }
+        }
+        catch (error) {
+            console.error("Error resending verification email:", error);
+            toast("Error resending verification email. Please try again.", false);
+        }
+    }
+
     return(
         <div className="flex flex-col h-screen bg-background overflow-x-hidden overflow-y-scroll">
+              {!isEmailSent? (
                 <SignUpForm 
                 formData={formData}
                 confirmPassword={confirmPassword}
@@ -131,6 +226,20 @@ const SignUpContainer = () => {
                 handleSubmit={handleSubmit} 
                 isSubmitting={signupMutation.isPending}
                 onRecaptchaChange={handleRecaptchaChange}                />
+              ): (
+                <VerifyEmail 
+                verifyCode={verifyCode}
+                setVerifyCode={setVerifyCode}
+                handleSubmit={(e)=> {
+                    e.preventDefault();
+                    handleEmailVerification();
+                }}
+                loading={signupMutation.isPending}
+                verifyCodeError={verifyCodeError}
+                isFormValid={verifyCode.length === 6}
+                handleResendEmail={handleResendEmail}
+                />
+              )}
            </div>
     );
 };

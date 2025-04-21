@@ -50,7 +50,7 @@ const VerifyEmail =({
             </InputOTP>
             </div>
             {verifyCodeError && (
-                <p className="text-red-500 text-sm mt-2">
+                <p className="text-red-500 text-sm mt-2 text-center">
                     {verifyCodeError}
                 </p>
             )}
@@ -66,15 +66,18 @@ const VerifyEmail =({
                     {loading ? "Verifying..." : "Verify Email"}
                 </button>
                 <p className="text-center flex flex-col text-text text-sm mt-4">
-                    Code Expired?
+                    Code Expired or Didn't Recieve Email?
                     <button
                         onClick={handleResendEmail}
                         className="text-secondary font-semibold hover:underline"
                         disabled={loading}>
-                            {loading ? "Resending..." : "Resend Code"}
+                            {loading ? "Resending..." : "Resend Email"}
 
                         </button>
 
+                </p>
+                <p className="text-center text-text text-sm mt-4">
+                If you still didn't receive the email, please make sure you entered the correct email address.
                 </p>
                 <p className="text-center text-text text-sm mt-4">
                     Incorrect Account Info? 

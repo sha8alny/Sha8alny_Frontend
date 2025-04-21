@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import FlagIcon from "@mui/icons-material/Flag";
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { SidebarPresentation } from "../presentation/SidebarPresentation";
 import WorkIcon from '@mui/icons-material/Work';
 import ReportIcon from '@mui/icons-material/Report';
@@ -26,6 +28,11 @@ export function SidebarContainer() {
 
   const routes = [
     {
+      name: "Analytics",
+      path: "/admin/analytics",
+      icon: QueryStatsIcon,
+    },
+    {
       name: "Flagged Jobs",
       path: "/admin/flagged",
       icon: FlagIcon,
@@ -35,6 +42,7 @@ export function SidebarContainer() {
       path: "/admin/job-posts",
       icon: WorkIcon,
     },
+
     {
       name: "Manage Inappropriate Content",
       path: "/admin/inappropriate-content",

@@ -74,6 +74,7 @@ export function FlaggedJobModal({ isOpen, onClose, report }) {
         <div className="flex justify-end mt-4">
           <button
             onClick={onClose}
+            data-testid="close-flagged-jobs-modal"
             className="bg-transparent text-secondary px-4 py-2 rounded-md border cursor-pointer"
           >
             Close
