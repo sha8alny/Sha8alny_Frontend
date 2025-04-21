@@ -76,7 +76,7 @@ export default function CommentContainer({ postId, comment }) {
   };
 
   const navigateTo = (username) => {
-    router.push(`/u/${username}`);
+    router.push(username);
   };
 
   const handleFollowMutation = useMutation({
@@ -97,6 +97,7 @@ export default function CommentContainer({ postId, comment }) {
   const handleReactMutation = useMutation({
     mutationFn: (params) => {
       const { postId, commentId, reaction } = params;
+      isLiked ? setIsLiked(false) : setIsLiked(reaction); // Optimistic update
       return isLiked && comment?.reaction === reaction
         ? reactToContent(postId, commentId, null, true)
         : reactToContent(postId, commentId, reaction);
@@ -122,6 +123,7 @@ export default function CommentContainer({ postId, comment }) {
         comment?.commentId,
       ]);
       setReplyText("");
+      setShowReplies(true);
       setIsReplying(false);
     },
     onError: (error) => {
@@ -188,6 +190,19 @@ export default function CommentContainer({ postId, comment }) {
     setShowReplies(false);
   };
 
+  const convertRelation = (relation) => {
+    switch (relation) {
+      case 1:
+        return "1st";
+      case 2:
+        return "2nd";
+      case 3:
+        return "3rd+";
+      default:
+        return null;
+    }
+  };
+
   const commentAge = determineAge(comment?.time || new Date());
   const hasRepliesSection = showReplies;
   const hasReplies = comment?.numComments > 0;
@@ -197,6 +212,8 @@ export default function CommentContainer({ postId, comment }) {
       comment={{
         ...comment,
         age: commentAge,
+        username: encodeURIComponent(comment?.username),
+        relation: convertRelation(comment?.connectionDegree),
         numReacts:
           (comment?.numLikes || 0) +
           (comment?.numCelebrates || 0) +

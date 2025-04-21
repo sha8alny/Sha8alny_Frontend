@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import ModCertificate from "../container/ModCertificate";
 import { Separator } from "@/app/components/ui/Separator";
+import { WorkspacePremium } from "@mui/icons-material";
 
 /**
  * @namespace profile
@@ -28,15 +29,8 @@ import { Separator } from "@/app/components/ui/Separator";
 const CertificateCard = ({ certificate, isMyProfile }) => {
   return (
     <div className="flex gap-2">
-      <div className="relative size-12 bg-gray-700 rounded-full">
-        <Image
-          src={
-            (certificate?.issuingOrganisationLogo) ?? "https://picsum.photos/200"
-          }
-          fill
-          alt="Company Logo"
-          className="rounded-full"
-        />
+      <div className="flex justify-center items-center size-12 bg-secondary/20 rounded-full">
+        <WorkspacePremium sx={{ fontSize: "2rem" }} className="text-secondary" />
       </div>
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
@@ -46,10 +40,12 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
         <p>{certificate?.issuingOrganization}</p>
         <p className="text-muted flex">
           <span>
-            Issued {certificate?.issueDate?.month?.substring(0,3) + "."}{" "}
+            Issued {certificate?.issueDate?.month?.substring(0, 3) + "."}{" "}
             {certificate?.issueDate?.year}
             {certificate?.expirationDate &&
-              ` - Expires ${certificate?.expirationDate?.month?.substring(0,3) + "."} ${certificate?.expirationDate?.year}`}
+              ` - Expires ${
+                certificate?.expirationDate?.month?.substring(0, 3) + "."
+              } ${certificate?.expirationDate?.year}`}
           </span>
         </p>
         <div className="flex gap-2 mt-2">
@@ -82,27 +78,28 @@ export default function Certifications({
   isMyProfile,
 }) {
   return (
-    (certifications.length > 0 || isMyProfile) && (
+    (certifications?.length > 0 || isMyProfile) && (
       <Container className="dark:border dark:border-[#111] rounded-xl shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Certificates {isMyProfile && <ModCertificate adding />}
         </h3>
         <div className="space-y-8">
-          {(!allCertificates ? certifications.slice(0, 3) : certifications).map(
-            (exp, index) => (
-              <div className="space-y-8" key={index}>
-                <CertificateCard certificate={exp} isMyProfile={isMyProfile} />
-                {index !== certifications.length - 1 && <Separator />}
-              </div>
-            )
-          )}
-          {isMyProfile && certifications.length === 0 && (
+          {(!allCertificates
+            ? certifications?.slice(0, 3)
+            : certifications
+          ).map((exp, index) => (
+            <div className="space-y-8" key={index}>
+              <CertificateCard certificate={exp} isMyProfile={isMyProfile} />
+              {index !== certifications?.length - 1 && <Separator />}
+            </div>
+          ))}
+          {isMyProfile && certifications?.length === 0 && (
             <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
               <p>Add your certifications to let others know more about you. </p>
             </div>
           )}
 
-          {certifications.length > 3 && (
+          {certifications?.length > 3 && (
             <button
               onClick={toggleAllCertificates}
               className="w-full text-center p-2 hover:cursor-pointer duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"
@@ -115,7 +112,7 @@ export default function Certifications({
               ) : (
                 <div className="flex items-center gap-1 justify-center">
                   <ChevronDown className="size-5" />
-                  Show all {certifications.length} certifications
+                  Show all {certifications?.length} certifications
                 </div>
               )}
             </button>

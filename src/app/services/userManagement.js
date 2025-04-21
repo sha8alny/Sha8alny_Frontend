@@ -157,14 +157,14 @@ export const sendVerificationEmail = async (email) => {
 };
     
 
-export const verifyEmail = async (email, verificationCode, token) => {
+export const verifyEmail = async (email, verificationCode) => {
   try{
-  const response = await fetch(`${apiURL}/verify-email`, {
-    method: "POST",
+  const queryParams = new URLSearchParams({ email, code: verificationCode });
+  const response = await fetch(`${apiURL}/verify-email?${queryParams.toString()}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, token, code: verificationCode }),
   });
   if (!response.ok) throw new Error("Failed to verify email");
   return true;

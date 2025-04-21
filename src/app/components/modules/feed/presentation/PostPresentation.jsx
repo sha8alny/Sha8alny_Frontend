@@ -19,14 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@/app/components/ui/DropDownMenu";
 import { Separator } from "@/app/components/ui/Separator";
-import { Badge } from "@/app/components/ui/Badge";
 import CommentSectionContainer from "../container/CommentSectionContainer";
 import {
   PersonAdd,
   Bookmark,
   Repeat,
   ChatBubbleOutline,
-  Send,
   OutlinedFlag,
   BookmarkAddOutlined,
   MoreHoriz,

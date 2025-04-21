@@ -18,10 +18,9 @@ export default function ModHeader({ userInfo }) {
     if (!userInfo?.resume) return;
     const link = document.createElement('a');
     link.href = userInfo.resume;
-    link.download = `resume_${userInfo.name || 'download'}.pdf`;
-    document.body.appendChild(link);
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
     link.click();
-    document.body.removeChild(link);
   };
 
   const handleConnect = (username) => {
@@ -61,6 +60,7 @@ export const ModifyProfileContainer = ({ userInfo }) => {
   const [name, setName] = useState(userInfo?.name || "");
   const [location, setLocation] = useState(userInfo?.location || "");
   const [headline, setHeadline] = useState(userInfo?.headline || "");
+  const [industry, setIndustry] = useState(userInfo?.industry || "");
   const [resume, setResume] = useState(userInfo?.resume || "");
   const [currentStage, setCurrentStage] = useState(0);
   const [error, setError] = useState(null);
@@ -69,6 +69,7 @@ export const ModifyProfileContainer = ({ userInfo }) => {
   const [nameError, setNameError] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const [headlineError, setHeadlineError] = useState(null);
+  const [industryError, setIndustryError] = useState(null);
 
   const isLoading = profileUpdate.isPending;
   const isError = profileUpdate.isError;
@@ -207,6 +208,7 @@ export const ModifyProfileContainer = ({ userInfo }) => {
         name,
         location,
         headline,
+        industry,
       };
 
       if (name.length < 3) {
@@ -227,6 +229,13 @@ export const ModifyProfileContainer = ({ userInfo }) => {
         return;
       } else {
         setHeadlineError(null);
+      }
+
+      if (industry.length < 3) {
+        setIndustryError("Industry must be at least 3 characters long.");
+        return;
+      } else {
+        setIndustryError(null);
       }
 
       await profileUpdate.mutateAsync({
@@ -384,6 +393,9 @@ export const ModifyProfileContainer = ({ userInfo }) => {
       profilePictureError={profilePictureError}
       coverPictureError={coverPictureError}
       resumeError={resumeError}
+      industry={industry}
+      setIndustry={setIndustry}
+      industryError={industryError}
     />
   );
 };
