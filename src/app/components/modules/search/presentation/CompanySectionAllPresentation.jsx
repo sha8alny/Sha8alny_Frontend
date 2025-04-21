@@ -1,6 +1,6 @@
 import ResultsCard from "@/app/components/modules/search/presentation/ResultCard";
-import { Briefcase } from "lucide-react";
-import  CompanyCardContainer  from "../container/CompanyCardContainer";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import CompanyCardContainer from "../container/CompanyCardContainer";
 
 /**
  * @namespace search
@@ -15,42 +15,44 @@ import  CompanyCardContainer  from "../container/CompanyCardContainer";
  *
  * @returns {JSX.Element} The rendered CompanySectionAllPresentation component.
  */
- const CompanySectionAllPresentation = ({
+const CompanySectionAllPresentation = ({
   companies,
   isLoading,
   isError,
   onViewMore,
+  error,
 }) => {
-
-    if (isError) {
-        return (
-            <ResultsCard
-                title="Companies"
-                icon={<Briefcase className="h-4 w-4" />}
-            >
-                <p className="text-gray-400 text-sm">Error loading companies.</p>
-            </ResultsCard>
-        );
-    }
+  if (isError) {
+    return (
+      <ResultsCard
+        title="Companies"
+        icon={<ApartmentIcon sx={{ fontSize: "1.125rem" }} />}
+      >
+        <p className="text-gray-400 text-sm">{error}</p>
+      </ResultsCard>
+    );
+  }
   return (
     <ResultsCard
       viewMoreText={"View all company results"}
       isLoading={isLoading}
       onViewMore={onViewMore}
       title="Companies"
-      icon={<Briefcase className="h-4 w-4" />}
+      icon={<ApartmentIcon sx={{ fontSize: "1.125rem" }} />}
     >
       {companies?.length > 0 ? (
         companies
           .slice(0, 3)
           .map((company, index) => (
             <CompanyCardContainer
-              key={company.companyUsername || index}
+              key={company.companyId || index}
               {...company}
             />
           ))
-      ) : (
+      ) : companies?.length == 0 ? (
         <p className="text-gray-400 text-sm">No companies found.</p>
+      ) : (
+        ""
       )}
     </ResultsCard>
   );
