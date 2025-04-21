@@ -80,7 +80,7 @@ function EditPageContainer({username}){
             const updatedUsername = companyURL || username;
             const response = await updateCompany(username, companyData);
             handleDiscard();
-            router.push(`/company-admin/${updatedUsername}/edit-page`);
+            router.push(`/company/${updatedUsername}/admin/edit`);
         } 
         catch (err) {
             setErrors({ api: err.message || "Failed to update company" })

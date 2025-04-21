@@ -23,7 +23,7 @@ function WritePost({company, text, setText,onImageUpload, preview, triggerFileIn
                             className="rounded-full w-14 h-14 object-cover" 
                         />
                     ) : (
-                        <ImageOutlinedIcon style={{fontSize: "56px", color: "gray" }} />
+                        <ImageOutlined style={{fontSize: "56px", color: "gray" }} />
                     )
                 }
                 <textarea className="flex-grow rounded-lg p-2 border border-[var(--background)] " placeholder="Start a post" value={text} onChange={(e)=>setText(e.target.value)}></textarea>
@@ -38,13 +38,32 @@ function WritePost({company, text, setText,onImageUpload, preview, triggerFileIn
                     <input id="upload-image" data-testid="upload-image" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={imageInputRef} onChange={onImageUpload}/>
                 </div>
                 <div htmlFor="upload-video" className="relative group">
-                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-video-button">
+                    <div className="relative group" onClick={()=>triggerFileInput("video")} data-testid="upload-video-button">
                         <VideocamOutlined className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload video</span>
                     </div>
                     <input id="upload-video" data-testid="upload-video" type="file" className="hidden" 
                     accept="video/mp4, video/webm, video/mov, video/avi, video/wmv, video/mkv" ref={imageInputRef} onChange={onImageUpload}/>
                 </div>
+                <div htmlFor="upload-tags" className="relative group">
+                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
+                        <LocalOfferOutlined className="cursor-pointer group"/>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload tags</span>
+                    </div>
+                </div>
+                <div htmlFor="upload-tags" className="relative group">
+                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
+                        <AccessTimeOutlined className="cursor-pointer group"/>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> idk</span>
+                    </div>
+                </div>
+                <div htmlFor="upload-tags" className="relative group">
+                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
+                        <PersonAddOutlined className="cursor-pointer group"/>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> idk</span>
+                    </div>
+                </div>
+                
                 <button className={`bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity ${!text.trim() && !preview ? "opacity-50 cursor-not-allowed" : "" }`} onClick={onSubmit} disabled={!text.trim() && !preview}
                 data-testid="post-button">
                     Post

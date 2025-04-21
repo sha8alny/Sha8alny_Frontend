@@ -63,7 +63,7 @@ import { deleteCompany, updateCompany } from "@/app/services/companyManagement";
  * @type {Array<{name: string, href: string, icon: JSX.Element, action?: Function}>}
  */
 
-function SideBarContainer({company,setCompany, username, logo ,setLogo }){
+function SideBarContainer({company,setCompany, username ,setLogo }){
     const pathname= usePathname();
     const isActive = (href) => pathname.startsWith(href);
     const [isModalOpen, setModalOpen] = useState(false); 
@@ -145,6 +145,11 @@ function SideBarContainer({company,setCompany, username, logo ,setLogo }){
         setModalOpen(false);
     }
 
+    const OpenJobsPage =()=>{
+        router.push(`/company/${username}/admin/company-author`);
+        setModalOpen(false);
+    }
+
     const handleLogout = () => {
         router.push(`/business`);
     }
@@ -156,21 +161,20 @@ function SideBarContainer({company,setCompany, username, logo ,setLogo }){
         {name: "Activity",href:"#", icon: <NotificationsOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Jobs", href:`/company/${username}/admin/company-job`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Jobs", href:`/company/${username}/admin/company-author`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(
         <div>
             <SideBar company={company} menuItems={menuItems}
-            isActive={isActive}
-            isModalOpen={isModalOpen} setModalOpen={handleOpenModal} 
+            isActive={isActive} setModalOpen={handleOpenModal} 
             onChangeCover={coverUpload} onChangeLogo={logoUpload} 
             triggerCoverInput={triggerCoverInput} triggerLogoInput={triggerLogoInput} 
             coverInputRef={coverInputRef} logoInputRef={logoInputRef} 
             fileusername={username} OpenCompanyUserPage={OpenCompanyUserPage}
             handleLogout={handleLogout}/>
 
-            <SideBarModal open={isModalOpen} onClose={setModalOpen(false)} type={modalType} onDeactivate={handleConfirmDeactivate} onCreatePost={OpenPostsPage}/> 
+            <SideBarModal open={isModalOpen} onClose={()=>setModalOpen(false)} type={modalType} onDeactivate={handleConfirmDeactivate} onCreatePost={OpenPostsPage} openJobsPage={OpenJobsPage}/> 
         </div>
     );
 

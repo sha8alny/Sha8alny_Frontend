@@ -2,9 +2,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import LanguageIcon from '@mui/icons-material/Language';
 import SearchIcon from "@mui/icons-material/Search";
 import BadgeIcon from "@mui/icons-material/Badge"; 
+import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import { Modal, Box, Button, Typography } from "@mui/material";
 
-export default function SideBarModal({ open, onClose, type, onDeactivate, onCreatePost }) {
+export default function SideBarModal({ open, onClose, type, onDeactivate, onCreatePost, openJobsPage }) {
     return(
         <Modal open={open} onClose={onClose} aria-labelledby="deactivate-modal" data-testid="deactivate-modal">
             <Box sx={{
@@ -57,7 +59,7 @@ export default function SideBarModal({ open, onClose, type, onDeactivate, onCrea
                                 </div>
                                 <span className="text-xs pr-24">Share content to connect with your followers</span>
                             </button>
-                            <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2 cursor-pointer">
+                            <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2 cursor-pointer" onClick={openJobsPage}>
                                 <div className="flex items-center gap-2 hover:underline">
                                     <WorkOutlineOutlinedIcon style={{fontSize:"20px"}} />
                                     <span>Post a free job</span>

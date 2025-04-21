@@ -37,6 +37,7 @@ export default function CompanyAdminContentContainer({ children }) {
         const fetchCompany = async () => {
             try {
                 const data = await getCompany(username);
+                console.log("data", data);
                 if (data?.notFound || data === null || data === undefined) {  
                     setCompany("notFound");
                 } 

@@ -276,6 +276,7 @@ export const getCompany = async (companyUsername) => {
 
 export const updateCompany = async (companyUsername, companyData) => {
     try{
+        console.log("companyData:", companyData);
         const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
             method: "PATCH",
             body: companyData,

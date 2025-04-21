@@ -1,6 +1,6 @@
 "use client";
 import SideBarContainer from "@/app/components/modules/company-page-author/container/SideBarContainer";
-import Analytics from "@/app/components/modules/company-page-author/presentation/Analytics";
+import AnalyticsContainer from "../container/AnalyticsContainer";
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
 import ClearIcon from '@mui/icons-material/Clear';
@@ -36,7 +36,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
     if (loading) {
         return (
             <div className="flex items-center justify-center w-screen h-screen bg-background text-[var(--text)]">
-                <p className="text-lg">Loading...</p>
+                <p className="text-2xl ">Loading...</p>
             </div>
         );
     }
@@ -119,7 +119,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                 <div className={`${isAnalyticsOpen ? " z-40  bg-opacity-50" : "hidden"} lg:bg-transparent lg:static lg:block lg:z-auto `}>
                     <div className={`w-80 2xl:w-100 min-h-screen shadow-lg  transition-transform duration-300
                         ${isAnalyticsOpen ? "translate-x-0" : "translate-x-full"} lg:translate-x-0 lg:shadow-none `}>
-                        <Analytics onClose={() => setIsAnalyticsOpen(false)} />
+                        <AnalyticsContainer username={username} onClose={() => setIsAnalyticsOpen(false)} />
                     </div>
                 </div>
             </div>

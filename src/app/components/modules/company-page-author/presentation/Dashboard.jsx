@@ -28,7 +28,7 @@ export default function Dashboard({ company, goToPostsPage }) {
         <div className="flex items-center gap-3">
           <Button
             className="w-full text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
-            onClick={() => goToPostsPage()} data-testid="create-post-button"
+            onClick={goToPostsPage} data-testid="create-post-button"
           >
             Create Post
           </Button>
