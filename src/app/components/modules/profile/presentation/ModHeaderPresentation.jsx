@@ -14,6 +14,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { AlertDialogCancel } from "@/app/components/ui/AlertDialog";
 import { Upload } from "@mui/icons-material";
 import { X, Loader2 } from "lucide-react";
+import Image from "next/image";
 
 /**
  * @namespace profile
@@ -105,6 +106,9 @@ export const ModifyProfilePresentation = ({
   profilePictureError,
   coverPictureError,
   resumeError,
+  industry,
+  setIndustry,
+  industryError,
 }) => {
   return (
     <>
@@ -122,10 +126,13 @@ export const ModifyProfilePresentation = ({
                 <div className="relative">
                   {coverPicture && !isCoverPictureLoading && (
                     <div className="relative mb-2 rounded-md overflow-hidden h-32">
-                      <img
-                        src={coverPicture || "/placeholder.svg"}
+                      <Image
+                        src={coverPicture}
                         alt="Cover"
                         className="w-full h-full object-cover"
+                        fill
+                        placeholder="blur"
+                        blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzAwMDAwMCIvPjwvc3ZnPg=="
                       />
                       <Button
                         type="button"
@@ -186,10 +193,13 @@ export const ModifyProfilePresentation = ({
                   {profilePicture && !isProfilePictureLoading && (
                     <div className="relative flex">
                       <div className="relative mb-2 w-24 h-24 rounded-full overflow-hidden">
-                        <img
-                          src={profilePicture || "/placeholder.svg"}
+                        <Image
+                          src={profilePicture}
                           alt="Profile"
                           className="w-full h-full object-cover"
+                          fill
+                          placeholder="blur"
+                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzAwMDAwMCIvPjwvc3ZnPg=="
                         />
                       </div>
                       <Button
@@ -285,6 +295,19 @@ export const ModifyProfilePresentation = ({
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="industry">Industry</Label>
+                <Input
+                  id="industry"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  placeholder="Your industry"
+                />
+                {industryError && (
+                  <p className="text-red-500 text-sm">{industryError}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="resume">Resume</Label>
                 <div className="relative">
                   {resume && !isResumeLoading && (
@@ -351,10 +374,13 @@ export const ModifyProfilePresentation = ({
                 {/* Cover Picture */}
                 <div className="h-40 bg-muted relative">
                   {coverPicture ? (
-                    <img
-                      src={coverPicture || "/placeholder.svg"}
+                    <Image
+                      src={coverPicture}
                       alt="Cover"
                       className="w-full h-full object-cover"
+                      fill
+                      placeholder="blur"
+                      blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzAwMDAwMCIvPjwvc3ZnPg=="
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-400 to-gray-400 dark:from-gray-100 dark:to-gray-200">

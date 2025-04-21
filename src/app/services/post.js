@@ -471,3 +471,13 @@ export const determineAge = (createdAt) => {
     return `${seconds}s`;
   }
 };
+
+export const fetchTrendingTopics = async () => {
+  const response = await fetchWithAuth(
+    `${process.env.NEXT_PUBLIC_API_URL}/trends`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch trending topics");
+  }
+  return response.json();
+};
