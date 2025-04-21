@@ -14,7 +14,7 @@ import ResultCardSkeleton from "@/app/components/modules/search/presentation/Res
  * @param {boolean} [props.isLoading] - Flag to indicate whether the card is in a loading state.
  */
 
-function ResultsCard({ title, icon, children, onViewMore, viewMoreText, isLoading }) {
+function ResultsCard({ title, icon, children, onViewMore, viewMoreText, isLoading, flag= true }) {
   if (isLoading) {
     return (
         <ResultCardSkeleton title={title} icon={icon} />
@@ -28,7 +28,7 @@ function ResultsCard({ title, icon, children, onViewMore, viewMoreText, isLoadin
 
       {children}
 
-      {onViewMore && (
+      {onViewMore && flag && (
         <>
           <div className="border-t dark:border-gray-500"></div>
           <button
