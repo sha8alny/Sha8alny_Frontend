@@ -12,7 +12,7 @@
  */
 export default function Footer() {
   return (
-    <footer className="bg-foreground w-full dark:border dark:border-[#111] rounded-2xl shadow-lg p-4 mt-2 mb-4">
+    <footer className="bg-foreground w-full border dark:border-[#111] rounded-2xl shadow-lg p-4 mt-2 mb-4">
       <div className="flex flex-wrap gap-2 text-xs text-muted">
         <a href="#" className="hover:text-secondary">
           About

@@ -22,7 +22,7 @@ import Image from "next/image";
 export default function UserSmallCard({ userInfo, onClick }) {
   return (
     <div className="flex gap-2 items-center">
-      <div className="relative w-12 h-12 bg-gray-800 rounded-full dark:border dark:border-[#111]">
+      <div className="relative w-12 h-12 bg-gray-800 rounded-full border dark:border-[#111]">
         <Image
           src={userInfo.image}
           alt="User Avatar"

@@ -1,4 +1,6 @@
 import Image from "next/image";
+import SafeImage from "@/app/components/ui/SafeImage";
+import SafeVideo from "@/app/components/ui/SafeVideo";
 import {
   Avatar,
   AvatarFallback,
@@ -83,7 +85,7 @@ export default function PostPresentation({
                 onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
               />
               <AvatarFallback>
-                {post?.isShared?.fullName.substring(0, 2).toUpperCase()}
+                {post?.isShared?.fullName?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <span>
@@ -115,7 +117,7 @@ export default function PostPresentation({
         >
           <AvatarImage src={post?.profilePicture} alt={post?.fullName} />
           <AvatarFallback>
-            {post?.fullName.substring(0, 2).toUpperCase()}
+            {post?.fullName?.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 
@@ -125,7 +127,9 @@ export default function PostPresentation({
               className="font-semibold flex items-center gap-2 cursor-pointer hover:underline"
               onClick={() =>
                 post?.isCompany
-                  ? navigateTo(`company-user-admin/${post?.username}/about-page`)
+                  ? navigateTo(
+                      `company-user-admin/${post?.username}/about-page`
+                    )
                   : navigateTo(`/u/${post?.username}`)
               }
             >
@@ -218,10 +222,28 @@ export default function PostPresentation({
       </CardHeader>
 
       <CardContent>
-        <div className="whitespace-pre-line mb-4">{post?.text}</div>
+        <div className="whitespace-pre-line mb-4">
+          {post?.text} 
+          {" "}
+          {post?.keywords?.length > 0 && (
+            <span className="text-primary">
+              {post?.keywords.map((keyword, index) => (
+                <span key={index}>
+                  {index > 0 && ", "}
+                  <span
+                    onClick={() => navigateTo(`/search/${keyword}`)}
+                    className="hover:underline cursor-pointer"
+                  >
+                    #{keyword}
+                  </span>
+                </span>
+              ))}
+            </span>
+          )}
+        </div>
 
         {isVideo && post?.media && post?.media.length > 0 && (
-          <video
+          <SafeVideo
             src={post?.media[0]}
             controls
             className="w-full aspect-square rounded-2xl"
@@ -233,8 +255,8 @@ export default function PostPresentation({
               .slice(0, post?.media.length > 4 ? 4 : post?.media.length)
               .map((mediaUrl, index) => (
                 <div key={index} className={`relative ${itemClasses[index]}`}>
-                  <Image
-                    src={mediaUrl || ""}
+                  <SafeImage
+                    src={mediaUrl}
                     alt={`Post media ${index + 1}`}
                     fill
                     className="object-cover rounded-md"

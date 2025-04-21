@@ -91,7 +91,7 @@ export default function Experience({
 }) {
   return (
     (experience?.length > 0 || isMyProfile) && (
-      <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
+      <Container className="border dark:border-[#111] shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Experience {isMyProfile && <ModExperience adding />}
         </h3>

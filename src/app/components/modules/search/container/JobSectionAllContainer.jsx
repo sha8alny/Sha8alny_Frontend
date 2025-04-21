@@ -2,13 +2,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { fetchJobListings } from "@/app/services/search";
-import  JobSectionAllPresentation  from "../presentation/JobSectionAllPresentation";
+import JobSectionAllPresentation from "../presentation/JobSectionAllPresentation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
 
- const JobSectionAllContainer = ({ query }) => {
-  const { data: jobs, isLoading, isError } = useQuery({
+const JobSectionAllContainer = ({ query }) => {
+  const {
+    data: jobs,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["jobListings", query],
     queryFn: () => fetchJobListings(query, 1),
+  
   });
 
   const router = useRouter();
@@ -18,7 +24,7 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
   };
   const handleJobClick = (jobId) => {
     router.push("/jobs/" + jobId);
-  }
+  };
   const normalizedJobs = jobs?.map((job) => normalizeJob(job)) || [];
 
   return (
@@ -28,6 +34,7 @@ import { normalizeJob } from "@/app/utils/normalizeJob";
       isError={isError}
       onViewMore={handleViewMore}
       handleJobClick={handleJobClick}
+      error={error?.message}
     />
   );
 };

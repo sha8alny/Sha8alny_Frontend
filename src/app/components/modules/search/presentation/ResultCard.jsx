@@ -14,26 +14,27 @@ import ResultCardSkeleton from "@/app/components/modules/search/presentation/Res
  * @param {boolean} [props.isLoading] - Flag to indicate whether the card is in a loading state.
  */
 
-function ResultsCard({ title, icon, children, onViewMore, viewMoreText, isLoading }) {
+function ResultsCard({ title, icon, children, onViewMore, viewMoreText, isLoading, flag= true, ...props }) {
   if (isLoading) {
     return (
-        <ResultCardSkeleton title={title} icon={icon} />
+        <ResultCardSkeleton title={title} icon={icon} data-testid={`${title.toLowerCase()}-skeleton`} />
     )
-}
+  }
   return (
-    <div className="bg-foreground text-text border-gray-800 shadow-sm p-4 rounded-lg">
+    <div className="bg-foreground text-text border-gray-800 shadow-sm p-4 rounded-lg" {...props}>
       <h2 className="text-lg font-bold mb-4 flex items-center gap-1.5">
         {icon} {title}
       </h2>
 
       {children}
 
-      {onViewMore && (
+      {onViewMore && flag && (
         <>
           <div className="border-t dark:border-gray-500"></div>
           <button
             onClick={onViewMore}
             className="bg-foreground mt-3 w-full text-center text-sm font-medium cursor-pointer py-2 rounded-md transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-gray-500 text-text"
+            data-testid={`view-more-${title.toLowerCase()}`}
           >
             {viewMoreText}
           </button>

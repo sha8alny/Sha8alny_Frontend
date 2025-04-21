@@ -112,7 +112,7 @@ export default function Education({
 }) {
   return (
     (isMyProfile || education?.length > 0) && (
-      <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
+      <Container className="border dark:border-[#111] shadow-lg mt-4 p-8">
         <div className="flex justify-between text-2xl mb-4 font-bold">
           Education {isMyProfile && <ModEducation adding={true} />}
         </div>
