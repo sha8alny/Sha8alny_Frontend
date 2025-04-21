@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import PostButtonPresentation from "../presentation/PostButtonPresentation";
 import { useToast } from "@/app/context/ToastContext";
+import { updateSessionTime } from "@/app/utils/sessionTime";
 
 export default function PostButton({ userInfo }) {
   const [text, setText] = useState("");
@@ -19,6 +20,8 @@ export default function PostButton({ userInfo }) {
   const [error, setError] = useState(null);
   const [currentState, setCurrentState] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
+  const [taggedUserPopoverOpen, setTaggedUserPopoverOpen] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
@@ -45,6 +48,10 @@ export default function PostButton({ userInfo }) {
       setImages([]);
       setVideos(null);
       setError(null);
+      setTaggedUsers([]);
+      setTags([]);
+      setTaggedUser("");
+      setTag("");
       toast("Post created successfully!");
       setTimeout(() => {
         setIsLoading(false);
@@ -59,6 +66,11 @@ export default function PostButton({ userInfo }) {
       setImages([]);
       setError(null);
       setVideos(null);
+      setTaggedUsers([]);
+      setTags([]);
+      setTaggedUser("");
+      setTag("");
+      toast("Error creating post. Please try again.", false);
       setIsLoading(false);
       setTimeout(() => {
         setOpen(false);
@@ -68,10 +80,6 @@ export default function PostButton({ userInfo }) {
   });
 
   const handlePost = () => {
-    if (text.trim() === "" && images.length === 0 && !videos) {
-      setError("Please add text or media to your post.");
-      return;
-    }
     if (text.trim() === "") {
       setError("Please add text to your post.");
       return;
@@ -185,8 +193,8 @@ export default function PostButton({ userInfo }) {
     }
   };
 
-  const handleRemoveTag = (index) => {
-    setTags((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove))
   };
 
   const handleAddTaggedUser = () => {
@@ -205,7 +213,7 @@ export default function PostButton({ userInfo }) {
       open={open}
       onOpenChange={setOpen}
       useRegularButton
-      buttonClass="w-full drop-shadow-lg mt-2 h-14 bg-secondary hover:bg-secondary/90 cursor-pointer ease-in-out duration-500 text-background dark:border dark:border-[#111] rounded-2xl font-bold p-2"
+      buttonClass="w-full drop-shadow-lg mt-2 h-14 bg-secondary hover:bg-secondary/90 cursor-pointer ease-in-out duration-500 text-background border dark:border-[#111] rounded-2xl font-bold p-2"
       buttonData="Post"
       className="bg-foreground"
       AlertContent={
@@ -234,6 +242,12 @@ export default function PostButton({ userInfo }) {
           videoInputRef={videoInputRef}
           userInfo={userInfo}
           isLoading={isLoading}
+          tagPopoverOpen={tagPopoverOpen}
+          setTagPopoverOpen={setTagPopoverOpen}
+          taggedUserPopoverOpen={taggedUserPopoverOpen}
+          setTaggedUserPopoverOpen={setTaggedUserPopoverOpen}
+          tagInput={tag}
+          setTagInput={setTag}
         />
       }
     />

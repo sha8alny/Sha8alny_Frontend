@@ -55,6 +55,8 @@ export default function CommentPresentation({
   hasReplies,
   onDelete,
   isDeleting,
+  nestCount,
+  postUsername,
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
@@ -69,7 +71,7 @@ export default function CommentPresentation({
         >
           <AvatarImage src={comment?.profilePicture} alt={comment?.fullName} />
           <AvatarFallback>
-            {comment?.fullName.substring(0, 2).toUpperCase()}
+            {comment?.fullName?.substring(0, 2).toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 space-y-1">
@@ -155,7 +157,10 @@ export default function CommentPresentation({
                         <Celebrate size="1.3rem" />
                       )}
                       {!!comment?.reaction || (
-                        <ThumbUpOutlined sx={{ fontSize: "1rem" }} className="rotate-y-180"/>
+                        <ThumbUpOutlined
+                          sx={{ fontSize: "1rem" }}
+                          className="rotate-y-180"
+                        />
                       )}
                       <span
                         className={`text-muted ${
@@ -265,8 +270,10 @@ export default function CommentPresentation({
       {hasRepliesSection && (
         <div className="ml-10 mt-2 border-l border-primary/20 pl-4 space-y-4">
           {isLoadingReplies && !isFetchingMoreReplies ? (
-            <div className="flex justify-center p-4">
-              <CommentSkeleton />
+            <div className="flex flex-col justify-center p-4">
+              {Array.from({ length: 2 }).map((_, index) => (
+                <CommentSkeleton key={index} />
+              ))}
             </div>
           ) : (
             <>
@@ -275,6 +282,8 @@ export default function CommentPresentation({
                   key={reply.commentId}
                   postId={postId}
                   comment={{ ...reply, isReply: true }}
+                  nestCount={nestCount + 1}
+                  postUsername={postUsername}
                 />
               ))}
 

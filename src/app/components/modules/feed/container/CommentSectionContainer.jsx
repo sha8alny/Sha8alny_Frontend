@@ -130,6 +130,7 @@ export default function CommentSectionContainer({ username, postId }) {
       isPost={isPost}
       isLoading={isLoading}
       isLoadingComments={isFetchingNextPage}
+      postUsername={username}
     />
   );
 }

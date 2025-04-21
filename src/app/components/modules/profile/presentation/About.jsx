@@ -17,7 +17,7 @@ import ModAbout from "../container/ModAbout";
 export default function About({ about, isMyProfile }) {
   return (
     (about || isMyProfile) && (
-    <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
+    <Container className="border dark:border-[#111] shadow-lg mt-4 p-8">
       <h3 className="justify-between flex text-2xl mb-4 font-bold">
         About
         {isMyProfile && <ModAbout about={about} />}
