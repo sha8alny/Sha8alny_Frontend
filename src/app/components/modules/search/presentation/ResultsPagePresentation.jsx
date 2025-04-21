@@ -125,16 +125,15 @@ const UserFilters = ({
         <Select
           value={connectionDegree}
           onValueChange={setConnectionDegree}
-          defaultValue="1"
           data-testid="user-connection-select"
         >
           <SelectTrigger className="h-9 w-full" data-testid="user-connection-trigger">
             <SelectValue placeholder="Connection degree" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="1" data-testid="user-connection-1st">1st Degree</SelectItem>
-            <SelectItem value="2" data-testid="user-connection-2nd">2nd Degree</SelectItem>
-            <SelectItem value="3" data-testid="user-connection-3rd">3rd Degree</SelectItem>
+            <SelectItem value={1} data-testid="user-connection-1st">1st Degree</SelectItem>
+            <SelectItem value={2} data-testid="user-connection-2nd">2nd Degree</SelectItem>
+            <SelectItem value={3} data-testid="user-connection-3rd">3rd Degree</SelectItem>
           </SelectContent>
         </Select>
       </div>

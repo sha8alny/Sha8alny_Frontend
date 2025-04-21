@@ -42,7 +42,7 @@ const ResultsPageContainer = () => {
   const [industryFilter, setIndustryFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const keyword = nameFilter == ""? searchParams.get("keyword"): nameFilter;
-  const [connectionDegree, setConnectionDegree] = useState("3");
+  const [connectionDegree, setConnectionDegree] = useState(3);
   const [companyIndustryFilter, setCompanyIndustryFilter] = useState("");
   const [orgSizeFilter, setOrgSizeFilter] = useState("");
   const [orgTypeFilter, setOrgTypeFilter] = useState("");
