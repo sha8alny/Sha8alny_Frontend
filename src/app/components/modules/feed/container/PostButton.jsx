@@ -58,7 +58,9 @@ export default function PostButton({ userInfo }) {
         setOpen(false);
         setCurrentState(0);
       }, 2000);
-      queryClient.invalidateQueries(["posts"]);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2500);
     },
     onError: () => {
       setCurrentState(3);
@@ -92,7 +94,11 @@ export default function PostButton({ userInfo }) {
     setIsLoading(true);
     const formData = new FormData();
     formData.append("text", text);
-    formData.append("keywords", tags);
+    if (tags.length > 0) {
+      tags.forEach((tag) => {
+        formData.append("keywords", tag);
+      });
+    }
     formData.append("tags", taggedUsers);
     if (images.length > 0) {
       images.forEach((image) => {
@@ -194,7 +200,7 @@ export default function PostButton({ userInfo }) {
   };
 
   const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove))
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleAddTaggedUser = () => {
@@ -213,7 +219,7 @@ export default function PostButton({ userInfo }) {
       open={open}
       onOpenChange={setOpen}
       useRegularButton
-      buttonClass="w-full drop-shadow-lg mt-2 h-14 bg-secondary hover:bg-secondary/90 cursor-pointer ease-in-out duration-500 text-background border dark:border-[#111] rounded-2xl font-bold p-2"
+      buttonClass="w-full shadow-md my-2 h-14 bg-secondary hover:bg-secondary/90 cursor-pointer ease-in-out duration-500 text-background border dark:border-[#111] rounded-2xl font-bold p-2"
       buttonData="Post"
       className="bg-foreground"
       AlertContent={

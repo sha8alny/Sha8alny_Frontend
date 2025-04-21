@@ -2,10 +2,10 @@ import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getMyPosts = async (pageNum, companyId) => {
+export const getMyPosts = async (pageNum, companyUsername) => {
   try {
     const response = await fetchWithAuth(
-      `${apiURL}/myPosts?pageNum=${pageNum}&companyId=${companyId}`,
+      `${apiURL}/myPosts?pageNum=${pageNum}&companyUsername=${companyUsername}`,
       {
         method: "GET",
         headers: {
@@ -91,11 +91,11 @@ export const getPosts = async (pageNum) => {
   return await response.json();
 };
 
-export const createPost = async (postData, companyId = null) => {
+export const createPost = async (postData, companyUsername = null) => {
   console.log("postData", postData);
   let url = `${apiURL}/posts`;
-  if (companyId) {
-    url += `?companyId=${companyId}`;
+  if (companyUsername) {
+    url += `?companyUsername=${companyUsername}`;
   }
   const response = await fetchWithAuth(url, {
     method: "POST",

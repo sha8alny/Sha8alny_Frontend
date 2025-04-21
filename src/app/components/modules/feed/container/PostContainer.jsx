@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import PostPresentation, {
   PostSkeleton,
 } from "../presentation/PostPresentation";
@@ -22,7 +22,12 @@ export default function PostContainer({ post }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(post?.reaction || false);
   const [isSaved, setIsSaved] = useState(post?.isSaved || false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
+  const pathName = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -33,7 +38,9 @@ export default function PostContainer({ post }) {
   const handleLikeMutation = useMutation({
     mutationFn: (params) => {
       const { postId, reaction } = params;
-      (isLiked && post?.reaction === reaction) ? setIsLiked(false) : setIsLiked(reaction); // Optimistic update
+      isLiked && post?.reaction === reaction
+        ? setIsLiked(false)
+        : setIsLiked(reaction); // Optimistic update
       return isLiked && post?.reaction === reaction
         ? reactToContent(postId, null, null, true)
         : reactToContent(postId, null, reaction);
@@ -159,13 +166,25 @@ export default function PostContainer({ post }) {
           itemClasses: itemClasses,
         };
     }
-    
   };
-  
+
+  // TODO : Modify the share URL for company posts
+  const shareUrl = post?.isCompany
+    ? `http://sha8alny.uaenorth.cloudapp.azure.com/${pathName}`
+    : `http://sha8alny.uaenorth.cloudapp.azure.com/u/${post?.username}/post/${post?.postId}`;
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const encodedUrl = encodeURIComponent(shareUrl);
+
   const isVideo = (mediaUrl) => {
     if (!mediaUrl) return false;
-    const extension = mediaUrl.split('.').pop().toLowerCase();
-    const videoExtensions = ['mp4', 'webm', 'mov', 'avi', 'wmv', 'mkv'];
+    const extension = mediaUrl.split(".").pop().toLowerCase();
+    const videoExtensions = ["mp4", "webm", "mov", "avi", "wmv", "mkv"];
     return videoExtensions.includes(extension);
   };
 
@@ -200,6 +219,15 @@ export default function PostContainer({ post }) {
       layoutClass={getLayout(post?.media.length).layoutClass}
       itemClasses={getLayout(post?.media.length).itemClasses}
       isVideo={videoCheck}
+      shareModalOpen={shareModalOpen}
+      setShareModalOpen={setShareModalOpen}
+      reportModalOpen={reportModalOpen}
+      setReportModalOpen={setReportModalOpen}
+      deleteModalOpen={deleteModalOpen}
+      setDeleteModalOpen={setDeleteModalOpen}
+      copied={copied}
+      copyToClipboard={copyToClipboard}
+      shareUrl={encodedUrl}
     />
   );
 }

@@ -13,9 +13,9 @@ function PostPageContainer({ username, logo }) {
 
   const handlePostSubmit = async (newPost) => {
     try {
-      const { companyId } = await getCompanyId(username);
-      const createdPost = await createPost(newPost, companyId);
+      const createdPost = await createPost(newPost, username);
       queryClient.invalidateQueries(["posts", username]);
+      window.location.reload();
     } catch (error) {
       console.error("Failed to create post:", error);
     }

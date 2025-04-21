@@ -35,9 +35,11 @@ import {
   ThumbUpOutlined,
   Share,
   Verified,
+  IosShare,
+  Send,
+  CommentOutlined,
 } from "@mui/icons-material";
-import ShareContainer from "../container/ShareContainer";
-import React from "react";
+import React, { useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -50,6 +52,9 @@ import Celebrate from "@/app/components/ui/Celebrate";
 import Love from "@/app/components/ui/Love";
 import Funny from "@/app/components/ui/Funny";
 import Support from "@/app/components/ui/Support";
+import Dialog from "@/app/components/ui/DialogMod";
+import SharePresentation from "../presentation/SharePresentation";
+import { usePathname } from "next/navigation";
 
 // TODO: Add image modal to view all images in a carousel
 // TODO: Modify Icons (choose what goes where)
@@ -72,7 +77,17 @@ export default function PostPresentation({
   layoutClass,
   itemClasses,
   isVideo,
+  shareModalOpen,
+  setShareModalOpen,
+  reportModalOpen,
+  setReportModalOpen,
+  deleteModalOpen,
+  setDeleteModalOpen,
+  copied,
+  copyToClipboard,
+  shareUrl,
 }) {
+
   return (
     <Card className="bg-foreground w-full max-w-2xl mx-auto mb-4">
       {post?.isShared && (
@@ -199,9 +214,13 @@ export default function PostPresentation({
                   </>
                 )}
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShareModalOpen(true)}>
+                <IosShare sx={{ fontSize: "1.3rem" }} />
+                <span>Share</span>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={post?.connectionDegree !== 0 ? onReport : onDelete}
+                onClick={post?.connectionDegree !== 0 ? () => setReportModalOpen(true) : () => setDeleteModalOpen(true)}
               >
                 {post?.connectionDegree !== 0 && (
                   <>
@@ -293,7 +312,7 @@ export default function PostPresentation({
                 {post?.reaction === "Love" && <Love size="1.5rem" />}
                 {post?.reaction === "Celebrate" && <Celebrate size="1.5rem" />}
                 {!!post?.reaction || (
-                  <ThumbUpOutlined sx={{ fontSize: "1.3rem" }} />
+                  <ThumbUpOutlined sx={{ fontSize: "1.3rem" }} className="rotate-y-180" />
                 )}
                 <span
                   className={
@@ -337,7 +356,7 @@ export default function PostPresentation({
           className="flex gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
           onClick={() => setCommentSectionOpen(!commentSectionOpen)}
         >
-          <ChatBubbleOutline sx={{ fontSize: "1.3rem" }} />
+          <CommentOutlined sx={{ fontSize: "1.3rem" }} />
           <span
             className={`text-muted ${
               commentSectionOpen ? "text-secondary" : ""
@@ -362,14 +381,8 @@ export default function PostPresentation({
           size="sm"
           className="flex gap-2 items-center cursor-pointer text-primary rounded-md hover:bg-primary/10"
         >
-          <Share sx={{ fontSize: "1.3rem" }} />
+          <Send sx={{ fontSize: "1.3rem" }} className="-rotate-45" />
         </Button>
-
-        <ShareContainer
-          postId={post?.postId}
-          username={post?.username}
-          fontSize="1.3rem"
-        />
       </CardFooter>
 
       {commentSectionOpen && (
@@ -378,6 +391,20 @@ export default function PostPresentation({
           postId={post?.postId}
         />
       )}
+
+      <Dialog
+        open={shareModalOpen}
+        onOpenChange={setShareModalOpen}
+        buttonClass="hidden"
+        className="min-w-max"
+        AlertContent={
+          <SharePresentation
+            copyToClipboard={copyToClipboard}
+            copied={copied}
+            shareUrl={shareUrl}
+          />
+        }
+      />
     </Card>
   );
 }
