@@ -47,7 +47,7 @@ function PersonCardPresentation({
           onClick={onNavigateToProfile}
         >
           <AvatarImage src={avatarUrl} alt={name} />
-          <AvatarFallback>{name.substring(0, 2).toUpperCase()}</AvatarFallback>
+          <AvatarFallback>{name?.substring(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="flex items-center gap-1.5">

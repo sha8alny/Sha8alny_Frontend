@@ -24,6 +24,7 @@ const PeopleSectionAllContainer = (query) => {
     data: users,
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["searchUsers"],
     queryFn: () => searchUser(query.query, "", "", 1),
@@ -39,6 +40,7 @@ const PeopleSectionAllContainer = (query) => {
       isLoading={isLoading}
       isError={isError}
       onViewMore={handleViewMore}
+      error={error?.message}
     />
   );
 };
