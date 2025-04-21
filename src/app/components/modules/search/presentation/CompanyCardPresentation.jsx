@@ -49,36 +49,42 @@ function CompanyCardPresentation({
   };
 
   return (
-    <div onClick={onNavigateToCompany} className="border-t dark:border-gray-500 py-3 hover:bg-hover p-3 cursor-pointer  duration-200">
-      <div className="flex items-start gap-3">
+    <div 
+      onClick={onNavigateToCompany} 
+      className="border-t dark:border-gray-500 py-3 hover:bg-hover p-3 cursor-pointer duration-200"
+      data-testid={`company-card-${companyUsername}`}
+    >
+      <div className="flex flex-col sm:flex-row items-start gap-3">
         <Avatar
           className="w-12 h-12 cursor-pointer"
           onClick={onNavigateToCompany}
+          data-testid={`company-avatar-${companyUsername}`}
         >
           <AvatarImage src={logo} alt={companyUsername} />
           <AvatarFallback>
             {companyUsername.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center gap-1.5">
+        <div className="flex-1 w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 mb-1">
             <h3
               className="text-sm font-medium cursor-pointer hover:underline"
               onClick={onNavigateToCompany}
+              data-testid={`company-username-${companyUsername}`}
             >
               {companyUsername}
             </h3>
             <Badge
               variant="outline"
-              className="text-[10px] text-text px-1.5 py-0"
+              className="text-[10px] text-text px-1.5 py-0 w-fit"
             >
               {industry}
             </Badge>
           </div>
-          <p className="text-gray-400 text-xs">
+          <p className="text-gray-400 text-xs mb-1">
             {truncateText(description, 60)}
-          </p>{" "}
-          <div className="flex items-center gap-3 mt-1">
+          </p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
             <p className="text-gray-400 text-xs flex items-center gap-1">
               <MapPin className="h-3 w-3" /> {location}
             </p>
@@ -100,11 +106,12 @@ function CompanyCardPresentation({
         </div>
         <Button
           size="sm"
-          className="rounded-full text-xs h-7 px-3 bg-secondary text-background hover:bg-secondary/80 cursor-pointer"
+          className="rounded-full text-xs h-7 px-3 bg-secondary text-background hover:bg-secondary/80 cursor-pointer mt-2 sm:mt-0"
           onClick={(e) => {
             e.stopPropagation();
             onFollowClick();
           }}
+          data-testid={`company-follow-button-${companyUsername}`}
         >
           {isFollowed ? "Following" : "Follow"}
         </Button>

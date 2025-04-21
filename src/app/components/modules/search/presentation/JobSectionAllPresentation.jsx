@@ -34,6 +34,7 @@ const JobSectionAllPresentation = ({
       <ResultsCard
         title="Jobs"
         icon={<WorkIcon sx={{ fontSize: "1.125rem" }} />}
+        data-testid="jobs-error-card"
       >
         <p className="text-gray-400 text-sm">{error}</p>
       </ResultsCard>
@@ -47,19 +48,20 @@ const JobSectionAllPresentation = ({
       viewMoreText={"View all job results"}
       onViewMore={onViewMore}
       flag={jobs?.length > 0 ? true : false}
+      data-testid="jobs-results-card"
     >
       {jobs?.length > 0 ? (
         jobs.slice(0, 3).map((job, index) => {
           if (!job || Object.keys(job).length === 0) return null;
 
           const normalizedJob = normalizeJob(job);
-          console.log(normalizedJob);
 
           return (
             <JobCard
               key={normalizedJob.id || index}
               job={normalizedJob}
               onClick={() => handleJobClick(normalizedJob.id)}
+              data-testid={`job-card-${normalizedJob.id || index}`}
             />
           );
         })

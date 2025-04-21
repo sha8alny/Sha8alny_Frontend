@@ -27,6 +27,7 @@ const CompanySectionAllPresentation = ({
       <ResultsCard
         title="Companies"
         icon={<ApartmentIcon sx={{ fontSize: "1.125rem" }} />}
+        data-testid="companies-error-card"
       >
         <p className="text-gray-400 text-sm">{error}</p>
       </ResultsCard>
@@ -39,6 +40,7 @@ const CompanySectionAllPresentation = ({
       onViewMore={onViewMore}
       title="Companies"
       icon={<ApartmentIcon sx={{ fontSize: "1.125rem" }} />}
+      data-testid="companies-results-card"
     >
       {companies?.length > 0 ? (
         companies
@@ -47,6 +49,7 @@ const CompanySectionAllPresentation = ({
             <CompanyCardContainer
               key={company.companyId || index}
               {...company}
+              data-testid={`company-card-${company.companyId || index}`}
             />
           ))
       ) : companies?.length == 0 ? (

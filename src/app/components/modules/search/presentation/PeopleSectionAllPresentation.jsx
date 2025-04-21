@@ -25,7 +25,11 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
 }) => {
   if (isError) {
     return (
-      <ResultsCard title="People"  icon={<PersonIcon sx={{ fontSize: "1.125rem" }} />}>
+      <ResultsCard 
+        title="People" 
+        icon={<PersonIcon sx={{ fontSize: "1.125rem" }} />}
+        data-testid="people-error-card"
+      >
         <p className="text-gray-400 text-sm">{error}</p>
       </ResultsCard>
     );
@@ -39,6 +43,7 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
       icon={<PersonIcon sx={{ fontSize: "1.125rem" }} />}
       viewMoreText={"View all people results"}
       onViewMore={onViewMore}
+      data-testid="people-results-card"
     >
       {users?.length > 0 ? (
         users
@@ -54,6 +59,7 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
               about={user.about}
               location={user.location}
               isConnected={user.isConnected}
+              data-testid={`person-card-container-${user.id || index}`}
             />
           ))
       ) : (

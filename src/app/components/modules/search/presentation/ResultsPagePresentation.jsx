@@ -54,6 +54,7 @@ const UserFilters = ({
           }}
           onBlur={() => setNameFilter(tempName)}
           className="h-9 w-full"
+          data-testid="user-name-filter-input"
         />
       </div>
 
@@ -73,6 +74,7 @@ const UserFilters = ({
           }}
           onBlur={() => setCompanyFilter(tempCompany)}
           className="h-9 w-full"
+          data-testid="user-company-filter-input"
         />
       </div>
 
@@ -92,6 +94,7 @@ const UserFilters = ({
           }}
           onBlur={() => setIndustryFilter(tempIndustry)}
           className="h-9 w-full"
+          data-testid="user-industry-filter-input"
         />
       </div>
 
@@ -111,6 +114,7 @@ const UserFilters = ({
           }}
           onBlur={() => setLocationFilter(tempLocation)}
           className="h-9 w-full"
+          data-testid="user-location-filter-input"
         />
       </div>
 
@@ -122,14 +126,15 @@ const UserFilters = ({
           value={connectionDegree}
           onValueChange={setConnectionDegree}
           defaultValue="1"
+          data-testid="user-connection-select"
         >
-          <SelectTrigger className="h-9 w-full">
+          <SelectTrigger className="h-9 w-full" data-testid="user-connection-trigger">
             <SelectValue placeholder="Connection degree" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="1">1st Degree</SelectItem>
-            <SelectItem value="2">2nd Degree</SelectItem>
-            <SelectItem value="3">3rd Degree</SelectItem>
+            <SelectItem value="1" data-testid="user-connection-1st">1st Degree</SelectItem>
+            <SelectItem value="2" data-testid="user-connection-2nd">2nd Degree</SelectItem>
+            <SelectItem value="3" data-testid="user-connection-3rd">3rd Degree</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -174,6 +179,7 @@ const CompanyFilters = ({
           }}
           onBlur={(e) => setNameFilter(e.target.value)}
           className="h-9 w-full"
+          data-testid="company-name-filter-input"
         />
       </div>
       <div className="space-y-2">
@@ -192,6 +198,7 @@ const CompanyFilters = ({
           }}
           onBlur={() => setCompanyIndustryFilter(tempCompanyIndustry)}
           className="h-9 w-full"
+          data-testid="company-industry-filter-input"
         />
       </div>
 
@@ -211,6 +218,7 @@ const CompanyFilters = ({
           }}
           onBlur={() => setLocationFilter(tempLocation)}
           className="h-9 w-full"
+          data-testid="company-location-filter-input"
         />
       </div>
 
@@ -218,26 +226,30 @@ const CompanyFilters = ({
         <label className="text-xs font-medium text-muted-foreground">
           Organization Size
         </label>
-        <Select value={orgSizeFilter} onValueChange={setOrgSizeFilter}>
-          <SelectTrigger className="h-9 w-full">
+        <Select 
+          value={orgSizeFilter} 
+          onValueChange={setOrgSizeFilter}
+          data-testid="company-size-select"
+        >
+          <SelectTrigger className="h-9 w-full" data-testid="company-size-trigger">
             <SelectValue placeholder="Select size" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="0-1 employees">0-1 employees</SelectItem>
-            <SelectItem value="2-10 employees">2-10 employees</SelectItem>
-            <SelectItem value="11-50 employees">11-50 employees</SelectItem>
-            <SelectItem value="51-200 employees">51-200 employees</SelectItem>
-            <SelectItem value="201-500 employees">201-500 employees</SelectItem>
-            <SelectItem value="501-1,000 employees">
+            <SelectItem value="0-1 employees" data-testid="company-size-0-1">0-1 employees</SelectItem>
+            <SelectItem value="2-10 employees" data-testid="company-size-2-10">2-10 employees</SelectItem>
+            <SelectItem value="11-50 employees" data-testid="company-size-11-50">11-50 employees</SelectItem>
+            <SelectItem value="51-200 employees" data-testid="company-size-51-200">51-200 employees</SelectItem>
+            <SelectItem value="201-500 employees" data-testid="company-size-201-500">201-500 employees</SelectItem>
+            <SelectItem value="501-1,000 employees" data-testid="company-size-501-1000">
               501-1,000 employees
             </SelectItem>
-            <SelectItem value="1,001-5,000 employees">
+            <SelectItem value="1,001-5,000 employees" data-testid="company-size-1001-5000">
               1,001-5,000 employees
             </SelectItem>
-            <SelectItem value="5,001-10,000 employees">
+            <SelectItem value="5,001-10,000 employees" data-testid="company-size-5001-10000">
               5,001-10,000 employees
             </SelectItem>
-            <SelectItem value="10,000+ employees">10,000+ employees</SelectItem>
+            <SelectItem value="10,000+ employees" data-testid="company-size-10000plus">10,000+ employees</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -246,20 +258,24 @@ const CompanyFilters = ({
         <label className="text-xs font-medium text-muted-foreground">
           Organization Type
         </label>
-        <Select value={orgTypeFilter} onValueChange={setOrgTypeFilter}>
-          <SelectTrigger className="h-9 w-full">
+        <Select 
+          value={orgTypeFilter} 
+          onValueChange={setOrgTypeFilter}
+          data-testid="company-type-select"
+        >
+          <SelectTrigger className="h-9 w-full" data-testid="company-type-trigger">
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Public company">Public company</SelectItem>
-            <SelectItem value="Self employed">Self employed</SelectItem>
-            <SelectItem value="Government agency">Government agency</SelectItem>
-            <SelectItem value="Nonprofit">Nonprofit</SelectItem>
-            <SelectItem value="Sole proprietorship">
+            <SelectItem value="Public company" data-testid="company-type-public">Public company</SelectItem>
+            <SelectItem value="Self employed" data-testid="company-type-self">Self employed</SelectItem>
+            <SelectItem value="Government agency" data-testid="company-type-government">Government agency</SelectItem>
+            <SelectItem value="Nonprofit" data-testid="company-type-nonprofit">Nonprofit</SelectItem>
+            <SelectItem value="Sole proprietorship" data-testid="company-type-sole">
               Sole proprietorship
             </SelectItem>
-            <SelectItem value="Privately held">Privately held</SelectItem>
-            <SelectItem value="Partnership">Partnership</SelectItem>
+            <SelectItem value="Privately held" data-testid="company-type-private">Privately held</SelectItem>
+            <SelectItem value="Partnership" data-testid="company-type-partnership">Partnership</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -379,6 +395,7 @@ const ResultsPagePresentation = ({
             title={`Results for "${keyword}"`}
             icon={iconMap[type]}
             isLoading={isLoading}
+            data-testid="search-results-card"
           >
             {isError && (
               <p className="text-gray-400 text-sm">Error loading results.</p>
@@ -432,6 +449,7 @@ const ResultsPagePresentation = ({
               }`}
               disabled={!showPrev}
               onClick={() => onPageChange(-1)}
+              data-testid="pagination-prev-button"
             >
               Previous
             </button>
@@ -444,6 +462,7 @@ const ResultsPagePresentation = ({
               }`}
               onClick={() => onPageChange(1)}
               disabled={!showNext}
+              data-testid="pagination-next-button"
             >
               Next
             </button>
