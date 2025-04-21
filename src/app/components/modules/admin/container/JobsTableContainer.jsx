@@ -26,11 +26,9 @@ export function JobsTableContainer() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const router = useRouter();
   
-  // Add debounce effect for search query
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query);
-      // Reset to page 1 when searching
       setPage(1);
     }, 300);
     

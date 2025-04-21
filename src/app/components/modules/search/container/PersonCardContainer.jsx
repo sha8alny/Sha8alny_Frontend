@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { connectUser } from "@/app/services/connectionManagement";
 import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
 /**
  * @namespace search
@@ -28,15 +29,14 @@ import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
   headline,
   location,
   avatarUrl = "/placeholder.svg?height=40&width=40",
-  isConnected = false,
+  isConnected,
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const connectWithUser = () => null; 
 
   const connectMutation = useMutation({
-    mutationFn: () => connectWithUser(username),
+    mutationFn: () => connectUser(username),
     onSuccess: () => {
       queryClient.invalidateQueries(["searchUsers"]);
     },
