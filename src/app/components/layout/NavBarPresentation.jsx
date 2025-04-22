@@ -165,7 +165,7 @@ export default function NavbarPresentation({
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+          <SheetContent side="left" className="w-[280px] sm:w-[350px]">
             <SheetHeader>
               <SheetTitle>
                 <div className="flex items-center gap-2 mb-6">
@@ -436,7 +436,7 @@ export const NavBarPresentationSkeleton = ({
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+          <SheetContent side="left" className="w-[280px] sm:w-[350px]">
             <SheetHeader>
               <SheetTitle>
                 <div className="flex items-center gap-2 mb-6">

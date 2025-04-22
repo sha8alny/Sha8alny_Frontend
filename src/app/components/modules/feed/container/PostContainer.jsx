@@ -22,6 +22,7 @@ export default function PostContainer({ post }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(post?.reaction || false);
   const [isSaved, setIsSaved] = useState(post?.isSaved || false);
+
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -32,6 +33,7 @@ export default function PostContainer({ post }) {
   const handleLikeMutation = useMutation({
     mutationFn: (params) => {
       const { postId, reaction } = params;
+      (isLiked && post?.reaction === reaction) ? setIsLiked(false) : setIsLiked(reaction); // Optimistic update
       return isLiked && post?.reaction === reaction
         ? reactToContent(postId, null, null, true)
         : reactToContent(postId, null, reaction);
@@ -59,6 +61,7 @@ export default function PostContainer({ post }) {
     mutationFn: (postId) => savePost(postId),
     onSuccess: () => {
       queryClient.invalidateQueries(["posts"]);
+      setIsSaved((prev) => !prev);
     },
   });
 

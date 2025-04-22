@@ -78,7 +78,7 @@ const ChangeEmailForm = ({
           disabled={isLoading}
           className="w-full bg-secondary text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
         >
-          {isLoading ? "Updating..." : "Add Email"}
+          {isLoading ? "Validating..." : "Add Email"}
         </Button>
       </form>
     </div>

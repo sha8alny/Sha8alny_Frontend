@@ -1,12 +1,6 @@
 import { fetchWithAuth } from "./userAuthentication";
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-const getToken = () => {
-  const token = localStorage.getItem("token") || "mock-token";
-  // if (!token) throw new Error("No token found");
-  return token;
-};
-
 export const fetchUserProfile = async (username) => {
     const response = await fetchWithAuth(`${apiURL}/profile/user/${username}`, {
       method: "GET",
@@ -36,7 +30,6 @@ export const fetchUserProfile = async (username) => {
           errorMsg = "Failed to fetch user profile";
       }
       
-      // Create an error object with both message and status properties
       const error = new Error(errorMsg);
       error.response = { status: status };
       throw error;
@@ -45,7 +38,6 @@ export const fetchUserProfile = async (username) => {
 };
 
 export const fetchUsername = async () => {
-  // return "mock-username"; 
   const response = await fetchWithAuth(`${apiURL}/profile/username`, {
     method: "GET",
     headers: {
@@ -56,3 +48,18 @@ export const fetchUsername = async () => {
   if (!response.ok) throw new Error("Failed to fetch user username");
   return response.json();
 }
+
+export const fetchUserConnections = async (pageNum = 1, pageSize = 10, username = null) => {
+  let url = `${process.env.NEXT_PUBLIC_API_URL}/connections/${pageNum}/${pageSize}`;
+  if (username) {
+    url += `?username=${username}`;
+  }
+  const response = await fetchWithAuth(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) throw new Error("Failed to fetch user connections");
+  return response.json();
+};

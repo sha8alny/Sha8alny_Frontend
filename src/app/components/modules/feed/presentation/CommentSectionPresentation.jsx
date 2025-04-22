@@ -16,6 +16,7 @@ export default function CommentSectionPresentation({
   navigateTo,
   isPost,
   isLoadingComments,
+  postUsername
 }) {
   return (
     <section className="flex flex-col gap-4 w-full">
@@ -50,15 +51,17 @@ export default function CommentSectionPresentation({
             key={comment.commentId}
             comment={comment}
             postId={postId}
+            postUsername={postUsername}
+            nestCount={0}
           />
         ))}
-        {isLoading && <CommentSkeleton />}
-        {isLoadingComments && <CommentSkeleton />}
+        {isLoading && Array.from({length: 2}).map((_, index) => (<CommentSkeleton key={index} />))}
+        {isLoadingComments && Array.from({length: 2}).map((_, index) => (<CommentSkeleton key={index} />))}
       </div>
-      {hasMore && (
+      {hasMore && !isLoadingComments && (
         <button
           className="text-primary font-semibold text-sm flex gap-1 items-center group justify-center cursor-pointer"
-          onClick={comments?.length > 10 && !isPost ? navigateTo : loadMore}
+          onClick={comments?.length > 5 && !isPost ? navigateTo : loadMore}
         >
           <ExpandMore sx={{ fontSize: "1rem" }} />
           <span className="group-hover:underline">Load more comments</span>

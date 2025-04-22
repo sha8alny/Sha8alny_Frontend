@@ -6,7 +6,11 @@ import {
   Send,
   ThumbUpOutlined,
 } from "@mui/icons-material";
-
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/components/ui/Avatar";
 import Image from "next/image";
 import CommentContainer from "../container/CommentContainer";
 import { Textarea } from "@/app/components/ui/Textarea";
@@ -50,34 +54,51 @@ export default function CommentPresentation({
   onHideReplies,
   hasReplies,
   onDelete,
-  isDeleting
+  isDeleting,
+  nestCount,
+  postUsername,
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
       <div className="flex gap-3">
-        <div className="size-10 relative flex-shrink-0">
-          <Image
-            src={comment?.profilePicture}
-            alt={comment?.fullName}
-            fill
-            className="rounded-full border"
-          />
-        </div>
+        <Avatar
+          className="cursor-pointer size-10"
+          onClick={() =>
+            comment?.isCompany
+              ? navigateTo(`company-user-admin/${comment?.username}/about-page`)
+              : navigateTo(`/u/${comment?.username}`)
+          }
+        >
+          <AvatarImage src={comment?.profilePicture} alt={comment?.fullName} />
+          <AvatarFallback>
+            {comment?.fullName?.substring(0, 2).toUpperCase() || "U"}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex-1 space-y-1">
           <div className="bg-primary/10 rounded-lg p-3">
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-col items-start">
                 <div className="flex items-center gap-1">
                   <button
-                     onClick={() =>
+                    onClick={() =>
                       comment?.connectionDegree === -1
-                        ? navigateTo(`company-user-admin/${post?.username}/about-page`)
-                        : navigateTo(`/u/${post?.username}`)
+                        ? navigateTo(
+                            `company-user-admin/${comment?.username}/about-page`
+                          )
+                        : navigateTo(`u/${comment?.username}`)
                     }
                     className="text-sm font-semibold hover:underline cursor-pointer"
                   >
                     {comment?.fullName}
                   </button>
+                  {comment?.relation && (
+                    <div className="text-muted text-xs space-x-1 flex items-center">
+                      <span className="text-muted text-xs">•</span>
+                      <span className="text-muted text-xs mr-1">
+                        {comment?.relation}
+                      </span>
+                    </div>
+                  )}
                   {comment?.connectionDegree !== 0 &&
                     comment?.connectionDegree !== -1 && (
                       <button
@@ -136,7 +157,10 @@ export default function CommentPresentation({
                         <Celebrate size="1.3rem" />
                       )}
                       {!!comment?.reaction || (
-                        <ThumbUpOutlined sx={{ fontSize: "1rem" }} />
+                        <ThumbUpOutlined
+                          sx={{ fontSize: "1rem" }}
+                          className="rotate-y-180"
+                        />
                       )}
                       <span
                         className={`text-muted ${
@@ -180,9 +204,10 @@ export default function CommentPresentation({
             </button>
             {comment?.connectionDegree === 0 && (
               <button
-                className={`text-xs ${isDeleting 
-                  ? "text-muted cursor-default" 
-                  : "text-muted hover:underline cursor-pointer"
+                className={`text-xs ${
+                  isDeleting
+                    ? "text-muted cursor-default"
+                    : "text-muted hover:underline cursor-pointer"
                 }`}
                 disabled={isDeleting}
                 onClick={onDelete}
@@ -245,8 +270,10 @@ export default function CommentPresentation({
       {hasRepliesSection && (
         <div className="ml-10 mt-2 border-l border-primary/20 pl-4 space-y-4">
           {isLoadingReplies && !isFetchingMoreReplies ? (
-            <div className="flex justify-center p-4">
-              <CommentSkeleton />
+            <div className="flex flex-col justify-center p-4">
+              {Array.from({ length: 2 }).map((_, index) => (
+                <CommentSkeleton key={index} />
+              ))}
             </div>
           ) : (
             <>
@@ -255,6 +282,8 @@ export default function CommentPresentation({
                   key={reply.commentId}
                   postId={postId}
                   comment={{ ...reply, isReply: true }}
+                  nestCount={nestCount + 1}
+                  postUsername={postUsername}
                 />
               ))}
 
