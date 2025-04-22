@@ -17,7 +17,7 @@ import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
  * @param {string} props.name - The full name of the person displayed on the card.
  * @param {string} props.headline - The headline or title of the person displayed on the card.
  * @param {string} props.location - The location of the person displayed on the card.
- * @param {string} [props.avatarUrl="/placeholder.svg?height=40&width=40"] - The URL of the avatar image for the person.
+ * @param {string} props.avatarUrl - The URL of the avatar image for the person.
  * @param {boolean} [props.isConnected=false] - Indicates whether the current user is connected with the person.
  * 
  * @returns {JSX.Element} The rendered `PersonCardPresentation` component with the provided props and event handlers.
@@ -28,12 +28,12 @@ import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
   name,
   headline,
   location,
-  avatarUrl = "/placeholder.svg?height=40&width=40",
+  avatarUrl,
   isConnected,
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
-
+  console.log(avatarUrl)
 
   const connectMutation = useMutation({
     mutationFn: () => connectUser(username),

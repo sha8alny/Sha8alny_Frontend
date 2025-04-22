@@ -23,6 +23,7 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
   onViewMore,
   error
 }) => {
+  
   if (isError) {
     return (
       <ResultsCard 
@@ -36,10 +37,11 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
   }
 
 
-  return (
+    return (
     <ResultsCard
       title="People"
       isLoading={isLoading}
+      flag={users?.length > 0}
       icon={<PersonIcon sx={{ fontSize: "1.125rem" }} />}
       viewMoreText={"View all people results"}
       onViewMore={onViewMore}
@@ -53,6 +55,7 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
               key={user.id || index}
               username={user.username}
               name={user.name}
+              avatarUrl={user.profilePicture}
               position={user.position}
               company={user.company}
               headline={user.headline}

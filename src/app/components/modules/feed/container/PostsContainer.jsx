@@ -37,7 +37,7 @@ function PostsContainer({ companyUsername, keyword }) {
         return allPages.length + 1;
       }
 
-      if (lastPage.posts && lastPage.posts.length > 0) {
+      if (lastPage?.posts && lastPage?.posts?.length > 0) {
         return allPages.length + 1;
       }
 
@@ -79,7 +79,7 @@ function PostsContainer({ companyUsername, keyword }) {
 
   const allPosts = data?.pages
     ? data.pages.flatMap((page) => {
-        if (page.posts) return page.posts;
+        if (page?.posts) return page.posts;
         if (Array.isArray(page)) return page;
         return [];
       })
@@ -88,8 +88,7 @@ function PostsContainer({ companyUsername, keyword }) {
   if (isLoading) {
     return <PostSkeleton />;
   }
-
-  if (isError) {
+  if (isError || allPosts.length == 0) {
     console.error("Error loading posts:", error);
     return (
       <div className="flex justify-center items-center h-full text-muted">
