@@ -3,66 +3,13 @@ import Dialog from "@/app/components/ui/DialogMod";
 import EditButton from "@/app/components/ui/EditButton";
 import ModCertificatePresentation from "../presentation/ModCertificatePresentation";
 import AddButton from "@/app/components/ui/AddButton";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 
 /**
  * @namespace profile
  * @module profile
  */
-
-// Form schemas for each stage
-const stage1Schema = z.object({
-  name: z.string().nonempty("Certificate name is required."),
-  issuingOrganization: z.string().nonempty("Issuing organization is required."),
-});
-
-const stage2Schema = z
-  .object({
-    issueDate: z.object({
-      month: z.string().nonempty("Issue month is required."),
-      year: z.string().nonempty("Issue year is required."),
-    }),
-    expirationDate: z.union([
-      z.null(),
-      z.object({
-        month: z.string().nonempty("Expiration month is required."),
-        year: z.string().nonempty("Expiration year is required."),
-      }),
-    ]),
-    neverExpires: z.boolean().default(false),
-  })
-  .refine(
-    (data) => {
-      if (data.neverExpires) {
-        return true; // No validation needed for expiration date if certificate never expires
-      } else {
-        return (
-          data.expirationDate &&
-          data.expirationDate.month &&
-          data.expirationDate.year
-        );
-      }
-    },
-    {
-      message: "Expiration date is required when certificate expires",
-      path: ["expirationDate"],
-    }
-  );
-
-const stage3Schema = z.object({
-  skills: z.array(z.string()).default([]),
-});
-
-// Combined schema for the complete form
-const formSchema = z.object({
-  ...stage1Schema.shape,
-  ...stage2Schema.shape,
-  ...stage3Schema.shape,
-});
 
 /**
  * Generates an array of years starting from 50 years in the past up to 10 years in the future.
@@ -101,13 +48,6 @@ const months = [
  * @param {boolean} props.adding - Flag indicating if this is an add operation (true) or edit operation (false)
  *
  * @returns {JSX.Element} Dialog component with multi-stage certificate form
- *
- * @example
- * // For adding a new certificate
- * <ModCertificate adding={true} />
- *
- * // For editing an existing certificate
- * <ModCertificate certificate={certificateData} adding={false} />
  */
 export default function ModCertificate({ certificate, adding }) {
   const [skillInput, setSkillInput] = useState("");
@@ -118,62 +58,198 @@ export default function ModCertificate({ certificate, adding }) {
     2: false,
     3: false,
   });
+
+  // Form data state
+  const [name, setName] = useState(certificate?.name || "");
+  const [issuingOrganization, setIssuingOrganization] = useState(
+    certificate?.issuingOrganization || ""
+  );
+  const [issueDate, setIssueDate] = useState({
+    month: certificate?.issueDate?.month || "",
+    year: certificate?.issueDate?.year?.toString() || "",
+  });
+  const [expirationDate, setExpirationDate] = useState({
+    month: certificate?.expirationDate?.month || "",
+    year: certificate?.expirationDate?.year?.toString() || "",
+  });
+  const [neverExpires, setNeverExpires] = useState(
+    certificate?.expirationDate === null ? true : false
+  );
+  const [skills, setSkills] = useState(certificate?.skills || []);
+
+  // Error states
+  const [nameError, setNameError] = useState(null);
+  const [issuingOrganizationError, setIssuingOrganizationError] =
+    useState(null);
+  const [issueDateError, setIssueDateError] = useState(null);
+  const [expirationDateError, setExpirationDateError] = useState(null);
+  const [skillsError, setSkillsError] = useState(null);
+
+  // UI states
   const [submitError, setSubmitError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const years = generateYears();
   const updateProfileMutation = useUpdateProfile();
+  const isLoading = updateProfileMutation.isPending || false;
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: certificate?.name || "",
-      issuingOrganization: certificate?.issuingOrganization || "",
-      issueDate: {
-        month: certificate?.issueDate?.month || "",
-        year: certificate?.issueDate?.year?.toString() || "",
-      },
-      expirationDate: {
-        month: certificate?.expirationDate?.month || "",
-        year: certificate?.expirationDate?.year?.toString() || "",
-      },
-      neverExpires: certificate?.expirationDate === null ? true : false,
-      skills: certificate?.skills || [],
+
+  // Create errors object to mimic react-hook-form error structure
+  const errors = {
+    name: nameError,
+    issuingOrganization: issuingOrganizationError,
+    issueDate: {
+      month: issueDateError?.month,
+      year: issueDateError?.year,
     },
-    mode: "onChange",
-  });
+    expirationDate: expirationDateError,
+    skills: skillsError,
+  };
 
-  const { handleSubmit, setValue, watch, formState, trigger } = form;
-  const { errors } = formState;
-  const skills = watch("skills");
-  const neverExpires = watch("neverExpires");
-  const isLoading = updateProfileMutation.isPending;
+  // Create form object to mimic react-hook-form
+  const form = {
+    handleSubmit: (callback) => (e) => {
+      e?.preventDefault();
+      const formData = {
+        name,
+        issuingOrganization,
+        issueDate,
+        expirationDate: neverExpires ? null : expirationDate,
+        skills,
+      };
+      callback(formData);
+    },
+    setValue: (fieldName, value) => {
+      setModified(true);
+      if (fieldName === "name") setName(value);
+      else if (fieldName === "issuingOrganization")
+        setIssuingOrganization(value);
+      else if (fieldName.startsWith("issueDate.")) {
+        const field = fieldName.split(".")[1];
+        setIssueDate((prev) => ({ ...prev, [field]: value }));
+      } else if (fieldName.startsWith("expirationDate.")) {
+        const field = fieldName.split(".")[1];
+        setExpirationDate((prev) => ({ ...prev, [field]: value }));
+      } else if (fieldName === "skills") setSkills(value);
+    },
+    watch: (fieldName) => {
+      if (!fieldName) {
+        return {
+          name,
+          issuingOrganization,
+          issueDate,
+          expirationDate: neverExpires ? null : expirationDate,
+          skills,
+        };
+      }
+      if (fieldName === "name") return name; // Now correctly returns state variable
+      if (fieldName === "issuingOrganization") return issuingOrganization;
+      if (fieldName === "issueDate") return issueDate;
+      if (fieldName === "expirationDate")
+        return neverExpires ? null : expirationDate;
+      if (fieldName === "skills") return skills;
+
+      // Handle nested properties
+      if (fieldName.includes(".")) {
+        const [parent, child] = fieldName.split(".");
+        if (parent === "issueDate") return issueDate[child];
+        if (parent === "expirationDate") return expirationDate[child];
+      }
+
+      return undefined;
+    },
+    formState: { errors },
+    trigger: async (fields) => {
+      // Validate specific fields
+      let isValid = true;
+
+      for (const field of fields) {
+        if (field === "issueDate.month" && !issueDate.month) {
+          setIssueDateError((prev) => ({
+            ...prev,
+            month: "Issue month is required",
+          }));
+          isValid = false;
+        }
+
+        if (field === "issueDate.year" && !issueDate.year) {
+          setIssueDateError((prev) => ({
+            ...prev,
+            year: "Issue year is required",
+          }));
+          isValid = false;
+        }
+
+        if (
+          field === "expirationDate.month" &&
+          !neverExpires &&
+          !expirationDate.month
+        ) {
+          setExpirationDateError("Expiration month is required");
+          isValid = false;
+        }
+
+        if (
+          field === "expirationDate.year" &&
+          !neverExpires &&
+          !expirationDate.year
+        ) {
+          setExpirationDateError("Expiration year is required");
+          isValid = false;
+        }
+      }
+
+      // Validate expiration date is after issue date if both are present
+      if (
+        !neverExpires &&
+        issueDate.year &&
+        issueDate.month &&
+        expirationDate.year &&
+        expirationDate.month
+      ) {
+        const issueYear = parseInt(issueDate.year);
+        const expirationYear = parseInt(expirationDate.year);
+
+        if (issueYear > expirationYear) {
+          setExpirationDateError("Expiration date must be after issue date");
+          isValid = false;
+        } else if (issueYear === expirationYear) {
+          const issueMonthIndex = months.indexOf(issueDate.month);
+          const expirationMonthIndex = months.indexOf(expirationDate.month);
+
+          if (issueMonthIndex > expirationMonthIndex) {
+            setExpirationDateError("Expiration date must be after issue date");
+            isValid = false;
+          }
+        }
+      }
+
+      return isValid;
+    },
+  };
 
   const handleNeverExpires = (value) => {
-    setValue("neverExpires", value, { shouldValidate: true });
+    setNeverExpires(value);
     if (value) {
-      setValue("expirationDate", null, { shouldValidate: true });
+      setExpirationDate({ month: "", year: "" });
+      setExpirationDateError(null);
     } else {
-      setValue(
-        "expirationDate",
-        { month: "", year: "" },
-        { shouldValidate: true }
-      );
+      setExpirationDate({
+        month: expirationDate.month || "",
+        year: expirationDate.year || "",
+      });
     }
   };
 
   const addSkill = (e) => {
     e.preventDefault();
     if (skillInput && !skills.includes(skillInput)) {
-      setValue("skills", [...skills, skillInput]);
+      setSkills((prev) => [...prev, skillInput]);
       setSkillInput("");
     }
   };
 
   const removeSkill = (skill) => {
-    setValue(
-      "skills",
-      skills.filter((s) => s !== skill)
-    );
+    setSkills((prev) => prev.filter((s) => s !== skill));
   };
 
   // Validate current stage and move to next or previous
@@ -182,18 +258,53 @@ export default function ModCertificate({ certificate, adding }) {
       let isValid = false;
 
       if (currentStage === 1) {
-        isValid = await trigger(["name", "issuingOrganization"]);
+        // Reset errors
+        setNameError(null);
+        setIssuingOrganizationError(null);
+
+        // Validate name
+        if (!name) {
+          setNameError("Name is required.");
+          isValid = false;
+        } else if (name.length < 2 || name.length > 50) {
+          setNameError("Name must be between 2 and 50 characters.");
+          isValid = false;
+        } else {
+          isValid = true;
+        }
+
+        // Validate issuing organization
+        if (!issuingOrganization) {
+          setIssuingOrganizationError("Issuing organization is required.");
+          isValid = false;
+        } else if (
+          issuingOrganization.length < 2 ||
+          issuingOrganization.length > 50
+        ) {
+          setIssuingOrganizationError(
+            "Issuing organization must be between 2 and 50 characters."
+          );
+          isValid = false;
+        } else if (isValid) {
+          // Only keep valid if name is also valid
+          isValid = true;
+        }
+
         if (isValid) {
           setStageValidation((prev) => ({ ...prev, 1: true }));
           setCurrentStage(2);
         }
       } else if (currentStage === 2) {
+        // Reset date errors
+        setIssueDateError(null);
+        setExpirationDateError(null);
+
         const fieldsToValidate = ["issueDate.month", "issueDate.year"];
         if (!neverExpires) {
           fieldsToValidate.push("expirationDate.month", "expirationDate.year");
         }
 
-        isValid = await trigger(fieldsToValidate);
+        isValid = await form.trigger(fieldsToValidate);
         if (isValid) {
           setStageValidation((prev) => ({ ...prev, 2: true }));
           setCurrentStage(3);
@@ -215,10 +326,12 @@ export default function ModCertificate({ certificate, adding }) {
     setShowSuccess(false);
     const updatedData = {
       ...data,
-      issueDate: watch("issueDate"),
-      expirationDate: watch("expirationDate"),
+      issueDate,
+      expirationDate: neverExpires ? null : expirationDate,
+      skills,
       _id: certificate?._id,
-    }
+    };
+
     updateProfileMutation.mutate(
       {
         api: adding
@@ -240,6 +353,16 @@ export default function ModCertificate({ certificate, adding }) {
               3: false,
             });
             setCurrentStage(1);
+
+            // Only reset form values when adding a new certificate
+            if (adding) {
+              setName("");
+              setIssuingOrganization("");
+              setIssueDate({ month: "", year: "" });
+              setExpirationDate({ month: "", year: "" });
+              setNeverExpires(false);
+              setSkills([]);
+            }
           }, 3000);
         },
         onError: (error) => {
@@ -304,11 +427,11 @@ export default function ModCertificate({ certificate, adding }) {
           addSkill={addSkill}
           removeSkill={removeSkill}
           adding={adding}
-          handleSubmit={handleSubmit}
-          watch={watch}
+          handleSubmit={form.handleSubmit}
+          watch={form.watch}
           skillInput={skillInput}
           setSkillInput={setSkillInput}
-          setValue={setValue}
+          setValue={form.setValue}
           skills={skills}
           handleNeverExpires={handleNeverExpires}
           isLoading={isLoading}

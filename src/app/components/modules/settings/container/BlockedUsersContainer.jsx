@@ -2,34 +2,21 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import BlockedUsersPresentation from '../presentation/BlockedUsersPresentation';
 import { useRouter } from 'next/navigation';
-const fetchBlockedUsers = async (query = '') => {
-  const response = await fetch(`http://localhost:5000/blocked?name=${query}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch blocked users');
-  }
-  return response.json();
-};
+import { unblockUser, fetchBlockedUsers } from '@/app/services/privacy';
+import { useToast } from '@/app/context/ToastContext';
 
-const unblockUser = async (userId) => {
-  const response = await fetch(`http://localhost:5000/blocked/${userId}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) {
-    throw new Error('Failed to unblock user');
-  }
-  return userId;
-};
-
-const BlockedUsersContainer = () => {
+const BlockedUsersContainer = ({ toggleForm }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userToUnblock, setUserToUnblock] = useState(null);
   const queryClient = useQueryClient();
-  
+  const pageSize = 10;
+  const showToast = useToast();
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['blockedUsers', searchTerm],
-    queryFn: () => fetchBlockedUsers(searchTerm),
-    staleTime: 1000 * 60 * 5, 
+    queryKey: ['blockedUsers', searchTerm, currentPage],
+    queryFn: () => fetchBlockedUsers(searchTerm, currentPage, pageSize),
+    staleTime: 1000 * 60 * 5,
   });
 
   const router = useRouter();
@@ -39,15 +26,18 @@ const BlockedUsersContainer = () => {
       queryClient.invalidateQueries({ queryKey: ['blockedUsers'] });
       setIsModalOpen(false);
       setUserToUnblock(null);
+      showToast(`${userToUnblock.name} unblocked`);
+
     },
   });
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1);
   };
 
-  const handleUnblockClick = (userId, userName) => {
-    setUserToUnblock({ id: userId, name: userName });
+  const handleUnblockClick = (userId, name) => {
+    setUserToUnblock({ id: userId, name: name });
     setIsModalOpen(true);
   };
 
@@ -63,13 +53,19 @@ const BlockedUsersContainer = () => {
   };
 
   const handleBackClick = () => {
-    return
-};
+    toggleForm();
+  };
 
-const navigateToProfile = (username) => {
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const navigateToProfile = (username) => {
     router.push(`/u/${username}`);
   };
+
   const blockedUsers = data?.blockedUsers || [];
+
 
   return (
     <BlockedUsersPresentation
@@ -85,6 +81,10 @@ const navigateToProfile = (username) => {
       closeModal={handleCloseModal}
       confirmUnblock={handleConfirmUnblock}
       navigateToProfile={navigateToProfile}
+      currentPage={currentPage}
+      onPageChange={handlePageChange}
+      totalCount={data?.totalCount || 0}
+      pageSize={pageSize}
     />
   );
 };

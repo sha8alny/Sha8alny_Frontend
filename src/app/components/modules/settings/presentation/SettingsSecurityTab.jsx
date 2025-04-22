@@ -24,6 +24,7 @@ const SettingsSecurityTab = ({ email, loading, activeForm, setActiveForm }) => {
         <ChangeEmailCard
           toggleForm={() => setActiveForm(null)}
           email={email}
+          
         />
       );
 

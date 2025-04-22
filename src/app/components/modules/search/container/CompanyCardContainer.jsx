@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { followCompany } from "@/app/services/companyManagement";
+import {  followUser } from "@/app/services/connectionManagement";
 import  CompanyCardPresentation  from "@/app/components/modules/search/presentation/CompanyCardPresentation";
 /**
  * @namespace search
@@ -23,6 +23,7 @@ import  CompanyCardPresentation  from "@/app/components/modules/search/presentat
  */
 
  function CompanyCardContainer({
+  companyId,
   companyUsername,
   logo,
   industry,
@@ -36,14 +37,14 @@ import  CompanyCardPresentation  from "@/app/components/modules/search/presentat
   const queryClient = useQueryClient();
 
   const followMutate = useMutation({
-    mutationFn: () => followCompany(companyUsername),
+    mutationFn: () => followUser(companyUsername),
     onSuccess: () => {
       queryClient.invalidateQueries(["searchCompanies"]);
     },
   });
 
   const handleNavigateToCompany = () => {
-    router.push(`/company/${companyUsername}`);
+    router.push(`/company/${companyUsername}/user/about`);
   };
 
   const handleFollowClick = () => {

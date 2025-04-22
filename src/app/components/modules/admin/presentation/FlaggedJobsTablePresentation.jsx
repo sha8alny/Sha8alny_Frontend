@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -96,6 +95,7 @@ export function FlaggedJobsTablePresentation({
           {statusOptions.map((status) => (
             <button
               key={status}
+              data-testid={`flagged-jobs-${status}`}
               onClick={() => toggleStatusFilter(status)}
               className={`text-sm px-2 py-0.5 rounded-md border text-secondary cursor-pointer transition-all duration-200 ${
                 selectedStatuses.includes(status)
@@ -109,134 +109,157 @@ export function FlaggedJobsTablePresentation({
         </div>
         <Select value={sortOrder} onValueChange={setSortOrder}>
           <SelectTrigger className="w-full md:w-[180px]">
-            <SelectValue placeholder="Sort by time" />
+            <SelectValue
+              data-testid="flagged-jobs-sort-time-select"
+              placeholder="Sort by time"
+            />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="asc">Ascending</SelectItem>
-            <SelectItem value="des">Descending</SelectItem>
+            <SelectItem data-testid="flagged-jobs-sort-asc" value="asc">
+              Ascending
+            </SelectItem>
+            <SelectItem data-testid="flagged-jobs-sort-des" value="des">
+              Descending
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
-
-      <div className="rounded-md border text-text">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Job Details</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Flagged By</TableHead>
-              <TableHead>Flagged Date</TableHead>
-              <TableHead className="w-[80px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableSkeleton />
-            ) : isError ? (
+      <div className="h-screen">
+        <div className="rounded-md border text-text  ">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-red-500">
-                  Failed to load reports.
-                </TableCell>
+                <TableHead>Job Details</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Flagged By</TableHead>
+                <TableHead>Flagged Date</TableHead>
+                <TableHead className="w-[80px]">Actions</TableHead>
               </TableRow>
-            ) : (
-              reports.data.map((report) => (
-                <TableRow key={report.jobId}>
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage
-                          src={report.companyData.logo}
-                          alt={report.companyData.name}
-                        />
-                        <AvatarFallback>
-                          {report.companyData.name.substring(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">{report.title}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {report.companyData.name}
-                        </div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={getStatusColor(report.status)}
-                    >
-                      {report.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{report.accountName}</TableCell>
-                  <TableCell>
-                    {new Date(report.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="w-full flex items-center justify-center">
-                          <MoreHorizIcon className="w-10" />
-                          <span className="sr-only">Open menu</span>
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => handleViewDetails(report)}
-                        >
-                          <VisibilityIcon className="mr-2" fontSize="small" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            handleUpdateReport(report._id, "approved");
-                            handleDeleteJob(report.jobId);
-                          }}
-                        >
-                          <CheckCircleIcon className="mr-2" fontSize="small" />
-                          Approve
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleUpdateReport(report._id, "rejected")
-                          }
-                        >
-                          <DeleteIcon className="mr-2" fontSize="small" />
-                          Reject
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleUpdateReport(report._id, "reviewing")
-                          }
-                        >
-                          <EditCalendarIcon className="mr-2" fontSize="small" />
-                          Set Status to Reviewing
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableSkeleton />
+              ) : isError ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-red-500">
+                    Failed to load reports.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : (
+                reports.data.map((report) => (
+                  <TableRow key={report.jobId}>
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={report.companyData.logo}
+                            alt={report.companyData.name}
+                          />
+                          <AvatarFallback>
+                            {report.companyData.name.substring(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{report.title}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {report.companyData.name}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={getStatusColor(report.status)}
+                      >
+                        {report.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{report.accountName}</TableCell>
+                    <TableCell>
+                      {new Date(report.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            data-testid="dropdown-flagged-jobs"
+                            className="w-full flex items-center justify-center"
+                          >
+                            <MoreHorizIcon className="w-10" />
+                            <span className="sr-only">Open menu</span>
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            data-testid="view-details-flagged-jobs"
+                            onClick={() => handleViewDetails(report)}
+                          >
+                            <VisibilityIcon className="mr-2" fontSize="small" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            data-testid="job-approve"
+                            onClick={() => {
+                              handleUpdateReport(report._id, "approved");
+                              handleDeleteJob(report.jobId);
+                            }}
+                          >
+                            <CheckCircleIcon
+                              className="mr-2"
+                              fontSize="small"
+                            />
+                            Approve
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            data-testid="job-reject"
+                            onClick={() =>
+                              handleUpdateReport(report._id, "rejected")
+                            }
+                          >
+                            <DeleteIcon className="mr-2" fontSize="small" />
+                            Reject
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            data-testid="job-review"
+                            onClick={() =>
+                              handleUpdateReport(report._id, "reviewing")
+                            }
+                          >
+                            <EditCalendarIcon
+                              className="mr-2"
+                              fontSize="small"
+                            />
+                            Set Status to Reviewing
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-      <div className="flex justify-between mt-4">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((prev) => prev - 1)}
-          className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-        >
-          Previous
-        </button>
-        <button
-          disabled={!reports.data?.nextPage || isFetching}
-          onClick={() => setPage((prev) => prev + 1)}
-          className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-        >
-          {isFetching ? "Loading..." : "Next"}
-        </button>
+        <div className="flex justify-between mt-4">
+          <button
+            data-testid="flagged-jobs-prev"
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+            className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <button
+            data-testid="flagged-jobs-next"
+            disabled={!reports.data?.nextPage || isFetching}
+            onClick={() => setPage((prev) => prev + 1)}
+            className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          >
+            {isFetching ? "Loading..." : "Next"}
+          </button>
+        </div>
       </div>
 
       <FlaggedJobModal

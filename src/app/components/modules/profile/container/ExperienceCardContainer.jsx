@@ -67,7 +67,8 @@ function calculateDate(from, to, isCurrent = false) {
       console.warn("Negative duration detected:", { from, to });
       return "Invalid date range";
     }
-
+    
+    if (months === 0 && years === 0) return "1 mth(s)";
     if (years === 0) return `${months} mth(s)`;
     if (months === 0) return `${years} yr(s)`;
     return `${years} yr(s), ${months} mth(s)`;

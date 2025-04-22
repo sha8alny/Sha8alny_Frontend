@@ -8,6 +8,18 @@ import {
   VideocamOutlined,
 } from "@mui/icons-material";
 import { Button } from "@/app/components/ui/Button";
+import { XIcon } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/components/ui/Avatar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/Popover";
+import { Badge } from "@/app/components/ui/Badge";
 
 export default function PostButtonPresentation({
   text,
@@ -34,6 +46,12 @@ export default function PostButtonPresentation({
   videoInputRef,
   userInfo,
   isLoading,
+  tagPopoverOpen,
+  setTagPopoverOpen,
+  taggedUserPopoverOpen,
+  setTaggedUserPopoverOpen,
+  tagInput,
+  setTagInput,
 }) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -47,7 +65,7 @@ export default function PostButtonPresentation({
           />
         </div>
         <div className="flex flex-col">
-          <h4 className="text-primary font-bold">{userInfo?.name}</h4>
+          <h4 className="text-primary text-start font-bold">{userInfo?.name}</h4>
           <p className="text-sm text-muted">{userInfo?.headline}</p>
         </div>
       </div>
@@ -83,9 +101,7 @@ export default function PostButtonPresentation({
           ))}
           {/* For single video file */}
           {videos && (
-            <div
-              className="relative w-24 min-h-24 bg-gray-700 rounded-lg mb-4"
-            >
+            <div className="relative w-24 min-h-24 bg-gray-700 rounded-lg mb-4">
               <video
                 src={URL.createObjectURL(videos)}
                 controls
@@ -102,6 +118,48 @@ export default function PostButtonPresentation({
             </div>
           )}
         </div>
+        {/* Display tags and tagged users if any */}
+        {(tags.length > 0 || taggedUsers.length > 0) && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <div
+                key={tag}
+                className="flex items-center gap-1 px-2 py-1 bg-secondary rounded-2xl text-background dark:text-primary"
+              >
+                <span className="text-background dark:text-primary font-semibold text-xs flex items-center">
+                  #{tag}
+                </span>
+
+                <button
+                  onClick={() => onRemoveTag(tag)}
+                  className="px-1 py-1 rounded-full hover:bg-background/20 duration-200 cursor-pointer ml-1"
+                >
+                  <XIcon className="size-3" />
+                </button>
+              </div>
+            ))}
+
+            {taggedUsers.map((user) => (
+              <Badge
+                key={user?._id}
+                variant="outline"
+                className="flex items-center gap-1 px-2 py-1 bg-muted/50"
+              >
+                <Avatar className="h-5 w-5 mr-1">
+                  <AvatarImage src={user?.profilePicture} alt={user?.fullName} />
+                  <AvatarFallback>{user?.fullName?.substring(0,2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                {user?.fullName}
+                <button
+                  onClick={() => onRemoveTaggedUser(user?._id)}
+                  className="h-4 w-4 rounded-full hover:bg-primary/20 duration-200 cursor-pointer flex items-center justify-center ml-1"
+                >
+                  <XIcon className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        )}
         <Separator />
         <div className="flex gap-2 mt-4 justify-between items-center">
           <span className="text-sm font-semibold">Add to your post</span>
@@ -126,13 +184,51 @@ export default function PostButtonPresentation({
             >
               <VideocamOutlined sx={{ fontSize: "1rem" }} />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full text-yellow-500 cursor-pointer"
-            >
-              <LocalOfferOutlined sx={{ fontSize: "1rem" }} />
-            </Button>
+
+            {/* Tag popover */}
+            <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-yellow-500 cursor-pointer"
+                >
+                  <LocalOfferOutlined sx={{ fontSize: "1rem" }} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-3" align="start">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold">
+                    Add tags to your post
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={onAddTag}
+                      className="flex-1 h-9 px-3 rounded-md border border-input bg-transparent text-sm ring-offset-background"
+                      placeholder="Add a tag..."
+                    />
+                    <Button
+                      size="sm"
+                      disabled={!tagInput.trim()}
+                      onClick={() => {
+                        if (
+                          tagInput.trim() &&
+                          !tags.includes(tagInput.trim())
+                        ) {
+                          setTags([...tags, tagInput.trim()]);
+                          setTagInput("");
+                        }
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button
               variant="ghost"
               size="icon"

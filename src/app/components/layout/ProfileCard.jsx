@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Container from "./Container";
-import { LocationCity } from "@mui/icons-material";
+import { LocationCity, Work } from "@mui/icons-material";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/Avatar";
 
 export default function ProfileCard({ userInfo, navigateTo }) {
   return (
-    <Container className="w-full dark:border dark:border-[#111] rounded-2xl shadow-lg">
+    <Container className="w-full border dark:border-[#111] rounded-2xl shadow-lg">
       <div className="relative w-full flex">
         <div className="absolute top-0 left-0 w-full h-20 bg-gray-700 rounded-t-xl">
           <Image
@@ -14,14 +15,15 @@ export default function ProfileCard({ userInfo, navigateTo }) {
             className="rounded-t-xl object-cover"
           />
         </div>
-        <div className="relative w-16 h-16 z-10 ml-4 bg-gray-600 rounded-full border-2 border-foreground mt-10">
-          <Image
-            src={userInfo?.profilePicture}
-            alt="User Avatar"
-            fill
-            className="rounded-full"
-          />
-        </div>
+        <Avatar
+          className="relative size-16 z-10 ml-4 rounded-full border-2 border-foreground mt-10 cursor-pointer"
+          onClick={() => navigateTo(`/u/${userInfo?.username}`)}
+        >
+          <AvatarImage src={userInfo?.profilePicture} alt={userInfo?.name} />
+          <AvatarFallback>
+            {userInfo?.name.substring(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
       </div>
       <div className="px-4 pt-1 flex flex-col pb-4">
         <button
@@ -32,7 +34,7 @@ export default function ProfileCard({ userInfo, navigateTo }) {
         </button>
         <p className="text-muted text-sm mb-2">{userInfo?.headline}</p>
         <div className="flex items-center gap-1">
-          <LocationCity className="text-muted" sx={{ fontSize: 18 }} />
+          <LocationCity className="text-muted" sx={{ fontSize: "1rem" }} />
           <p className="text-muted text-xs">{userInfo?.location}</p>
         </div>
       </div>

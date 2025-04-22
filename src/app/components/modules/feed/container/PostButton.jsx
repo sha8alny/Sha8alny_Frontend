@@ -1,9 +1,11 @@
 import DialogMod from "@/app/components/ui/DialogMod";
-import { fetchUserConnections } from "@/app/services/getUserConnections";
+import { fetchUserConnections } from "@/app/services/userProfile";
 import { createPost } from "@/app/services/post";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import PostButtonPresentation from "../presentation/PostButtonPresentation";
+import { useToast } from "@/app/context/ToastContext";
+import { updateSessionTime } from "@/app/utils/sessionTime";
 
 export default function PostButton({ userInfo }) {
   const [text, setText] = useState("");
@@ -18,9 +20,12 @@ export default function PostButton({ userInfo }) {
   const [error, setError] = useState(null);
   const [currentState, setCurrentState] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
+  const [taggedUserPopoverOpen, setTaggedUserPopoverOpen] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
+  const toast = useToast();
   const queryClient = useQueryClient();
 
   const { data: usersFound } = useQuery({
@@ -38,13 +43,18 @@ export default function PostButton({ userInfo }) {
   const handlePostMutation = useMutation({
     mutationFn: (formData) => createPost(formData),
     onSuccess: () => {
-      setIsLoading(false);
       setCurrentState(2);
       setText("");
       setImages([]);
       setVideos(null);
       setError(null);
+      setTaggedUsers([]);
+      setTags([]);
+      setTaggedUser("");
+      setTag("");
+      toast("Post created successfully!");
       setTimeout(() => {
+        setIsLoading(false);
         setOpen(false);
         setCurrentState(0);
       }, 2000);
@@ -56,6 +66,12 @@ export default function PostButton({ userInfo }) {
       setImages([]);
       setError(null);
       setVideos(null);
+      setTaggedUsers([]);
+      setTags([]);
+      setTaggedUser("");
+      setTag("");
+      toast("Error creating post. Please try again.", false);
+      setIsLoading(false);
       setTimeout(() => {
         setOpen(false);
         setCurrentState(0);
@@ -64,8 +80,12 @@ export default function PostButton({ userInfo }) {
   });
 
   const handlePost = () => {
-    if (text.trim() === "" && images.length === 0 && !videos) {
-      setError("Please add text or media to your post.");
+    if (text.trim() === "") {
+      setError("Please add text to your post.");
+      return;
+    }
+    if (text.length > 1000) {
+      setError("Post is too long. Please keep it under 1000 characters.");
       return;
     }
     setError(null);
@@ -88,27 +108,40 @@ export default function PostButton({ userInfo }) {
 
   const handleAddMedia = (media) => {
     const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-    const MAX_IMAGE_COUNT = 10; // 10 images
+    const MAX_IMAGE_COUNT = 20; // 20 images
     const MAX_VIDEO_COUNT = 1; // 1 video
 
     if (media.size > MAX_SIZE) {
-      setError(`File too large. Please keep files under ${MAX_SIZE / (1024 * 1024)}MB.`);
+      setError(
+        `File too large. Please keep files under ${MAX_SIZE / (1024 * 1024)}MB.`
+      );
       return;
     }
 
     if (media.type.startsWith("image/")) {
-      const supportedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      const supportedImageTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
       if (!supportedImageTypes.includes(media.type)) {
-        setError("Unsupported image format. Please use JPEG, PNG, GIF or WebP.");
+        setError(
+          "Unsupported image format. Please use JPEG, PNG, GIF or WebP."
+        );
         return;
       }
       if (images.length > MAX_IMAGE_COUNT) {
-        setError(`You can only upload ${MAX_IMAGE_COUNT} image(s) at a time. Please remove the existing image(s) first.`);
+        setError(
+          `You can only upload ${MAX_IMAGE_COUNT} image(s) at a time. Please remove the existing image(s) first.`
+        );
         return;
       }
-      
+
       if (videos) {
-        setError("You can only upload one type of media at a time. Please remove videos first.");
+        setError(
+          "You can only upload one type of media at a time. Please remove videos first."
+        );
         return;
       }
       setImages((prev) => [...prev, media]);
@@ -120,18 +153,24 @@ export default function PostButton({ userInfo }) {
         return;
       }
       if (videos) {
-        setError(`You can only upload ${MAX_VIDEO_COUNT} video(s) at a time. Please remove the existing video(s) first.`);
+        setError(
+          `You can only upload ${MAX_VIDEO_COUNT} video(s) at a time. Please remove the existing video(s) first.`
+        );
         return;
       }
-      
+
       if (images.length > 0) {
-        setError("You can only upload one type of media at a time. Please remove images first.");
+        setError(
+          "You can only upload one type of media at a time. Please remove images first."
+        );
         return;
       }
       setVideos(media);
       setError(null);
     } else {
-      setError("Unsupported media type. Please upload an image (JPEG, PNG, GIF, WebP) or video (MP4, WebM).");
+      setError(
+        "Unsupported media type. Please upload an image (JPEG, PNG, GIF, WebP) or video (MP4, WebM)."
+      );
     }
   };
 
@@ -154,8 +193,8 @@ export default function PostButton({ userInfo }) {
     }
   };
 
-  const handleRemoveTag = (index) => {
-    setTags((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove))
   };
 
   const handleAddTaggedUser = () => {
@@ -174,7 +213,7 @@ export default function PostButton({ userInfo }) {
       open={open}
       onOpenChange={setOpen}
       useRegularButton
-      buttonClass="w-full drop-shadow-lg mt-2 h-14 bg-secondary hover:bg-secondary/90 cursor-pointer ease-in-out duration-500 text-background dark:border dark:border-[#111] rounded-2xl font-bold p-2"
+      buttonClass="w-full drop-shadow-lg mt-2 h-14 bg-secondary hover:bg-secondary/90 cursor-pointer ease-in-out duration-500 text-background border dark:border-[#111] rounded-2xl font-bold p-2"
       buttonData="Post"
       className="bg-foreground"
       AlertContent={
@@ -203,6 +242,12 @@ export default function PostButton({ userInfo }) {
           videoInputRef={videoInputRef}
           userInfo={userInfo}
           isLoading={isLoading}
+          tagPopoverOpen={tagPopoverOpen}
+          setTagPopoverOpen={setTagPopoverOpen}
+          taggedUserPopoverOpen={taggedUserPopoverOpen}
+          setTaggedUserPopoverOpen={setTaggedUserPopoverOpen}
+          tagInput={tag}
+          setTagInput={setTag}
         />
       }
     />

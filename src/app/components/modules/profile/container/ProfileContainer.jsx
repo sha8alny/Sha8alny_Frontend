@@ -1,10 +1,16 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "@/app/services/userProfile";
-import ProfilePresentation, { ProfileSkeleton } from "../presentation/ProfilePresentation";
-import { IsMyProfileProvider, useIsMyProfile } from "@/app/context/IsMyProfileContext";
+import ProfilePresentation, {
+  ProfileSkeleton,
+} from "../presentation/ProfilePresentation";
+import {
+  IsMyProfileProvider,
+  useIsMyProfile,
+} from "@/app/context/IsMyProfileContext";
 import { useEffect } from "react";
-
+import { useToast } from "@/app/context/ToastContext";
+import { useState } from "react";
 
 /**
  * @namespace profile
@@ -60,8 +66,8 @@ const getStrengthColor = (strength) => {
 };
 
 /**
- * 
- * @param {string} username - The username of the profile to display 
+ *
+ * @param {string} username - The username of the profile to display
  * @returns {JSX.Element} Returns the ProfileContainer component
  */
 export const ProfileContainer = ({ username }) => {
@@ -72,7 +78,7 @@ export const ProfileContainer = ({ username }) => {
       </div>
     );
   }
-  
+
   return (
     <IsMyProfileProvider>
       <ProfileContent username={username} />
@@ -82,10 +88,10 @@ export const ProfileContainer = ({ username }) => {
 
 /**
  * Renders the content of a user's profile page.
- * 
+ *
  * @param {Object} props - The component props
  * @param {string} props.username - The username of the profile to display
- * 
+ *
  * @returns {JSX.Element} Returns one of the following:
  * - A loading skeleton while data is being fetched
  * - An error message if fetching fails
@@ -100,18 +106,43 @@ export const ProfileContainer = ({ username }) => {
  */
 function ProfileContent({ username }) {
   const { setIsMyProfile } = useIsMyProfile();
-  
+  const toast = useToast();
+  const [copied, setCopied] = useState(false);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const [hoverCover, setHoverCover] = useState(false);
+  const [hoverProfile, setHoverProfile] = useState(false);
+
+  const openFullscreen = (imageUrl) => {
+    setFullscreenImage(imageUrl);
+    document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+  };
+
+  const closeFullscreen = () => {
+    setFullscreenImage(null);
+    document.body.style.overflow = ""; // Restore scrolling
+  };
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleEmail = (email) => {
+    window.location.href = `mailto:${email}`;
+  };
+
   const {
     data: userProfile,
     isLoading,
     isError,
-    error
+    error,
   } = useQuery({
     queryKey: ["userProfile", username],
     queryFn: () => fetchUserProfile(username),
+    retry: 0,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-  
+
   useEffect(() => {
     if (!userProfile) return;
     if (userProfile?.isMyProfile) {
@@ -124,7 +155,7 @@ function ProfileContent({ username }) {
   if (isError) {
     let errorMessage = "Error fetching user profile.";
     console.log("Error details:", error);
-    
+
     if (error?.response?.status) {
       const status = error.response.status;
       switch (status) {
@@ -164,16 +195,17 @@ function ProfileContent({ username }) {
     strength,
     label: getStrengthLabel(strength),
     color: getStrengthColor(strength),
-    hasProfile: !!userProfile?.profilePicture && userProfile?.profilePicture !== "",
+    hasProfile:
+      !!userProfile?.profilePicture && userProfile?.profilePicture !== "",
     hasAbout: userProfile?.about != null && userProfile?.about !== "",
     hasEducation: userProfile?.education?.length > 0,
-    hasExperience: userProfile?.experience?.length > 0, 
+    hasExperience: userProfile?.experience?.length > 0,
     hasSkills: userProfile?.skills?.length > 0,
     hasConnections: userProfile?.connectionsCount > 0,
   };
 
   const changeRelation = (relation) => {
-    switch (relation){
+    switch (relation) {
       case 0:
         return "3rd+";
       case 1:
@@ -185,15 +217,24 @@ function ProfileContent({ username }) {
       default:
         return "";
     }
-  }
-
-  console.log(userProfile)
+  };
 
   return (
     <ProfilePresentation
-      userProfile={{...userProfile, relation: changeRelation(userProfile?.relation)}}
+      userProfile={{
+        ...userProfile,
+        relation: changeRelation(userProfile?.relation),
+      }}
+      onEmail={handleEmail}
+      onCopy={copyToClipboard}
+      copied={copied}
       profileStrength={profileStrength}
       isMyProfile={userProfile?.isMyProfile || false}
+      fullscreenImage={fullscreenImage}
+      setHoverCover={setHoverCover}
+      setHoverProfile={setHoverProfile}
+      openFullscreen={openFullscreen}
+      closeFullscreen={closeFullscreen}
     />
   );
 }

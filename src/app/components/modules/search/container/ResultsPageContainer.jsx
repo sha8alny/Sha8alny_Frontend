@@ -34,25 +34,45 @@ import ResultsPagePresentation from "@/app/components/modules/search/presentatio
  */
 const ResultsPageContainer = () => {
   const searchParams = useSearchParams();
-  const keyword = searchParams.get("keyword") || "";
   const type = searchParams.get("type") || "company";
   const [currentPage, setCurrentPage] = useState(1);
-
+  
   const [nameFilter, setNameFilter] = useState("");
   const [companyFilter, setCompanyFilter] = useState("");
   const [industryFilter, setIndustryFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const keyword = nameFilter == ""? searchParams.get("keyword"): nameFilter;
+  const [connectionDegree, setConnectionDegree] = useState("");
+  const [companyIndustryFilter, setCompanyIndustryFilter] = useState("");
+  const [orgSizeFilter, setOrgSizeFilter] = useState("");
+  const [orgTypeFilter, setOrgTypeFilter] = useState("");
+  
+  const [tempName, setTempName] = useState(nameFilter);
+  const [tempCompany, setTempCompany] = useState(companyFilter);
+  const [tempIndustry, setTempIndustry] = useState(industryFilter);
+  const [tempLocation, setTempLocation] = useState(locationFilter);
+  const [tempCompanyIndustry, setTempCompanyIndustry] = useState(companyIndustryFilter);
+
+  useEffect(() => {
+    setTempName(nameFilter);
+    setTempCompany(companyFilter);
+    setTempIndustry(industryFilter);
+    setTempLocation(locationFilter);
+    setTempCompanyIndustry(companyIndustryFilter);
+  }, [nameFilter, companyFilter, industryFilter, locationFilter, companyIndustryFilter]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [keyword, type]);
-
+  }, [ type]);
+  
+  
   const queryFn = () => {
     if (type === "user") {
-      return searchUser(keyword, industryFilter, companyFilter, currentPage);
+      return searchUser(keyword, industryFilter, companyFilter, locationFilter, connectionDegree, currentPage, 10);
     } else if (type === "post") {
       return searchPost(keyword, currentPage);
-    } else {
-      return searchCompany(keyword, currentPage);
+    } else if (type == "company") {
+      return searchCompany(keyword,currentPage, companyIndustryFilter, locationFilter, orgSizeFilter, orgTypeFilter, currentPage, 10);
     }
   };
 
@@ -60,18 +80,23 @@ const ResultsPageContainer = () => {
     data: results,
     isLoading,
     isError,
+    error
   } = useQuery({
     queryKey: [
       "search",
       type,
       keyword,
-      currentPage,
-      nameFilter,
-      companyFilter,
       industryFilter,
+      companyFilter,
+      locationFilter,
+      connectionDegree,
+      companyIndustryFilter,
+      orgSizeFilter,
+      orgTypeFilter,
+      currentPage
     ],
     queryFn,
-    enabled: !!keyword,
+    retry:1,
     keepPreviousData: true,
   });
 
@@ -96,9 +121,30 @@ const ResultsPageContainer = () => {
       nameFilter={nameFilter}
       companyFilter={companyFilter}
       industryFilter={industryFilter}
+      locationFilter={locationFilter}
+      connectionDegree={connectionDegree}
+      companyIndustryFilter={companyIndustryFilter}
+      orgSizeFilter={orgSizeFilter}
+      orgTypeFilter={orgTypeFilter}
       setNameFilter={setNameFilter}
       setCompanyFilter={setCompanyFilter}
       setIndustryFilter={setIndustryFilter}
+      setLocationFilter={setLocationFilter}
+      setConnectionDegree={setConnectionDegree}
+      setCompanyIndustryFilter={setCompanyIndustryFilter}
+      setOrgSizeFilter={setOrgSizeFilter}
+      setOrgTypeFilter={setOrgTypeFilter}
+      tempName={tempName}
+      setTempName={setTempName}
+      tempCompany={tempCompany}
+      setTempCompany={setTempCompany}
+      tempIndustry={tempIndustry}
+      setTempIndustry={setTempIndustry}
+      tempLocation={tempLocation}
+      setTempLocation={setTempLocation}
+      tempCompanyIndustry={tempCompanyIndustry}
+      setTempCompanyIndustry={setTempCompanyIndustry}
+      error={error}
     />
   );
 };
