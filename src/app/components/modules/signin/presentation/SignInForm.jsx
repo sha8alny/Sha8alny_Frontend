@@ -45,6 +45,7 @@ const SignInForm = ({
     isSubmitting,
     error,
     handleChange,
+    handleGoogleSignIn
 }) => {
 
 return(
@@ -113,7 +114,8 @@ return(
                 <button
                     data-testid="google-signin-button"
                     type="submit"
-                    className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300">
+                    className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
+                    onClick={handleGoogleSignIn}>
                   <img src="/google-color-svgrepo-com.svg" alt="Google Logo" className="w-6 h-6 inline-block mr-2.5" />
 
                     Continue with Google
