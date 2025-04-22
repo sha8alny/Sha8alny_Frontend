@@ -205,7 +205,6 @@ export const handleSignup = async ({ username,email,password, isAdmin, recaptcha
 
     if (!signupResponse.ok) throw new Error("Failed to signup");
 
-
     const loginResponse = await handleSignIn({email,password, rememberMe});
     if (!loginResponse) throw new Error("Failed to login");
     return {success:true};
@@ -361,6 +360,30 @@ export const handleResetPassword = async (resetCode,newPassword)=>{
     return { success: false, message: error.message };
   }
 };
+
+export const handleGoogleSignIn = async (token) => {
+  try {
+    const response = await fetch(`${apiURL}/google-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code:token }),
+    });
+
+    if (!response.ok) throw new Error("Login failed");
+
+    const { accessToken, refreshToken, isComplete } = await response.json();
+    if (accessToken) {
+      sessionStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("isProfileComplete", isComplete);
+      return { success: true };
+    }
+    return { success: false, message: "Login failed" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: error.message };
+  }
+}
 
 export const handleLogout = async () => {
   sessionStorage.removeItem("accessToken");
