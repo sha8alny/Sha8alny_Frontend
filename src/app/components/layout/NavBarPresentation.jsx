@@ -15,6 +15,7 @@ import {
   LightMode as Sun,
   Person as User,
   Menu as MenuIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import Image from "next/image";
 import {
@@ -150,11 +151,50 @@ export default function NavbarPresentation({
   open,
   setOpen,
   handleLogOut,
+  showMobileSearch,
+  setShowMobileSearch,
+  searchQuery,
+  setSearchQuery,
+  handleSearch
 }) {
+
+
   return (
-    <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6">
+    <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6 relative">
+      {/* Mobile Search Overlay - this will slide in from top when activated */}
+      {showMobileSearch && (
+        <div className="absolute inset-0 bg-foreground z-50 px-4 py-3 flex items-center animate-in slide-in-from-top duration-300">
+          <div className="relative flex-1 flex items-center">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-secondary text-primary pr-20"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
+              autoFocus
+            />
+            <div className="absolute right-12 top-1/2 -translate-y-1/2">
+              <Button 
+                size="sm"
+                className="h-8 bg-secondary hover:bg-secondary/80 text-background rounded-full px-3"
+                onClick={handleSearch}
+              >
+                <Search sx={{ fontSize: 18 }} />
+              </Button>
+            </div>
+            <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-primary rounded-full hover:bg-primary/10"
+              onClick={() => setShowMobileSearch(false)}
+            >
+              <CloseIcon sx={{ fontSize: 20 }} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Menu */}
-      <div className="md:hidden flex items-center">
+      <div className="lg:hidden flex items-center">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button
@@ -292,30 +332,33 @@ export default function NavbarPresentation({
             SHA<span className="text-secondary">غ</span>ALNY
           </span>
         </div>
-        <div className="ml-4 relative hidden lg:block">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
-            onKeyDown={(e) => {
-              console.log("i searched");
-              if (e.key === "Enter") {
-                const query = e.target.value.trim();
-                if (query) {
-                  navigateTo(`/search/all?query=${encodeURIComponent(query)}`);
-                }
-              }
-            }}
-          />
-          <Search
-            className="absolute right-3 top-2.5 text-gray-500"
-            sx={{ fontSize: 20 }}
-          />
+
+        {/* Desktop Search Bar - Hidden on small screens */}
+        <div className="ml-4 relative hidden lg:block flex-1 max-w-md">
+          <div className="relative group">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full 
+                focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent 
+                text-primary transition-all duration-300 
+                group-hover:shadow-md group-hover:border-secondary/70"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
+            />
+            <Search
+              className="absolute right-3 top-2.5 text-gray-500 cursor-pointer transition-colors duration-300 
+                hover:text-secondary"
+              sx={{ fontSize: 20 }}
+              onClick={handleSearch}
+            />
+          </div>
         </div>
       </section>
 
       {/* Nav Icons - Hidden on mobile */}
-      <section className="hidden md:flex w-full gap-4 justify-center">
+      <section className="hidden lg:flex w-full gap-4 justify-center">
         {navIcons.map((icon, index) => (
           <Icon
             key={index}
@@ -328,6 +371,16 @@ export default function NavbarPresentation({
 
       {/* User Profile Section */}
       <section className="flex gap-3 p-3 text-primary justify-end items-center w-full ml-auto">
+        {/* Mobile Search Button - Only visible on small-medium screens */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden text-primary cursor-pointer hover:bg-primary/10 rounded-full "
+          onClick={() => setShowMobileSearch(true)}
+        >
+          <Search className="text-neutral-400" sx={{ fontSize: 20 }} />
+        </Button>
+
         {/* Notification Icons - Hidden on mobile */}
         <div className="hidden md:flex gap-3">
           {[
@@ -388,7 +441,7 @@ export default function NavbarPresentation({
         <button
           onClick={toggleTheme}
           title="Toggle Theme"
-          className="ml-4 p-2 cursor-pointer rounded-lg hover:bg-primary/10"
+          className="hidden md:flex ml-4 p-2 cursor-pointer rounded-lg hover:bg-primary/10"
         >
           {theme === "dark" ? (
             <Sun sx={{ fontSize: 20 }} />
@@ -422,8 +475,35 @@ export const NavBarPresentationSkeleton = ({
   open,
   setOpen,
 }) => {
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+
   return (
     <nav className="w-full flex justify-center bg-foreground drop-shadow-md sticky top-0 z-30 px-6">
+      {/* Mobile Search Overlay Skeleton */}
+      {showMobileSearch && (
+        <div className="absolute inset-0 bg-foreground z-50 px-4 py-3 flex items-center animate-in slide-in-from-top duration-300">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search..."
+              disabled={isLoading}
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-secondary text-primary pr-10"
+              autoFocus
+            />
+            <Search
+              className="absolute right-10 top-2.5 text-gray-500"
+              sx={{ fontSize: 20 }}
+            />
+            <button
+              className="absolute right-2 top-2.5 text-gray-500 hover:text-primary"
+              onClick={() => setShowMobileSearch(false)}
+            >
+              <CloseIcon sx={{ fontSize: 20 }} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Menu - Skeleton */}
       <div className="md:hidden flex items-center">
         <Sheet open={open} onOpenChange={setOpen}>
@@ -541,17 +621,21 @@ export const NavBarPresentationSkeleton = ({
             SHA<span className="text-secondary">غ</span>ALNY
           </span>
         </div>
-        <div className="ml-4 relative hidden lg:block">
-          <input
-            type="text"
-            placeholder="Search..."
-            disabled={isLoading}
-            className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
-          />
-          <Search
-            className="absolute right-3 top-2.5 text-gray-500"
-            sx={{ fontSize: 20 }}
-          />
+
+        {/* Desktop Search Bar Skeleton - Hidden on small screens */}
+        <div className="ml-4 relative hidden lg:block flex-1 max-w-md">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              disabled={isLoading}
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-secondary text-primary"
+            />
+            <Search
+              className="absolute right-3 top-2.5 text-gray-500"
+              sx={{ fontSize: 20 }}
+            />
+          </div>
         </div>
       </section>
 
@@ -569,6 +653,16 @@ export const NavBarPresentationSkeleton = ({
 
       {/* User Profile Section */}
       <section className="flex gap-3 p-3 text-primary justify-end items-center w-full ml-auto">
+        {/* Mobile Search Button for Skeleton - Only visible on small-medium screens */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden  cursor-pointer hover:bg-primary/10 rounded-full"
+          onClick={() => setShowMobileSearch(true)}
+        >
+          <Search sx={{ fontSize: 20 }} />
+        </Button>
+
         {/* Notification Icons Skeleton - Hidden on mobile */}
         {isLoading && (
           <div className="hidden md:flex gap-3">
