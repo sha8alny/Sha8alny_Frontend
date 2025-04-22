@@ -22,10 +22,13 @@ export const fetchWithAuth = async (url, options = {}) => {
       const page = parseInt(pageNum, 10);
       console.log("page", page);
   
-      let sessionTime =
-        page === 1 || !getSessionTime()
-          ? getOrCreateSessionTime()
-          : getSessionTime();
+      console.log("sessionTime", getSessionTime());
+      let sessionTime = getSessionTime();
+      
+      if (!sessionTime || page === 1) {
+        console.log("yeah i am setting session time");
+        sessionTime = await getOrCreateSessionTime(page);
+      }
   
       if (sessionTime) {
         urlObj.searchParams.set("sessionTime", sessionTime);
