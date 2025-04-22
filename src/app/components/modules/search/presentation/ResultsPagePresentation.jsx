@@ -363,6 +363,7 @@ const ResultsPagePresentation = ({
   setTempLocation,
   tempCompanyIndustry,
   setTempCompanyIndustry,
+  error
 }) => {
 
   if (type === "post") {
@@ -397,7 +398,7 @@ const ResultsPagePresentation = ({
             data-testid="search-results-card"
           >
             {isError && (
-              <p className="text-gray-400 text-sm">Error loading results.</p>
+              <p className="text-gray-400 text-sm">{error.message}</p>
             )}
 
             {results?.length > 0 ? (
@@ -417,6 +418,7 @@ const ResultsPagePresentation = ({
                         key={item.id || index}
                         username={item.username}
                         name={item.name}
+                        avatarUrl={item.profilePicture}
                         position={item.position}
                         company={item.company}
                         headline={item.headline}

@@ -28,6 +28,7 @@ import  CompanySectionAllPresentation  from "../presentation/CompanySectionAllPr
   } = useQuery({
     queryKey: ["searchCompanies", query],
     queryFn: () => searchCompany(query, 1),
+  retry:1
   });
 
   const router = useRouter();

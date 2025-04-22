@@ -58,7 +58,7 @@ export const searchUser = async (
   pageSize = 10
 ) => {
   const response = await fetchWithAuth(
-    `http://localhost:5000/users/search/${pageNum}/${pageSize}?text=${encodeURIComponent(
+    `${apiURL}/users/search/${pageNum}/${pageSize}?name=${encodeURIComponent(
       name
     )}&industry=${encodeURIComponent(
       industry || ""
@@ -75,7 +75,13 @@ export const searchUser = async (
     }
   );
 
-  const data = await response.json();
+  let data;
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    data = null;
+  }
 
   if (!response.ok) {
     const message = data?.message || data?.error || "Failed to search users";
@@ -122,7 +128,7 @@ export const searchPosts = async (keyword = "", pageNum) => {
   const formattedKeyword = transformKeyword(keyword);
 
   const response = await fetchWithAuth(
-    `http://localhost:5000/search/posts?keyword=${formattedKeyword}&pageNum=${pageNum}`,
+    `${apiURL}/search/posts?keyword=${formattedKeyword}&pageNum=${pageNum}`,
     {
       method: "GET",
       headers: {

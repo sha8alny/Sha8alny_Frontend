@@ -26,8 +26,9 @@ const PeopleSectionAllContainer = (query) => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["searchUsers"],
-    queryFn: () => searchUser(query.query, "", "", 1),
+    queryKey: ["searchUsers", query.query],
+    queryFn: () => searchUser(query.query),
+    retry:1
   });
 
   const handleViewMore = () => {
