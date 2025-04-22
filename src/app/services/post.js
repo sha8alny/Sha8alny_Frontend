@@ -161,6 +161,19 @@ export const deletePost = async (postId) => {
   return "Post deleted successfully";
 };
 
+export const repostPost = async (postId) => {
+  const response = await fetchWithAuth(`${apiURL}/posts/${postId}/share`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to repost post");
+  }
+  return response.json();
+};
+
 /**
  * Get comments or replies for a post with pagination
  * @param {string} postId - The ID of the post
@@ -214,8 +227,8 @@ export async function reactToContent(
     if (commentId) {
       url += `?commentId=${commentId}`;
     }
-
-    const bodyContent = !remove ? { reaction } : undefined;
+    const safeReaction = typeof reaction === "string" ? reaction : "Like";
+    const bodyContent = !remove ? { reaction: safeReaction } : undefined;
 
     const response = await fetchWithAuth(url, {
       method: remove ? "DELETE" : "POST",
@@ -454,4 +467,26 @@ export const determineAge = (createdAt) => {
   } else {
     return `${seconds}s`;
   }
+};
+
+export const fetchTrendingTopics = async () => {
+  const response = await fetchWithAuth(
+    `${process.env.NEXT_PUBLIC_API_URL}/trends`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch trending topics");
+  }
+  if (response.status === 204) {
+    return [];
+  }
+  return response.json();
+};
+
+export const getComment = async (postId, commentId) => {
+  const apiURL = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetchWithAuth(
+    `${apiURL}/posts/${postId}/comment/${commentId}`
+  );
+  if (!response.ok) throw new Error("Failed to fetch comment");
+  return await response.json();
 };

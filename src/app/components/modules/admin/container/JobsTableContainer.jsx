@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchJobListingsPageNumber } from "@/app/services/jobs";
+import { fetchJobListings } from "@/app/services/jobs";
 import { deleteJob } from "@/app/services/admin";
 import { useToast } from "@/app/context/ToastContext";
 import { JobsTablePresentation } from "../presentation/JobsTablePresentation";
+import { useRouter } from "next/navigation";
 /**
  * @namespace admin
  * @module admin
@@ -21,13 +22,34 @@ import { JobsTablePresentation } from "../presentation/JobsTablePresentation";
 
 export function JobsTableContainer() {
   const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const router = useRouter();
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+      setPage(1);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["jobsAdmin", page],
-    queryFn: () => fetchJobListingsPageNumber({ pageParam: page }),
-    keepPreviousData: true,
+    queryKey: ["jobsAdmin", debouncedQuery, page],
+    queryFn: () =>
+      fetchJobListings({
+        pageParam: page,
+        filters: { keyword: debouncedQuery }, 
+        itemsPerPage: 5,
+      }),
+    keepPreviousData: true, 
   });
 
+  const handleJobClick = (jobId) => {
+    router.push("/jobs/" + jobId);
+  }
+  
   const queryClient = useQueryClient();
   const showToast = useToast();
 
@@ -55,6 +77,8 @@ export function JobsTableContainer() {
       setPage={setPage}
       isFetching={isFetching}
       data={data}
+      handleJobClick={handleJobClick} 
+      setQuery={setQuery}
     />
   );
 }

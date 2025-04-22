@@ -4,6 +4,7 @@ import ExperienceCardContainer from "../container/ExperienceCardContainer";
 import Container from "@/app/components/layout/Container";
 import ModExperience from "../container/ModExperience";
 import { Separator } from "@/app/components/ui/Separator";
+import { Business } from "@mui/icons-material";
 
 /**
  * @namespace profile
@@ -33,24 +34,15 @@ import { Separator } from "@/app/components/ui/Separator";
 export const ExperienceCard = ({ job, duration, isMyProfile }) => {
   return (
     <div className="flex gap-2">
-      <div className="relative size-12 bg-gray-700 rounded-full">
-        <Image
-          src={
-            job?.image && job?.image !== ""
-              ? job?.image
-              : `https://picsum.photos/seed/${job?._id}/200`
-          }
-          fill
-          alt="Company Logo"
-          className="rounded-full"
-        />
+      <div className="flex justify-center items-center size-12 bg-secondary/20 rounded-full">
+        <Business sx={{ fontSize: "2rem" }} className="text-secondary" />
       </div>
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
-          {job.title} {isMyProfile && <ModExperience experience={job} />}
+          {job?.title} {isMyProfile && <ModExperience experience={job} />}
         </h4>
         <p className="flex items-center">
-          {job.company}
+          {job?.company}
           <span className="text-xs ml-2">•</span>
           <span className="ml-2">{job?.employmentType}</span>
         </p>
@@ -66,10 +58,10 @@ export const ExperienceCard = ({ job, duration, isMyProfile }) => {
           <span className="ml-2">•</span>
           <span className="ml-2">{duration}</span>
         </p>
-        <p className="text-muted">{job.location}</p>
-        <p className="mt-2">{job.description}</p>
+        <p className="text-muted">{job?.location}</p>
+        <p className="mt-2">{job?.description}</p>
         <div className="flex gap-2 mt-2">
-          {job.skills.map((skill, index) => (
+          {job?.skills.map((skill, index) => (
             <span
               key={index}
               className="bg-secondary text-background px-2 py-1 rounded-full text-xs font-bold"
@@ -99,7 +91,7 @@ export default function Experience({
 }) {
   return (
     (experience?.length > 0 || isMyProfile) && (
-      <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
+      <Container className="border dark:border-[#111] shadow-lg mt-4 p-8">
         <h3 className="flex justify-between text-2xl mb-4 font-bold">
           Experience {isMyProfile && <ModExperience adding />}
         </h3>
@@ -109,11 +101,11 @@ export default function Experience({
           </div>
         )}
         <div className="space-y-8">
-          {(!allExperience ? experience.slice(0, 3) : experience).map(
+          {(!allExperience ? experience?.slice(0, 3) : experience).map(
             (exp, index) => (
               <div className="space-y-8" key={index}>
                 <ExperienceCardContainer job={exp} />
-                {index !== experience.length - 1 && <Separator />}
+                {index !== experience?.length - 1 && <Separator />}
               </div>
             )
           )}
@@ -125,13 +117,13 @@ export default function Experience({
             >
               {allExperience ? (
                 <div className="flex items-center gap-1 justify-center">
-                  <ChevronUp className="size-5 text-white" />
+                  <ChevronUp className="size-5 text-primary" />
                   Show less
                 </div>
               ) : (
                 <div className="flex items-center gap-1 justify-center">
-                  <ChevronDown className="size-5 text-white" />
-                  Show all {experience.length} experiences
+                  <ChevronDown className="size-5 text-primary" />
+                  Show all {experience?.length} experiences
                 </div>
               )}
             </button>

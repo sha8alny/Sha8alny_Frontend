@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { completeProfile } from "../../../../services/userManagement";
 import { useRouter } from "next/navigation";
 import { set } from "date-fns";
+import { useAuth } from "@/app/context/AuthContext";
 
 /** 
  * CompleteProfileContainer component
@@ -21,15 +22,16 @@ import { set } from "date-fns";
  */ 
 
 const CompleteProfileContainer = () => {
+    const Auth = useAuth();
     const toast = useToast();
     const router = useRouter();
     const [formData, setFormData] = useState({
         name: "",
         location: "",
     });
-    const [profilePicture, setProfilePicture] = useState(null);
+    const [profilePicture, setProfilePicture] = useState("https://www.gravatar.com/avatar/?d=mp&s=200");
     const [saveProfilePic, setSaveProfilePic] = useState(null);
-    const [coverPicture, setCoverPicture] = useState(null);
+    const [coverPicture, setCoverPicture] = useState("https://operaparallele.org/wp-content/uploads/2023/09/Placeholder_Image.png");
     const [saveCoverPic, setSaveCoverPic] = useState(null);
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,11 +40,9 @@ const CompleteProfileContainer = () => {
     useEffect(() => {
         setIsFormValid(
             formData.name.trim() !== "" &&
-            formData.location.trim() !== "" &&
-            profilePicture !== null &&
-            coverPicture !== null
+            formData.location.trim() !== "" 
         );
-    }, [formData, profilePicture, coverPicture]);
+    }, [formData]);
 
     const handleCompleteProfile = useMutation({
         mutationFn: completeProfile,
@@ -59,8 +59,8 @@ const CompleteProfileContainer = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 if(type === "profile"){
-                    setProfilePicture(reader.result);}
-                    setSaveProfilePic(file);
+                    setProfilePicture(reader.result);
+                    setSaveProfilePic(file);}
                 if (type === "cover"){
                     setCoverPicture(reader.result);
                     setSaveCoverPic(file);
@@ -73,17 +73,26 @@ const CompleteProfileContainer = () => {
     const handleLocationSelect = (location) => {
         setFormData({ ...formData, location });
     };
+    const fetchImageAsFile = async (url, filename) => {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new File([blob], filename, { type: blob.type });
+    };
+    
     
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!isFormValid) return;
         setIsSubmitting(true);
+        const profileFile = saveProfilePic || await fetchImageAsFile(profilePicture, "placeholder-profile.jpg");
+        const coverFile = saveCoverPic || await fetchImageAsFile(coverPicture, "placeholder-cover.jpg");
+
         
         try {
             const response=await handleCompleteProfile.mutateAsync({
                 formData:formData,
-                profilePic:saveProfilePic,
-                coverPic:saveCoverPic
+                profilePic:profileFile,
+                coverPic:coverFile
             });
             if (!response) {
                 toast("Error completing profile", false);
@@ -92,8 +101,10 @@ const CompleteProfileContainer = () => {
             console.log("✅ Profile updated successfully.");
             toast("Profile updated successfully");
             setTimeout(() => {
-                router.push("/");
-            }, 3000);
+                const redirectPath = Auth.getRedirectPath();
+                Auth.clearRedirectPath();
+                router.push(redirectPath);
+                }, 3000);
         } catch (error) {
             console.error("Error completing profile:", error);
             toast("Error completing profile", false);

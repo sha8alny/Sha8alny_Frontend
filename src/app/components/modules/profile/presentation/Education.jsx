@@ -4,6 +4,7 @@ import Image from "next/image";
 import ModEducation from "../container/ModEducation";
 import AddButton from "@/app/components/ui/AddButton";
 import { Separator } from "@/app/components/ui/Separator";
+import { School } from "@mui/icons-material";
 
 /**
  * @namespace profile
@@ -36,17 +37,8 @@ import { Separator } from "@/app/components/ui/Separator";
 const EducationCard = ({ placeOfEducation, isMyProfile }) => {
   return (
     <div className="flex gap-2">
-      <div className="relative size-12 bg-gray-700 rounded-full">
-        <Image
-          src={
-            placeOfEducation?.image && placeOfEducation?.image !== ""
-              ? placeOfEducation.image
-              : `https://picsum.photos/seed/${placeOfEducation?._id}/200`
-          }
-          fill
-          alt="Company Logo"
-          className="rounded-full"
-        />
+      <div className="flex justify-center items-center size-12 bg-secondary/20 rounded-full">
+        <School sx={{ fontSize: "2rem" }} className="text-secondary" />
       </div>
       <div className="flex flex-col">
         <div className="flex gap-4 text-lg font-bold items-center">
@@ -120,12 +112,12 @@ export default function Education({
 }) {
   return (
     (isMyProfile || education?.length > 0) && (
-      <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
+      <Container className="border dark:border-[#111] shadow-lg mt-4 p-8">
         <div className="flex justify-between text-2xl mb-4 font-bold">
           Education {isMyProfile && <ModEducation adding={true} />}
         </div>
         <div className="space-y-8">
-          {(!allEducation ? education.slice(0, 1) : education).map(
+          {(!allEducation ? education.slice(0, 3) : education).map(
             (edu, index) => (
               <div className="space-y-8" key={index}>
                 <EducationCard
@@ -142,19 +134,19 @@ export default function Education({
             </div>
           )}
 
-          {education?.length > 2 && (
+          {education?.length > 3 && (
             <button
               onClick={toggleAllEducation}
               className="w-full text-center hover:cursor-pointer p-2 duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"
             >
               {allEducation ? (
                 <div className="flex items-center gap-1 justify-center">
-                  <ChevronUp className="size-5 text-white" />
+                  <ChevronUp className="size-5 text-primary" />
                   Show less
                 </div>
               ) : (
                 <div className="flex items-center gap-1 justify-center">
-                  <ChevronDown className="size-5 text-white" />
+                  <ChevronDown className="size-5 text-primary" />
                   Show all {education.length} places of education
                 </div>
               )}

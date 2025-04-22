@@ -1,4 +1,3 @@
-import { useState } from "react";
 import BackButton from "./BackButton";
 import { Input } from "@/app/components/ui/Input";
 import { Label } from "@/app/components/ui/Label";
@@ -27,7 +26,7 @@ const DeleteAccountPassConfirmation = ({
 }) => {
   return (
     <div className="flex flex-col gap-6 w-full max-w-[725px] mx-auto">
-      <BackButton handler={handleDeleteAccountForm} />
+      <BackButton data-testid="back-delete-pass" handler={handleDeleteAccountForm} />
       
       <div className="space-y-2">
         <h1 className="text-xl font-semibold text-destructive">Delete account</h1>
@@ -39,6 +38,7 @@ const DeleteAccountPassConfirmation = ({
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
+            data-testid="password-delete"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -49,6 +49,7 @@ const DeleteAccountPassConfirmation = ({
         <Button
           type="button"
           variant="destructive"
+          data-testid="delete-account-button"
           onClick={handleDeleteAccount}
           disabled={!password.trim()}
           className="w-full cursor-pointer hover:bg-destructive/80 transition-colors duration-200"

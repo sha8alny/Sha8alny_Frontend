@@ -15,6 +15,7 @@ import {
   LightMode as Sun,
   Person as User,
   Menu as MenuIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import Image from "next/image";
 import {
@@ -78,6 +79,7 @@ const Icon = ({ icon, currentPath, navigateTo }) => {
   return (
     <div
       onClick={() => navigateTo(icon.pathName)}
+      data-testid={`nav-icon-${icon.name.toLowerCase()}`}
       className={`flex flex-col gap-1 items-center justify-center p-1 px-3 hover:bg-primary/10 cursor-pointer ${
         currentPath === icon.pathName
           ? "border-b-2 border-secondary text-secondary font-semibold"
@@ -113,6 +115,7 @@ const IconWithBadge = ({ icon, currentPath, navigateTo }) => {
       <Button
         variant="ghost"
         size="icon"
+        data-testid={`icon-with-badge-${icon.name.toLowerCase()}`}
         className="rounded-full cursor-pointer hover:bg-primary/10"
         aria-label={icon.name}
       >
@@ -150,22 +153,64 @@ export default function NavbarPresentation({
   open,
   setOpen,
   handleLogOut,
+  showMobileSearch,
+  setShowMobileSearch,
+  searchQuery,
+  setSearchQuery,
+  handleSearch
 }) {
+
+
   return (
-    <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6">
+    <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6 relative">
+      {/* Mobile Search Overlay - this will slide in from top when activated */}
+      {showMobileSearch && (
+        <div className="absolute inset-0 bg-foreground z-50 px-4 py-3 flex items-center animate-in slide-in-from-top duration-300">
+          <div className="relative flex-1 flex items-center">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-secondary text-primary pr-20"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
+              autoFocus
+            />
+            <div className="absolute right-12 top-1/2 -translate-y-1/2">
+              <Button 
+                size="sm"
+                data-testid="search-submit-button"
+                className="h-8 bg-secondary hover:bg-secondary/80 text-background rounded-full px-3"
+                onClick={handleSearch}
+              >
+                <Search sx={{ fontSize: 18 }} />
+              </Button>
+            </div>
+            <button
+              data-testid="close-mobile-search-button"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-primary rounded-full hover:bg-primary/10"
+              onClick={() => setShowMobileSearch(false)}
+            >
+              <CloseIcon sx={{ fontSize: 20 }} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Menu */}
-      <div className="md:hidden flex items-center">
+      <div className="lg:hidden flex items-center">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
+              data-testid="mobile-menu-button"
               className="text-primary mr-2 cursor-pointer"
             >
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+          <SheetContent side="left" className="w-[280px] sm:w-[350px]">
             <SheetHeader>
               <SheetTitle>
                 <div className="flex items-center gap-2 mb-6">
@@ -200,6 +245,7 @@ export default function NavbarPresentation({
                 <Button
                   key={index}
                   variant="ghost"
+                  data-testid={`mobile-nav-${icon.name.toLowerCase()}`}
                   className={`justify-start cursor-pointer gap-3 ${
                     currentPath === icon.pathName
                       ? "bg-secondary/10 text-secondary"
@@ -218,6 +264,7 @@ export default function NavbarPresentation({
               {/* Messages & Notifications for Mobile */}
               <Button
                 variant="ghost"
+                data-testid="mobile-messages-button"
                 className="justify-start gap-3 cursor-pointer hover:bg-primary/10"
                 onClick={() => {
                   navigateTo("/messages");
@@ -235,6 +282,7 @@ export default function NavbarPresentation({
 
               <Button
                 variant="ghost"
+                data-testid="mobile-notifications-button"
                 className="justify-start gap-3 cursor-pointer hover:bg-primary/10"
                 onClick={() => {
                   navigateTo("/notifications");
@@ -253,6 +301,7 @@ export default function NavbarPresentation({
               {/* Settings & Logout for Mobile */}
               <Button
                 variant="ghost"
+                data-testid="mobile-settings-button"
                 className="justify-start gap-3 cursor-pointer hover:bg-primary/10"
                 onClick={() => {
                   navigateTo("/settings");
@@ -265,6 +314,7 @@ export default function NavbarPresentation({
 
               <Button
                 variant="ghost"
+                data-testid="mobile-logout-button"
                 className="justify-start gap-3 cursor-pointer hover:bg-primary/10"
                 onClick={() => {
                   handleLogOut();
@@ -283,6 +333,7 @@ export default function NavbarPresentation({
       <section className="flex mr-auto items-center p-2 w-full">
         <div
           onClick={() => navigateTo("/")}
+          data-testid="logo-button"
           className="flex items-center gap-2 group hover:scale-110 cursor-pointer ease-in-out duration-300"
         >
           <div className="bg-gradient-to-r from-secondary to-secondary/90 p-1.5 rounded-md group-hover:shadow-md transition-all duration-200">
@@ -292,30 +343,34 @@ export default function NavbarPresentation({
             SHA<span className="text-secondary">غ</span>ALNY
           </span>
         </div>
-        <div className="ml-4 relative hidden lg:block">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
-            onKeyDown={(e) => {
-              console.log("i searched");
-              if (e.key === "Enter") {
-                const query = e.target.value.trim();
-                if (query) {
-                  navigateTo(`/search/all?query=${encodeURIComponent(query)}`);
-                }
-              }
-            }}
-          />
-          <Search
-            className="absolute right-3 top-2.5 text-gray-500"
-            sx={{ fontSize: 20 }}
-          />
+
+        {/* Desktop Search Bar - Hidden on small screens */}
+        <div className="ml-4 relative hidden lg:block flex-1 max-w-md">
+          <div className="relative group">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full 
+                focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent 
+                text-primary transition-all duration-300 
+                group-hover:shadow-md group-hover:border-secondary/70"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
+            />
+            <Search
+              className="absolute right-3 top-2.5 text-gray-500 cursor-pointer transition-colors duration-300 
+                hover:text-secondary"
+              data-testid="desktop-search-button"
+              sx={{ fontSize: 20 }}
+              onClick={handleSearch}
+            />
+          </div>
         </div>
       </section>
 
       {/* Nav Icons - Hidden on mobile */}
-      <section className="hidden md:flex w-full gap-4 justify-center">
+      <section className="hidden lg:flex w-full gap-4 justify-center">
         {navIcons.map((icon, index) => (
           <Icon
             key={index}
@@ -328,6 +383,17 @@ export default function NavbarPresentation({
 
       {/* User Profile Section */}
       <section className="flex gap-3 p-3 text-primary justify-end items-center w-full ml-auto">
+        {/* Mobile Search Button - Only visible on small-medium screens */}
+        <Button
+          variant="ghost"
+          size="icon"
+          data-testid="open-mobile-search-button"
+          className="lg:hidden text-primary cursor-pointer hover:bg-primary/10 rounded-full "
+          onClick={() => setShowMobileSearch(true)}
+        >
+          <Search className="text-neutral-400" sx={{ fontSize: 20 }} />
+        </Button>
+
         {/* Notification Icons - Hidden on mobile */}
         <div className="hidden md:flex gap-3">
           {[
@@ -348,7 +414,7 @@ export default function NavbarPresentation({
 
         {/* User Dropdown - Modified for responsiveness */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="ml-4 flex items-center space-x-2">
+          <DropdownMenuTrigger className="ml-4 flex items-center space-x-2" data-testid="user-dropdown-trigger">
             <div className="relative rounded-full size-9">
               <Image
                 src={userInfo?.profilePicture}
@@ -367,17 +433,24 @@ export default function NavbarPresentation({
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48">
             <DropdownMenuItem
+              data-testid="view-profile-button"
               onClick={() => navigateTo(`/u/${userInfo?.username}`)}
             >
               <User sx={{ fontSize: 16 }} />
               <span>View Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigateTo("/settings")}>
+            <DropdownMenuItem 
+              data-testid="settings-dropdown-button"
+              onClick={() => navigateTo("/settings")}
+            >
               <Settings sx={{ fontSize: 16 }} />
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleLogOut()}>
+            <DropdownMenuItem 
+              data-testid="logout-dropdown-button"
+              onClick={() => handleLogOut()}
+            >
               <LogOut sx={{ fontSize: 16 }} />
               <span>Log Out</span>
             </DropdownMenuItem>
@@ -387,8 +460,9 @@ export default function NavbarPresentation({
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
+          data-testid="theme-toggle-button"
           title="Toggle Theme"
-          className="ml-4 p-2 cursor-pointer rounded-lg hover:bg-primary/10"
+          className="hidden md:flex ml-4 p-2 cursor-pointer rounded-lg hover:bg-primary/10"
         >
           {theme === "dark" ? (
             <Sun sx={{ fontSize: 20 }} />
@@ -422,8 +496,36 @@ export const NavBarPresentationSkeleton = ({
   open,
   setOpen,
 }) => {
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+
   return (
     <nav className="w-full flex justify-center bg-foreground drop-shadow-md sticky top-0 z-30 px-6">
+      {/* Mobile Search Overlay Skeleton */}
+      {showMobileSearch && (
+        <div className="absolute inset-0 bg-foreground z-50 px-4 py-3 flex items-center animate-in slide-in-from-top duration-300">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search..."
+              disabled={isLoading}
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-secondary text-primary pr-10"
+              autoFocus
+            />
+            <Search
+              className="absolute right-10 top-2.5 text-gray-500"
+              sx={{ fontSize: 20 }}
+            />
+            <button
+              className="absolute right-2 top-2.5 text-gray-500 hover:text-primary"
+              data-testid="close-mobile-search-skeleton-button"
+              onClick={() => setShowMobileSearch(false)}
+            >
+              <CloseIcon sx={{ fontSize: 20 }} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Menu - Skeleton */}
       <div className="md:hidden flex items-center">
         <Sheet open={open} onOpenChange={setOpen}>
@@ -431,12 +533,13 @@ export const NavBarPresentationSkeleton = ({
             <Button
               variant="ghost"
               size="icon"
+              data-testid="mobile-menu-skeleton-button"
               className="text-primary mr-2 cursor-pointer"
             >
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+          <SheetContent side="left" className="w-[280px] sm:w-[350px]">
             <SheetHeader>
               <SheetTitle>
                 <div className="flex items-center gap-2 mb-6">
@@ -477,6 +580,7 @@ export const NavBarPresentationSkeleton = ({
                 <Button
                   key={index}
                   variant="ghost"
+                  data-testid={`skeleton-mobile-nav-${icon.name.toLowerCase()}`}
                   className={`justify-start gap-3 cursor-pointer ${
                     currentPath === icon.pathName
                       ? "bg-secondary/10 text-secondary"
@@ -493,7 +597,12 @@ export const NavBarPresentationSkeleton = ({
               ))}
 
               {/* Messages & Notifications Skeleton for Mobile */}
-              <Button variant="ghost" className="justify-start gap-3" disabled>
+              <Button 
+                variant="ghost" 
+                className="justify-start gap-3" 
+                disabled
+                data-testid="skeleton-messages-button"
+              >
                 <MessageCircle sx={{ fontSize: 20 }} />
                 <span>Messages</span>
                 <div
@@ -503,7 +612,12 @@ export const NavBarPresentationSkeleton = ({
                 />
               </Button>
 
-              <Button variant="ghost" className="justify-start gap-3" disabled>
+              <Button 
+                variant="ghost" 
+                className="justify-start gap-3" 
+                disabled
+                data-testid="skeleton-notifications-button"
+              >
                 <Bell sx={{ fontSize: 20 }} />
                 <span>Notifications</span>
                 <div
@@ -514,12 +628,22 @@ export const NavBarPresentationSkeleton = ({
               </Button>
 
               {/* Settings & Logout Skeleton */}
-              <Button variant="ghost" className="justify-start gap-3" disabled>
+              <Button 
+                variant="ghost" 
+                className="justify-start gap-3" 
+                disabled
+                data-testid="skeleton-settings-button"
+              >
                 <Settings sx={{ fontSize: 20 }} />
                 <span>Settings</span>
               </Button>
 
-              <Button variant="ghost" className="justify-start gap-3" disabled>
+              <Button 
+                variant="ghost" 
+                className="justify-start gap-3" 
+                disabled
+                data-testid="skeleton-logout-button"
+              >
                 <LogOut sx={{ fontSize: 20 }} />
                 <span>Log Out</span>
               </Button>
@@ -532,6 +656,7 @@ export const NavBarPresentationSkeleton = ({
       <section className="flex w-full mr-auto items-center p-2">
         <div
           onClick={() => navigateTo("/")}
+          data-testid="skeleton-logo-button"
           className="flex items-center gap-2 group hover:scale-110 cursor-pointer ease-in-out duration-300"
         >
           <div className="bg-gradient-to-r from-secondary to-secondary/90 p-1.5 rounded-md group-hover:shadow-md transition-all duration-200">
@@ -541,17 +666,22 @@ export const NavBarPresentationSkeleton = ({
             SHA<span className="text-secondary">غ</span>ALNY
           </span>
         </div>
-        <div className="ml-4 relative hidden lg:block">
-          <input
-            type="text"
-            placeholder="Search..."
-            disabled={isLoading}
-            className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
-          />
-          <Search
-            className="absolute right-3 top-2.5 text-gray-500"
-            sx={{ fontSize: 20 }}
-          />
+
+        {/* Desktop Search Bar Skeleton - Hidden on small screens */}
+        <div className="ml-4 relative hidden lg:block flex-1 max-w-md">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              disabled={isLoading}
+              className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-full focus:outline-none focus:ring-2 focus:ring-secondary text-primary"
+            />
+            <Search
+              className="absolute right-3 top-2.5 text-gray-500"
+              data-testid="skeleton-search-button"
+              sx={{ fontSize: 20 }}
+            />
+          </div>
         </div>
       </section>
 
@@ -569,6 +699,17 @@ export const NavBarPresentationSkeleton = ({
 
       {/* User Profile Section */}
       <section className="flex gap-3 p-3 text-primary justify-end items-center w-full ml-auto">
+        {/* Mobile Search Button for Skeleton - Only visible on small-medium screens */}
+        <Button
+          variant="ghost"
+          size="icon"
+          data-testid="open-mobile-search-skeleton-button"
+          className="lg:hidden  cursor-pointer hover:bg-primary/10 rounded-full"
+          onClick={() => setShowMobileSearch(true)}
+        >
+          <Search sx={{ fontSize: 20 }} />
+        </Button>
+
         {/* Notification Icons Skeleton - Hidden on mobile */}
         {isLoading && (
           <div className="hidden md:flex gap-3">
@@ -581,6 +722,7 @@ export const NavBarPresentationSkeleton = ({
                   variant="ghost"
                   size="icon"
                   disabled
+                  data-testid={`skeleton-badge-${icon.name.toLowerCase()}`}
                   className="rounded-full cursor-not-allowed opacity-70"
                   aria-label={icon.name}
                 >
@@ -625,6 +767,7 @@ export const NavBarPresentationSkeleton = ({
         {!isLoading && (
           <button
             className="flex gap-2 items-center rounded-2xl bg-secondary/80 px-6 py-2 text-sm font-semibold text-background cursor-pointer duration-300 hover:bg-secondary/60 "
+            data-testid="login-button"
             onClick={() => navigateTo("/signin")}
           >
             <LoginIcon sx={{ fontSize: 20 }} />
@@ -635,6 +778,7 @@ export const NavBarPresentationSkeleton = ({
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
+          data-testid="skeleton-theme-toggle-button"
           title="Toggle Theme"
           className="ml-4 p-2 cursor-pointer rounded-lg hover:bg-primary/10"
         >

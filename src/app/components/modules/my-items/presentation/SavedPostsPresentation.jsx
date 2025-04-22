@@ -5,7 +5,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SearchIcon from "@mui/icons-material/Search";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LaunchIcon from "@mui/icons-material/Launch";
-import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import PersonIcon from "@mui/icons-material/Person";
 import { Button } from "@/app/components/ui/Button";
@@ -170,113 +170,128 @@ function PostCard({ post, onPostClick, formatPostTime }) {
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow duration-200 bg-foreground ">
       <div className="flex flex-col sm:flex-row">
-      {post.media && post.media.length > 0 && (
+        {post.media && post.media.length > 0 && (
           <div className="hidden sm:block w-32 h-auto bg-neutral-700 ml-2 rounded-lg overflow-hidden ">
-            <img
-              src={post.media[0]}
-              alt="Post thumbnail"
-              className="w-full h-full object-cover"
-            />
+            {post.media[0].includes(".mp4") ||
+            post.media[0].includes(".webm") ||
+            post.media[0].includes(".ogg") ? (
+              <video
+                onContextMenu={(e) => e.preventDefault()}
+                autoPlay={true}
+                loop={true}
+                muted={true}
+                className="w-full h-full object-cover"
+                poster={post.media[0]}
+              >
+                <source src={post.media[0]} />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <img
+                src={post.media[0]}
+                alt="Post thumbnail"
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
         )}
         <div className="flex-1">
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-start">
-            <div className="flex items-start gap-3">
-              <Avatar className="h-10 w-10 border">
-                <AvatarImage src={post.profilePicture} alt={post.fullName} />
-                <AvatarFallback>
-                  {post.fullName?.charAt(0).toUpperCase() || "U"}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold">{post.fullName}</h3>
-                  {post.connectionDegree === 1 && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs px-1.5 py-0 bg-green-50 text-green-700 border-green-200"
-                    >
-                      {post.randomFirstDegreeConnection || "1st connection"}
-                    </Badge>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground line-clamp-1">
-                  {post.headline}
-                </p>
-                <div className="flex items-center text-xs text-muted-foreground mt-1">
-                  <CalendarTodayIcon fontSize="0.75rem" className=" mr-1" />
-                  <span>{formattedTime}</span>
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-start">
+              <div className="flex items-start gap-3">
+                <Avatar className="h-10 w-10 border">
+                  <AvatarImage src={post.profilePicture} alt={post.fullName} />
+                  <AvatarFallback>
+                    {post.fullName?.charAt(0).toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">{post.fullName}</h3>
+                    {post.connectionDegree === 1 && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs px-1.5 py-0 bg-green-50 text-green-700 border-green-200"
+                      >
+                        {post.randomFirstDegreeConnection || "1st connection"}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-1">
+                    {post.headline}
+                  </p>
+                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <CalendarTodayIcon fontSize="0.75rem" className=" mr-1" />
+                    <span>{formattedTime}</span>
+                  </div>
                 </div>
               </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreHorizIcon fontSize="1rem" className="h-4 w-4" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <ShareIcon className="mr-2 h-4 w-4" />
+                    <span>Share</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <BookmarkIcon className="mr-2 h-4 w-4" />
+                    <span>Remove from saved</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <span>Report content</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizIcon fontSize="1rem" className="h-4 w-4" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <ShareIcon className="mr-2 h-4 w-4" />
-                  <span>Share</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <BookmarkIcon className="mr-2 h-4 w-4" />
-                  <span>Remove from saved</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <span>Report content</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="pb-3">
-          {post.taggedPeople && post.taggedPeople.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-2 items-center">
-              <span className="text-xs text-muted-foreground">Tagged:</span>
-              {post.taggedPeople.map((person) => (
-                <Badge
-                  key={person.userId}
-                  variant="secondary"
-                  className="text-xs flex items-center gap-1"
-                >
-                  <PersonIcon className="h-3 w-3" />
-                  {person.fullName}
-                </Badge>
-              ))}
-            </div>
-          )}
-          <p className="text-sm line-clamp-3">{post.text || "No content"}</p>
-        </CardContent>
-        <CardFooter className="pt-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1.5"
-            onClick={() => onPostClick(post.postId, post.username)}
-          >
-            <LaunchIcon fontSize="0.875rem" className="h-3.5 w-3.5" />
-            <span>Read post</span>
-          </Button>
-          
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="flex items-center">
-              <ThumbUpOutlinedIcon  className="h-3 w-3 mr-1" />
-              <span>{totalReactions}</span>
-            </div>
-            <div className="flex items-center">
-              <ChatBubbleOutlineIcon  className="h-3 w-3 mr-1" />
-              <span>{post.numComments}</span>
-            </div>
-          </div>
-        </CardFooter>
-      </div>
+          </CardHeader>
 
+          <CardContent className="pb-3">
+            {post.taggedPeople && post.taggedPeople.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2 items-center">
+                <span className="text-xs text-muted-foreground">Tagged:</span>
+                {post.taggedPeople.map((person) => (
+                  <Badge
+                    key={person.userId}
+                    variant="secondary"
+                    className="text-xs flex items-center gap-1"
+                  >
+                    <PersonIcon className="h-3 w-3" />
+                    {person.fullName}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            <p className="text-sm line-clamp-3">{post.text || "No content"}</p>
+          </CardContent>
+          <CardFooter className="pt-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1.5"
+              onClick={() => onPostClick(post.postId, post.username)}
+            >
+              <LaunchIcon fontSize="0.875rem" className="h-3.5 w-3.5" />
+              <span>Read post</span>
+            </Button>
+
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <div className="flex items-center">
+                <ThumbUpOutlinedIcon className="h-3 w-3 mr-1" />
+                <span>{totalReactions}</span>
+              </div>
+              <div className="flex items-center">
+                <ChatBubbleOutlineIcon className="h-3 w-3 mr-1" />
+                <span>{post.numComments}</span>
+              </div>
+            </div>
+          </CardFooter>
+        </div>
       </div>
     </Card>
   );

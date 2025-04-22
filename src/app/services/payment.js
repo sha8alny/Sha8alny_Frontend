@@ -12,7 +12,7 @@ export const fetchSubscription = async () => {
 };
 
 export const fetchPlansDetails = async () => {
-  const response = await fetchWithAuth(`${API_URL}/plans`, {
+  const response = await fetchWithAuth(`${API_URL}/subscriptions/plans`, {
     method: "GET",
   });
 
@@ -45,7 +45,7 @@ export const processPaymentMonthly = async (paymentData, maxRetries = 3) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const response = await fetch(
-        "http://sha8alny.uaenorth.cloudapp.azure.com:5000/api/subscriptions/monthly",
+        `${API_URL}/subscriptions/monthly`,
         {
           method: "PATCH",
           headers: {
@@ -86,7 +86,7 @@ export const processPaymentOneTime = async (paymentData, maxRetries = 3) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const response = await fetch(
-        "http://sha8alny.uaenorth.cloudapp.azure.com:5000/api/subscriptions/oneTime",
+        `${API_URL}/subscriptions/oneTime`,
         {
           method: "PATCH",
           headers: {

@@ -1,10 +1,5 @@
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
-
-const getToken = () => {
-  const token = localStorage.getItem("token") || "mock-token";
-  // if (!token) throw new Error("No token found");
-  return token;
-};
+import { fetchWithAuth } from "@/app/services/userAuthentication";
 
 export const fetchReports = async ({
   pageParam = 1,
@@ -12,12 +7,12 @@ export const fetchReports = async ({
   jobs = false,
   comments = false,
   posts = false,
-  sortByTime ,
+  sortByTime,
   statuses = [],
+  TypeFilter = [],
 }) => {
-  const authToken = getToken();
   const itemsPerPage = 10;
-  const url = new URL(`${apiURL}/admin/reports/${pageParam}`);
+  const url = new URL(`http://localhost:5000/admin/reports/${pageParam}`);
 
   url.searchParams.append("users", users.toString());
   url.searchParams.append("jobs", jobs.toString());
@@ -25,16 +20,16 @@ export const fetchReports = async ({
   url.searchParams.append("posts", posts.toString());
 
   statuses.forEach((status) => url.searchParams.append("statuses", status));
-  console.log(sortByTime)
+  console.log(sortByTime);
   if (sortByTime) {
     url.searchParams.append("sortByTime", sortByTime);
   }
+  if (TypeFilter.length > 0) {
+    TypeFilter.forEach((type) => url.searchParams.append("TypeFilter", type));
+  }
 
-  const response = await fetch(url.toString(), {
+  const response = await fetchWithAuth(url.toString(), {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
   });
 
   if (!response.ok) {
@@ -50,9 +45,7 @@ export const fetchReports = async ({
 };
 
 export const deleteReport = async (reportId) => {
-  const authToken = getToken();
-
-  const response = await fetch(`${apiURL}/admin/reports/${reportId}`, {
+  const response = await fetchWithAuth(`${apiURL}/admin/reports/${reportId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -61,25 +54,33 @@ export const deleteReport = async (reportId) => {
 };
 
 export const deleteJob = async (jobId) => {
-  const authToken = getToken();
-
-  const response = await fetch(`${apiURL}/admin/jobs/${jobId}`, {
+  const response = await fetchWithAuth(`${apiURL}/admin/jobs/${jobId}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
+  });
+};
+export const deleteComment = async (commentId) => {
+  const response = await fetchWithAuth(
+    `${apiURL}/admin/comments/${commentId}`,
+    {
+      method: "DELETE",
+    }
+  );
+};
+export const deletePost = async (postId) => {
+  const response = await fetchWithAuth(`${apiURL}/admin/posts/${postId}`, {
+    method: "DELETE",
+  });
+};
+export const deleteUser = async (userId) => {
+  const response = await fetchWithAuth(`${apiURL}/admin/users/${userId}`, {
+    method: "DELETE",
   });
 };
 
 export const updateStatusReport = async (reportId, status) => {
-  const authToken = getToken();
+  const response = await fetchWithAuth(`${apiURL}/admin/reports/`, {
+    method: "PATCH",
 
-  const response = await fetch(`${apiURL}/admin/reports/`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ reportId, status }),
   });
 };

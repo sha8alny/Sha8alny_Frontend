@@ -7,11 +7,16 @@ export default function DynamicFavicon() {
   const { theme } = useTheme();
   
   useEffect(() => {
-    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    let link = document.querySelector("link[rel*='icon']");
+    
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'shortcut icon';
+      document.head.appendChild(link);
+    }
+    
     link.type = 'image/png';
-    link.rel = 'shortcut icon';
     link.href = theme === 'dark' ? '/favicon-dark.ico' : '/favicon-light.ico';
-    document.getElementsByTagName('head')[0].appendChild(link);
   }, [theme]);
   
   return null;

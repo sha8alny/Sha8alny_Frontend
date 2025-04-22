@@ -33,13 +33,32 @@ export default function ProfilePresentation({
   userProfile,
   profileStrength,
   isMyProfile,
+  onCopy,
+  onEmail,
+  copied,
+  fullscreenImage,
+  setHoverCover,
+  setHoverProfile,
+  openFullscreen,
+  closeFullscreen,
 }) {
   return (
     <div>
       <main className="flex flex-col lg:flex-row gap-10 p-8 lg:px-32 bg-background">
         <section className="md:flex-[3_1_0]">
-          <ProfileHeader userProfile={userProfile} isMyProfile={isMyProfile}/>
-          <About about={userProfile.about} isMyProfile={isMyProfile}/>
+          <ProfileHeader
+            onCopy={onCopy}
+            onEmail={onEmail}
+            copied={copied}
+            userProfile={userProfile}
+            isMyProfile={isMyProfile}
+            fullscreenImage={fullscreenImage}
+            setHoverCover={setHoverCover}
+            setHoverProfile={setHoverProfile}
+            openFullscreen={openFullscreen}
+            closeFullscreen={closeFullscreen}
+          />
+          <About about={userProfile.about} isMyProfile={isMyProfile} />
           <ExperienceContainer experience={userProfile.experience} />
           <EducationContainer education={userProfile.education} />
           <Skills skills={userProfile.skills} isMyProfile={isMyProfile} />

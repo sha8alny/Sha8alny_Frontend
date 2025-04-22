@@ -13,11 +13,16 @@ import {
 } from "@tanstack/react-query";
 import CommentPresentation from "../presentation/CommentPresentation";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { followUser } from "@/app/services/connectionManagement";
 import { Reactions } from "@/app/utils/Reactions";
 
-export default function CommentContainer({ postId, comment }) {
+export default function CommentContainer({
+  postId,
+  comment,
+  postUsername,
+  nestCount = 0,
+}) {
   const [isLiked, setIsLiked] = useState(comment?.reaction || false);
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
@@ -25,6 +30,7 @@ export default function CommentContainer({ postId, comment }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
+  const pathname = usePathname();
 
   const {
     data,
@@ -71,12 +77,12 @@ export default function CommentContainer({ postId, comment }) {
       Array.isArray(page.data) ? page.data : []
     ) || [];
 
-  const loadMoreReplies = () => {
-    fetchNextPage();
+  const navigateTo = (link) => {
+    router.push(link);
   };
 
-  const navigateTo = (username) => {
-    router.push(`/u/${username}`);
+  const loadMoreReplies = () => {
+    fetchNextPage();
   };
 
   const handleFollowMutation = useMutation({
@@ -97,12 +103,20 @@ export default function CommentContainer({ postId, comment }) {
   const handleReactMutation = useMutation({
     mutationFn: (params) => {
       const { postId, commentId, reaction } = params;
+      isLiked && comment?.reaction === reaction
+        ? setIsLiked(false)
+        : setIsLiked(reaction); // Optimistic update
       return isLiked && comment?.reaction === reaction
         ? reactToContent(postId, commentId, null, true)
         : reactToContent(postId, commentId, reaction);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["comments", postId]);
+      queryClient.invalidateQueries([
+        "commentReplies",
+        postId,
+        comment?.commentId,
+      ]);
     },
   });
 
@@ -122,6 +136,7 @@ export default function CommentContainer({ postId, comment }) {
         comment?.commentId,
       ]);
       setReplyText("");
+      setShowReplies(true);
       setIsReplying(false);
     },
     onError: (error) => {
@@ -181,11 +196,30 @@ export default function CommentContainer({ postId, comment }) {
   };
 
   const handleShowReplies = () => {
-    setShowReplies(true);
+    if (nestCount > 2) {
+      navigateTo(
+        `/u/${postUsername}/post/${postId}/comment/${comment?.commentId}`
+      );
+    } else {
+      setShowReplies(true);
+    }
   };
 
   const handleHideReplies = () => {
     setShowReplies(false);
+  };
+
+  const convertRelation = (relation) => {
+    switch (relation) {
+      case 1:
+        return "1st";
+      case 2:
+        return "2nd";
+      case 3:
+        return "3rd+";
+      default:
+        return null;
+    }
   };
 
   const commentAge = determineAge(comment?.time || new Date());
@@ -197,6 +231,8 @@ export default function CommentContainer({ postId, comment }) {
       comment={{
         ...comment,
         age: commentAge,
+        username: encodeURIComponent(comment?.username),
+        relation: convertRelation(comment?.connectionDegree),
         numReacts:
           (comment?.numLikes || 0) +
           (comment?.numCelebrates || 0) +
@@ -229,6 +265,8 @@ export default function CommentContainer({ postId, comment }) {
       onDelete={handleDelete}
       hasReplies={hasReplies}
       isDeleting={isDeleting}
+      nestCount={nestCount}
+      postUsername={postUsername}
     />
   );
 }

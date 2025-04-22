@@ -107,6 +107,9 @@ const PostNewJobContainer = ({ onBack,username, initialJobData=null }) => {
                     salary: "",
                 });
                 setErrors({});
+                setTimeout(() => {
+                    onBack();
+                }, 2000);
             },
             onError: (error) => {
                 toast("Error posting job",false);

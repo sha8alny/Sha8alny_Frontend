@@ -245,19 +245,3 @@ export const saveJob = async (jobId, action = "save") => {
   return response.json();
 };
 
-export const fetchJobListingsPageNumber = async ({ pageParam = 1 }) => {
-  const itemsPerPage = 10;
-  const url = new URL(`${apiURL}/jobs/search/${pageParam}`);
-
-  const response = await fetchWithAuth(url.toString());
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return {
-    data,
-    nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
-    prevPage: pageParam > 1 ? pageParam - 1 : null,
-  };
-};

@@ -9,6 +9,8 @@ import { usePathname, useRouter } from "next/navigation";
 export default function CommentSectionContainer({ username, postId }) {
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
+  const [isCommenting, setIsCommenting] = useState(false);
+
   const queryClient = useQueryClient();
   const router = useRouter();
   const currentPath = usePathname();
@@ -86,6 +88,7 @@ export default function CommentSectionContainer({ username, postId }) {
     onSuccess: () => {
       setComment("");
       setError(null);
+      setIsCommenting(false);
       queryClient.invalidateQueries(["comments", postId]);
     },
     onError: (error) => {
@@ -99,14 +102,12 @@ export default function CommentSectionContainer({ username, postId }) {
 
   const isPost = currentPath.includes("/post/");
 
-  const isSubmittingComment = handleCommentMutation.isLoading;
-
   const handleComment = () => {
     if (!comment.trim()) {
       setError("Comment cannot be empty");
       return;
     }
-
+    setIsCommenting(true);
     handleCommentMutation.mutate({
       postId,
       commentId: null,
@@ -122,13 +123,14 @@ export default function CommentSectionContainer({ username, postId }) {
       handleComment={handleComment}
       comment={comment}
       setComment={setComment}
-      isSubmittingComment={isSubmittingComment}
+      isSubmittingComment={isCommenting}
       error={error}
       postId={postId}
       navigateTo={navigateTo}
       isPost={isPost}
       isLoading={isLoading}
       isLoadingComments={isFetchingNextPage}
+      postUsername={username}
     />
   );
 }

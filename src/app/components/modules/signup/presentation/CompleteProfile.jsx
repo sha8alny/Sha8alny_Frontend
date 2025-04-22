@@ -24,11 +24,12 @@ const CompleteProfile = ({
             </div>
             <div className="relative w-full h-32 sm:h-40 md:h-48 rounded-lg overflow-hidden">
                     <img
-                    src={coverPic|| "https://operaparallele.org/wp-content/uploads/2023/09/Placeholder_Image.png"}
+                    src={coverPic}
                     alt="Cover Pic"
                     className="w-full h-full object-cover"
                     />
                 <input
+                    data-testid="cover-pic-input"
                     type="file"
                     accept="image/png, image/jpg, image/jpeg, image/webp, image/gif"
                     onChange={(e) => handleImageChange(e, "cover")}
@@ -44,11 +45,12 @@ const CompleteProfile = ({
 
             <div className="relative w-24 h-24 md:w-36 md:h-36 sm:w-28 sm:h-28 lg:w-40 lg:h-40 rounded-full overflow-hidden mx-auto ">
                     <img
-                    src={profilePic || "https://www.gravatar.com/avatar/?d=mp&s=200"}
+                    src={profilePic}
                     alt="Profile Pic"
                     className="w-full h-full object-cover"
                     />
                 <input
+                    data-testid="profile-pic-input"
                     type="file"
                     accept="image/png, image/jpg, image/jpeg, image/webp, image/gif"
                     onChange={(e) => handleImageChange(e, "profile")}
@@ -61,6 +63,7 @@ const CompleteProfile = ({
             <div className="mb-4">
                 <label htmlFor="fullname" className="block text-text text-sm font-semibold mb-2"> Full Name </label>
                 <input
+                    data-testid="fullname-input"
                     id="fullname"
                     type="text"
                     name="name"
@@ -74,6 +77,7 @@ const CompleteProfile = ({
                 <div className="mb-4">
                     <label htmlFor="location" className="block text-text text-sm font-semibold mb-2"> Location </label>
                     <input
+                        data-testid="location-input"
                         id="location"
                         type="location"
                         name="location"
@@ -85,6 +89,7 @@ const CompleteProfile = ({
                     />
                     </div>
                     <button
+                    data-testid="complete-profile-button"
                     type="submit"
                     disabled={!isFormValid || isSubmitting}
                     className={`w-full font-semibold p-3 rounded-lg transition duration-300 ${

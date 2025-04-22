@@ -35,7 +35,7 @@ const ChangeUsernameForm = ({
     <SettingsFormLayout>
       <BackButton handler={toggleForm} />
       <div className="flex flex-col gap-4">
-        <h1 className="text-xl font-semibold">Change user name</h1>
+        <h1 className="text-lg font-semibold">Change user name</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="space-y-2">
             <Label htmlFor="username" className="flex items-center">
@@ -44,6 +44,7 @@ const ChangeUsernameForm = ({
             <Input
               id="username"
               name="username"
+              data-testid="username-change-input"
               value={username}
               onChange={handleChange}
               required
@@ -57,6 +58,7 @@ const ChangeUsernameForm = ({
           <Button 
             type="submit" 
             disabled={isLoading || !username}
+            data-testid="username-change-submit"
             className="w-full text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
           >
             {isLoading ? "Saving..." : "Save user name"}
