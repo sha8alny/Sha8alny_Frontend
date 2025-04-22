@@ -39,6 +39,7 @@ const CompanySectionAllPresentation = ({
       isLoading={isLoading}
       onViewMore={onViewMore}
       title="Companies"
+      flag={companies?.length > 0}
       icon={<ApartmentIcon sx={{ fontSize: "1.125rem" }} />}
       data-testid="companies-results-card"
     >
@@ -52,10 +53,8 @@ const CompanySectionAllPresentation = ({
               data-testid={`company-card-${company.companyId || index}`}
             />
           ))
-      ) : companies?.length == 0 ? (
-        <p className="text-gray-400 text-sm">No companies found.</p>
       ) : (
-        ""
+        <p className="text-gray-400 text-sm">No companies found.</p>
       )}
     </ResultsCard>
   );

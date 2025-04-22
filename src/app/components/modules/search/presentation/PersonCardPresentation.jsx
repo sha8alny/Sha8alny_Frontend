@@ -62,7 +62,7 @@ function PersonCardPresentation({
             </h3>
           </div>
           <p className="text-gray-400 text-xs flex items-center gap-1">
-            <Briefcase className="h-3 w-3" /> {headline}
+            <Briefcase className="h-3 w-3" /> {headline || "N/A"}
           </p>
           <p className="text-gray-400 text-xs flex items-center gap-1">
             <MapPin className="h-3 w-3" /> {location}

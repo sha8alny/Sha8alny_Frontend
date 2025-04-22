@@ -42,7 +42,7 @@ const ResultsPageContainer = () => {
   const [industryFilter, setIndustryFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const keyword = nameFilter == ""? searchParams.get("keyword"): nameFilter;
-  const [connectionDegree, setConnectionDegree] = useState(3);
+  const [connectionDegree, setConnectionDegree] = useState("");
   const [companyIndustryFilter, setCompanyIndustryFilter] = useState("");
   const [orgSizeFilter, setOrgSizeFilter] = useState("");
   const [orgTypeFilter, setOrgTypeFilter] = useState("");
@@ -72,7 +72,6 @@ const ResultsPageContainer = () => {
     } else if (type === "post") {
       return searchPost(keyword, currentPage);
     } else if (type == "company") {
-      console.log("i am in company")
       return searchCompany(keyword,currentPage, companyIndustryFilter, locationFilter, orgSizeFilter, orgTypeFilter, currentPage, 10);
     }
   };
@@ -81,6 +80,7 @@ const ResultsPageContainer = () => {
     data: results,
     isLoading,
     isError,
+    error
   } = useQuery({
     queryKey: [
       "search",
@@ -96,7 +96,7 @@ const ResultsPageContainer = () => {
       currentPage
     ],
     queryFn,
-    enabled: !!keyword,
+    retry:1,
     keepPreviousData: true,
   });
 
@@ -144,6 +144,7 @@ const ResultsPageContainer = () => {
       setTempLocation={setTempLocation}
       tempCompanyIndustry={tempCompanyIndustry}
       setTempCompanyIndustry={setTempCompanyIndustry}
+      error={error}
     />
   );
 };
