@@ -24,25 +24,28 @@ export const messagingService = {
           }
           return response.json();
         },
-    // // Get all conversations for a user
-    // getUserConversations: async () => {
-    //     try {
-    //         const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/Conversation/get`, {
-    //             method: 'GET',
-    //         });
+    getUnseenMessagesCount: async (receiverName) => {
+        try {
+            if (!receiverName) {
+                throw new Error("Receiver name is required");
+            }
 
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! Status: ${response.status}`);
-    //         }
+            const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/Conversation/getUnseenMessagesCount?receiverName=${encodeURIComponent(receiverName)}`, {
+                method: 'GET'
+            });
 
-    //         const data = await response.json();
-    //         console.log("User conversations data:", data);
-    //         return data
-    //     } catch (error) {
-    //         console.error("Error fetching user conversations:", error);
-    //         return [];
-    //     }
-    // },
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.unseenMessagesCount;
+        } catch (error) {
+            console.error("Error getting unseen messages count:", error);
+            throw new Error("Error getting unseen messages count: " + error.message);
+        }
+    },
 
     // Listen to conversations in real-time
     subscribeToConversations: (username, callback) => {
@@ -57,38 +60,14 @@ export const messagingService = {
                 conversations.push({ id: doc.id, ...data });
             }
             });
+            console.log("Conversations data:", conversations);
             callback(conversations);
         }, (error) => {
             console.error("Error subscribing to conversations:", error);
         });
     },
     
-    // // Get messages for a conversation
-    // getConversationMessages: async (receiverName) => {
-    //     try {
-    //         if (!receiverName) {
-    //             throw new Error("Receiver name is required");
-    //         }
 
-    //         const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL}/Conversation/Messages`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'receiverName': receiverName
-    //             }
-    //         });
-
-    //         if (!response.ok) {
-    //             const error = await response.json();
-    //             throw new Error(error.message || `HTTP error! Status: ${response.status}`);
-    //         }
-
-    //         const data = await response.json();
-    //         return data
-    //     } catch (error) {
-    //         console.error("Error fetching conversation messages:", error);
-    //         throw error;
-    //     }
-    // },
 
     // Listen to messages for a conversation in real-time
     subscribeToConversationMessages: (conversationId, callback) => {
@@ -150,7 +129,7 @@ export const messagingService = {
             if (mediaFiles.length > 0) {
             // Use FormData for media files
             const formData = new FormData();
-            formData.append('recieverName', receiverName);
+            formData.append('receiverName', receiverName);
             formData.append('message', message || "");
             
             mediaFiles.forEach((file, index) => {
@@ -169,7 +148,7 @@ export const messagingService = {
                 'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    recieverName: receiverName,
+                    receiverName: receiverName,
                 message: message
                 })
             };
@@ -195,20 +174,45 @@ export const messagingService = {
         }
         
         const participants = [currentUser, receiverName];
-        const lastMessage = { text: "", timestamp: new Date() };
+        const lastMessage = null
         
         const conversationRef = collection(db, "conversations");
         return await addDoc(conversationRef, {
             participants,
             lastMessage,
             isDeleted: false,
-            read: false,
+            read: true,
             createdAt: new Date(),
             timestamp: new Date(),
         });
     } catch (error) {
         throw new Error("Error creating conversation: " + error.message);
     }
+    },
+    // Delete a conversation entirely
+    deleteConversation: async (conversationId) => {
+        try {
+            if (!conversationId) {
+                throw new Error("Conversation ID is required");
+            }
+
+            const conversationRef = doc(db, "conversations", conversationId);
+            const conversationSnap = await getDoc(conversationRef);
+
+            if (!conversationSnap.exists()) {
+                throw new Error(`Conversation with ID ${conversationId} not found`);
+            }
+
+            await updateDoc(conversationRef, {
+                isDeleted: true,
+                deletedAt: new Date(),
+            });
+
+            return { success: true };
+        } catch (error) {
+            console.error("Error deleting conversation:", error);
+            throw new Error(`Failed to delete conversation: ${error.message}`);
+        }
     },
     // Mark messages as read
     markMessagesAsRead: async (receiverName) => {

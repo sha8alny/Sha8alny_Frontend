@@ -53,3 +53,29 @@ export function formatTime(timestamp) {
     }
 }
 
+export function formatDate(timestamp) {
+    let date;
+    if (timestamp && typeof timestamp.toDate === 'function') {
+        // Handle Firestore timestamp
+        date = timestamp.toDate();
+    } else if (timestamp instanceof Date) {
+        date = timestamp;
+    } else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+        console.log('ISO string or number:', timestamp);
+        // Handle ISO string or timestamp number
+        date = new Date(timestamp);
+    } else if (timestamp && typeof timestamp.seconds === 'number' && typeof timestamp.nanoseconds === 'number') {
+        // Handle custom timestamp object with seconds and nanoseconds
+        console.log('Custom timestamp:', timestamp);
+        date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+    } else {
+        return 'Invalid date';
+    }
+    
+    try {
+        return date;
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return 'Invalid date';
+    }
+}
