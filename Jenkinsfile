@@ -66,7 +66,7 @@ pipeline {
                 sh '''
                 docker run -d \
                     --name ${DOCKER_CONTAINER} \
-                    -p 80:3000 \
+                    -p 3001:3000 \
                     --restart=always\
                     ${DOCKER_IMAGE_FRONT}
                 '''
