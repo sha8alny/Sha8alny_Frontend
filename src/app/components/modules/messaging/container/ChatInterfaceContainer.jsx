@@ -1,6 +1,6 @@
 "use client";
 
-import  { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ChatPresentation } from "../presentation/ChatInterface";
 
 export function ChatContainer({
@@ -32,11 +32,13 @@ export function ChatContainer({
     return () => clearTimeout(timeoutId);
   }, [messages.length]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (message.trim() || mediaFiles.length > 0) {
       try {
         // Get participant name - this should be the other participant in the selectedConversation
-        const receiverName = selectedConversation.participantName;
+        const receiverName = selectedConversation.participants.find(
+          (participant) => participant !== currentUser
+        );
 
         // Pass the receiver name and message directly to the onSendMessage handler
         await onSendMessage(receiverName, message, mediaFiles);
@@ -48,36 +50,38 @@ export function ChatContainer({
           clearTimeout(typingTimeoutRef.current);
           typingTimeoutRef.current = null;
         }
-        onSetTypingIndicator(currentUser.id, selectedConversation.id, false);
+        onSetTypingIndicator(currentUser, selectedConversation.id, false);
       } catch (error) {
         console.error("Error sending message:", error);
       }
     }
-  };
+  }, [message, mediaFiles, selectedConversation, currentUser, onSendMessage, onSetTypingIndicator]);
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = useCallback((e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
-  };
+  }, [handleSendMessage]);
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = useCallback((e) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       setMediaFiles((prev) => [...prev, ...filesArray]);
     }
-  };
+  }, []);
 
-  const handleRemoveFile = (index) => {
+  const handleRemoveFile = useCallback((index) => {
     setMediaFiles((prev) => prev.filter((_, i) => i !== index));
-  };
+  }, []);
 
-  const handleTyping = (e) => {
+  const handleTyping = useCallback((e) => {
     setMessage(e.target.value);
 
+    const conversationId = selectedConversation.id;
+
     if (!typingTimeoutRef.current) {
-      onSetTypingIndicator(currentUser.id, selectedConversation.id, true);
+      onSetTypingIndicator(currentUser, conversationId, true);
     }
 
     if (typingTimeoutRef.current) {
@@ -85,18 +89,18 @@ export function ChatContainer({
     }
 
     typingTimeoutRef.current = setTimeout(() => {
-      onSetTypingIndicator(currentUser.id, selectedConversation.id, false);
+      onSetTypingIndicator(currentUser, conversationId, false);
       typingTimeoutRef.current = null;
     }, 2000);
-  };
+  }, [currentUser, selectedConversation.id, onSetTypingIndicator]);
 
-  const handleBlockUser = async () => {
+  const handleBlockUser = useCallback(async () => {
     await onToggleBlock(selectedConversation.id, true);
-  };
+  }, [selectedConversation.id, onToggleBlock]);
 
-  const handleUnblockUser = async () => {
+  const handleUnblockUser = useCallback(async () => {
     await onToggleBlock(selectedConversation.id, false);
-  };
+  }, [selectedConversation.id, onToggleBlock]);
 
   return (
     <ChatPresentation

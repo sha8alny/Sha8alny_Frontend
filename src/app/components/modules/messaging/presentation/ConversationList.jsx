@@ -26,12 +26,12 @@ export function ConversationListPresentation({
   onSearchChange,
   onSelectConversation,
   onMarkAsRead,
-  onMarkAsUnread,
+  onToggleRead,
   onToggleBlock,
 }) {
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-4 border-b">
+    <div className="flex flex-col h-full md:bg-foreground bg-foreground/70 transition-colors duration-200">
+      <div className="sticky top-0 z-10 p-3 border-b bg-foreground/95 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <Input
             placeholder="Search messages..."
@@ -39,51 +39,49 @@ export function ConversationListPresentation({
             onChange={onSearchChange}
             className="flex-1"
           />
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="flex-shrink-0">
             <Search className="h-4 w-4" />
           </Button>
         </div>
       </div>
-      <ScrollArea className="flex-1">
-        <div className="p-2">
+      <ScrollArea className="flex-1 overflow-y-auto">
+        <div className="py-2">
           {filteredConversations.length > 0 ? (
             filteredConversations.map((conversation) => {
-              // Find the participant who is not the current user
-              const otherParticipant = conversation.participants?.find(
-                (participant) => participant !== currentUser
-              ) || "Unknown";
-
               return (
                 <div
                   key={conversation.id}
-                  className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
+                  className={`flex items-start gap-3 p-3 mx-2 my-1 rounded-lg cursor-pointer transition-colors duration-200 ${
                     selectedConversationId === conversation.id
-                      ? "bg-accent"
-                      : "hover:bg-muted"
+                      ? "bg-secondary/20"
+                      : "hover:bg-background/30"
                   }`}
-                  onClick={() => onSelectConversation(conversation.id)}
+                  onClick={() => {
+                    onSelectConversation(conversation.id);
+                    onMarkAsRead(conversation.id);
+                  }}
                 >
-                  <Avatar>
+                  <Avatar className="flex-shrink-0">
                     <AvatarImage
                       src={`/placeholder.svg`}
-                      alt={otherParticipant}
+                      alt={conversation.otherParticipant}
                     />
                     <AvatarFallback>
-                      {otherParticipant?.substring(0, 2).toUpperCase() || "??"}
+                      {conversation.otherParticipant?.substring(0, 2).toUpperCase() || "??"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <div className="font-medium truncate text-text">
-                        {otherParticipant}
+                        {conversation.otherParticipant}
                         {conversation.isBlocked && (
                           <span className="ml-2 text-xs text-muted-foreground">
                             (Blocked)
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {conversation.timestamp
+                      <div className="text-xs text-muted-foreground whitespace-nowrap ml-2 flex-shrink-0">
+                        {conversation?.timestamp
                           ? formatDistanceToNow(
                               new Date(conversation.timestamp.seconds * 1000)
                             )
@@ -91,22 +89,31 @@ export function ConversationListPresentation({
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-1">
-                      <div className="text-sm text-muted-foreground truncate max-w-[180px]">
-                        {conversation.isTyping ? (
+                      <div className="text-sm text-muted-foreground truncate max-w-[180px] sm:max-w-[220px] md:max-w-[250px]">
+                        {conversation.isOtherParticipantTyping ? (
                           <span className="italic">Typing...</span>
-                        ) : conversation.lastMessage ? (
+                        ) : conversation?.lastMessage ? (
                           <span>{conversation.lastMessage}</span>
                         ) : (
-                          "Start a conversation"
+                          <span className="italic">No messages yet</span>
                         )}
                       </div>
-                      {!conversation.read && (
+                      {!conversation.read ? (
                         <Badge
                           variant="default"
                           className="rounded-full px-2 py-2 text-xs"
                         >
-                          
+                          {conversation.unseenCount > 0 ? conversation.unseenCount : ''}
                         </Badge>
+                      ) : (
+                        conversation.unseenCount > 0 && (
+                          <Badge
+                            variant="default"
+                            className="rounded-full text-xs"
+                          >
+                            {conversation.unseenCount}
+                          </Badge>
+                        )
                       )}
                     </div>
                   </div>
@@ -115,7 +122,7 @@ export function ConversationListPresentation({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 flex-shrink-0"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical className="h-4 w-4" />
@@ -126,7 +133,7 @@ export function ConversationListPresentation({
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            onMarkAsUnread(conversation.id);
+                            onToggleRead();
                           }}
                         >
                           Mark as unread
@@ -135,7 +142,7 @@ export function ConversationListPresentation({
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            onMarkAsRead(conversation.id);
+                            onToggleRead();
                           }}
                         >
                           Mark as read

@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ArrowLeft, MoreVertical, Send, ImageIcon, Ban, Check } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
 import { MediaPreview } from "./MediaPreview";
-
+import { formatDate } from "@/app/utils/utils";
 
 export function ChatPresentation({
     selectedConversation,
@@ -28,33 +28,71 @@ export function ChatPresentation({
     onUnblockUser
 }) {
     // Find the other participant for display
-    const otherParticipant = selectedConversation.participantName || 
-        (selectedConversation.participants?.find(p => p !== currentUser.username) || "User");
+    const otherParticipant = selectedConversation.participants?.find(
+        (participant) => participant !== currentUser
+    );
+    // Check if the other participant is typing
+    const isOtherParticipantTyping = selectedConversation.typingStatus?.[otherParticipant] === true;
+
+    // Helper function to check if two dates are on the same day
+    function isSameDay(date1, date2) {
+        return date1.getFullYear() === date2.getFullYear() &&
+               date1.getMonth() === date2.getMonth() &&
+               date1.getDate() === date2.getDate();
+    }
+
+    // Render message list with date separators
+    console.log("Rendering messages:", messages);
+    const messageList = messages.map((message, index) => {
+        // Show date separator if it's the first message or if the date is different from the previous message
+        const showDateSeparator = index === 0 || 
+            !isSameDay(formatDate(message.timestamp), formatDate(messages[index - 1].timestamp));
+        
+        return (
+            <MessageBubble 
+                key={message.messageId || message.id}
+                message={{
+                    messageId: message.messageId || message.id,
+                    content: message.content || message.messageContent,
+                    sender: message.sender || message.senderName,
+                    timestamp: message.timestamp,
+                    isDeleted: message.isDeleted,
+                    read: message.read
+                }}
+                isCurrentUser={(message.sender || message.senderName) === currentUser}
+                participantName={otherParticipant}
+                showDateSeparator={showDateSeparator}
+            />
+        );
+    });
     
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex flex-col h-full overflow-hidden">
+            {/* Chat Header */}
+            <div className="flex items-center justify-between p-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
                 <div className="flex items-center gap-3">
                     {onBack && (
-                        <Button variant="ghost" size="icon" onClick={onBack}>
+                        <Button variant="ghost" size="icon" onClick={onBack} >
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
                     )}
-                    <Avatar>
+                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                         <AvatarImage
-                            src={selectedConversation.participantAvatar || "/placeholder.svg"}
+                            src={otherParticipant?.picture || "/placeholder.svg"}
                             alt={otherParticipant}
                         />
                         <AvatarFallback>{otherParticipant?.substring(0, 2).toUpperCase() || "??"}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <div className="font-medium">{otherParticipant}</div>
-                        {selectedConversation.isTyping && <div className="text-xs text-muted-foreground">Typing...</div>}
+                        <div className="font-medium text-sm sm:text-base text-text">{otherParticipant}</div>
+                        {isOtherParticipantTyping && (
+                            <div className="text-xs text-muted-foreground">Typing...</div>
+                        )}
                     </div>
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
                             <MoreVertical className="h-5 w-5" />
                         </Button>
                     </DropdownMenuTrigger>
@@ -74,45 +112,44 @@ export function ChatPresentation({
                 </DropdownMenu>
             </div>
 
-            <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-                <div className="space-y-4">
-                    {messages.map((msg) => (
-                        <MessageBubble
-                            key={msg.id}
-                            message={{
-                                messageId: msg.id,
-                                content: msg.messageContent,
-                                sender: msg.senderName,
-                                timestamp: msg.timestamp,
-                                isDeleted: msg.isDeleted,
-                                read: msg.read
-                            }}
-                            isCurrentUser={msg.senderName === currentUser}
-                            participantName={otherParticipant}
-                            currentUserName={currentUser}
-                        />
-                    ))}
+            {/* Messages Area */}
+            <ScrollArea 
+                className="flex-1 p-3 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted/50 scrollbar-track-transparent" 
+                ref={scrollAreaRef}
+
+            >
+                <div className="space-y-4 pb-2">
+                    {messageList}
                 </div>
             </ScrollArea>
 
+            {/* Blocked Message or Input Area */}
             {selectedConversation.isBlocked ? (
-                <div className="p-4 text-center text-muted-foreground border-t">
+                <div className="p-4 text-center text-muted-foreground border-t bg-background/95 backdrop-blur-sm">
                     You have blocked this user. Unblock to send messages.
                 </div>
             ) : (
                 <>
+                    {/* Media Preview Area */}
                     {mediaFiles.length > 0 && (
-                        <div className="p-2 border-t">
-                            <div className="flex gap-2 overflow-x-auto p-2">
+                        <div className="p-2 border-t bg-background">
+                            <div className="flex gap-2 overflow-x-auto p-2 scrollbar-thin">
                                 {mediaFiles.map((file, index) => (
                                     <MediaPreview key={index} file={file} onRemove={() => onRemoveFile(index)} />
                                 ))}
                             </div>
                         </div>
                     )}
-                    <div className="p-4 border-t sticky bottom-0 ">
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="icon" onClick={() => fileInputRef.current?.click()}>
+                    
+                    {/* Message Input Area */}
+                    <div className="p-3 border-t sticky bottom-0 bg-background/95 backdrop-blur-sm z-10 flex-shrink-0">
+                        <div className="flex gap-2 items-end">
+                            <Button 
+                                variant="outline" 
+                                size="icon" 
+                                onClick={() => fileInputRef.current?.click()}
+                                className="flex-shrink-0 h-10 w-10"
+                            >
                                 <ImageIcon className="h-5 w-5" />
                             </Button>
                             <input
@@ -128,9 +165,15 @@ export function ChatPresentation({
                                 value={message}
                                 onChange={onTyping}
                                 onKeyDown={onKeyDown}
-                                className="flex-1 min-h-[40px] max-h-[120px]"
+                                className="flex-1 min-h-[40px] max-h-[120px] resize-none"
+                                rows={1}
                             />
-                            <Button size="icon" onClick={onSendMessage}>
+                            <Button 
+                                size="icon" 
+                                onClick={onSendMessage}
+                                className="flex-shrink-0 h-10 w-10"
+                                disabled={!message.trim() && mediaFiles.length === 0}
+                            >
                                 <Send className="h-5 w-5" />
                             </Button>
                         </div>

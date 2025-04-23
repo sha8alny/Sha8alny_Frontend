@@ -1,4 +1,3 @@
-// MessageBubble.jsx (continued)
 "use client"
 
 import { useState } from "react"
@@ -6,7 +5,33 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/Avatar"
 import { Check, FileText, ImageIcon, Film } from "lucide-react"
 import { formatTime } from "@/app/utils/utils"
 
-export function MessageBubble({ message, isCurrentUser, participantName, currentUserName }) {
+// Helper function to format date for day separators
+export function formatMessageDate(timestamp) {
+    const date = timestamp.toDate()
+    const today = new Date()
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
+    
+    if (date.toDateString() === today.toDateString()) {
+        return "Today"
+    } else if (date.toDateString() === yesterday.toDateString()) {
+        return "Yesterday"
+    } else {
+        return date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
+    }
+}
+
+export function DateSeparator({ date }) {
+    return (
+        <div className="flex items-center justify-center my-4">
+            <div className=" bg-primary/60  px-3 py-1 rounded-full text-xs text-foreground">
+                {date}
+            </div>
+        </div>
+    )
+}
+
+export function MessageBubble({ message, isCurrentUser, participantName, showDateSeparator }) {
     const [imageLoaded, setImageLoaded] = useState(false)
 
     const getFileIcon = (url) => {
@@ -65,25 +90,28 @@ export function MessageBubble({ message, isCurrentUser, participantName, current
     }
 
     return (
-        <div className={`flex gap-2 max-w-[80%] ${isCurrentUser ? "ml-auto flex-row-reverse" : ""}`}>
-            {!isCurrentUser && (
-                <Avatar className="h-8 w-8">
-                    <AvatarImage src={participantName ? `/api/avatar/${participantName}` : "/placeholder.svg"} alt={participantName} />
-                    <AvatarFallback>{participantName?.substring(0, 2).toUpperCase() || "??"}</AvatarFallback>
-                </Avatar>
-            )}
-            <div>
-                <div className={`rounded-lg p-3 ${isCurrentUser ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
-                    {message.content}
-                    {message.mediaUrls && message.mediaUrls.length > 0 && (
-                        <div className="space-y-2">{message.mediaUrls.map((url, index) => renderMedia(url, index))}</div>
-                    )}
-                </div>
-                <div className={`flex items-center text-xs text-muted-foreground mt-1 ${isCurrentUser ? "justify-end" : ""}`}>
-                    <span>{formatTime(message.timestamp)}</span>
-                    {isCurrentUser && message.read && <Check className="h-3 w-3 ml-1 text-primary" />}
+        <>
+            {showDateSeparator && <DateSeparator date={formatMessageDate(message.timestamp)} />}
+            <div className={`flex gap-2 max-w-[80%] ${isCurrentUser ? "ml-auto flex-row-reverse" : ""}`}>
+                {!isCurrentUser && (
+                    <Avatar className="h-8 w-8">
+                        <AvatarImage src={participantName ? `/api/avatar/${participantName}` : "/placeholder.svg"} alt={participantName} />
+                        <AvatarFallback>{participantName?.substring(0, 2).toUpperCase() || "??"}</AvatarFallback>
+                    </Avatar>
+                )}
+                <div>
+                    <div className={`rounded-xl p-3 ${isCurrentUser ? "bg-secondary " : "bg-primary text-primary-foreground"}`}>
+                        {message.content}
+                        {message.mediaUrls && message.mediaUrls.length > 0 && (
+                            <div className="space-y-2">{message.mediaUrls.map((url, index) => renderMedia(url, index))}</div>
+                        )}
+                    </div>
+                    <div className={`flex items-center text-xs text-muted-foreground mt-1 ${isCurrentUser ? "justify-end" : ""}`}>
+                        <span>{formatTime(message.timestamp)}</span>
+                        {isCurrentUser && message.read && <Check className="h-3 w-3 ml-1 text-primary" />}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
