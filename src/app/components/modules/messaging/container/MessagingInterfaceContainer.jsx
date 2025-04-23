@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useService } from "@/app/context/ServiceContext";
+import { useState, useEffect, useCallback, useRef } from "react";
+import * as FirestoreService from   "@/app/services/messagingService";
 import { MessagingPresentation } from "../presentation/MessagingInterface";
 import { ConnectionsModal } from "../presentation/ConnectionsModal";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -15,7 +15,7 @@ export function MessagingContainer({ currentUser }) {
   const [loadingConnections, setLoadingConnections] = useState(false);
   const [isNavigatingBack, setIsNavigatingBack] = useState(false);
 
-  const service = useService();
+  const service = FirestoreService.messagingService;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -26,93 +26,68 @@ export function MessagingContainer({ currentUser }) {
     [currentUser]
   );
 
-  const buildConversationDetails = useCallback((conv) => {
-    const other = getOtherParticipant(conv);
-    return other
-      ? {
-          id: conv.id,
-          participants: conv.participants,
-          createdAt: conv.createdAt,
-          updatedAt: conv.timestamp,
-          participantId: other,
-          participantName: other,
-          participantAvatar: null,
-          unreadCount: conv.read ? 0 : 1,
-          isTyping: true,
-          isBlocked: false,
-          readStatus: conv.read ? null : "unread",
-          lastMessage: conv.lastMessage,
-        }
-      : null;
-  }, [getOtherParticipant]);
+  // Conversations subscription
+  useEffect(() => {
+    if (isNavigatingBack) return;
+    if (!currentUser) return;
 
-// Conversations subscription
-useEffect(() => {
-  if (!currentUser) return;
+    const unsubscribe = service.subscribeToConversations(currentUser, (updatedConversations) => {
+      if (!Array.isArray(updatedConversations)) return;
 
-  const unsubscribe = service.subscribeToConversations(currentUser, (updatedConversations) => {
-    if (!Array.isArray(updatedConversations)) return;
+      setUserConversations(updatedConversations);
+      const username = searchParams.get("username");
 
-    setUserConversations(updatedConversations);
+      if (username && !selectedConversation) {
+        const match = updatedConversations.find((c) => c.participants.includes(username));
+        if (match) setSelectedConversation(match);
+      }
+    });
 
-    const username = searchParams.get("username");
-    if (username && !selectedConversation) {
-      const match = updatedConversations.find((c) => c.participants.includes(username));
-      if (match) setSelectedConversation(buildConversationDetails(match));
-    }
-  });
-
-  return () => unsubscribe?.();
-}, [currentUser, service, selectedConversation]);
+    return () => unsubscribe?.();
+  }, [currentUser, service, searchParams, selectedConversation]);
 
   // Messages subscription
-useEffect(() => {
-  if (!selectedConversation) {
-    setMessages([]);
-    return;
-  }
+  useEffect(() => {
+    if (!selectedConversation) return setMessages([]);
 
-  const conv = userConversations.find((c) => c.id === selectedConversation.id);
-  if (!conv) return;
+    const conv = userConversations.find((c) => c.id === selectedConversation.id);
+    if (!conv) return;
 
-  const other = getOtherParticipant(conv);
-  if (!other) return;
+    const other = getOtherParticipant(conv);
+    if (!other) return;
 
-  // Avoid repeated router.push if username already matches
-  const currentUsername = searchParams.get("username");
-  const shouldPush = !isNavigatingBack && currentUsername !== other;
-
-  if (shouldPush) {
-    router.push(`${pathname}?username=${other}`, { scroll: false });
-  }
-
-  // Reset navigation guard
-  if (isNavigatingBack) {
-    setIsNavigatingBack(false);
-  }
-
-  const unsubscribe = service.subscribeToConversationMessages(conv.id, (newMessages) => {
-    if (Array.isArray(newMessages)) {
-      setMessages(newMessages);
+    const currentUsername = searchParams.get("username");
+    if (!isNavigatingBack && currentUsername !== other) {
+      router.push(`${pathname}?username=${other}`, { scroll: false });
+    } else {
+      setIsNavigatingBack(false);
     }
-  });
+    const unsubscribe = service.subscribeToConversationMessages(conv.id, (newMessages) => {
+      if (Array.isArray(newMessages)) setMessages(newMessages);
+    });
 
-  return () => unsubscribe?.();
-}, [
-  selectedConversation?.id, // only track id, not full object to avoid re-triggering
-  userConversations,
-  isNavigatingBack,
-  pathname,
-  router,
-]);
+    return () => unsubscribe?.();
+  }, [selectedConversation, userConversations, getOtherParticipant, service, pathname, router, isNavigatingBack, searchParams]);
 
+  // Update selected conversation when it changes in userConversations
+  useEffect(() => {
+    if (!selectedConversation) return;
+    
+    const updatedConversation = userConversations.find(
+      (conv) => conv.id === selectedConversation.id
+    );
+    
+    if (updatedConversation && JSON.stringify(updatedConversation) !== JSON.stringify(selectedConversation)) {
+      setSelectedConversation(updatedConversation);
+    }
+  }, [userConversations, selectedConversation]);
 
   const handleSelectConversation = useCallback(
     (id) => {
       const conv = userConversations.find((c) => c.id === id);
-      if (conv) setSelectedConversation(buildConversationDetails(conv));
+      if (conv) setSelectedConversation(conv);
     },
-    [userConversations, buildConversationDetails]
+    [userConversations]
   );
 
   const handleMarkAsRead = useCallback(async (id) => {
@@ -126,7 +101,7 @@ useEffect(() => {
     );
   }, [userConversations, getOtherParticipant, service]);
 
-  const handleMarkAsUnread = useCallback(async (id) => {
+  const handleToggleRead = useCallback(async (id) => {
     const conv = userConversations.find((c) => c.id === id);
     const other = getOtherParticipant(conv);
     if (!other) return;
@@ -141,7 +116,8 @@ useEffect(() => {
     if (!currentUser) return;
 
     await service.toggleUserBlock(currentUser, id, isBlocked);
-    setSelectedConversation((prev) => prev ? { ...prev, isBlocked: !prev.isBlocked } : null);
+    // We don't need to update selectedConversation here as it will be updated
+    // via the userConversations effect
   }, [currentUser, service]);
 
   const handleSendMessage = useCallback(async (receiverName, message, mediaFiles) => {
@@ -160,29 +136,11 @@ useEffect(() => {
       mediaUrl: newMsg.mediaUrls?.[0] || null,
     }]);
 
-    setUserConversations((prev) =>
-      prev.map((conv) =>
-        conv.participants.includes(receiverName)
-          ? { ...conv, lastMessage: { content: newMsg.content, timestamp: newMsg.timestamp } }
-          : conv
-      )
-    );
-
-    setSelectedConversation((prev) =>
-      prev ? {
-        ...prev,
-        lastMessage: {
-          content: newMsg.content,
-          timestamp: newMsg.timestamp,
-          senderId: newMsg.sender,
-        },
-      } : null
-    );
   }, [service]);
 
-  const handleSetTypingIndicator = useCallback((userId, convId, isTyping) => {
-    service.updateTypingStatus(userId, convId, isTyping);
-    setSelectedConversation((prev) => prev ? { ...prev, isTyping } : null);
+  const handleSetTypingIndicator = useCallback((userName, convId, isTyping) => {
+    service.updateTypingStatus(userName, convId, isTyping);
+    
   }, [service]);
 
   const handleOpenConnections = useCallback(async () => {
@@ -229,11 +187,12 @@ useEffect(() => {
     if (!selectedConversation) return;
     setIsNavigatingBack(true);
     setSelectedConversation(null);
-    window.history.pushState({}, "", pathname);
-  }, [selectedConversation, pathname]);
+    router.push(pathname, { scroll: false });
+  }, [selectedConversation, pathname, router]);
 
   return (
     <>
+
       <MessagingPresentation
         userConversations={userConversations}
         selectedConversation={selectedConversation}
@@ -241,12 +200,13 @@ useEffect(() => {
         messages={messages}
         onSelectConversation={handleSelectConversation}
         onMarkAsRead={handleMarkAsRead}
-        onMarkAsUnread={handleMarkAsUnread}
+        onToggleRead={handleToggleRead}
         onToggleBlock={handleToggleBlock}
         onSendMessage={handleSendMessage}
         onSetTypingIndicator={handleSetTypingIndicator}
         onBack={handleBack}
         onOpenConnections={handleOpenConnections}
+        
       />
 
       {showConnectionsModal && (
