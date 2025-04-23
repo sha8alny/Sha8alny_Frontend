@@ -1,5 +1,6 @@
+import SafeImage from "@/app/components/ui/SafeImage";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import Image from "next/image";
+
 /**
  * @namespace jobs
  * @module jobs
@@ -33,13 +34,12 @@ function JobHeader({ job, isLoading }) {
         </h1>
         {!isLoading && (
           <div className="w-24 h-24 relative flex items-center justify-center border border-blue-300 mr-4 rounded-md">
-            <Image
+            <SafeImage
               src={companyLogo}
-              alt={`${companyName} logo`}
               width={96}
               height={96}
-              className="object-contain"
-            />
+              alt={`${companyName} logo`}
+              className="w-full h-full object-cover rounded-md" />
           </div>
         )}
       </div>
