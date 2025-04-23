@@ -174,8 +174,8 @@ function JobsFilterPresentation({
   onClearAllFilters,
 }) {
   return (
-    <Card className="w-full bg-foreground">
-      <CardHeader className="pb-3">
+    <Card className="w-full bg-foreground gap-2">
+      <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <FilterAltIcon className="h-5 w-5" />
@@ -195,7 +195,7 @@ function JobsFilterPresentation({
         </div>
 
         {selectedFilters.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-2 mt-2">
             {selectedFilters.map((filter, index) => (
               <Badge
                 key={index}
