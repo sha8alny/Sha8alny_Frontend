@@ -57,6 +57,7 @@ export default function CommentPresentation({
   isDeleting,
   nestCount,
   postUsername,
+  isFollowing
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
@@ -102,21 +103,21 @@ export default function CommentPresentation({
                   {comment?.connectionDegree !== 0 &&
                     comment?.connectionDegree !== -1 && (
                       <button
-                        disabled={comment?.isFollowed}
+                        disabled={isFollowing}
                         onClick={() => onFollow(comment?.username)}
                         className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
-                          comment?.isFollowed
+                          isFollowing
                             ? "bg-secondary/80 text-background dark:text-primary cursor-default"
                             : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
                         } transition-colors duration-200`}
                       >
-                        {comment?.isFollowed ? (
+                        {isFollowing ? (
                           <Person sx={{ fontSize: "0.75rem" }} />
                         ) : (
                           <PersonAdd sx={{ fontSize: "0.75rem" }} />
                         )}
                         <span className="max-w-0 overflow-hidden group-hover:max-w-24 group-hover:ml-2 group-hover:mr-1 transition-all duration-300 whitespace-nowrap">
-                          {comment?.isFollowed ? "Following" : "Follow"}
+                          {isFollowing ? "Following" : "Follow"}
                         </span>
                       </button>
                     )}

@@ -26,6 +26,20 @@ export default function PostContainer({ post }) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(post?.isFollowed || false);
+  const [reactionCount, setReactionCount] = useState(
+    post?.numLikes +
+      post?.numCelebrates +
+      post?.numLoves +
+      post?.numSupports +
+      post?.numFunnies +
+      post?.numInsightfuls
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  
+  const fileName = post?.media[0]?.split('/').pop() || "Document";
+  const fileExtension = post?.media[0]?.split('.').pop()?.toUpperCase()
 
   const pathName = usePathname();
   const router = useRouter();
@@ -38,10 +52,16 @@ export default function PostContainer({ post }) {
   const handleLikeMutation = useMutation({
     mutationFn: (params) => {
       const { postId, reaction } = params;
-      isLiked && post?.reaction === reaction
-        ? setIsLiked(false)
-        : setIsLiked(reaction); // Optimistic update
-      return isLiked && post?.reaction === reaction
+      if (isLiked && isLiked === reaction) {
+        setIsLiked(false);
+        setReactionCount((prev) => prev - 1);
+      } else {
+        if (!isLiked) {
+          setReactionCount((prev) => prev + 1);
+        }
+        setIsLiked(reaction);
+      }
+      return isLiked && isLiked === reaction
         ? reactToContent(postId, null, null, true)
         : reactToContent(postId, null, reaction);
     },
@@ -68,13 +88,14 @@ export default function PostContainer({ post }) {
     mutationFn: (postId) => savePost(postId),
     onSuccess: () => {
       queryClient.invalidateQueries(["posts"]);
-      setIsSaved((prev) => !prev);
+      setIsSaved(true);
     },
   });
 
   const handleFollowMutation = useMutation({
     mutationFn: (username) => followUser(username),
     onSuccess: () => {
+      setIsFollowing(true);
       queryClient.invalidateQueries(["posts"]);
     },
   });
@@ -83,6 +104,7 @@ export default function PostContainer({ post }) {
     mutationFn: (postId) => deletePost(postId),
     onSuccess: () => {
       queryClient.invalidateQueries(["posts"]);
+      window.location.reload();
     },
   });
 
@@ -188,7 +210,23 @@ export default function PostContainer({ post }) {
     return videoExtensions.includes(extension);
   };
 
+  const isDocument = (mediaUrl) => {
+    if (!mediaUrl) return false;
+    const extension = mediaUrl.split(".").pop().toLowerCase();
+    const documentExtensions = [
+      "pdf",
+      "doc",
+      "docx",
+      "ppt",
+      "pptx",
+      "xls",
+      "xlsx",
+    ];
+    return documentExtensions.includes(extension);
+  };
+
   const videoCheck = isVideo(post?.media[0]);
+  const documentCheck = isDocument(post?.media[0]);
 
   return (
     <PostPresentation
@@ -207,13 +245,7 @@ export default function PostContainer({ post }) {
         ...post,
         age: determineAge(post?.time),
         relation: convertRelation(post?.connectionDegree),
-        numReacts:
-          post?.numLikes +
-          post?.numCelebrates +
-          post?.numLoves +
-          post?.numSupports +
-          post?.numFunnies +
-          post?.numInsightfuls,
+        numReacts: reactionCount,
       }}
       userReactions={Reactions}
       layoutClass={getLayout(post?.media.length).layoutClass}
@@ -228,6 +260,14 @@ export default function PostContainer({ post }) {
       copied={copied}
       copyToClipboard={copyToClipboard}
       shareUrl={encodedUrl}
+      isDocument={documentCheck}
+      isFollowing={isFollowing}
+      setIsLoading={setIsLoading}
+      setHasError={setHasError}
+      hasError={hasError}
+      isLoading={isLoading}
+      fileName={fileName}
+      fileExtension={fileExtension}
     />
   );
 }

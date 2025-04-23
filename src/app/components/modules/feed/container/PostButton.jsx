@@ -17,6 +17,7 @@ export default function PostButton({ userInfo }) {
   const [searchResults, setSearchResults] = useState([]);
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState(null);
+  const [document, setDocument] = useState(null);
   const [error, setError] = useState(null);
   const [currentState, setCurrentState] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +25,8 @@ export default function PostButton({ userInfo }) {
   const [taggedUserPopoverOpen, setTaggedUserPopoverOpen] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
+  const documentInputRef = useRef(null);
+  
 
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -107,6 +110,9 @@ export default function PostButton({ userInfo }) {
     }
     if (videos) {
       formData.append("media", videos);
+    }
+    if (document) {
+      formData.append("media", document);
     }
     console.log(formData);
     handlePostMutation.mutate(formData);
@@ -199,6 +205,29 @@ export default function PostButton({ userInfo }) {
     }
   };
 
+  const handleAddDocument = (file) => {
+    const supportedDocumentTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (file && supportedDocumentTypes.includes(file.type)) {
+      const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+      if (file.size > MAX_SIZE) {
+        setError("File too large. Please keep files under 10MB.");
+        return;
+      }
+      setError(null);
+      setDocument(file);
+    } else {
+      setError("Unsupported document format. Please use PDF, DOC or DOCX.");
+    }
+  };
+
+  const handleRemoveDocument = () => {
+    setDocument(null);
+  };
+
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
@@ -254,6 +283,10 @@ export default function PostButton({ userInfo }) {
           setTaggedUserPopoverOpen={setTaggedUserPopoverOpen}
           tagInput={tag}
           setTagInput={setTag}
+          onAddDocument={handleAddDocument}
+          onRemoveDocument={handleRemoveDocument}
+          document={document}
+          documentInputRef={documentInputRef}
         />
       }
     />

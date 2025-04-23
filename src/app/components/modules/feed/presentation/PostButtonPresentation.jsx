@@ -2,6 +2,7 @@ import { Separator } from "@/app/components/ui/Separator";
 import Image from "next/image";
 import {
   AccessTimeOutlined,
+  DescriptionOutlined,
   ImageOutlined,
   LocalOfferOutlined,
   PersonAddOutlined,
@@ -52,6 +53,10 @@ export default function PostButtonPresentation({
   setTaggedUserPopoverOpen,
   tagInput,
   setTagInput,
+  onAddDocument,
+  onRemoveDocument,
+  document,
+  documentInputRef,
 }) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -65,7 +70,9 @@ export default function PostButtonPresentation({
           />
         </div>
         <div className="flex flex-col">
-          <h4 className="text-primary text-start font-bold">{userInfo?.name}</h4>
+          <h4 className="text-primary text-start font-bold">
+            {userInfo?.name}
+          </h4>
           <p className="text-sm text-muted">{userInfo?.headline}</p>
         </div>
       </div>
@@ -117,8 +124,30 @@ export default function PostButtonPresentation({
               </Button>
             </div>
           )}
-        </div>
-        {/* Display tags and tagged users if any */}
+          {/* Document preview */}
+          {document && (
+            <div className="relative w-full max-w-sm bg-primary/10 rounded-lg p-3 mb-4 flex items-center gap-3 border border-foreground/20">
+              <div className="flex-shrink-0">
+                <DescriptionOutlined className="text-secondary h-8 w-8" />
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <p className="text-sm font-medium text-primary truncate">{document.name}</p>
+                <p className="text-xs text-muted">
+                  {(document.size / 1024).toFixed(1)} KB • {document.name.split('.').pop().toUpperCase()}
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="flex-shrink-0 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80"
+                onClick={onRemoveDocument}
+              >
+                <XIcon className="h-3 w-3" />
+              </Button>
+            </div>
+          )}
+          </div>
+          {/* Display tags and tagged users if any */}
         {(tags.length > 0 || taggedUsers.length > 0) && (
           <div className="mt-4 flex flex-wrap gap-2">
             {tags.map((tag) => (
@@ -146,8 +175,13 @@ export default function PostButtonPresentation({
                 className="flex items-center gap-1 px-2 py-1 bg-muted/50"
               >
                 <Avatar className="h-5 w-5 mr-1">
-                  <AvatarImage src={user?.profilePicture} alt={user?.fullName} />
-                  <AvatarFallback>{user?.fullName?.substring(0,2).toUpperCase()}</AvatarFallback>
+                  <AvatarImage
+                    src={user?.profilePicture}
+                    alt={user?.fullName}
+                  />
+                  <AvatarFallback>
+                    {user?.fullName?.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 {user?.fullName}
                 <button
@@ -183,6 +217,16 @@ export default function PostButtonPresentation({
               }}
             >
               <VideocamOutlined sx={{ fontSize: "1rem" }} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full text-orange-500 cursor-pointer"
+              onClick={() => {
+                documentInputRef.current?.click();
+              }}
+            >
+              <DescriptionOutlined sx={{ fontSize: "1rem" }} />
             </Button>
 
             {/* Tag popover */}
@@ -276,6 +320,17 @@ export default function PostButtonPresentation({
         onChange={(e) => {
           if (e.target.files.length > 0) {
             onAddMedia(e.target.files[0]);
+          }
+        }}
+      />
+      <input
+        type="file"
+        ref={documentInputRef}
+        className="hidden"
+        accept=".pdf,.doc,.docx"
+        onChange={(e) => {
+          if (e.target.files.length > 0) {
+            onAddDocument(e.target.files[0]);
           }
         }}
       />

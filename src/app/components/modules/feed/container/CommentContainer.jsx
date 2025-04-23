@@ -28,6 +28,15 @@ export default function CommentContainer({
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [reactionCount, setReactionCount] = useState(
+    (comment?.numLikes || 0) +
+      (comment?.numCelebrates || 0) +
+      (comment?.numLoves || 0) +
+      (comment?.numSupports || 0) +
+      (comment?.numFunnies || 0) +
+      (comment?.numInsightfuls || 0)
+  );
+  const [isFollowing, setIsFollowing] = useState(comment?.isFollowed || false);
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
@@ -88,6 +97,7 @@ export default function CommentContainer({
   const handleFollowMutation = useMutation({
     mutationFn: followUser,
     onSuccess: () => {
+      setIsFollowing(true);
       queryClient.invalidateQueries(["comments", postId]);
       queryClient.invalidateQueries([
         "commentReplies",
@@ -103,9 +113,15 @@ export default function CommentContainer({
   const handleReactMutation = useMutation({
     mutationFn: (params) => {
       const { postId, commentId, reaction } = params;
-      isLiked && comment?.reaction === reaction
-        ? setIsLiked(false)
-        : setIsLiked(reaction); // Optimistic update
+      if (isLiked && isLiked === reaction) {
+        setIsLiked(false);
+        setReactionCount((prev) => prev - 1);
+      } else {
+        if (!isLiked) {
+          setReactionCount((prev) => prev + 1);
+        }
+        setIsLiked(reaction);
+      }
       return isLiked && comment?.reaction === reaction
         ? reactToContent(postId, commentId, null, true)
         : reactToContent(postId, commentId, reaction);
@@ -233,13 +249,7 @@ export default function CommentContainer({
         age: commentAge,
         username: encodeURIComponent(comment?.username),
         relation: convertRelation(comment?.connectionDegree),
-        numReacts:
-          (comment?.numLikes || 0) +
-          (comment?.numCelebrates || 0) +
-          (comment?.numLoves || 0) +
-          (comment?.numSupports || 0) +
-          (comment?.numFunnies || 0) +
-          (comment?.numInsightfuls || 0),
+        numReacts: reactionCount,
       }}
       isLiked={isLiked}
       onLike={handleLike}
@@ -267,6 +277,7 @@ export default function CommentContainer({
       isDeleting={isDeleting}
       nestCount={nestCount}
       postUsername={postUsername}
+      isFollowing={isFollowing}
     />
   );
 }

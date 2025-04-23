@@ -86,8 +86,15 @@ export default function PostPresentation({
   copied,
   copyToClipboard,
   shareUrl,
+  isDocument,
+  isFollowing,
+  setIsLoading,
+  setHasError,
+  hasError,
+  isLoading,
+  fileName,
+  fileExtension,
 }) {
-
   return (
     <Card className="bg-foreground w-full max-w-2xl mx-auto mb-4">
       {post?.isShared && (
@@ -164,15 +171,15 @@ export default function PostPresentation({
             )}
             {post?.connectionDegree !== 0 && post?.connectionDegree !== -1 && (
               <button
-                disabled={post?.isFollowed}
+                disabled={isFollowing}
                 onClick={() => onFollow(post?.username)}
                 className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
-                  post?.isFollowed
+                  isFollowing
                     ? "bg-secondary/80 text-background dark:text-primary cursor-default"
                     : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
                 } transition-colors duration-200`}
               >
-                {post?.isFollowed &&
+                {isFollowing &&
                 (post?.connectionDegree !== 0 ||
                   post?.connectionDegree !== -1) ? (
                   <Person sx={{ fontSize: "0.75rem" }} />
@@ -180,7 +187,7 @@ export default function PostPresentation({
                   <PersonAdd sx={{ fontSize: "0.75rem" }} />
                 )}
                 <span className="max-w-0 overflow-hidden group-hover:max-w-24 group-hover:ml-2 group-hover:mr-1 transition-all duration-300 whitespace-nowrap">
-                  {post?.isFollowed ? "Following" : "Follow"}
+                  {isFollowing ? "Following" : "Follow"}
                 </span>
               </button>
             )}
@@ -220,7 +227,11 @@ export default function PostPresentation({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={post?.connectionDegree !== 0 ? () => setReportModalOpen(true) : () => setDeleteModalOpen(true)}
+                onClick={
+                  post?.connectionDegree !== 0
+                    ? () => setReportModalOpen(true)
+                    : () => setDeleteModalOpen(true)
+                }
               >
                 {post?.connectionDegree !== 0 && (
                   <>
@@ -242,8 +253,7 @@ export default function PostPresentation({
 
       <CardContent>
         <div className="whitespace-pre-line mb-4">
-          {post?.text} 
-          {" "}
+          {post?.text}{" "}
           {post?.keywords?.length > 0 && (
             <span className="text-primary">
               {post?.keywords.map((keyword, index) => (
@@ -260,15 +270,85 @@ export default function PostPresentation({
             </span>
           )}
         </div>
-
-        {isVideo && post?.media && post?.media.length > 0 && (
+        {isDocument && post?.media && post?.media.length > 0 && (
+            <div className="relative w-full rounded-lg overflow-hidden border border-primary/10 bg-primary/5">
+              {/* Document header with info */}
+              <div className="flex items-center justify-between p-2 bg-primary/10">
+                <div className="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="text-sm font-medium truncate">
+                    {fileExtension + " Document" || "Document"}
+                  </span>
+                </div>
+                <a 
+                  href={post?.media[0]} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-xs text-primary hover:text-primary/80 flex items-center gap-1"
+                >
+                  <span>Open</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+              
+              {/* Document preview with React state for loading/error */}
+              <div className="relative aspect-[4/3] w-full bg-background">
+                {!hasError && (
+                  <iframe 
+                    src={post?.media[0]} 
+                    title={`Document: ${fileName}`}
+                    className="absolute inset-0 w-full h-full border-none"
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups"
+                    onLoad={() => {
+                      setIsLoading(false);
+                    }}
+                    onError={() => {
+                      setIsLoading(false);
+                      setHasError(true);
+                    }}
+                  />
+                )}
+                
+                {/* Loading indicator */}
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/50 transition-opacity duration-300">
+                    <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full"></div>
+                  </div>
+                )}
+                
+                {/* Error fallback */}
+                {hasError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 transition-opacity duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary/70 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p className="text-sm text-primary/70">Document preview unavailable</p>
+                    <a 
+                      href={post?.media[0]} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="mt-3 px-3 py-1.5 bg-primary text-background rounded-md text-sm hover:bg-primary/80 transition-colors"
+                    >
+                      Open Document
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        {!isDocument && isVideo && post?.media && post?.media.length > 0 && (
           <SafeVideo
             src={post?.media[0]}
             controls
             className="w-full aspect-square rounded-2xl"
           />
         )}
-        {!isVideo && post?.media && post?.media.length > 0 && (
+        {!isDocument && !isVideo && post?.media && post?.media.length > 0 && (
           <div className={`gap-2 ${layoutClass}`}>
             {post?.media
               .slice(0, post?.media.length > 4 ? 4 : post?.media.length)
@@ -312,7 +392,10 @@ export default function PostPresentation({
                 {post?.reaction === "Love" && <Love size="1.5rem" />}
                 {post?.reaction === "Celebrate" && <Celebrate size="1.5rem" />}
                 {!!post?.reaction || (
-                  <ThumbUpOutlined sx={{ fontSize: "1.3rem" }} className="rotate-y-180" />
+                  <ThumbUpOutlined
+                    sx={{ fontSize: "1.3rem" }}
+                    className="rotate-y-180"
+                  />
                 )}
                 <span
                   className={
