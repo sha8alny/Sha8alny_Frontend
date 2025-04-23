@@ -4,18 +4,23 @@ import JobsFilterContainer from "../components/modules/jobs/container/JobFilters
 import RecentSearchesContainer from "../components/modules/jobs/container/RecentSearchesContainer";
 import LeftSidebar from "../components/modules/feed/container/LeftSidebar";
 import { Suspense } from "react";
+import { ScrollArea } from "../components/ui/ScrollArea";
+
+
 function JobsPage() {
   return (
     <div className="min-h-screen bg-background text-white flex flex-col">
-      <main className="container mx-auto px-4 py-6 flex-1">
-        <div className="flex flex-col md:flex-row gap-6 min-h-screen">
-          <aside className="w-full md:w-1/4 order-first">
-            <div className="sticky top-20 ">
+      <main className="container mx-auto px-4 py-6 flex-1 order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-screen">
+          {/* Left sidebar */}
+          <aside className="lg:col-span-3">
+            <div className="sticky top-20">
               <LeftSidebar />
             </div>
           </aside>
 
-          <section className="w-full md:w-2/4 space-y-6">
+          {/* Main content */}
+          <section className="lg:col-span-6 space-y-6 order-3 lg:order-2">
             <Suspense fallback={<div>Loading...</div>}>
               <RecentSearchesContainer />
             </Suspense>
@@ -26,13 +31,14 @@ function JobsPage() {
             </div>
           </section>
 
-          <aside className="w-full md:w-1/4 md:order-last">
-            <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-hidden hover:overflow-y-auto scrollbar-hide">
-              <div className="pr-2 ">
+          {/* Right sidebar */}
+          <aside className="lg:col-span-3 order-2">
+            <div className="sticky top-20 max-h-[calc(100vh-6rem)]">
+              <ScrollArea className="h-[calc(100vh-6rem)]">
                 <Suspense fallback={<div>Loading...</div>}>
                   <JobsFilterContainer />
                 </Suspense>
-              </div>
+              </ScrollArea>
             </div>
           </aside>
         </div>
