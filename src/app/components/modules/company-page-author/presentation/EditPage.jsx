@@ -42,11 +42,11 @@ import SelectFieldContainer from "../../company-page-form/container/SelectFieldC
  * @returns {JSX.Element} - The rendered JSX for the edit page form.
  */
 
-function EditPage({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyTagline, setCompanyTagline, companySize, setCompanySize, companyType, setCompanyType, companyLocation, setCompanyLocation,companyURL, setCompanyURL, companyWebsite, setCompanyWebsite, companyDate, setCompanyDate, companyPhone, setCompanyPhone, companyDescription, setCompanyDescription, onSave, onDiscard, loading, errors, setErrors}){
+function EditPage({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyTagline, setCompanyTagline, companySize, setCompanySize, companyType, setCompanyType, companyLocation, setCompanyLocation,companyUsername, setCompanyUsername, companyWebsite, setCompanyWebsite, companyDate, setCompanyDate, companyPhone, setCompanyPhone, companyDescription, setCompanyDescription, onSave, onDiscard, loading, errors, setErrors}){
     return(
         <div>
             <div className="p-4 bg-[var(--foreground)] border rounded-lg">
-                <InputFieldContainer companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyURL={companyURL} setCompanyURL={setCompanyURL} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
+                <InputFieldContainer companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyUsername={companyUsername} setCompanyUsername={setCompanyUsername} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
                 companyDate={companyDate} setCompanyDate={setCompanyDate} companyPhone={companyPhone} setCompanyPhone={setCompanyPhone} errorss={errors} setErrors={setErrors} isEditing={true}/>
                 <SelectFieldContainer companySize={companySize} setCompanySize={setCompanySize} companyType={companyType} setCompanyType={setCompanyType} errorss={errors} setErrors={setErrors} isEditing={true}/>
                 <TagLineContainer companyTagline={companyTagline} setCompanyTagline={setCompanyTagline} companyDescription={companyDescription} setCompanyDescription={setCompanyDescription} isEditing={true}/>

@@ -10,20 +10,21 @@ import TagLineContainer from "../container/TagLineContainer";
  * @module company-page-form
  */
 
-function CreateCompanySection({companyName, setCompanyName,companyIndustry, setCompanyIndustry,companyTagline, setCompanyTagline, file, setFile, companySize,setCompanySize, companyType,setCompanyType,companyLocation, setCompanyLocation, companyWebsite, setCompanyWebsite, onCreateCompany, companyURL, setCompanyURL, companyDate, setCompanyDate, companyPhone, setCompanyPhone, loading, isFormValid, errors, setErrors, isChecked, checkBox, error})
+function CreateCompanySection({companyName, setCompanyName,companyIndustry, setCompanyIndustry,companyTagline, setCompanyTagline, file, setFile, companySize,setCompanySize, companyType,setCompanyType,companyLocation, setCompanyLocation, companyWebsite, setCompanyWebsite, onCreateCompany, companyUsername, setCompanyUsername, companyDate, setCompanyDate, companyPhone, setCompanyPhone, loading, isFormValid, errors, setErrors, isChecked, checkBox, error})
 {
+    const [companyDescription, setCompanyDescription] = useState("");
     return (
         <div>
             <p className="flex items-center mb-1 text-sm text-gray-500"><EmergencyRoundedIcon style={{fontSize:"10px"}} className="mr-1"/>indicates required</p>
             <form onSubmit={(e) => { e.preventDefault(); onCreateCompany(); }} className="flex flex-col gap-4 bg-[var(--foreground)] p-4 rounded-lg">
                 <InputFieldContainer 
-                companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} companyURL={companyURL} setCompanyURL={setCompanyURL} 
+                companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} companyUsername={companyUsername} setCompanyUsername={setCompanyUsername} 
                 companyDate={companyDate} setCompanyDate={setCompanyDate} companyPhone={companyPhone} setCompanyPhone={setCompanyPhone} errors={errors} setErrors={setErrors}/> 
 
                 <SelectFieldContainer companySize={companySize} setCompanySize={setCompanySize} companyType={companyType} setCompanyType={setCompanyType} errors={errors} setErrors={setErrors}/>
 
                 <FileUploadContainer file={file} setFile={setFile}/> 
-                <TagLineContainer companyTagline={companyTagline} setCompanyTagline={setCompanyTagline}/>
+                <TagLineContainer companyTagline={companyTagline} setCompanyTagline={setCompanyTagline} companyDescription={companyDescription} setCompanyDescription={setCompanyDescription} isEditing={false}/>
                 <CheckBoxFieldContainer errors={errors} setErrors={setErrors} isChecked={isChecked} onChange={checkBox}/>
                 <a href="#" className="hover:underline font-bold text-[var(--secondary)]">Read the Shaغalny Pages Terms </a>   
             </form>

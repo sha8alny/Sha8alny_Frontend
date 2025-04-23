@@ -6,6 +6,21 @@ import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import { Modal, Box, Button, Typography } from "@mui/material";
 
+/**
+ * SideBarModal component displays a modal with different content based on the type passed to it.
+ * The modal can either show a "deactivate page" prompt or options to create posts and jobs.
+ *
+ * @param {Object} props - The props for the SideBarModal component.
+ * @param {boolean} props.open - Determines if the modal is open or closed.
+ * @param {Function} props.onClose - The function to call when the modal should be closed.
+ * @param {string} props.type - The type of modal to show. It can either be "deactivate" or "create".
+ * @param {Function} props.onDeactivate - The function to call when the user confirms deactivation.
+ * @param {Function} props.onCreatePost - The function to call when the user wants to create a post.
+ * @param {Function} props.openJobsPage - The function to call when the user wants to post a job.
+ *
+ * @returns {JSX.Element} The rendered SideBarModal component.
+ */
+
 export default function SideBarModal({ open, onClose, type, onDeactivate, onCreatePost, openJobsPage }) {
     return(
         <Modal open={open} onClose={onClose} aria-labelledby="deactivate-modal" data-testid="deactivate-modal">

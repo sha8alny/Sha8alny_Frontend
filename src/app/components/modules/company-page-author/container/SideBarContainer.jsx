@@ -7,11 +7,10 @@ import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-import DynamicFeedOutlinedIcon from "@mui/icons-material/DynamicFeedOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteCompany, updateCompany } from "@/app/services/companyManagement";
+import { deleteCompanyMedia } from "@/app/services/companyManagement";
 
 
 /**
@@ -73,6 +72,7 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
     const logoInputRef = useRef(null);
     const router = useRouter(); 
 
+    
     const coverUpload = async(e) => {
         const selectedFile=e.target.files[0];
         if (selectedFile){
@@ -82,10 +82,7 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
                 const formData = new FormData();
                 formData.append("cover", selectedFile);
                 const response = await updateCompany(username, formData);
-                setCompany((prev) => ({
-                    ...prev,
-                    cover: response.cover || newCoverURL, 
-                })); 
+                setCompany((prev) => ({...prev,cover: response.cover || newCoverURL, })); 
 
             }catch (err) { 
                 console.error("Failed to upload cover:", err);
@@ -102,16 +99,34 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
                 const formData = new FormData();
                 formData.append("logo", file);
                 const response = await updateCompany(username, formData);
-                setCompany((prev) => ({
-                    ...prev,
-                    logo: response.logo || newLogoURL, 
-                }));    
+                setCompany((prev) => ({...prev,logo: response.logo || newLogoURL, }));    
             }
             catch (err) {
                 console.error("Failed to upload logo:", err);
             }
         }
     };
+
+    const handleRemoveLogo = async () => {
+        try {
+            await deleteCompanyMedia(username, 'logo');
+            setCompany((prev) => ({...prev,logo: null,}));
+            setLogo(null);
+        } catch (error) {
+            console.error("Error removing logo:", error);
+        }
+    };
+    
+    const handleRemoveCover = async () => {
+        try {
+            await deleteCompanyMedia(username, 'cover');
+            setCompany((prev) => ({...prev,cover: null,}));
+            setCoverPreview(null);
+        } catch (error) {
+            console.error("Error removing cover image:", error);
+        }
+    };   
+    
 
     const triggerCoverInput = () => {
         coverInputRef.current?.click();
@@ -157,8 +172,6 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
     const menuItems =[
         {name: "Dashboard", href:`/company/${username}/admin/dashboard`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Page Posts", href:`/company/${username}/admin/posts` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Feed",href:"#", icon: <DynamicFeedOutlinedIcon style={{fontSize:"20px"}} />},
-        {name: "Activity",href:"#", icon: <NotificationsOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Jobs", href:`/company/${username}/admin/company-author`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
@@ -172,7 +185,8 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
             triggerCoverInput={triggerCoverInput} triggerLogoInput={triggerLogoInput} 
             coverInputRef={coverInputRef} logoInputRef={logoInputRef} 
             fileusername={username} OpenCompanyUserPage={OpenCompanyUserPage}
-            handleLogout={handleLogout}/>
+            handleLogout={handleLogout} onRemoveLogo={handleRemoveLogo} onRemoveCover={handleRemoveCover}
+            />
 
             <SideBarModal open={isModalOpen} onClose={()=>setModalOpen(false)} type={modalType} onDeactivate={handleConfirmDeactivate} onCreatePost={OpenPostsPage} openJobsPage={OpenJobsPage}/> 
         </div>

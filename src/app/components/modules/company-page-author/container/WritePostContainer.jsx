@@ -54,14 +54,27 @@ function WritePostContainer({company, onPostSubmit, logo}){
         if (selectedFile && selectedFile.type.startsWith("image/")){
             setFile(selectedFile);
             setPreview(URL.createObjectURL(selectedFile));
+            setImages([selectedFile]);
         }
     };
 
+    const videoUpload = (e) => {
+        const selectedFile=e.target.files[0];
+        console.log("video selected", e.target.files[0]);
+        if (selectedFile && selectedFile.type.startsWith("video/")) {
+            setFile(selectedFile);
+            setPreview(URL.createObjectURL(selectedFile));
+            setVideos([selectedFile]);
+        }
+    }
+
     const triggerFileInput = (fileType) => {
         if (fileType === "image") imageInputRef.current?.click();
+        if (fileType === "video") videoInputRef.current?.click();
     };
 
     const handleSubmit = async() => {
+        console.log("Videos:", videos);
         if (text.trim() === "" && images.length === 0 && !videos) {
             setError("Please add text or media to your post.");
             return;
@@ -78,14 +91,13 @@ function WritePostContainer({company, onPostSubmit, logo}){
         }
         if (videos) {
             formData.append("media", videos);
-        }
-        console.log(formData);
+        }  
         onPostSubmit(formData);
     };
     return(
         <div className="max-w-2xl mx-auto mb-10">
             <WritePost company={company} text={text} setText={setText} onImageUpload={imageUpload} preview={preview} triggerFileInput={triggerFileInput}
-            imageInputRef={imageInputRef} onSubmit={handleSubmit} 
+            imageInputRef={imageInputRef}  videoUpload={videoUpload} videoInputRef={videoInputRef} onSubmit={handleSubmit} 
             logo={logo}/>
         </div>
     );

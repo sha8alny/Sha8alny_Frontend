@@ -95,34 +95,35 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                 </button>
             </div>
             {/* SideBar content */}
-            <div className="flex flex-1 font-sans">
-                <div className={`${isSidebarOpen ? " z-40 bg-opacity-50" : "hidden"}  lg:bg-transparent lg:static lg:block lg:z-auto`}>
-                    <div className={`w-full 2xl:w-100 h-full bg-background shadow-lg transition-transform duration-300
-                        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:shadow-none `}>
-                        <SideBarContainer 
-                            company={company}
-                            setCompany={setCompany}
-                            username={username} 
-                            logo={logo} 
-                            setLogo={setLogo} 
-                            onClose={() => setIsSidebarOpen(false)}
-                        />
-                    </div>
+        <div className="flex flex-1 font-sans w-full">
+            <div className={`${isSidebarOpen ? "left-0 z-40 bg-opacity-50" : "hidden"} lg:relative lg:block lg:z-auto lg:bg-transparent`}>
+                <div className={`w-64 md:w-69 lg:w-68 sm:w-full 2xl:w-80 min-h-screen bg-background  transition-transform duration-300 ${isSidebarOpen ? "translate-x-0 max-[639px]:w-90" : "-translate-x-full"} lg:translate-x-0 lg:shadow-none`} >
+                    <SideBarContainer
+                    company={company}
+                    setCompany={setCompany}
+                    username={username}
+                    logo={logo}
+                    setLogo={setLogo}
+                    onClose={() => setIsSidebarOpen(false)}
+                    />
                 </div>
-                
-                {/* Main content */}
-                <main className="flex-1 overflow-auto lg:px-4 p-4 md:p-6 flex flex-col">
+            </div>
+
+            {/* Main content */}
+            <main className="flex-1 overflow-auto p-4 md:p-6 flex flex-col">
+                <div className={`${isSidebarOpen ? "block sm:block hidden" : "block"}
+                                ${isAnalyticsOpen ? "block sm:block hidden" : "block"}`}>
                     {children && React.cloneElement(children, { logo })}
-                </main>
-                
-                {/* Analytics*/}
-                <div className={`${isAnalyticsOpen ? " z-40  bg-opacity-50" : "hidden"} lg:bg-transparent lg:static lg:block lg:z-auto `}>
-                    <div className={`w-80 2xl:w-100 min-h-screen shadow-lg  transition-transform duration-300
-                        ${isAnalyticsOpen ? "translate-x-0" : "translate-x-full"} lg:translate-x-0 lg:shadow-none `}>
-                        <AnalyticsContainer username={username} onClose={() => setIsAnalyticsOpen(false)} />
-                    </div>
+                </div>
+            </main>
+
+            {/* Analytics*/}
+            <div className={`${isAnalyticsOpen ? "right-0 z-40 bg-opacity-50" : "hidden"} lg:relative lg:block lg:z-auto lg:bg-transparent`}>
+                <div className={`w-64 md:w-69 lg:w-68 sm:w-full 2xl:w-80 min-h-screen  bg-background transition-transform duration-300 ${isAnalyticsOpen ? "translate-x-0 max-[639px]:w-90" : "-translate-x-full"} lg:translate-x-0 lg:shadow-none`}>
+                    <AnalyticsContainer companyUsername={username} onClose={() => setIsAnalyticsOpen(false)} />
                 </div>
             </div>
         </div>
+    </div>
     );
 }

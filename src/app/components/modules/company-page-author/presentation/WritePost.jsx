@@ -10,8 +10,9 @@ import {
   PersonAddOutlined,
   VideocamOutlined,
 } from "@mui/icons-material";
+import { Maximize2 } from "lucide-react";
 
-function WritePost({company, text, setText,onImageUpload, preview, triggerFileInput,imageInputRef,onSubmit}) {
+function WritePost({company, text, setText,onImageUpload,videoUpload, preview, triggerFileInput,imageInputRef, videoInputRef, onSubmit}) {
   return (
     <div className="text-text">
         <div className="bg-[var(--foreground)] border rounded-lg p-4">
@@ -23,7 +24,11 @@ function WritePost({company, text, setText,onImageUpload, preview, triggerFileIn
                             className="rounded-full w-14 h-14 object-cover" 
                         />
                     ) : (
-                        <ImageOutlined style={{fontSize: "56px", color: "gray" }} />
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
+                            <Maximize2 className="text-white" size={18} />
+                        </div>
+                    </div>
                     )
                 }
                 <textarea className="flex-grow rounded-lg p-2 border border-[var(--background)] " placeholder="Start a post" value={text} onChange={(e)=>setText(e.target.value)}></textarea>
@@ -37,26 +42,30 @@ function WritePost({company, text, setText,onImageUpload, preview, triggerFileIn
                     </div>
                     <input id="upload-image" data-testid="upload-image" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={imageInputRef} onChange={onImageUpload}/>
                 </div>
+
                 <div htmlFor="upload-video" className="relative group">
                     <div className="relative group" onClick={()=>triggerFileInput("video")} data-testid="upload-video-button">
                         <VideocamOutlined className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload video</span>
                     </div>
                     <input id="upload-video" data-testid="upload-video" type="file" className="hidden" 
-                    accept="video/mp4, video/webm, video/mov, video/avi, video/wmv, video/mkv" ref={imageInputRef} onChange={onImageUpload}/>
+                    accept="video/mp4, video/webm, video/mov, video/avi, video/wmv, video/mkv" ref={videoInputRef} onChange={videoUpload}/>
                 </div>
+
                 <div htmlFor="upload-tags" className="relative group">
                     <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
                         <LocalOfferOutlined className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload tags</span>
                     </div>
                 </div>
+
                 <div htmlFor="upload-tags" className="relative group">
                     <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
                         <AccessTimeOutlined className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> idk</span>
                     </div>
                 </div>
+                
                 <div htmlFor="upload-tags" className="relative group">
                     <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
                         <PersonAddOutlined className="cursor-pointer group"/>
@@ -71,7 +80,7 @@ function WritePost({company, text, setText,onImageUpload, preview, triggerFileIn
             </div>
             {/*Filters*/}
         </div>
-        <div className="mt-2 w-full overflow-x-auto scrollbar-hide">
+        <div className="mt-4 w-full overflow-x-auto scrollbar-hide">
             <div className="flex justify-between space-x-2 min-w-max pb-2">
                 <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap" data-testid="page-posts-button">
                     Page Posts
