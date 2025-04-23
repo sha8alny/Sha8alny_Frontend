@@ -1,4 +1,4 @@
-import Image from "next/image";
+import SafeImage from "@/app/components/ui/SafeImage";
 
 /**
  * @namespace jobs
@@ -69,8 +69,8 @@ export function JobCard({ job, onClick }) {
       onClick={() => onClick(job)}
     >
       <div className="w-16 h-16 shrink-0 bg-background flex items-center justify-center rounded-sm ">
-        <Image
-          src={job.company.logo || "https://picsum.photos/48/48"}
+        <SafeImage 
+          src={job.company.logo}
           width={48}
           height={48}
           alt={job.company.name || "Company Logo"}
