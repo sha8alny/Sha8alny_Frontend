@@ -48,7 +48,7 @@ const BlockedUserItem = ({ user, onUnblockClick, navigateToProfile }) => {
             <Briefcase className="h-3 w-3" /> {user.headline}
           </p>
           <p className="text-gray-400 text-xs flex items-center gap-1">
-            <MapPin className="h-3 w-3" /> {user.location}
+            <MapPin className="h-3 w-3" /> {user.time}
           </p>
         </div>
         <Button
@@ -56,7 +56,7 @@ const BlockedUserItem = ({ user, onUnblockClick, navigateToProfile }) => {
           className="rounded-full text-xs h-7 px-3 bg-secondary text-background hover:bg-secondary/80 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
-            onUnblockClick(user.id, user.name);
+            onUnblockClick(user.username, user.name);
           }}
           data-testid="unblock-button"
         >
@@ -145,7 +145,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, name }) => {
   );
 };
 
-const PaginationControls = ({ currentPage, onPageChange,pageSize ,length}) => {
+const PaginationControls = ({ currentPage, onPageChange, pageSize, length }) => {
   return (
     <div className="flex justify-between items-center mt-6">
       <Button
@@ -156,9 +156,7 @@ const PaginationControls = ({ currentPage, onPageChange,pageSize ,length}) => {
       >
         Previous
       </Button>
-      <span className="text-sm text-text">
-        Page {currentPage}
-      </span>
+      <span className="text-sm text-text">Page {currentPage}</span>
       <Button
         variant="outline"
         disabled={length < pageSize}
@@ -175,6 +173,7 @@ const BlockedUsersPresentation = ({
   blockedUsers,
   isLoading,
   isError,
+  isEmpty,
   searchTerm,
   onSearchChange,
   onUnblockClick,
@@ -206,9 +205,9 @@ const BlockedUsersPresentation = ({
               Manage blocked users
             </h1>
           </div>
-          <div className="text-sm text-gray-500 text-center sm:text-right mt-2 sm:mt-0">
+          {/* <div className="text-sm text-gray-500 text-center sm:text-right mt-2 sm:mt-0">
             {totalCount} {totalCount === 1 ? "user" : "users"} blocked
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -232,7 +231,9 @@ const BlockedUsersPresentation = ({
         <div className="text-center py-8 text-red-500">
           Error loading blocked users. Please try again.
         </div>
-      ) : blockedUsers.length > 0 ? (
+      ) : isEmpty ? (
+        <EmptyState />
+      ) : (
         <>
           <div className="space-y-4">
             {blockedUsers.map((user) => (
@@ -251,8 +252,6 @@ const BlockedUsersPresentation = ({
             length={blockedUsers.length}
           />
         </>
-      ) : (
-        <EmptyState />
       )}
 
       <ConfirmationModal
