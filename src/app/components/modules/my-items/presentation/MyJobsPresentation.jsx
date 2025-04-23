@@ -44,7 +44,38 @@ function MyJobsPresentation({
   loadMoreJobs,
   isLoadingMore,
   errorMessage,
+  isLoading = false,
+  isError = false,
+  error = null,
 }) {
+  if (isLoading) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-64 bg-foreground rounded-xl shadow-lg">
+        <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">Loading saved jobs...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-8 bg-foreground rounded-xl text-center mx-auto">
+      <ErrorOutlineIcon sx={{ fontSize: "3rem" }} className=" text-red-500 mx-auto mb-4" />
+      <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
+        Unable to load saved jobs
+      </p>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        {error?.message || "Something went wrong. Please try again."}
+      </p>
+      <Button
+        variant="default"
+        onClick={handleRetry}
+        className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"  >
+        Try Again
+      </Button>
+      </div>
+    );
+  }
   // Filter jobs based on tab
   const filteredJobs = (tabValue) => {
     if (!Array.isArray(jobs) || jobs.length === 0) return [];

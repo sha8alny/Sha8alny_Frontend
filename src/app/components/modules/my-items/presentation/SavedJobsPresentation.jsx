@@ -1,5 +1,7 @@
 import React from "react";
 import JobsCard from "../../jobs/presentation/JobsCard";
+import { Button } from "@/app/components/ui/Button";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 /**
  * @namespace my-items
@@ -25,15 +27,44 @@ function SavedJobsPresentation({
   savedJobs = [],
   error = null,
   isLoading = false,
+  isError = false,
   fetchNextPage,
   hasNextPage = false,
   isFetchingNextPage = false,
   handleJobClick,
   handleMoreJobsClick,
+  handleRetry,
 }) {
   // Use savedJobs directly since it's already normalized in the container
   const jobs = savedJobs.length > 0 ? savedJobs : [];
+  if (isLoading) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-64 bg-foreground rounded-xl shadow-lg">
+        <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">Loading saved jobs...</p>
+      </div>
+    );
+  }
 
+  if (isError) {
+    return (
+      <div className="p-8 bg-foreground rounded-xl text-center mx-auto">
+      <ErrorOutlineIcon sx={{ fontSize: "3rem" }} className=" text-red-500 mx-auto mb-4" />
+      <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
+        Unable to load saved jobs
+      </p>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        {error?.message || "Something went wrong. Please try again."}
+      </p>
+      <Button
+        variant="default"
+        onClick={handleRetry}
+        className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"  >
+        Try Again
+      </Button>
+      </div>
+    );
+  }
   return (
     <div className="p-4 rounded-2xl shadow-2xl bg-foreground px-8 h-full">
       <div className="mb-6">
@@ -51,15 +82,7 @@ function SavedJobsPresentation({
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-6">
-          <p className="text-gray-600">Loading saved jobs...</p>
-        </div>
-      ) : error ? (
-        <div className="bg-red-100 text-red-700 p-4 rounded-xl">
-          <p>Error loading saved jobs: {error.message}</p>
-        </div>
-      ) : jobs.length > 0 ? (
+      { jobs.length > 0 ? (
         <>
           <JobsCard jobListings={jobs} handleJobClick={handleJobClick} />
 
