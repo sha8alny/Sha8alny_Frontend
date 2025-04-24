@@ -72,5 +72,6 @@ export function normalizeJob(job) {
     isSavedByUser: !!job.isSavedByUser,
     createdAt: job.createdAt ? new Date(job.createdAt) : null,
     updatedAt: job.updatedAt ? new Date(job.updatedAt) : null,
+    isAcceptingApplications: job.isAcceptingApplications || true,
   };
 }

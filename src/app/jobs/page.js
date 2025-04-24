@@ -4,7 +4,6 @@ import JobsFilterContainer from "../components/modules/jobs/container/JobFilters
 import RecentSearchesContainer from "../components/modules/jobs/container/RecentSearchesContainer";
 import LeftSidebar from "../components/modules/feed/container/LeftSidebar";
 import { Suspense } from "react";
-import { ScrollArea } from "../components/ui/ScrollArea";
 
 
 function JobsPage() {
@@ -34,11 +33,9 @@ function JobsPage() {
           {/* Right sidebar */}
           <aside className="lg:col-span-3 order-2">
             <div className="sticky top-20 max-h-[calc(100vh-6rem)]">
-              <ScrollArea className="h-[calc(100vh-6rem)]">
                 <Suspense fallback={<div>Loading...</div>}>
                   <JobsFilterContainer />
                 </Suspense>
-              </ScrollArea>
             </div>
           </aside>
         </div>
