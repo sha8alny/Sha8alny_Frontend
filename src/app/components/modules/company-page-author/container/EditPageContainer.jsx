@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import EditPage from "../presentation/EditPage";
 import { updateCompany } from "@/app/services/companyManagement";
-import { Tag } from "@mui/icons-material";
 
 
 /**
@@ -40,7 +39,7 @@ function EditPageContainer({username}){
     const [companyType, setCompanyType] = useState("");
     const [companyLocation, setCompanyLocation] = useState("");
     const [companyDescription, setCompanyDescription] = useState("");
-    const [companyURL, setCompanyURL]= useState("");
+    const [companyUsername, setCompanyUsername]= useState("");
     const [companyWebsite, setCompanyWebsite] = useState("");
     const [companyDate, setCompanyDate] = useState("");
     const [companyPhone, setCompanyPhone] = useState("");
@@ -55,7 +54,7 @@ function EditPageContainer({username}){
         setCompanySize("");
         setCompanyType("");
         setCompanyLocation("");
-        setCompanyURL("");
+        setCompanyUsername("");
         setCompanyWebsite("");
         setCompanyDate("");
         setCompanyPhone("");
@@ -67,7 +66,7 @@ function EditPageContainer({username}){
         setLoading(true);
         const companyData = new FormData();
         if (companyName) companyData.append("name", companyName);
-        if (companyURL) companyData.append("username", companyURL);
+        if (companyUsername) companyData.append("username", companyUsername);
         if (companyWebsite) companyData.append("URL", companyWebsite);
         if (companySize) companyData.append("orgSize", companySize);
         if (companyType) companyData.append("orgType", companyType);
@@ -78,10 +77,10 @@ function EditPageContainer({username}){
         if (companyPhone) companyData.append("phoneNumber", companyPhone);
         if (companyDate) companyData.append("foundingDate", companyDate);
         try{
-            const updatedUsername = companyURL || username;
+            const updatedUsername = companyUsername || username;
             const response = await updateCompany(username, companyData);
             handleDiscard();
-            router.push(`/company-admin/${updatedUsername}/edit-page`);
+            router.push(`/company/${updatedUsername}/admin/edit`);
         } 
         catch (err) {
             setErrors({ api: err.message || "Failed to update company" })
@@ -100,7 +99,7 @@ function EditPageContainer({username}){
             companySize={companySize} setCompanySize={setCompanySize} 
             companyType={companyType} setCompanyType={setCompanyType} 
             companyLocation={companyLocation} setCompanyLocation={setCompanyLocation}
-            companyURL={companyURL} setCompanyURL={setCompanyURL} 
+            companyUsername={companyUsername} setCompanyUsername={setCompanyUsername} 
             companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} 
             companyDate={companyDate} setCompanyDate={setCompanyDate} 
             companyPhone={companyPhone} setCompanyPhone={setCompanyPhone}

@@ -1,5 +1,6 @@
 import Container from "@/app/components/layout/Container";
 import PostCard from "./PostCard";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
 
 /**
  * Home component - Displays an overview of the company and a horizontal list of recent posts.
@@ -23,7 +24,7 @@ import PostCard from "./PostCard";
  */
 export default function Home({company,posts, goToAboutPage, goToPostsPage}) {
     const Posts = posts?.map((post) => ({
-        image: company?.logo, // Replace with post.image if available
+        image: company?.logo,
         dateTime: post.time,
         postText: post.text,
         company: company?.name,
@@ -53,7 +54,7 @@ export default function Home({company,posts, goToAboutPage, goToPostsPage}) {
                     <h1 className="text-xl font-bold mb-2">Page posts</h1>
                     <div className="flex overflow-x-auto space-x-4 pr-2 scrollbar-transparent">
                         {Posts.length > 0 ? (
-                            Posts.map((post, i) => (
+                            Posts.slice(0,4).map((post, i) => (
                             <div key={i} className="w-1/2 gap-4 max-w-[260px] flex-shrink-0">
                                 <PostCard {...post} />
                             </div>

@@ -33,8 +33,8 @@ export default function PostCard({ image, dateTime, postText, company, followers
               <h3 className="text-[var(--text)] leading-tight mb-2">{postText}</h3>
           </div>
           <div className="flex items-center px-4 py-2 text-sm text-gray-400">
-              <p>{likes} likes . </p>
-              <p>{comments} comments . </p>
+              <p>{likes} likes {" "}. </p>
+              <p>{comments} comments{" "} . </p>
               <p>{shares} shares</p>
           </div>
       </div>

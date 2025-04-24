@@ -43,10 +43,8 @@ export default function HomeContainer({ username }) {
 
     useEffect(() => {
         const fetchPosts = async () => {
-        const response = await getCompanyId(username);
-        const { companyId } = response;
             try {
-                const myPosts = await getProfilePosts(1, companyId, true); 
+                const myPosts = await getProfilePosts(1, username, true); 
                 setPosts(myPosts);
             } catch (err) {
                 setError(err.message);
