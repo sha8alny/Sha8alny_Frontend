@@ -9,6 +9,7 @@ export default function CommentSectionPresentation({
   hasMore,
   loadMore,
   handleComment,
+  handleKeyPress,
   comment,
   setComment,
   isSubmittingComment,
@@ -28,6 +29,7 @@ export default function CommentSectionPresentation({
               placeholder="Add a comment..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              onKeyDown={handleKeyPress}
               className="w-full py-2 text-primary px-4 bg-foreground rounded-md border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
             <Button

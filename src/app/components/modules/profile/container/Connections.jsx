@@ -24,7 +24,7 @@ export default function Connections({ userInfo }) {
       fetchUserConnections(
         pageParam,
         10,
-        userInfo?._id !== undefined ? userInfo._id : null // Will change once backend modifies the endpoint
+        userInfo?.username !== undefined ? userInfo.username : null
       ),
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.length || lastPage.length < 10) return undefined;
@@ -231,7 +231,7 @@ export default function Connections({ userInfo }) {
     }
   };
   
-  const allConnections = [...connections, ...mockData].map((connection) => ({
+  const allConnections = [...connections].map((connection) => ({
     ...connection,
     connectedAt: formatConnectedDate(connection?.connectedAt),
   }));
@@ -247,6 +247,7 @@ export default function Connections({ userInfo }) {
           : userInfo?.connectionsCount) + " connection(s)"
       }
       buttonClass="hover:underline cursor-pointer text-secondary self-start text-sm"
+      testId="connections"
       AlertContent={
         <ConnectionsPresentation
           connections={allConnections}

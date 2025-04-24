@@ -35,22 +35,52 @@ import { School } from "@mui/icons-material";
  * @returns {JSX.Element} A card component displaying education information
  */
 const EducationCard = ({ placeOfEducation, isMyProfile }) => {
+  const educationId =
+    placeOfEducation?._id || placeOfEducation?.school?.replace(/\s+/g, "-"); // Use ID or fallback to school name for testid
   return (
-    <div className="flex gap-2">
-      <div className="flex justify-center items-center size-12 bg-secondary/20 rounded-full">
-        <School sx={{ fontSize: "2rem" }} className="text-secondary" />
+    <div className="flex gap-2" data-testid={`education-card-${educationId}`}>
+      {" "}
+      {/* Added data-testid */}
+      <div
+        className="flex justify-center items-center size-12 bg-secondary/20 rounded-full"
+        data-testid={`education-icon-container-${educationId}`}
+      >
+        {" "}
+        {/* Added data-testid */}
+        <School
+          sx={{ fontSize: "2rem" }}
+          className="text-secondary"
+          data-testid={`education-icon-${educationId}`}
+        />{" "}
+        {/* Added data-testid */}
       </div>
       <div className="flex flex-col">
-        <div className="flex gap-4 text-lg font-bold items-center">
+        <div
+          className="flex gap-4 text-lg font-bold items-center"
+          data-testid={`education-school-heading-${educationId}`}
+        >
+          {" "}
+          {/* Added data-testid */}
           {placeOfEducation.school}{" "}
-          {isMyProfile && <ModEducation education={placeOfEducation} />}
+          {isMyProfile && <ModEducation education={placeOfEducation} />}{" "}
+          {/* Consider adding testid inside ModEducation */}
         </div>
-        <p className="flex items-center">
+        <p
+          className="flex items-center"
+          data-testid={`education-degree-field-${educationId}`}
+        >
+          {" "}
+          {/* Added data-testid */}
           {placeOfEducation?.degree}
           <span className="text-xs ml-2">•</span>
           <span className="ml-2">{placeOfEducation?.fieldOfStudy}</span>
         </p>
-        <p className="text-muted flex">
+        <p
+          className="text-muted flex"
+          data-testid={`education-dates-${educationId}`}
+        >
+          {" "}
+          {/* Added data-testid */}
           <span>
             {placeOfEducation?.startDate?.month?.substring(0, 3) + "."}{" "}
             {placeOfEducation?.startDate?.year} -{" "}
@@ -58,22 +88,59 @@ const EducationCard = ({ placeOfEducation, isMyProfile }) => {
             {placeOfEducation?.endDate?.year}
           </span>
         </p>
-        <p className="text-muted">
-          {placeOfEducation.grade ? `Grade: ${placeOfEducation.grade}` : ""}
-        </p>
-        <p className="text-muted">{placeOfEducation.location}</p>
-        <p className="mt-2">{placeOfEducation.description}</p>
+        {placeOfEducation.grade && (
+          <p
+            className="text-muted"
+            data-testid={`education-grade-${educationId}`}
+          >
+            {" "}
+            {/* Added data-testid */}
+            Grade: {placeOfEducation.grade}
+          </p>
+        )}
+        <p
+          className="text-muted"
+          data-testid={`education-location-${educationId}`}
+        >
+          {placeOfEducation.location}
+        </p>{" "}
+        {/* Added data-testid */}
+        <p
+          className="mt-2"
+          data-testid={`education-description-${educationId}`}
+        >
+          {placeOfEducation.description}
+        </p>{" "}
+        {/* Added data-testid */}
         {placeOfEducation.activities && (
           <>
-            <p className="mt-2 font-semibold">Activities and Societies:</p>
-            <p className="text-muted">{placeOfEducation.activities}</p>
+            <p
+              className="mt-2 font-semibold"
+              data-testid={`education-activities-heading-${educationId}`}
+            >
+              Activities and Societies:
+            </p>{" "}
+            {/* Added data-testid */}
+            <p
+              className="text-muted"
+              data-testid={`education-activities-text-${educationId}`}
+            >
+              {placeOfEducation.activities}
+            </p>{" "}
+            {/* Added data-testid */}
           </>
         )}
-        <div className="flex gap-2 mt-2">
+        <div
+          className="flex gap-2 mt-2"
+          data-testid={`education-skills-container-${educationId}`}
+        >
+          {" "}
+          {/* Added data-testid */}
           {placeOfEducation.skills.map((skill, index) => (
             <span
               key={index}
               className="bg-secondary text-background px-2 py-1 rounded-full text-xs font-bold"
+              data-testid={`education-skill-${educationId}-${index}`} // Added data-testid
             >
               {skill}
             </span>
@@ -112,14 +179,33 @@ export default function Education({
 }) {
   return (
     (isMyProfile || education?.length > 0) && (
-      <Container className="border dark:border-[#111] shadow-lg mt-4 p-8">
-        <div className="flex justify-between text-2xl mb-4 font-bold">
-          Education {isMyProfile && <ModEducation adding={true} />}
+      <Container
+        className="border dark:border-[#111] shadow-lg mt-4 p-8"
+        data-testid="education-section-container"
+      >
+        {" "}
+        {/* Added data-testid */}
+        <div
+          className="flex justify-between text-2xl mb-4 font-bold"
+          data-testid="education-section-heading"
+        >
+          {" "}
+          {/* Added data-testid */}
+          Education {isMyProfile && <ModEducation adding={true} />}{" "}
+          {/* Consider adding testid inside ModEducation */}
         </div>
-        <div className="space-y-8">
+        <div className="space-y-8" data-testid="education-list">
+          {" "}
+          {/* Added data-testid */}
           {(!allEducation ? education.slice(0, 3) : education).map(
             (edu, index) => (
-              <div className="space-y-8" key={index}>
+              <div
+                className="space-y-8"
+                key={edu?._id || index}
+                data-testid={`education-item-${edu?._id || index}`}
+              >
+                {" "}
+                {/* Added data-testid */}
                 <EducationCard
                   placeOfEducation={edu}
                   isMyProfile={isMyProfile}
@@ -129,15 +215,20 @@ export default function Education({
             )
           )}
           {education?.length === 0 && isMyProfile && (
-            <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
+            <div
+              className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center"
+              data-testid="education-placeholder"
+            >
+              {" "}
+              {/* Added data-testid */}
               <p>Add your education to let others know more about you. </p>
             </div>
           )}
-
           {education?.length > 3 && (
             <button
               onClick={toggleAllEducation}
               className="w-full text-center hover:cursor-pointer p-2 duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"
+              data-testid="toggle-education-button" // Added data-testid
             >
               {allEducation ? (
                 <div className="flex items-center gap-1 justify-center">
