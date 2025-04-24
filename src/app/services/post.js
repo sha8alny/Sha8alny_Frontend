@@ -91,11 +91,11 @@ export const getPosts = async (pageNum) => {
   return await response.json();
 };
 
-export const createPost = async (postData, companyId = null) => {
-  console.log("postData", postData);
+export const createPost = async (postData, companyUsername) => {
+  console.log("Post data:", postData);
   let url = `${apiURL}/posts`;
-  if (companyId) {
-    url += `?companyId=${companyId}`;
+  if (companyUsername) {
+    url += `?companyUsername=${companyUsername}`;
   }
   const response = await fetchWithAuth(url, {
     method: "POST",
