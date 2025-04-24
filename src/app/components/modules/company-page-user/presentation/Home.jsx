@@ -1,6 +1,5 @@
 import Container from "@/app/components/layout/Container";
 import PostCard from "./PostCard";
-import { ScrollArea } from "@/app/components/ui/scroll-area";
 
 /**
  * Home component - Displays an overview of the company and a horizontal list of recent posts.
