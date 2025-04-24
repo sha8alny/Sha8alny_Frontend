@@ -55,6 +55,8 @@ import Support from "@/app/components/ui/Support";
 import Dialog from "@/app/components/ui/DialogMod";
 import SharePresentation from "../presentation/SharePresentation";
 import { usePathname } from "next/navigation";
+import DeletePostPresentation from "./DeletePostPresentation";
+import ReportPostPresentation from "./ReportPostPresentation";
 
 // TODO: Add image modal to view all images in a carousel
 // TODO: Modify Icons (choose what goes where)
@@ -94,7 +96,23 @@ export default function PostPresentation({
   isLoading,
   fileName,
   fileExtension,
+  isDeleting,
+  errorDeleting,
+  errorDeleteMessage,
+  reportOptions,
+  reportState,
+  reportText,
+  setReportText,
+  reportType,
+  setReportType,
 }) {
+  console.log({
+    isDocument: isDocument,
+    mediaType: post?.mediaType,
+    mediaUrl: post?.media[0],
+    fileExtension: fileExtension,
+  });
+
   return (
     <Card className="bg-foreground w-full max-w-2xl mx-auto mb-4">
       {post?.isShared && (
@@ -252,100 +270,120 @@ export default function PostPresentation({
       </CardHeader>
 
       <CardContent>
-        <div className="whitespace-pre-line mb-4">
-          {post?.text}{" "}
-          {post?.keywords?.length > 0 && (
-            <span className="text-primary">
-              {post?.keywords.map((keyword, index) => (
-                <span key={index}>
-                  {index > 0 && ", "}
-                  <span
-                    onClick={() => navigateTo(`/search/${keyword}`)}
-                    className="hover:underline cursor-pointer"
-                  >
-                    #{keyword}
-                  </span>
-                </span>
-              ))}
-            </span>
-          )}
+        <div className="whitespace-pre-line">
+          <p className="mb-3">{post?.text}</p>
         </div>
         {isDocument && post?.media && post?.media.length > 0 && (
-            <div className="relative w-full rounded-lg overflow-hidden border border-primary/10 bg-primary/5">
-              {/* Document header with info */}
-              <div className="flex items-center justify-between p-2 bg-primary/10">
-                <div className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span className="text-sm font-medium truncate">
-                    {fileExtension + " Document" || "Document"}
-                  </span>
-                </div>
-                <a 
-                  href={post?.media[0]} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-xs text-primary hover:text-primary/80 flex items-center gap-1"
+          <div className="relative w-full rounded-lg overflow-hidden border border-primary/10 bg-primary/5">
+            {/* Document header with info */}
+            <div className="flex items-center justify-between p-2 bg-primary/10">
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-primary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <span>Open</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              </div>
-              
-              {/* Document preview with React state for loading/error */}
-              <div className="relative aspect-[4/3] w-full bg-background">
-                {!hasError && (
-                  <iframe 
-                    src={post?.media[0]} 
-                    title={`Document: ${fileName}`}
-                    className="absolute inset-0 w-full h-full border-none"
-                    loading="lazy"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-popups"
-                    onLoad={() => {
-                      setIsLoading(false);
-                    }}
-                    onError={() => {
-                      setIsLoading(false);
-                      setHasError(true);
-                    }}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
-                )}
-                
-                {/* Loading indicator */}
-                {isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/50 transition-opacity duration-300">
-                    <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full"></div>
-                  </div>
-                )}
-                
-                {/* Error fallback */}
-                {hasError && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 transition-opacity duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary/70 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <p className="text-sm text-primary/70">Document preview unavailable</p>
-                    <a 
-                      href={post?.media[0]} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="mt-3 px-3 py-1.5 bg-primary text-background rounded-md text-sm hover:bg-primary/80 transition-colors"
-                    >
-                      Open Document
-                    </a>
-                  </div>
-                )}
+                </svg>
+                <span className="text-sm font-medium truncate">
+                  {fileExtension + " Document" || "Document"}
+                </span>
               </div>
+              <a
+                href={post?.media[0]}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-primary hover:text-primary/80 flex items-center gap-1"
+              >
+                <span>Open</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
             </div>
-          )}
+
+            {/* Document preview with React state for loading/error */}
+            <div className="relative aspect-[4/3] w-full bg-background">
+              {!hasError && (
+                <iframe
+                  src={post?.media[0]}
+                  title={`Document: ${fileName}`}
+                  className="absolute inset-0 w-full h-full border-none"
+                  loading="lazy"
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-downloads"
+                  onLoad={() => {
+                    setIsLoading(false);
+                  }}
+                  onError={() => {
+                    setIsLoading(false);
+                    setHasError(true);
+                  }}
+                />
+              )}
+
+              {/* Loading indicator */}
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/50 transition-opacity duration-300">
+                  <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full"></div>
+                </div>
+              )}
+
+              {/* Error fallback */}
+              {hasError && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 transition-opacity duration-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10 text-primary/70 mb-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <p className="text-sm text-primary/70">
+                    Document preview unavailable
+                  </p>
+                  <a
+                    href={post?.media[0]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 px-3 py-1.5 bg-primary text-background rounded-md text-sm hover:bg-primary/80 transition-colors"
+                  >
+                    Open Document
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         {!isDocument && isVideo && post?.media && post?.media.length > 0 && (
           <SafeVideo
             src={post?.media[0]}
             controls
-            className="w-full aspect-square rounded-2xl"
+            className="w-full aspect-video rounded-2xl"
           />
         )}
         {!isDocument && !isVideo && post?.media && post?.media.length > 0 && (
@@ -371,11 +409,29 @@ export default function PostPresentation({
               ))}
           </div>
         )}
+        {post?.keywords?.length > 0 && (
+          <span className="text-background text-xs flex gap-1.5 flex-wrap pt-3">
+            {post?.keywords.map((keyword, index) => (
+              <span
+                className="px-2 py-1 font-semibold bg-secondary/20 text-secondary rounded-full"
+                key={index}
+              >
+                {index > 0 && " "}
+                <span
+                  onClick={() =>
+                    navigateTo(`search/results?keyword=${keyword}&type=post`)
+                  }
+                  className="hover:underline cursor-pointer"
+                >
+                  #{keyword}
+                </span>
+              </span>
+            ))}
+          </span>
+        )}
       </CardContent>
 
-      <Separator />
-
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between border-t">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -383,15 +439,13 @@ export default function PostPresentation({
                 onClick={() => onLike("Like")}
                 className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
               >
-                {post?.reaction === "Like" && <Like size="1.5rem" />}
-                {post?.reaction === "Insightful" && (
-                  <Insightful size="1.3rem" />
-                )}
-                {post?.reaction === "Support" && <Support size="1.5rem" />}
-                {post?.reaction === "Funny" && <Funny size="1.5rem" />}
-                {post?.reaction === "Love" && <Love size="1.5rem" />}
-                {post?.reaction === "Celebrate" && <Celebrate size="1.5rem" />}
-                {!!post?.reaction || (
+                {isLiked === "Like" && <Like size="1.5rem" />}
+                {isLiked === "Insightful" && <Insightful size="1.3rem" />}
+                {isLiked === "Support" && <Support size="1.5rem" />}
+                {isLiked === "Funny" && <Funny size="1.5rem" />}
+                {isLiked === "Love" && <Love size="1.5rem" />}
+                {isLiked === "Celebrate" && <Celebrate size="1.5rem" />}
+                {!isLiked && (
                   <ThumbUpOutlined
                     sx={{ fontSize: "1.3rem" }}
                     className="rotate-y-180"
@@ -399,9 +453,7 @@ export default function PostPresentation({
                 )}
                 <span
                   className={
-                    post?.reaction
-                      ? "text-secondary/70 font-semibold"
-                      : "text-muted"
+                    isLiked ? "text-secondary/70 font-semibold" : "text-muted"
                   }
                 >
                   {post?.numReacts}
@@ -485,6 +537,40 @@ export default function PostPresentation({
             copyToClipboard={copyToClipboard}
             copied={copied}
             shareUrl={shareUrl}
+          />
+        }
+      />
+      <Dialog
+        open={reportModalOpen}
+        onOpenChange={setReportModalOpen}
+        buttonClass="hidden"
+        className="min-w-max"
+        AlertContent={
+          <ReportPostPresentation
+            reportOptions={reportOptions}
+            reportState={reportState}
+            reportText={reportText}
+            setReportText={setReportText}
+            reportType={reportType}
+            setReportType={setReportType}
+            onReport={onReport}
+          />
+        }
+      />
+      <Dialog
+        open={deleteModalOpen}
+        onOpenChange={setDeleteModalOpen}
+        buttonClass="hidden"
+        className="min-w-max"
+        AlertContent={
+          <DeletePostPresentation
+            post={post}
+            deletePost={onDelete}
+            isLoading={isDeleting}
+            isError={errorDeleting}
+            error={errorDeleteMessage}
+            onOpenChange={setDeleteModalOpen}
+            reportState={reportState}
           />
         }
       />

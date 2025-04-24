@@ -57,7 +57,9 @@ export default function CommentPresentation({
   isDeleting,
   nestCount,
   postUsername,
-  isFollowing
+  isFollowing,
+  onKeyPress,
+  isCommenting
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
@@ -128,7 +130,7 @@ export default function CommentPresentation({
                 {comment.age}
               </span>
             </div>
-            <p className="text-sm">{comment?.text}</p>
+            <p className="text-sm">{comment?.text} {comment?.parentId}</p>
           </div>
 
           <div className="flex items-center gap-4 pl-1">
@@ -136,7 +138,6 @@ export default function CommentPresentation({
               className={`flex items-center gap-1 text-xs transition-colors ${
                 isLiked ? "text-primary" : "text-muted hover:text-foreground"
               }`}
-              onClick={onLike}
             >
               <TooltipProvider>
                 <Tooltip>
@@ -145,19 +146,13 @@ export default function CommentPresentation({
                       onClick={() => onLike("Like")}
                       className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
                     >
-                      {comment?.reaction === "Like" && <Like size="1.3rem" />}
-                      {comment?.reaction === "Insightful" && (
-                        <Insightful size="1.3rem" />
-                      )}
-                      {comment?.reaction === "Support" && (
-                        <Support size="1.3rem" />
-                      )}
-                      {comment?.reaction === "Funny" && <Funny size="1.3rem" />}
-                      {comment?.reaction === "Love" && <Love size="1.3rem" />}
-                      {comment?.reaction === "Celebrate" && (
-                        <Celebrate size="1.3rem" />
-                      )}
-                      {!!comment?.reaction || (
+                      {isLiked === "Like" && <Like size="1.3rem" />}
+                      {isLiked === "Insightful" && <Insightful size="1.3rem" />}
+                      {isLiked === "Support" && <Support size="1.3rem" />}
+                      {isLiked === "Funny" && <Funny size="1.3rem" />}
+                      {isLiked === "Love" && <Love size="1.3rem" />}
+                      {isLiked === "Celebrate" && <Celebrate size="1.3rem" />}
+                      {!isLiked && (
                         <ThumbUpOutlined
                           sx={{ fontSize: "1rem" }}
                           className="rotate-y-180"
@@ -165,7 +160,7 @@ export default function CommentPresentation({
                       )}
                       <span
                         className={`text-muted ${
-                          comment?.reaction ? "text-secondary" : ""
+                          isLiked ? "text-secondary" : ""
                         }`}
                       >
                         {comment?.numReacts}
@@ -251,17 +246,19 @@ export default function CommentPresentation({
             <div className="flex items-end gap-2 mt-2">
               <Textarea
                 placeholder="Write a reply..."
-                className="min-h-[80px] flex-1 text-sm"
+                className="flex-1 text-sm"
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
+                onKeyDown={onKeyPress}
+                rows={1}
               />
               <Button
                 size="icon"
                 onClick={onReply}
-                disabled={!replyText.trim()}
+                disabled={!replyText.trim() || isCommenting}
                 className="cursor-pointer bg-secondary/80 dark:text-primary hover:bg-secondary/60 transition-colors duration-200"
               >
-                <Send sx={{ fontSize: "1rem" }} />
+                {isCommenting ? <div className="size-4 animate-spin border-2 border-t-transparent rounded-full border-primary"/> : <Send sx={{ fontSize: "1rem" }} />}
               </Button>
             </div>
           )}
@@ -282,7 +279,7 @@ export default function CommentPresentation({
                 <CommentContainer
                   key={reply.commentId}
                   postId={postId}
-                  comment={{ ...reply, isReply: true }}
+                  comment={{ ...reply, isReply: true, parentId: comment.commentId }}
                   nestCount={nestCount + 1}
                   postUsername={postUsername}
                 />

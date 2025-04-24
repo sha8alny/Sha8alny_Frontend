@@ -41,6 +41,7 @@ function NavbarContainer() {
   
     const handleNavigation = (path) => {
       router.push(path);
+      window.location.reload();
     };
 
     const handleLogOut = () => {
@@ -72,7 +73,6 @@ function NavbarContainer() {
         />
       );
     }
-    console.log("navbar", userProfile);
     return (
       <NavbarPresentation
         userInfo={userProfile}

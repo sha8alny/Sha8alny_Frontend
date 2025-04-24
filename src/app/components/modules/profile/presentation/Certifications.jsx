@@ -30,11 +30,14 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
   return (
     <div className="flex gap-2">
       <div className="flex justify-center items-center size-12 bg-secondary/20 rounded-full">
-        <WorkspacePremium sx={{ fontSize: "2rem" }} className="text-secondary" />
+        <WorkspacePremium
+          sx={{ fontSize: "2rem" }}
+          className="text-secondary"
+        />
       </div>
       <div className="flex flex-col">
         <h4 className="flex gap-4 text-lg font-bold items-center">
-          {certificate?.name}{" "}
+          <span className="hover:underline">{certificate?.name}</span>{" "}
           {isMyProfile && <ModCertificate certificate={certificate} />}
         </h4>
         <p>{certificate?.issuingOrganization}</p>

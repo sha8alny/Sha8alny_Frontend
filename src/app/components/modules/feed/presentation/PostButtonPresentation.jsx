@@ -1,12 +1,12 @@
+import React from "react";
 import { Separator } from "@/app/components/ui/Separator";
-import Image from "next/image";
 import {
   AccessTimeOutlined,
-  DescriptionOutlined,
   ImageOutlined,
   LocalOfferOutlined,
   PersonAddOutlined,
   VideocamOutlined,
+  DescriptionOutlined,
 } from "@mui/icons-material";
 import { Button } from "@/app/components/ui/Button";
 import { XIcon } from "lucide-react";
@@ -26,15 +26,17 @@ export default function PostButtonPresentation({
   text,
   setText,
   onPost,
-  onAddMedia,
   onRemoveMedia,
-  images,
-  videos,
-  error,
-  onAddTag,
+  onRemoveDocument,
+  onImageInputChange,
+  onVideoInputChange,
+  onDocumentInputChange,
+  tagInput,
+  setTagInput,
+  onAddTagKeyDown,
+  onAddTagClick,
   onRemoveTag,
   tags,
-  setTags,
   taggedUser,
   setTaggedUser,
   taggedUsers,
@@ -42,32 +44,30 @@ export default function PostButtonPresentation({
   onRemoveTaggedUser,
   searchResults,
   setSearchResults,
-  currentState,
   fileInputRef,
   videoInputRef,
+  documentInputRef,
   userInfo,
   isLoading,
+  error,
   tagPopoverOpen,
   setTagPopoverOpen,
   taggedUserPopoverOpen,
   setTaggedUserPopoverOpen,
-  tagInput,
-  setTagInput,
-  onAddDocument,
-  onRemoveDocument,
-  document,
-  documentInputRef,
+  imagePreviews,
+  videoPreview,
+  documentPreview,
 }) {
   return (
     <div className="flex flex-col gap-2 w-full">
       <div className="flex items-center gap-2">
         <div className="relative size-10 bg-gray-700 rounded-full">
-          <Image
-            src={userInfo?.profilePicture}
-            fill
-            alt="User Avatar"
-            className="rounded-full"
-          />
+          <Avatar className="size-10">
+            <AvatarImage src={userInfo?.profilePicture} alt={userInfo?.name} />
+            <AvatarFallback>
+              {userInfo?.name?.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
         </div>
         <div className="flex flex-col">
           <h4 className="text-primary text-start font-bold">
@@ -83,71 +83,11 @@ export default function PostButtonPresentation({
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        {/* Media Preview */}
         <div className="flex gap-2 flex-wrap">
-          {images?.map((image, index) => (
-            <div
-              key={index}
-              className="relative size-12 bg-gray-700 rounded-lg"
-            >
-              <Image
-                src={URL.createObjectURL(image)}
-                fill
-                alt="Media Preview"
-                className="rounded-lg object-cover"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80 dark:hover:bg-foreground/80 cursor-pointer"
-                onClick={() => onRemoveMedia(index, "image")}
-              >
-                &times;
-              </Button>
-            </div>
-          ))}
-          {/* For single video file */}
-          {videos && (
-            <div className="relative w-24 min-h-24 bg-gray-700 rounded-lg mb-4">
-              <video
-                src={URL.createObjectURL(videos)}
-                controls
-                className="rounded-lg"
-              ></video>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80 dark:hover:bg-foreground/80 cursor-pointer"
-                onClick={() => onRemoveMedia(0, "video")}
-              >
-                &times;
-              </Button>
-            </div>
-          )}
-          {/* Document preview */}
-          {document && (
-            <div className="relative w-full max-w-sm bg-primary/10 rounded-lg p-3 mb-4 flex items-center gap-3 border border-foreground/20">
-              <div className="flex-shrink-0">
-                <DescriptionOutlined className="text-secondary h-8 w-8" />
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="text-sm font-medium text-primary truncate">{document.name}</p>
-                <p className="text-xs text-muted">
-                  {(document.size / 1024).toFixed(1)} KB • {document.name.split('.').pop().toUpperCase()}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="flex-shrink-0 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80"
-                onClick={onRemoveDocument}
-              >
-                <XIcon className="h-3 w-3" />
-              </Button>
-            </div>
-          )}
-          </div>
-          {/* Display tags and tagged users if any */}
+          {imagePreviews}
+          {videoPreview}
+          {documentPreview}
+        </div>
         {(tags.length > 0 || taggedUsers.length > 0) && (
           <div className="mt-4 flex flex-wrap gap-2">
             {tags.map((tag) => (
@@ -158,7 +98,6 @@ export default function PostButtonPresentation({
                 <span className="text-background dark:text-primary font-semibold text-xs flex items-center">
                   #{tag}
                 </span>
-
                 <button
                   onClick={() => onRemoveTag(tag)}
                   className="px-1 py-1 rounded-full hover:bg-background/20 duration-200 cursor-pointer ml-1"
@@ -167,7 +106,6 @@ export default function PostButtonPresentation({
                 </button>
               </div>
             ))}
-
             {taggedUsers.map((user) => (
               <Badge
                 key={user?._id}
@@ -202,9 +140,7 @@ export default function PostButtonPresentation({
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-full text-green-500 cursor-pointer"
-              onClick={() => {
-                fileInputRef.current?.click();
-              }}
+              onClick={() => fileInputRef.current?.click()}
             >
               <ImageOutlined sx={{ fontSize: "1rem" }} />
             </Button>
@@ -212,9 +148,7 @@ export default function PostButtonPresentation({
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-full text-blue-500 cursor-pointer"
-              onClick={() => {
-                videoInputRef.current?.click();
-              }}
+              onClick={() => videoInputRef.current?.click()}
             >
               <VideocamOutlined sx={{ fontSize: "1rem" }} />
             </Button>
@@ -222,14 +156,10 @@ export default function PostButtonPresentation({
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-full text-orange-500 cursor-pointer"
-              onClick={() => {
-                documentInputRef.current?.click();
-              }}
+              onClick={() => documentInputRef.current?.click()}
             >
               <DescriptionOutlined sx={{ fontSize: "1rem" }} />
             </Button>
-
-            {/* Tag popover */}
             <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -250,22 +180,14 @@ export default function PostButtonPresentation({
                       type="text"
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={onAddTag}
+                      onKeyDown={onAddTagKeyDown}
                       className="flex-1 h-9 px-3 rounded-md border border-input bg-transparent text-sm ring-offset-background"
                       placeholder="Add a tag..."
                     />
                     <Button
                       size="sm"
                       disabled={!tagInput.trim()}
-                      onClick={() => {
-                        if (
-                          tagInput.trim() &&
-                          !tags.includes(tagInput.trim())
-                        ) {
-                          setTags([...tags, tagInput.trim()]);
-                          setTagInput("");
-                        }
-                      }}
+                      onClick={onAddTagClick}
                     >
                       Add
                     </Button>
@@ -299,40 +221,27 @@ export default function PostButtonPresentation({
           {isLoading ? "Posting..." : "Post"}
         </Button>
       </div>
-
       <input
         type="file"
         ref={fileInputRef}
         className="hidden"
         accept="image/*"
         multiple
-        onChange={(e) => {
-          if (e.target.files.length > 0) {
-            Array.from(e.target.files).forEach((file) => onAddMedia(file));
-          }
-        }}
+        onChange={onImageInputChange}
       />
       <input
         type="file"
         ref={videoInputRef}
         className="hidden"
         accept="video/*"
-        onChange={(e) => {
-          if (e.target.files.length > 0) {
-            onAddMedia(e.target.files[0]);
-          }
-        }}
+        onChange={onVideoInputChange}
       />
       <input
         type="file"
         ref={documentInputRef}
         className="hidden"
-        accept=".pdf,.doc,.docx"
-        onChange={(e) => {
-          if (e.target.files.length > 0) {
-            onAddDocument(e.target.files[0]);
-          }
-        }}
+        accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        onChange={onDocumentInputChange}
       />
     </div>
   );

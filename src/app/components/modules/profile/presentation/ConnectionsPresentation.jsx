@@ -72,7 +72,7 @@ const ConnectionsCard = ({ connection, navigateTo, isMyProfile }) => {
             alt={connection?.name}
           />
           <AvatarFallback>
-            {connection?.name.substring(0, 2).toUpperCase()}
+            {connection?.name?.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div>

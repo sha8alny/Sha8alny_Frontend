@@ -298,7 +298,6 @@ export default function NavbarPresentation({
             placeholder="Search..."
             className="bg-foreground border border-primary/60 px-4 py-2 rounded-full w-64 focus:outline-hidden focus:ring-2 focus:ring-secondary text-primary"
             onKeyDown={(e) => {
-              console.log("i searched");
               if (e.key === "Enter") {
                 const query = e.target.value.trim();
                 if (query) {

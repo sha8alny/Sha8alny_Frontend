@@ -17,7 +17,11 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "sha8alny.uaenorth.cloudapp.azure.com",
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "sha8alny.uaenorth.cloudapp.azure.com",
+      },
     ],
   },
 };

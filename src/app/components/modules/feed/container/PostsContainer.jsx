@@ -5,7 +5,7 @@ import { useRef, useCallback } from "react";
 import PostsPresentation from "../presentation/PostsPresentation";
 import { PostSkeleton } from "../presentation/PostPresentation";
 
-function PostsContainer({ companyUsername }) {
+function PostsContainer({ companyUsername = null }) {
   const observerRef = useRef(null);
 
   const {
@@ -30,7 +30,13 @@ function PostsContainer({ companyUsername }) {
 
       return undefined;
     },
-    staleTime: 1000 * 60 * 1, // 1 minute
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: 0,
+    refetchInterval: false,
+    cacheTime: 1000 * 60 * 60, // 1 hour cache
   });
 
   const lastElementRef = useCallback(

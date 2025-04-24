@@ -92,17 +92,27 @@ export const getPosts = async (pageNum) => {
 };
 
 export const createPost = async (postData, companyUsername = null) => {
-  console.log("postData", postData);
   let url = `${apiURL}/posts`;
   if (companyUsername) {
-    url += `?companyUsername=${companyUsername}`;
+    url = `${apiURL}/posts?companyUsername=${companyUsername}`;
   }
-  const response = await fetchWithAuth(url, {
-    method: "POST",
-    body: postData,
-  });
-  if (!response.ok) throw new Error("Failed to create post");
-  return response.json();
+  
+  try {
+    const response = await fetchWithAuth(url, {
+      method: "POST",
+      body: postData,
+    });
+    
+    if (!response.ok) {
+      throw new Error("Failed to create post");
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating post:", error);
+    throw error;
+  }
 };
 
 export const getPost = async (postId) => {
@@ -154,7 +164,7 @@ export const savePost = async (postId) => {
 };
 
 export const deletePost = async (postId) => {
-  const response = await fetchWithAuth(`${apiURL}/myposts/${postId}`, {
+  const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete post");

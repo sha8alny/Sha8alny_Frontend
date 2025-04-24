@@ -24,7 +24,7 @@ export default function ChangeURL({ userInfo }) {
         </h2>
         <ModVisibility userInfo={userInfo} />
       </div>
-      <p className="text-muted">www.sha8alny.com/u/{userInfo?.username}</p>
+      <p className="text-muted">{process.env.NEXT_PUBLIC_DOMAIN_URL}/u/{userInfo?.username}</p>
     </Container>
   );
 }
