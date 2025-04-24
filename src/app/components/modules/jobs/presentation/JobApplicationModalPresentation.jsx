@@ -11,13 +11,13 @@ import { Label } from "@/app/components/ui/Label";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SendIcon from "@mui/icons-material/Send";
 import CancelIcon from "@mui/icons-material/Cancel";
-import AutorenewIcon from '@mui/icons-material/Autorenew';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
 import { useState } from "react";
 import { useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
-import 'react-phone-input-2/lib/high-res.css'
+import "react-phone-input-2/lib/high-res.css";
 import "@/app/styles/phone-input-styles.css";
 
 /**
@@ -80,13 +80,15 @@ const JobApplicationModalPresenter = ({
   if (!isMounted) return null;
 
   return (
-    <Dialog 
-      open={isVisible} 
+    <Dialog
+      open={isVisible}
       onOpenChange={() => {
         setIsVisible(false);
         setTimeout(() => handleClose(), 300);
       }}
-      className={`transition-opacity duration-300 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      className={`transition-opacity duration-300 ease-in-out ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
     >
       <DialogContent className="sm:max-w-lg w-full bg-white dark:bg-background text-gray-900 dark:text-white transform transition-all duration-300 ease-in-out">
         <DialogHeader>
@@ -136,7 +138,9 @@ const JobApplicationModalPresenter = ({
                 }}
                 containerClass="w-full"
                 inputClass={`w-full p-2 rounded-md focus:ring-2 focus:ring-primary transition-all duration-200 dark:bg-gray-700 dark:text-white ${
-                  errors.phone ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600"
+                  errors.phone
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600"
                 }`}
                 buttonClass="dark:bg-gray-700 dark:border-gray-600 "
                 dropdownClass="dark:bg-gray-800 dark:text-white"

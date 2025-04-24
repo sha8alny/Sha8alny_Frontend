@@ -5,32 +5,34 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import JobApplicationModalPresentation from "../presentation/JobApplicationModalPresentation";
 import { submitJobApplication } from "@/app/services/jobs";
-import {  isValidPhoneNumber } from 'react-phone-number-input';
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 // Define accepted file types for resume uploads
 const ACCEPTED_FILE_TYPES = [
-  "application/pdf",                                                   // PDF files
-  "application/msword",                                                // DOC files
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // DOCX files
+  "application/pdf", // PDF files
+  "application/msword", // DOC files
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX files
 ];
 
 // Define readable extensions for user-friendly error messages
 const READABLE_EXTENSIONS = ".pdf, .doc, .docx";
 const jobApplicationSchema = z.object({
-  phone: z.string()
+  phone: z
+    .string()
     .min(1, "Phone number is required")
     .refine((val) => {
       return val && isValidPhoneNumber(val);
     }, "Please enter a valid phone number"),
   coverLetter: z.string().optional(),
-  resume: z.any()
-    .refine(file => !!file, "Resume is required")
+  resume: z
+    .any()
+    .refine((file) => !!file, "Resume is required")
     .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
       (file) => ACCEPTED_FILE_TYPES.includes(file?.type),
       `Invalid file type. Accepted formats: ${READABLE_EXTENSIONS}`
-    )
+    ),
 });
 
 /**
@@ -50,20 +52,33 @@ const jobApplicationSchema = z.object({
  *
  * @returns {JSX.Element} The JobApplicationModalContainer component.
  */
-const JobApplicationModalContainer = ({ show, handleClose, jobId, jobTitle }) => {
+const JobApplicationModalContainer = ({
+  show,
+  handleClose,
+  jobId,
+  jobTitle,
+}) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [phoneValue, setPhoneValue] = useState(""); // State for phone input
   const fileInputRef = useRef(null); // For clearing file input after submission
 
-  const { register, handleSubmit, control, setValue, formState: { errors }, reset, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm({
     resolver: zodResolver(jobApplicationSchema),
     defaultValues: {
       phone: "",
       coverLetter: "",
       resume: null,
-    }
-  }); 
+    },
+  });
 
   // Handle phone input changes from react-phone-input-2
   const handlePhoneChange = (value) => {
