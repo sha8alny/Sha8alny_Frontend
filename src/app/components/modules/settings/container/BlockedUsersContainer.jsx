@@ -36,8 +36,8 @@ const BlockedUsersContainer = ({ toggleForm }) => {
     setCurrentPage(1);
   };
 
-  const handleUnblockClick = (userId, name) => {
-    setUserToUnblock({ id: userId, name: name });
+  const handleUnblockClick = (username, name) => {
+    setUserToUnblock({ username: username, name: name });
     setIsModalOpen(true);
   };
 
@@ -65,13 +65,15 @@ const BlockedUsersContainer = ({ toggleForm }) => {
   };
 
   const blockedUsers = data?.blockedUsers || [];
-
+  const totalCount = data?.totalCount || 0;
+  const isEmpty = !isLoading && !isError && blockedUsers.length === 0;
 
   return (
     <BlockedUsersPresentation
       blockedUsers={blockedUsers}
       isLoading={isLoading}
       isError={isError}
+      isEmpty={isEmpty}
       searchTerm={searchTerm}
       onSearchChange={handleSearchChange}
       onUnblockClick={handleUnblockClick}
@@ -83,7 +85,7 @@ const BlockedUsersContainer = ({ toggleForm }) => {
       navigateToProfile={navigateToProfile}
       currentPage={currentPage}
       onPageChange={handlePageChange}
-      totalCount={data?.totalCount || 0}
+      totalCount={totalCount}
       pageSize={pageSize}
     />
   );

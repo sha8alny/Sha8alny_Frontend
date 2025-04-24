@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import About from "../presentation/About";
 import { getCompany } from "@/app/services/companyManagement";
+import { useRouter } from "next/navigation";
 
 /**
  * AboutContainer component
@@ -39,6 +40,7 @@ export default function AboutContainer({ username }) {
     const [company, setCompany] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchCompany = async () => {
@@ -57,9 +59,12 @@ export default function AboutContainer({ username }) {
 
     if (loading) return <p className="p-4">Loading company info...</p>;
     if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
+    const goToCompanyPage = () => { 
+        router.push(`/company/${username}/user/home`);
+    }
     return (
         <div>
-            <About company={company} />
+            <About company={company} goToCompanyPage={goToCompanyPage} />
         </div>
     );
 }
