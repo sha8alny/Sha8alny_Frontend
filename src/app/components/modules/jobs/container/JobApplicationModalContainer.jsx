@@ -72,6 +72,11 @@ const JobApplicationModalContainer = ({ show, handleClose, jobId, jobTitle }) =>
       setSuccess(true);
       reset();
       if (fileInputRef.current) fileInputRef.current.value = ""; // Clear file input
+      // Close the modal after a successful submission
+      setTimeout(() => {
+        handleClose();
+        setSuccess(false);
+      }, 2000); // Close after 2 seconds to allow user to see success message
     },
     onError: (error) => {
       setError(error.message || "Failed to submit application");

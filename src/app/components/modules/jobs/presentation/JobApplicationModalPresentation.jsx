@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +15,8 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import { useState } from "react";
+import { useEffect } from "react";
 /**
  * @namespace jobs
  * @module jobs
@@ -54,9 +55,32 @@ const JobApplicationModalPresenter = ({
   error,
   fileInputRef,
 }) => {
+  const [isVisible, setIsVisible] = useState(show);
+  const [isMounted, setIsMounted] = useState(show);
+
+  useEffect(() => {
+    if (show) {
+      setIsMounted(true);
+      setTimeout(() => setIsVisible(true), 10);
+    } else {
+      setIsVisible(false);
+      const timer = setTimeout(() => setIsMounted(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
+
+  if (!isMounted) return null;
+
   return (
-    <Dialog open={show} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg w-full bg-white dark:bg-background text-gray-900 dark:text-white">
+    <Dialog 
+      open={isVisible} 
+      onOpenChange={() => {
+        setIsVisible(false);
+        setTimeout(() => handleClose(), 300);
+      }}
+      className={`transition-opacity duration-300 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+    >
+      <DialogContent className="sm:max-w-lg w-full bg-white dark:bg-background text-gray-900 dark:text-white transform transition-all duration-300 ease-in-out">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
             Apply for {jobTitle}
@@ -148,6 +172,7 @@ const JobApplicationModalPresenter = ({
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                   className="gap-2 border-gray-300 dark:border-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  data-testid="upload-resume-btn"
                 >
                   <FileUploadIcon className="h-4 w-4" />
                   Upload Resume *
@@ -178,8 +203,12 @@ const JobApplicationModalPresenter = ({
             <Button
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={() => {
+                setIsVisible(false);
+                setTimeout(() => handleClose(), 300);
+              }}
               className="gap-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              data-testid="cancel-btn"
             >
               <CancelIcon className="h-4 w-4" />
               Cancel
@@ -188,6 +217,7 @@ const JobApplicationModalPresenter = ({
               type="submit"
               disabled={isSubmitting}
               className="gap-2 bg-secondary hover:bg-secondary/80  text-background transition-colors duration-200"
+              data-testid="submit-application-btn"
             >
               {isSubmitting ? (
                 <>
