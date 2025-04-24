@@ -70,22 +70,12 @@ const CompleteProfileContainer = () => {
         }
     };
 
-    const handleLocationSelect = (location) => {
-        setFormData({ ...formData, location });
-    };
-    const fetchImageAsFile = async (url, filename) => {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return new File([blob], filename, { type: blob.type });
-    };
-    
-    
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!isFormValid) return;
         setIsSubmitting(true);
-        const profileFile = saveProfilePic || await fetchImageAsFile(profilePicture, "placeholder-profile.jpg");
-        const coverFile = saveCoverPic || await fetchImageAsFile(coverPicture, "placeholder-cover.jpg");
+        const profileFile = saveProfilePic ;
+        const coverFile = saveCoverPic ;
 
         
         try {
