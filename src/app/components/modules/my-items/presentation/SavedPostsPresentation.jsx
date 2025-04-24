@@ -51,7 +51,9 @@ export default function SavedPostsPresentation({
     return (
       <div className="p-8 flex flex-col items-center justify-center h-64 bg-foreground rounded-xl shadow-lg">
         <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">Loading saved jobs...</p>
+        <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">
+          Loading saved jobs...
+        </p>
       </div>
     );
   }
@@ -59,19 +61,23 @@ export default function SavedPostsPresentation({
   if (isError) {
     return (
       <div className="p-8 bg-foreground rounded-xl text-center mx-auto">
-      <ErrorOutlineIcon sx={{ fontSize: "3rem" }} className=" text-red-500 mx-auto mb-4" />
-      <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
-        Unable to load saved jobs
-      </p>
-      <p className="text-gray-600 dark:text-gray-300 mb-6">
-        {error?.message || "Something went wrong. Please try again."}
-      </p>
-      <Button
-        variant="default"
-        onClick={handleRetry}
-        className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"  >
-        Try Again
-      </Button>
+        <ErrorOutlineIcon
+          sx={{ fontSize: "3rem" }}
+          className=" text-red-500 mx-auto mb-4"
+        />
+        <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
+          Unable to load saved jobs
+        </p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          {error?.message || "Something went wrong. Please try again."}
+        </p>
+        <Button
+          variant="default"
+          onClick={handleRetry}
+          className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"
+        >
+          Try Again
+        </Button>
       </div>
     );
   }
@@ -96,6 +102,7 @@ export default function SavedPostsPresentation({
               className="w-full sm:w-[250px] pl-8 pr-4 h-10 rounded-lg"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
+              data-testid="search-saved-posts-input"
             />
           </div>
         </div>
@@ -106,6 +113,7 @@ export default function SavedPostsPresentation({
               variant={selectedPerson === null ? "default" : "outline"}
               className="cursor-pointer hover:bg-opacity-80"
               onClick={() => onPersonSelect(null)}
+              data-testid="filter-all-badge"
             >
               All
             </Badge>
@@ -121,6 +129,7 @@ export default function SavedPostsPresentation({
                     selectedPerson === person.userId ? null : person.userId
                   )
                 }
+                data-testid={`filter-person-badge-${person.userId}`}
               >
                 <PersonIcon className="h-3 w-3" />
                 {person.fullName}
@@ -154,6 +163,7 @@ export default function SavedPostsPresentation({
               onClick={onLoadMore}
               disabled={isFetchingNextPage}
               variant="outline"
+              data-testid="load-more-posts-btn"
             >
               {isFetchingNextPage ? "Loading more..." : "Load more posts"}
             </Button>
@@ -283,6 +293,7 @@ function PostCard({ post, onPostClick, formatPostTime }) {
               size="sm"
               className="flex items-center gap-1.5"
               onClick={() => onPostClick(post.postId, post.username)}
+              data-testid={`read-post-btn-${post.postId}`}
             >
               <LaunchIcon fontSize="0.875rem" className="h-3.5 w-3.5" />
               <span>Read post</span>
@@ -316,7 +327,12 @@ function EmptyState({ searchQuery, selectedPerson, onClearFilters }) {
           : "You haven't saved any posts yet"}
       </p>
       {(searchQuery || selectedPerson) && (
-        <Button variant="outline" className="mt-4" onClick={onClearFilters}>
+        <Button
+          variant="outline"
+          className="mt-4"
+          onClick={onClearFilters}
+          data-testid="clear-filters-btn"
+        >
           Clear Filters
         </Button>
       )}

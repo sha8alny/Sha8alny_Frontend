@@ -67,6 +67,7 @@ export function JobCard({ job, onClick }) {
     <div
       className="flex space-x-4 p-4 bg-foreground rounded-lg hover:shadow-md transition-shadow hover:bg-hover shadow-sm duration-200 cursor-pointer"
       onClick={() => onClick(job)}
+      data-testid={`job-card-${job._id}`}
     >
       <div className="w-16 h-16 shrink-0 bg-background flex items-center justify-center rounded-sm ">
         <SafeImage 

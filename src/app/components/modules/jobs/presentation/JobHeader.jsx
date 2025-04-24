@@ -20,10 +20,9 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
  * @returns {JSX.Element} The rendered JobHeader component.
  */
 function JobHeader({ job, isLoading }) {
-  const defaultLogo = "https://picsum.photos/96/96";
   const companyName = job?.company?.name || "";
   const companyLocation = job?.company?.location || "";
-  const companyLogo = job?.company?.logo || defaultLogo;
+  const companyLogo = job?.company?.logo;
   const jobTitle = job?.title || "";
 
   return (

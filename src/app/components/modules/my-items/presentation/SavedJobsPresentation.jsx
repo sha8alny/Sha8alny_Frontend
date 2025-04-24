@@ -1,7 +1,7 @@
 import React from "react";
 import JobsCard from "../../jobs/presentation/JobsCard";
 import { Button } from "@/app/components/ui/Button";
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 /**
  * @namespace my-items
@@ -41,7 +41,9 @@ function SavedJobsPresentation({
     return (
       <div className="p-8 flex flex-col items-center justify-center h-64 bg-foreground rounded-xl shadow-lg">
         <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">Loading saved jobs...</p>
+        <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">
+          Loading saved jobs...
+        </p>
       </div>
     );
   }
@@ -49,19 +51,23 @@ function SavedJobsPresentation({
   if (isError) {
     return (
       <div className="p-8 bg-foreground rounded-xl text-center mx-auto">
-      <ErrorOutlineIcon sx={{ fontSize: "3rem" }} className=" text-red-500 mx-auto mb-4" />
-      <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
-        Unable to load saved jobs
-      </p>
-      <p className="text-gray-600 dark:text-gray-300 mb-6">
-        {error?.message || "Something went wrong. Please try again."}
-      </p>
-      <Button
-        variant="default"
-        onClick={handleRetry}
-        className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"  >
-        Try Again
-      </Button>
+        <ErrorOutlineIcon
+          sx={{ fontSize: "3rem" }}
+          className=" text-red-500 mx-auto mb-4"
+        />
+        <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
+          Unable to load saved jobs
+        </p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          {error?.message || "Something went wrong. Please try again."}
+        </p>
+        <Button
+          variant="default"
+          onClick={handleRetry}
+          className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"
+        >
+          Try Again
+        </Button>
       </div>
     );
   }
@@ -76,13 +82,17 @@ function SavedJobsPresentation({
 
       <div className="flex justify-between items-center mb-6">
         <div className="flex space-x-2">
-          <button className="flex items-center px-4 py-2 bg-secondary text-background hover:bg-secondary/80 transition-colors duration-20 rounded-md " onClick={handleMoreJobsClick}>
+          <button
+            className="flex items-center px-4 py-2 bg-secondary text-background hover:bg-secondary/80 transition-colors duration-20 rounded-md "
+            onClick={handleMoreJobsClick}
+            data-testid="browse-more-jobs-btn"
+          >
             Browse More Jobs
           </button>
         </div>
       </div>
 
-      { jobs.length > 0 ? (
+      {jobs.length > 0 ? (
         <>
           <JobsCard jobListings={jobs} handleJobClick={handleJobClick} />
 
@@ -92,6 +102,7 @@ function SavedJobsPresentation({
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
                 className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary/80 disabled:bg-blue-400 transition-colors duration-200"
+                data-testid="load-more-jobs-btn"
               >
                 {isFetchingNextPage ? "Loading more..." : "Load More Jobs"}
               </button>
@@ -107,7 +118,11 @@ function SavedJobsPresentation({
             Save jobs you're interested in to keep track of opportunities that
             catch your eye
           </p>
-          <button className="px-4 py-2 bg-secondary text-background rounded-md hover:bg-secondary/80 transition-colors duration-200" onClick={handleMoreJobsClick}>
+          <button
+            className="px-4 py-2 bg-secondary text-background rounded-md hover:bg-secondary/80 transition-colors duration-200"
+            onClick={handleMoreJobsClick}
+            data-testid="explore-jobs-btn"
+          >
             Explore Jobs
           </button>
         </div>
