@@ -5,7 +5,6 @@ import {
   DialogTitle,
 } from "@/app/components/ui/Dialog";
 import { Button } from "@/app/components/ui/Button";
-import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
 import { Alert, AlertDescription } from "@/app/components/ui/Alert";
 import { Label } from "@/app/components/ui/Label";
@@ -17,6 +16,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useState } from "react";
 import { useEffect } from "react";
+import PhoneInput from "react-phone-input-2";
+import 'react-phone-input-2/lib/high-res.css'
+import "@/app/styles/phone-input-styles.css";
+
 /**
  * @namespace jobs
  * @module jobs
@@ -38,6 +41,9 @@ import { useEffect } from "react";
  * @param {boolean} props.success - Indicates whether the application was submitted successfully.
  * @param {string|null} props.error - Error message to display if the application submission fails.
  * @param {React.RefObject} props.fileInputRef - Reference to the file input element.
+ * @param {string} props.phoneValue - The current phone number value.
+ * @param {Function} props.onPhoneChange - Function to handle phone number changes.
+ * @param {Object} props.control - React Hook Form control object.
  *
  * @returns {JSX.Element} The rendered JobApplicationModalPresenter component.
  */
@@ -54,6 +60,8 @@ const JobApplicationModalPresenter = ({
   success,
   error,
   fileInputRef,
+  phoneValue,
+  onPhoneChange,
 }) => {
   const [isVisible, setIsVisible] = useState(show);
   const [isMounted, setIsMounted] = useState(show);
@@ -115,21 +123,29 @@ const JobApplicationModalPresenter = ({
             <Label htmlFor="phone" className="text-gray-700 dark:text-gray-300">
               Phone Number *
             </Label>
-            <Input
-              id="phone"
-              type="tel"
-              className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 dark:text-white"
-              {...register("phone", {
-                onChange: (e) => {
-                  // Filter out non-numeric characters
-                  const numericValue = e.target.value.replace(/[^0-9]/g, "");
-                  // Set the input value directly for immediate feedback
-                  e.target.value = numericValue;
-                },
-                // This ensures the actual value in the form state is numeric
-                setValueAs: (v) => v.replace(/[^0-9]/g, ""),
-              })}
-            />
+            <div className="phone-input-container">
+              <PhoneInput
+                country={"eg"} // Default country
+                value={phoneValue}
+                onChange={onPhoneChange}
+                inputProps={{
+                  id: "phone",
+                  name: "phone",
+                  required: true,
+                  "aria-invalid": errors.phone ? "true" : "false",
+                }}
+                containerClass="w-full"
+                inputClass={`w-full p-2 rounded-md focus:ring-2 focus:ring-primary transition-all duration-200 dark:bg-gray-700 dark:text-white ${
+                  errors.phone ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600"
+                }`}
+                buttonClass="dark:bg-gray-700 dark:border-gray-600 "
+                dropdownClass="dark:bg-gray-800 dark:text-white"
+                searchClass="dark:bg-gray-700 dark:text-white"
+                enableSearch={true}
+                disableSearchIcon={true}
+                searchPlaceholder="Search countries..."
+              />
+            </div>
             {errors.phone && (
               <p className="text-sm text-red-500">{errors.phone.message}</p>
             )}
@@ -166,6 +182,7 @@ const JobApplicationModalPresenter = ({
                   type="file"
                   accept=".pdf,.doc,.docx"
                   onChange={handleFileChange}
+                  data-testid="resume-file-input"
                 />
                 <Button
                   type="button"
