@@ -1,5 +1,5 @@
 import ResultsCard from "@/app/components/modules/search/presentation/ResultCard";
-import { User } from "lucide-react";
+import PersonIcon from '@mui/icons-material/Person';
 import  PersonCardContainer  from "../container/PersonCardContainer";
 /**
  * @namespace search
@@ -21,21 +21,31 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
   isLoading,
   isError,
   onViewMore,
+  error
 }) => {
+  
   if (isError) {
     return (
-      <ResultsCard title="People" icon={<User className="h-4 w-4" />}>
-        <p className="text-gray-400 text-sm">Error loading People.</p>
+      <ResultsCard 
+        title="People" 
+        icon={<PersonIcon sx={{ fontSize: "1.125rem" }} />}
+        data-testid="people-error-card"
+      >
+        <p className="text-gray-400 text-sm">{error}</p>
       </ResultsCard>
     );
   }
-  return (
+
+
+    return (
     <ResultsCard
       title="People"
       isLoading={isLoading}
-      icon={<User className="h-4 w-4" />}
+      flag={users?.length > 0}
+      icon={<PersonIcon sx={{ fontSize: "1.125rem" }} />}
       viewMoreText={"View all people results"}
       onViewMore={onViewMore}
+      data-testid="people-results-card"
     >
       {users?.length > 0 ? (
         users
@@ -45,12 +55,14 @@ import  PersonCardContainer  from "../container/PersonCardContainer";
               key={user.id || index}
               username={user.username}
               name={user.name}
+              avatarUrl={user.profilePicture}
               position={user.position}
               company={user.company}
               headline={user.headline}
               about={user.about}
               location={user.location}
-              onConnect={() => console.log(`Connect with ${user.name}`)}
+              isConnected={user.isConnected}
+              data-testid={`person-card-container-${user.id || index}`}
             />
           ))
       ) : (

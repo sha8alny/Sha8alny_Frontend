@@ -37,6 +37,7 @@ export default function CompanyAdminContentContainer({ children }) {
         const fetchCompany = async () => {
             try {
                 const data = await getCompany(username);
+                console.log("data", data);
                 if (data?.notFound || data === null || data === undefined) {  
                     setCompany("notFound");
                 } 
@@ -81,6 +82,16 @@ export default function CompanyAdminContentContainer({ children }) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+        if (!isSidebarOpen) setIsAnalyticsOpen(false); 
+    };
+
+    const toggleAnalytics = () => {
+        setIsAnalyticsOpen(!isAnalyticsOpen);
+        if (!isAnalyticsOpen) setIsSidebarOpen(false); 
+    };
+
     const goToBusinessPage = () => {
         router.push(`/business/`);
     }
@@ -101,6 +112,8 @@ export default function CompanyAdminContentContainer({ children }) {
                 error={error}
                 children={children}
                 onClick={goToBusinessPage}
+                toggleSidebar={toggleSidebar}
+                toggleAnalytics={toggleAnalytics}
             />
         </>
     )

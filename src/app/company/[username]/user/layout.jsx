@@ -9,7 +9,7 @@ export default function CompanyUserAdminLayout({children}){
     return(
         <div>
             <div className="flex flex-1 font-sans">
-                <div className="w-full p-4">
+                <div className="w-450 p-4">
                     <ProfileHeaderContainer userProfile={username}/>
                     <main className="flex-1 overflow-auto mt-4">
                         {children}

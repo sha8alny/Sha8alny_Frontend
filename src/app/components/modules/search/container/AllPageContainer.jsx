@@ -1,7 +1,6 @@
-
+// AllPageContainer.jsx
 "use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AllPagePresentation from "../presentation/AllPagePresentation";
 import { useSearchParams } from "next/navigation";
 
@@ -9,6 +8,7 @@ import { useSearchParams } from "next/navigation";
  * @namespace search
  * @module search
  */
+
 /**
  * AllPageContainer Component
  *
@@ -24,11 +24,13 @@ import { useSearchParams } from "next/navigation";
  * - Passes the active section, sections list, and query to the presentation component.
  *
  */
-
 function AllPageContainer() {
   const [activeSection, setActiveSection] = useState("people");
   const searchParams = useSearchParams();
   let query = searchParams.get("query") || "";
+
+  const isScrolling = useRef(false);
+
   const sections = [
     { id: "people", label: "People" },
     { id: "companies", label: "Companies" },
@@ -38,29 +40,57 @@ function AllPageContainer() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      let currentSection = activeSection;
+      if (isScrolling.current) return;
 
-      sections.forEach(({ id }) => {
-        const section = document.getElementById(id);
-        if (section && section.offsetTop <= scrollPosition) {
+      const scrollPosition = window.scrollY + 100;
+
+      let currentSection = null;
+
+      for (const { id } of sections) {
+        const element = document.getElementById(id);
+        if (element && element.offsetTop <= scrollPosition) {
           currentSection = id;
         }
-      });
+      }
 
-      setActiveSection(currentSection);
+      if (currentSection && currentSection !== activeSection) {
+        setActiveSection(currentSection);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    let ticking = false;
+    const throttledScrollHandler = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", throttledScrollHandler);
+
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", throttledScrollHandler);
   }, [activeSection, sections]);
+
+  const handleSetActiveSection = (sectionId) => {
+    isScrolling.current = true;
+    setActiveSection(sectionId);
+
+    setTimeout(() => {
+      isScrolling.current = false;
+    }, 1000);
+  };
 
   return (
     <AllPagePresentation
       activeSection={activeSection}
       sections={sections}
-      setActiveSection={setActiveSection}
-        query={query}
+      setActiveSection={handleSetActiveSection}
+      query={query}
     />
   );
 }

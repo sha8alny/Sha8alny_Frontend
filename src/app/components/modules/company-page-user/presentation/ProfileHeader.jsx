@@ -59,7 +59,7 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
         <div>
           <div className="flex flex-col">
             <h1 className="text-2xl font-bold">{company?.name}</h1>
-            <p>{company?.tagline}</p>
+            <p className="text-sm text-text">{company?.tagline}</p>
             <p className="text-muted">{company?.industry} , {company?.location}</p>
           </div>
           <div className="flex flex-row gap-2 items-center mb-3">

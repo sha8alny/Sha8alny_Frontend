@@ -20,13 +20,13 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
  * @returns {JSX.Element} The rendered InputFieldContainer component
  */
 
-function InputFieldContainer({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyLocation, setCompanyLocation, companyURL, companyWebsite, setCompanyWebsite, setCompanyURL, companyDate, setCompanyDate ,companyPhone,  setCompanyPhone,errors={}, setErrors, isEditing=false}) {
-  const [isCompanyURLEdited, setIsCompanyURLEdited ]= useState(false);
+function InputFieldContainer({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyLocation, setCompanyLocation, companyUsername, companyWebsite, setCompanyWebsite, setCompanyUsername, companyDate, setCompanyDate ,companyPhone,  setCompanyPhone,errors={}, setErrors, isEditing=false}) {
+  const [isCompanyUsernameEdited, setIsCompanyUsernameEdited ]= useState(false);
 
   const handleNameError = (e) =>{
     const name = e.target.value;
-    if (!isEditing && !isCompanyURLEdited && name !== "") {
-      setCompanyURL(name); 
+    if (!isEditing && !isCompanyUsernameEdited && name !== "") {
+      setIsCompanyUsernameEdited(name);
     }
     setCompanyName(name);
     const nameRegex = /^[A-Za-z\s]{2,50}$/; //Allow only letters and spaces, Minimum length:2 , Maximum length:50
@@ -41,18 +41,18 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
     }
   };
 
-  const handleURlChange=(e)=>{
-    const url = e.target.value;
-    if (!isCompanyURLEdited && url !== companyName) {
-      setIsCompanyURLEdited(true);
+  const handleUsernameChange=(e)=>{
+    const username = e.target.value;
+    if (!isCompanyUsernameEdited && username !== companyName) {
+      setIsCompanyUsernameEdited(true);
     }
-    setCompanyURL(url);
-    const URLRegex= /^[a-zA-Z0-9-]{3,30}$/;  //Allowed characters are letters, numbers and hyphens 
-    if(!URLRegex.test(url) && url !== ""){
-      setErrors((prev) => ({ ...prev, companyURL: "Only letters, numbers and hyphens are allowed." }));
+    setCompanyUsername(username);
+    const UsernameRegex= /^[a-zA-Z0-9-]{3,30}$/;  //Allowed characters are letters, numbers and hyphens 
+    if(!UsernameRegex.test(username) && username !== ""){
+      setErrors((prev) => ({ ...prev, companyUsername: "Only letters, numbers and hyphens are allowed." }));
     }
     else{
-      setErrors((prev) => ({ ...prev, companyURL: "" }));
+      setErrors((prev) => ({ ...prev, companyUsername: "" }));
     }
   };
 
@@ -81,7 +81,7 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
   const handleWebsiteChange=(e)=>{
     const website= e.target.value;
     setCompanyWebsite(website);
-    const websiteRegex = /^(https?:\/\/|www\.)[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+(\/\S*)?$/;
+    const websiteRegex = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:\d{1,5})?(\/.*)?$/;
     if(!websiteRegex.test(website)){
       setErrors((prev) => ({ ...prev, companyWebsite: "Please enter a valid website" }));
     }
@@ -92,35 +92,39 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
 
   const handleDateChange = (e) => {
     const rawDate = e.target.value; 
+
+    const currentTime = new Date();
+    const currentDate = new Date(`${currentTime.getFullYear()}-${String(currentTime.getMonth() +1).padStart(2,"0")}-${String(currentTime.getDate()).padStart(2,"0")}`);
+    const selectedDate = new Date(rawDate);
+    
     if(rawDate == ""){
       setCompanyDate("");
       setErrors((prev) => ({ ...prev, companyDate: (<span className="flex items-center gap-1"><RemoveCircleOutlineIcon style={{fontSize:"16px"}}/> Please enter the Company Founding Date</span>)}));
       return;
     }
+    else if(selectedDate > currentDate){
+      setCompanyDate("");
+      setErrors((prev) => ({ ...prev, companyDate: "Please enter a valid date" }));
+      return;
+    }
     else{
       setErrors((prev) => ({ ...prev, companyDate: "" }));
     }
-    const currentTime = new Date();
-    const currentDate = new Date(`${currentTime.getFullYear()}-${String(currentTime.getMonth() +1).padStart(2,"0")}-${String(currentTime.getDate()).padStart(2,"0")}`);
-    const selectedDate = new Date(rawDate);
-    console.log("currentDate", currentDate);
-    console.log("rawDate", selectedDate);
-    if(selectedDate> currentDate){
-      setErrors((prev) => ({ ...prev, companyDate: "Please enter a valid date" }));
-    }
     const dateWithTime = new Date(`${rawDate}T${currentTime.toTimeString().split(" ")[0]}Z`);
-    const isoDate = dateWithTime.toISOString(); 
+    const isoDate = dateWithTime.toISOString().split("T")[0]; 
     setCompanyDate(isoDate);
   };
 
-  const formatDateForInput = (isoDate) => {
-    if (!isoDate) return ""; 
-    const date = new Date(isoDate);
-    return date.toISOString().split("T")[0];
-  };
-
   const handlePhoneChange = (e) =>{
-    setCompanyPhone(e.target.value);
+    const phone = e.target.value;
+    setCompanyPhone(phone);
+    const phoneRegex = /^\+?[0-9\s\-]{0,13}$/; //Allow only numbers, spaces and hyphens, Maximum length:13
+    if(!phoneRegex.test(phone) && phone !== ""){
+      setErrors((prev) => ({ ...prev, companyPhone: "Please enter a valid Phone number" }));
+    }
+    else{
+      setErrors((prev) => ({ ...prev, companyPhone: "" }));
+    }
   };
 
   return (
@@ -129,7 +133,7 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
       {!isEditing && errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
 
       <div>
-        <InputField label="shaغalny.com/company/"  name="company-url" type="text" placeholder="Add your unique shaغalny address" required selectedname={companyURL} onChange={handleURlChange} />
+        <InputField label="shaغalny.com/company/"  name="company-url" type="text" placeholder="Add your unique shaغalny address" required selectedname={companyUsername} onChange={handleUsernameChange} />
         <a href="#" className="mt-4 hover:underline font-bold text-[var(--secondary)]">Learn more about the Page Public URL </a>  
         {!isEditing && errors.companyURL && <p className="text-red-500 text-sm mt-1">{errors.companyURL}</p> }
       </div>
@@ -142,10 +146,12 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
       <InputField label="Industry" type="text" name="company-industry" placeholder="ex:Information Services" required selectedname={companyIndustry} onChange={handleIndustryError}/> 
       {!isEditing && errors.companyIndustry && <p className="text-red-500 text-sm mt-1">{errors.companyIndustry}</p>}
 
-      <InputField label="Founding Date" type="date" name="company-date" placeholder="Select a date" required selectedname={formatDateForInput(companyDate)} onChange={handleDateChange}/>
+      <InputField label="Founding Date" type="date" name="company-date" placeholder="Select a date" required selectedname={companyDate} onChange={handleDateChange}/>
       {!isEditing && errors.companyDate && <p className="text-red-500 text-sm mt-1">{errors.companyDate}</p>}
       
       <InputField label="Phone Number" type="tel" name="company-number" placeholder="Add your phone number" selectedname={companyPhone} onChange={handlePhoneChange}/>
+      {!isEditing && errors.companyPhone && <p className="text-red-500 text-sm mt-1">{errors.companyPhone}</p>}
+      
     </div> 
   );
 }

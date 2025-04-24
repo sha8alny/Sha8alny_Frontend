@@ -18,7 +18,7 @@ import Container from "@/app/components/layout/Container";
  * @returns {JSX.Element} The rendered component.
  */
 
-export default function About({company}){
+export default function About({company,goToCompanyPage}){
     return(
         <Container className="border-[#111] border shadow-lg">
             <div className="h-max rounded-xl p-6 space-y-2">
@@ -26,7 +26,7 @@ export default function About({company}){
                     <h1 className="text-xl font-bold">Overview</h1>
                     <p className="text-muted">{company?.description || "No description provided."}</p>
                 </div>
-                <div>
+                <div onClick={goToCompanyPage}>
                     <h2 className="font-bold">Website</h2>
                     <p className="text-[var(--secondary)] hover:underline cursor-pointer">{company?.URL || "Not provided"}</p>
                 </div>

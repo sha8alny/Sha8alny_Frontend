@@ -27,7 +27,7 @@ import { createCompany } from "@/app/services/companyManagement";
 
 
 function CreateCompanySectionContainer({companyName, setcompanyName,companyIndustry,setcompanyIndustry,companyTagline,setcompanyTagline,file,setFile}){
-    const [companyURL, setCompanyURL] = useState("");
+    const [companyUsername, setCompanyUsername] = useState("");
     const [companySize, setCompanySize] = useState("");
     const [companyType, setCompanyType] = useState("");
     const [companyLocation, setCompanyLocation] = useState("");
@@ -71,7 +71,7 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         if (!companySize.trim()) newErrors.companySize = "Company size is required";
         if (!companyType.trim()) newErrors.companyType = "Company type is required";
         if (!companyLocation.trim()) newErrors.companyLocation = "Location is required";
-        if (!companyURL.trim()) newErrors.companyURL = "URL is required";
+        if (!companyUsername.trim()) newErrors.companyUsername = "Username is required";
         if (!companyDate.trim()) newErrors.companyDate = "Founding date is required";
         if (!isChecked) newErrors.terms = "You must agree to the terms.";
 
@@ -87,20 +87,20 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         try {
             const companyData = new FormData();
             companyData.append("name", companyName);
-            companyData.append("username", companyURL);
-            companyData.append("URL", companyWebsite);
+            companyData.append("username", companyUsername);
+            if(companyWebsite) companyData.append("URL", companyWebsite);
             companyData.append("orgSize", companySize);
             companyData.append("orgType", companyType);
-            companyData.append("tagline", companyTagline);
+            if(companyTagline) companyData.append("tagline", companyTagline);
             companyData.append("industry", companyIndustry);
             companyData.append("location", companyLocation);
-            companyData.append("phoneNumber", companyPhone);
+            if(companyPhone)companyData.append("phoneNumber", companyPhone);
             companyData.append("foundingDate", companyDate);
             if (file) {
                 companyData.append("logo", file);
             }
             const response = await createCompany(companyData);
-            router.push(`/company/${companyURL}/admin/dashboard`);
+            router.push(`/company/${companyUsername}/admin/dashboard`);
         } catch (err) {
             setError(err.message || "Failed to create company");
         } finally {
@@ -118,7 +118,7 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
         companyType={companyType} setCompanyType={(value)=>{setCompanyType(value);handleInputChange("companyType", value);}} 
         companyLocation={companyLocation} setCompanyLocation={(value)=>{setCompanyLocation(value);handleInputChange("companyLocation", value);}} 
         companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite}
-        companyURL={companyURL} setCompanyURL={(value)=>{setCompanyURL(value);handleInputChange("companyURL", value);}}
+        companyUsername={companyUsername} setCompanyUsername={(value)=>{setCompanyUsername(value);handleInputChange("username", value);}}
         companyDate={companyDate} setCompanyDate ={(value)=>{setCompanyDate(value);handleInputChange("companyDate", value);}}
         companyPhone={companyPhone} setCompanyPhone= {(value)=>{setCompanyPhone(value);handleInputChange("companyPhone", value);}}
         onCreateCompany={handleSubmit} loading={loading} isFormValid={isFormValid} errors={errors} setErrors={setErrors}

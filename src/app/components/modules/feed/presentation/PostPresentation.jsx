@@ -125,7 +125,7 @@ export default function PostPresentation({
                 onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
               />
               <AvatarFallback>
-                {post?.isShared?.fullName.substring(0, 2).toUpperCase()}
+                {post?.isShared?.fullName?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <span>
@@ -157,7 +157,7 @@ export default function PostPresentation({
         >
           <AvatarImage src={post?.profilePicture} alt={post?.fullName} />
           <AvatarFallback>
-            {post?.fullName.substring(0, 2).toUpperCase()}
+            {post?.fullName?.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 

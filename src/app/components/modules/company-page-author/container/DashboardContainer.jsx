@@ -42,7 +42,7 @@ export default function DashboardContainer({username}){
      * Redirects the user to the posts page for the company admin.
      */
     const goToPostsPage=()=>{
-        router.push(`/company-admin/${username}/posts-page`);
+        router.push(`/company/${username}/admin/posts`);
     }
     return(
         <div>
