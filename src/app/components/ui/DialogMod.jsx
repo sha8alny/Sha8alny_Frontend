@@ -37,6 +37,7 @@ const CloseButton = () => {
  * @param {boolean} [props.disabled=false] - Whether the trigger button is disabled
  * @param {boolean} props.open - Controls the open state of the dialog
  * @param {Function} props.onOpenChange - Callback function when dialog open state changes
+ * @param {string} [props.testId="dialog-trigger"] - Test ID for the trigger button
  * @returns {React.ReactElement} A dialog component with customizable trigger and content
  */
 const Dialog = ({
@@ -51,6 +52,7 @@ const Dialog = ({
   disabled = false,
   open,
   onOpenChange,
+  testId = "dialog-trigger",
 }) => {
   const ButtonComponent = useRegularButton ? "button" : Button;
 
@@ -62,6 +64,7 @@ const Dialog = ({
           className={buttonClass}
           variant={variant}
           size={size}
+          data-testid={testId}
         >
           {buttonData}
         </ButtonComponent>

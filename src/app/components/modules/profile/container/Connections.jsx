@@ -247,6 +247,7 @@ export default function Connections({ userInfo }) {
           : userInfo?.connectionsCount) + " connection(s)"
       }
       buttonClass="hover:underline cursor-pointer text-secondary self-start text-sm"
+      testId="connections"
       AlertContent={
         <ConnectionsPresentation
           connections={allConnections}

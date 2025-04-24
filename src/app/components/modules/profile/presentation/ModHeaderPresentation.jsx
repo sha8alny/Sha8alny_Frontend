@@ -37,6 +37,7 @@ export default function ModHeaderPresentation({
           buttonClass="bg-secondary text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
           className="min-w-[60vh]"
           buttonData={"Edit Profile"}
+          buttonTestId="edit-profile-button"
           AlertContent={
             <ModifyProfileContainer
               userInfo={userInfo}
@@ -45,11 +46,12 @@ export default function ModHeaderPresentation({
           }
         />
       ) : (
-        <div className="flex gap-4">
+        <div className="flex gap-4" data-testid="other-profile-actions">
           {userInfo?.resume && (
             <ButtonProfile
               text="Download Resume"
               onClick={handleResumeDownload}
+              testId="download-resume-button"
             />
           )}
           <ButtonProfile
@@ -61,6 +63,13 @@ export default function ModHeaderPresentation({
                 : "Connect"
             }
             onClick={() => handleConnect(userInfo.username)}
+            testId={
+              isConnected
+                ? "message-button"
+                : pendingConnection
+                ? "awaiting-response-button"
+                : "connect-button"
+            }
           />
         </div>
       )}
@@ -68,11 +77,12 @@ export default function ModHeaderPresentation({
   );
 }
 
-const ButtonProfile = ({ text, onClick }) => {
+const ButtonProfile = ({ text, onClick, testId }) => {
   return (
     <button
       onClick={onClick}
       className="bg-secondary text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
+      data-testid={testId}
     >
       {text}
     </button>
@@ -113,19 +123,34 @@ export const ModifyProfilePresentation = ({
   return (
     <>
       {currentStage === 0 && (
-        <Tabs defaultValue="edit" className="w-full">
+        <Tabs
+          defaultValue="edit"
+          className="w-full"
+          data-testid="edit-profile-tabs"
+        >
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="edit">Edit</TabsTrigger>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
+            <TabsTrigger value="edit" data-testid="edit-tab-trigger">
+              Edit
+            </TabsTrigger>
+            <TabsTrigger value="preview" data-testid="preview-tab-trigger">
+              Preview
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="edit">
-            <form onSubmit={onSubmit} className="grid gap-6 py-4">
+            <form
+              onSubmit={onSubmit}
+              className="grid gap-6 py-4"
+              data-testid="edit-profile-form"
+            >
               <div className="space-y-2">
                 <Label htmlFor="coverPicture">Cover Picture</Label>
                 <div className="relative">
                   {coverPicture && !isCoverPictureLoading && (
-                    <div className="relative mb-2 rounded-md overflow-hidden h-32">
+                    <div
+                      className="relative mb-2 rounded-md overflow-hidden h-32"
+                      data-testid="cover-picture-preview"
+                    >
                       <Image
                         src={coverPicture}
                         alt="Cover"
@@ -137,6 +162,7 @@ export const ModifyProfilePresentation = ({
                       <Button
                         type="button"
                         size="icon"
+                        data-testid="remove-cover"
                         className="absolute top-2 right-2 hover:bg-destructive/80 bg-destructive text-primary cursor-pointer"
                         onClick={() => removeFile("cover")}
                       >
@@ -146,13 +172,19 @@ export const ModifyProfilePresentation = ({
                   )}
 
                   {isCoverPictureLoading && (
-                    <div className="flex justify-center items-center h-32 mb-2 bg-muted rounded-md">
+                    <div
+                      className="flex justify-center items-center h-32 mb-2 bg-muted rounded-md"
+                      data-testid="cover-picture-loading"
+                    >
                       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                   )}
 
                   {coverPictureError && (
-                    <p className="text-destructive text-sm mb-2">
+                    <p
+                      className="text-destructive text-sm mb-2"
+                      data-testid="cover-picture-error"
+                    >
                       {coverPictureError}
                     </p>
                   )}
@@ -160,6 +192,7 @@ export const ModifyProfilePresentation = ({
                   <div className="flex items-center gap-2">
                     <Label
                       htmlFor="coverPictureInput"
+                      data-testid="cover-picture-upload-label"
                       className={`cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted ${
                         isCoverPictureLoading
                           ? "opacity-50 pointer-events-none"
@@ -179,6 +212,7 @@ export const ModifyProfilePresentation = ({
                       id="coverPictureInput"
                       type="file"
                       accept="image/*"
+                      data-testid="cover-picture-input"
                       className="hidden"
                       onChange={(e) => handleFileChange(e, "cover")}
                       disabled={isCoverPictureLoading}
@@ -191,8 +225,14 @@ export const ModifyProfilePresentation = ({
                 <Label htmlFor="profilePicture">Profile Picture</Label>
                 <div className="relative">
                   {profilePicture && !isProfilePictureLoading && (
-                    <div className="relative flex">
-                      <div className="relative mb-2 w-24 h-24 rounded-full overflow-hidden">
+                    <div
+                      className="relative flex"
+                      data-testid="profile-picture-preview-container"
+                    >
+                      <div
+                        className="relative mb-2 w-24 h-24 rounded-full overflow-hidden"
+                        data-testid="profile-picture-preview"
+                      >
                         <Image
                           src={profilePicture}
                           alt="Profile"
@@ -205,6 +245,7 @@ export const ModifyProfilePresentation = ({
                       <Button
                         type="button"
                         size="icon"
+                        data-testid="remove-profile"
                         className="absolute left-0 hover:bg-destructive/80 bg-destructive text-primary cursor-pointer"
                         onClick={() => removeFile("profile")}
                       >
@@ -214,13 +255,19 @@ export const ModifyProfilePresentation = ({
                   )}
 
                   {isProfilePictureLoading && (
-                    <div className="flex justify-center items-center w-24 h-24 mb-2 bg-muted rounded-full">
+                    <div
+                      className="flex justify-center items-center w-24 h-24 mb-2 bg-muted rounded-full"
+                      data-testid="profile-picture-loading"
+                    >
                       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                   )}
 
                   {profilePictureError && (
-                    <p className="text-destructive text-sm mb-2">
+                    <p
+                      className="text-destructive text-sm mb-2"
+                      data-testid="profile-picture-error"
+                    >
                       {profilePictureError}
                     </p>
                   )}
@@ -228,6 +275,7 @@ export const ModifyProfilePresentation = ({
                   <div className="flex items-center gap-2">
                     <Label
                       htmlFor="profilePictureInput"
+                      data-testid="profile-picture-upload-label"
                       className={`cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted ${
                         isProfilePictureLoading
                           ? "opacity-50 pointer-events-none"
@@ -248,6 +296,7 @@ export const ModifyProfilePresentation = ({
                       type="file"
                       accept="image/*"
                       className="hidden"
+                      data-testid="profile-picture-input"
                       onChange={(e) => handleFileChange(e, "profile")}
                       disabled={isProfilePictureLoading}
                     />
@@ -259,12 +308,15 @@ export const ModifyProfilePresentation = ({
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
+                  data-testid="name-input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
                 />
                 {nameError && (
-                  <p className="text-red-500 text-sm">{nameError}</p>
+                  <p className="text-red-500 text-sm" data-testid="name-error">
+                    {nameError}
+                  </p>
                 )}
               </div>
 
@@ -272,12 +324,18 @@ export const ModifyProfilePresentation = ({
                 <Label htmlFor="location">Location</Label>
                 <Input
                   id="location"
+                  data-testid="location-input"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Your location"
                 />
                 {locationError && (
-                  <p className="text-red-500 text-sm">{locationError}</p>
+                  <p
+                    className="text-red-500 text-sm"
+                    data-testid="location-error"
+                  >
+                    {locationError}
+                  </p>
                 )}
               </div>
 
@@ -285,12 +343,18 @@ export const ModifyProfilePresentation = ({
                 <Label htmlFor="headline">Headline</Label>
                 <Input
                   id="headline"
+                  data-testid="headline-input"
                   value={headline}
                   onChange={(e) => setHeadline(e.target.value)}
                   placeholder="Your professional headline"
                 />
                 {headlineError && (
-                  <p className="text-red-500 text-sm">{headlineError}</p>
+                  <p
+                    className="text-red-500 text-sm"
+                    data-testid="headline-error"
+                  >
+                    {headlineError}
+                  </p>
                 )}
               </div>
 
@@ -298,12 +362,18 @@ export const ModifyProfilePresentation = ({
                 <Label htmlFor="industry">Industry</Label>
                 <Input
                   id="industry"
+                  data-testid="industry-input"
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
                   placeholder="Your industry"
                 />
                 {industryError && (
-                  <p className="text-red-500 text-sm">{industryError}</p>
+                  <p
+                    className="text-red-500 text-sm"
+                    data-testid="industry-error"
+                  >
+                    {industryError}
+                  </p>
                 )}
               </div>
 
@@ -311,8 +381,14 @@ export const ModifyProfilePresentation = ({
                 <Label htmlFor="resume">Resume</Label>
                 <div className="relative">
                   {resume && !isResumeLoading && (
-                    <div className="flex items-center justify-between p-2 mb-2 border rounded-md">
-                      <span className="text-sm truncate max-w-[400px]">
+                    <div
+                      className="flex items-center justify-between p-2 mb-2 border rounded-md"
+                      data-testid="resume-display"
+                    >
+                      <span
+                        className="text-sm truncate max-w-[400px]"
+                        data-testid="resume-filename"
+                      >
                         {typeof resume === "string"
                           ? resume.split("/").pop()
                           : "Resume uploaded"}
@@ -321,6 +397,7 @@ export const ModifyProfilePresentation = ({
                         type="button"
                         variant="ghost"
                         size="icon"
+                        data-testid="remove-resume"
                         onClick={() => removeFile("resume")}
                       >
                         <X className="h-4 w-4" />
@@ -329,13 +406,19 @@ export const ModifyProfilePresentation = ({
                   )}
 
                   {isResumeLoading && (
-                    <div className="flex justify-center items-center h-12 mb-2 bg-muted rounded-md">
+                    <div
+                      className="flex justify-center items-center h-12 mb-2 bg-muted rounded-md"
+                      data-testid="resume-loading"
+                    >
                       <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
                   )}
 
                   {resumeError && (
-                    <p className="text-destructive text-sm mb-2">
+                    <p
+                      className="text-destructive text-sm mb-2"
+                      data-testid="resume-error"
+                    >
                       {resumeError}
                     </p>
                   )}
@@ -343,6 +426,7 @@ export const ModifyProfilePresentation = ({
                   <div className="flex items-center gap-2">
                     <Label
                       htmlFor="resumeInput"
+                      data-testid="resume-upload-label"
                       className={`cursor-pointer flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted ${
                         isResumeLoading ? "opacity-50 pointer-events-none" : ""
                       }`}
@@ -359,6 +443,7 @@ export const ModifyProfilePresentation = ({
                       type="file"
                       accept=".pdf,.doc,.docx"
                       className="hidden"
+                      data-testid="resume-input"
                       onChange={(e) => handleFileChange(e, "resume")}
                       disabled={isResumeLoading}
                     />
@@ -369,10 +454,13 @@ export const ModifyProfilePresentation = ({
           </TabsContent>
 
           <TabsContent value="preview">
-            <div className="py-4">
+            <div className="py-4" data-testid="profile-preview">
               <div className="rounded-lg overflow-hidden border shadow-sm">
                 {/* Cover Picture */}
-                <div className="h-40 bg-muted relative">
+                <div
+                  className="h-40 bg-muted relative"
+                  data-testid="preview-cover-container"
+                >
                   {coverPicture ? (
                     <Image
                       src={coverPicture}
@@ -381,10 +469,14 @@ export const ModifyProfilePresentation = ({
                       fill
                       placeholder="blur"
                       blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iIzAwMDAwMCIvPjwvc3ZnPg=="
+                      data-testid="preview-cover-image"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-400 to-gray-400 dark:from-gray-100 dark:to-gray-200">
-                      <span className="text-background dark:text-muted-foreground">
+                      <span
+                        className="text-background dark:text-muted-foreground"
+                        data-testid="preview-no-cover"
+                      >
                         No cover picture
                       </span>
                     </div>
@@ -392,16 +484,25 @@ export const ModifyProfilePresentation = ({
 
                   {/* Profile Picture */}
                   <div className="absolute -bottom-16 left-6">
-                    <div className="w-32 h-32 rounded-full border-4 border-background overflow-hidden">
+                    <div
+                      className="w-32 h-32 rounded-full border-4 border-background overflow-hidden"
+                      data-testid="preview-profile-container"
+                    >
                       {profilePicture ? (
                         <img
                           src={profilePicture || "/placeholder.svg"}
                           alt="Profile"
                           className="w-full h-full object-cover"
+                          data-testid="preview-profile-image"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-muted">
-                          <span className="text-2xl">👤</span>
+                          <span
+                            className="text-2xl"
+                            data-testid="preview-no-profile"
+                          >
+                            👤
+                          </span>
                         </div>
                       )}
                     </div>
@@ -410,19 +511,36 @@ export const ModifyProfilePresentation = ({
 
                 {/* Profile Info */}
                 <div className="pt-20 pb-6 px-6">
-                  <h2 className="text-2xl font-bold">{name || "Your Name"}</h2>
+                  <h2 className="text-2xl font-bold" data-testid="preview-name">
+                    {name || "Your Name"}
+                  </h2>
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p
+                      className="text-sm text-muted-foreground"
+                      data-testid="preview-headline"
+                    >
                       {headline ||
                         "Your professional headline will appear here"}
                     </p>
                   </div>
-                  <p className="text-muted-foreground text-sm">
+                  <p
+                    className="text-muted-foreground text-sm"
+                    data-testid="preview-location"
+                  >
                     {location || "Your Location"}
+                  </p>
+                  <p
+                    className="text-muted-foreground text-sm"
+                    data-testid="preview-industry"
+                  >
+                    {industry || "Your Industry"}
                   </p>
 
                   {resume && (
-                    <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                    <div
+                      className="mt-4 flex items-center gap-2 text-sm text-muted-foreground"
+                      data-testid="preview-resume-attached"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -446,11 +564,15 @@ export const ModifyProfilePresentation = ({
             </div>
           </TabsContent>
           <div className="flex gap-2 w-full">
-            <AlertDialogCancel className="flex-1 bg-red-700 rounded-2xl font-semibold cursor-pointer hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300 hover:text-background">
+            <AlertDialogCancel
+              data-testid="cancel-edit-button"
+              className="flex-1 bg-red-700 rounded-2xl font-semibold cursor-pointer hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300 hover:text-background"
+            >
               Cancel
             </AlertDialogCancel>
             <Button
               className="flex-1 bg-secondary font-semibold rounded-2xl cursor-pointer hover:bg-secondary/80"
+              data-testid="submit-edit-button"
               onClick={onSubmit}
             >
               Submit
@@ -459,13 +581,19 @@ export const ModifyProfilePresentation = ({
         </Tabs>
       )}
       {currentStage === 1 && (
-        <div className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center">
+        <div
+          className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center"
+          data-testid="loading-stage"
+        >
           <div className="size-12 animate-spin border-2 border-t-transparent rounded-full border-secondary" />
           Modifying...
         </div>
       )}
       {currentStage === 2 && (
-        <div className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center">
+        <div
+          className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center"
+          data-testid="success-stage"
+        >
           <CheckCircleIcon className="text-secondary" sx={{ fontSize: 60 }} />
           <h2 className="text-2xl font-bold">Profile Updated</h2>
           <p className="text-muted-foreground">
@@ -475,10 +603,18 @@ export const ModifyProfilePresentation = ({
         </div>
       )}
       {currentStage === 3 && (
-        <div className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center">
+        <div
+          className="w-full h-full flex flex-col gap-2 text-primary justify-center items-center"
+          data-testid="error-stage"
+        >
           <CancelIcon className="text-destructive" sx={{ fontSize: 60 }} />
           <h2 className="text-2xl font-bold">Error</h2>
-          <p className="text-muted-foreground">{error}</p>
+          <p
+            className="text-muted-foreground"
+            data-testid="error-stage-message"
+          >
+            {error}
+          </p>
           <p>Please try again.</p>
           <p>You can close the window now.</p>
         </div>

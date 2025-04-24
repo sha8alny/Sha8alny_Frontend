@@ -457,6 +457,7 @@ export default function ModEducation({ education, adding }) {
       onOpenChange={setOpen}
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
+      testId={adding ? "add-education-button" : "edit-education-" + education?._id}
       AlertContent={
         <ModEducationPresentation
           form={form}

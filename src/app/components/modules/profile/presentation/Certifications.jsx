@@ -28,20 +28,41 @@ import { WorkspacePremium } from "@mui/icons-material";
  */
 const CertificateCard = ({ certificate, isMyProfile }) => {
   return (
-    <div className="flex gap-2">
-      <div className="flex justify-center items-center size-12 bg-secondary/20 rounded-full">
+    <div
+      className="flex gap-2"
+      data-testid={`certificate-card-${certificate?.name?.replace(
+        /\s+/g,
+        "-"
+      )}`}
+    >
+      <div
+        className="flex justify-center items-center size-12 bg-secondary/20 rounded-full"
+        data-testid="certificate-icon-container"
+      >
         <WorkspacePremium
           sx={{ fontSize: "2rem" }}
           className="text-secondary"
+          data-testid="certificate-icon"
         />
       </div>
       <div className="flex flex-col">
-        <h4 className="flex gap-4 text-lg font-bold items-center">
-          <span className="hover:underline">{certificate?.name}</span>{" "}
+        <h4
+          className="flex gap-4 text-lg font-bold items-center"
+          data-testid="certificate-name-heading"
+        >
+          <span
+            onClick={() => certificate?.certificateUrl && window.open(certificate?.certificateUrl, '_blank')}
+            className={certificate?.certificateUrl ? "hover:underline cursor-pointer" : ""}
+            data-testid="certificate-name"
+          >
+            {certificate?.name}
+          </span>{" "}
           {isMyProfile && <ModCertificate certificate={certificate} />}
         </h4>
-        <p>{certificate?.issuingOrganization}</p>
-        <p className="text-muted flex">
+        <p data-testid="certificate-organization">
+          {certificate?.issuingOrganization}
+        </p>
+        <p className="text-muted flex" data-testid="certificate-dates">
           <span>
             Issued {certificate?.issueDate?.month?.substring(0, 3) + "."}{" "}
             {certificate?.issueDate?.year}
@@ -51,11 +72,15 @@ const CertificateCard = ({ certificate, isMyProfile }) => {
               } ${certificate?.expirationDate?.year}`}
           </span>
         </p>
-        <div className="flex gap-2 mt-2">
+        <div
+          className="flex gap-2 mt-2"
+          data-testid="certificate-skills-container"
+        >
           {certificate?.skills.map((skill, index) => (
             <span
               key={index}
               className="bg-secondary text-background px-2 py-1 rounded-full text-xs font-bold"
+              data-testid={`certificate-skill-${index}`}
             >
               {skill}
             </span>
@@ -82,22 +107,35 @@ export default function Certifications({
 }) {
   return (
     (certifications?.length > 0 || isMyProfile) && (
-      <Container className="border dark:border-[#111] rounded-xl shadow-lg mt-4 p-8">
-        <h3 className="flex justify-between text-2xl mb-4 font-bold">
+      <Container
+        className="border dark:border-[#111] rounded-xl shadow-lg mt-4 p-8"
+        data-testid="certifications-section-container"
+      >
+        <h3
+          className="flex justify-between text-2xl mb-4 font-bold"
+          data-testid="certifications-section-heading"
+        >
           Certificates {isMyProfile && <ModCertificate adding />}
         </h3>
-        <div className="space-y-8">
+        <div className="space-y-8" data-testid="certifications-list">
           {(!allCertificates
             ? certifications?.slice(0, 3)
             : certifications
           ).map((exp, index) => (
-            <div className="space-y-8" key={index}>
+            <div
+              className="space-y-8"
+              key={index}
+              data-testid={`certification-item-${index}`}
+            >
               <CertificateCard certificate={exp} isMyProfile={isMyProfile} />
               {index !== certifications?.length - 1 && <Separator />}
             </div>
           ))}
           {isMyProfile && certifications?.length === 0 && (
-            <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
+            <div
+              className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center"
+              data-testid="certifications-placeholder"
+            >
               <p>Add your certifications to let others know more about you. </p>
             </div>
           )}
@@ -106,6 +144,7 @@ export default function Certifications({
             <button
               onClick={toggleAllCertificates}
               className="w-full text-center p-2 hover:cursor-pointer duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"
+              data-testid="toggle-certificates-button"
             >
               {allCertificates ? (
                 <div className="flex items-center gap-1 justify-center">
