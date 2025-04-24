@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import * as FirestoreService from   "@/app/services/messagingService";
 import { MessagingPresentation } from "../presentation/MessagingInterface";
 import { ConnectionsModal } from "../presentation/ConnectionsModal";
@@ -13,71 +13,100 @@ export function MessagingContainer({ currentUser }) {
   const [showConnectionsModal, setShowConnectionsModal] = useState(false);
   const [userConnections, setUserConnections] = useState([]);
   const [loadingConnections, setLoadingConnections] = useState(false);
-  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
 
   const service = FirestoreService.messagingService;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const getOtherParticipant = useCallback(
+  const getOtherParticipantUsername = useCallback(
     (conversation) =>
-      conversation?.participants.find((p) => p !== currentUser) || null,
+      // Find the participant object whose username is not the current user's
+      conversation?.participants.find((p) => p.username !== currentUser)?.username || null,
     [currentUser]
   );
 
-  // Conversations subscription
+  // Add a stable reference for the current conversation ID
+  const selectedConversationIdRef = useRef(null);
+  
+  // Add memoized username param getter
+  const usernameParam = useMemo(() => searchParams.get("username"), [searchParams]);
+  
+  // Split the effect for URL updates and subscriptions to avoid cycles
+  
+  // Effect for URL syncing - runs only when necessary
   useEffect(() => {
-    if (isNavigatingBack) return;
+    if (!selectedConversation?.id) return;
+    
+    const otherUsername = getOtherParticipantUsername(selectedConversation);
+    if (!otherUsername) return;
+    
+    // Update URL only when needed
+    if (usernameParam !== otherUsername) {
+      router.push(`${pathname}?username=${otherUsername}`, { scroll: false });
+    } 
+  }, [selectedConversation, getOtherParticipantUsername, pathname, router, usernameParam]);
+  
+  // Messages subscription with reduced dependencies
+  useEffect(() => {
+    if (!selectedConversation?.id) {
+      setMessages([]);
+      return;
+    }
+
+    // Store current ID in ref for cleanup
+    selectedConversationIdRef.current = selectedConversation.id;
+    
+    // Subscribe using id
+    const unsubscribe = service.subscribeToConversationMessages(selectedConversation.id, (newMessages) => {
+      if (Array.isArray(newMessages)) {
+        setMessages(newMessages);
+      }
+    });
+
+    return () => {
+      unsubscribe?.();
+    };
+  }, [selectedConversation?.id, service]); // Minimal dependencies
+
+  // Add a blocking flag for preventing conversation selection from URL when going back
+  const preventSelectionRef = useRef(false);
+
+  // Modify the conversations subscription effect to handle URL-based selection
+  useEffect(() => {
     if (!currentUser) return;
 
     const unsubscribe = service.subscribeToConversations(currentUser, (updatedConversations) => {
       if (!Array.isArray(updatedConversations)) return;
 
       setUserConversations(updatedConversations);
-      const username = searchParams.get("username");
 
-      if (username && !selectedConversation) {
-        const match = updatedConversations.find((c) => c.participants.includes(username));
-        if (match) setSelectedConversation(match);
+      // If URL has username and selection is not blocked, find matching conversation
+      if (usernameParam && !preventSelectionRef.current) {
+        const matchingConversation = updatedConversations.find((c) => 
+          c.participants.some(p => p.username === usernameParam && p.username !== currentUser)
+        );
+        
+        if (matchingConversation && 
+           (!selectedConversation || selectedConversation.id !== matchingConversation.id)) {
+          setSelectedConversation(matchingConversation);
+        }
       }
     });
 
     return () => unsubscribe?.();
-  }, [currentUser, service, searchParams, selectedConversation]);
-
-  // Messages subscription
-  useEffect(() => {
-    if (!selectedConversation) return setMessages([]);
-
-    const conv = userConversations.find((c) => c.id === selectedConversation.id);
-    if (!conv) return;
-
-    const other = getOtherParticipant(conv);
-    if (!other) return;
-
-    const currentUsername = searchParams.get("username");
-    if (!isNavigatingBack && currentUsername !== other) {
-      router.push(`${pathname}?username=${other}`, { scroll: false });
-    } else {
-      setIsNavigatingBack(false);
-    }
-    const unsubscribe = service.subscribeToConversationMessages(conv.id, (newMessages) => {
-      if (Array.isArray(newMessages)) setMessages(newMessages);
-    });
-
-    return () => unsubscribe?.();
-  }, [selectedConversation, userConversations, getOtherParticipant, service, pathname, router, isNavigatingBack, searchParams]);
+  }, [currentUser, service, usernameParam, selectedConversation]);
 
   // Update selected conversation when it changes in userConversations
   useEffect(() => {
-    if (!selectedConversation) return;
+    if (!selectedConversation?.id) return; // Use id
     
     const updatedConversation = userConversations.find(
       (conv) => conv.id === selectedConversation.id
     );
     
-    if (updatedConversation && JSON.stringify(updatedConversation) !== JSON.stringify(selectedConversation)) {
+    // Simple check if the object reference or content changed
+    if (updatedConversation && updatedConversation !== selectedConversation && JSON.stringify(updatedConversation) !== JSON.stringify(selectedConversation)) {
       setSelectedConversation(updatedConversation);
     }
   }, [userConversations, selectedConversation]);
@@ -85,70 +114,161 @@ export function MessagingContainer({ currentUser }) {
   const handleSelectConversation = useCallback(
     (id) => {
       const conv = userConversations.find((c) => c.id === id);
-      if (conv) setSelectedConversation(conv);
+      if (conv) {
+        const otherUsername = getOtherParticipantUsername(conv);
+        
+        // Update selection first
+        setSelectedConversation(conv);
+        
+        // Optimistically update UI
+        setUserConversations(prev => prev.map(c => 
+          c.id === id ? {...c, read: true} : c
+        ));
+        
+        // Trigger read status updates if needed
+        if (!conv.read) {
+          handleToggleRead(id, true);
+        }
+        
+        // Mark messages as read
+        if (otherUsername) {
+          service.markMessagesAsRead(otherUsername)
+            .catch(err => console.error("Error marking messages as read:", err));
+        }
+      }
     },
-    [userConversations]
+    [userConversations, getOtherParticipantUsername, service]
   );
 
-  const handleMarkAsRead = useCallback(async (id) => {
+  const handleMarkAsRead = useCallback((id) => {
     const conv = userConversations.find((c) => c.id === id);
-    const other = getOtherParticipant(conv);
+    const other = getOtherParticipantUsername(conv); // Get other participant's username
     if (!other) return;
 
-    await service.markMessagesAsRead(other);
+    // Optimistically update UI first
     setUserConversations((prev) =>
       prev.map((c) => (c.id === id ? { ...c, read: true } : c))
     );
-  }, [userConversations, getOtherParticipant, service]);
 
-  const handleToggleRead = useCallback(async (id) => {
+    // Then make the API call without awaiting
+    service.markMessagesAsRead(other)
+      .catch(err => {
+        console.error("Error marking messages as read:", err);
+        // Consider reverting the UI update on error if needed
+      });
+  }, [userConversations, service, getOtherParticipantUsername]);
+  
+  // Add a ref to track in-progress read status operations
+  const readStatusOperations = useRef(new Map());
+
+  const handleToggleRead = useCallback((id, readStatus) => { 
     const conv = userConversations.find((c) => c.id === id);
-    const other = getOtherParticipant(conv);
+    const other = getOtherParticipantUsername(conv);
     if (!other) return;
-
-    await service.toggleConversationReadStatus(other);
+    
+    // Add this operation to our tracking map
+    readStatusOperations.current.set(id, readStatus);
+    
+    // Optimistically update UI first
     setUserConversations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, read: false } : c))
+      prev.map((c) => (c.id === id ? { ...c, read: readStatus } : c)) 
     );
-  }, [userConversations, getOtherParticipant, service]);
+    
+    // Then make the API call without awaiting
+    service.toggleConversationReadStatus(other)
+      .then(() => {
+        // On success, keep the optimistic update
+        // But wait a bit before removing from operations map to prevent race conditions
+        setTimeout(() => {
+          readStatusOperations.current.delete(id);
+        }, 500);
+      })
+      .catch(err => {
+        console.error("Error toggling conversation read status:", err);
+        // On error, revert the optimistic update
+        setUserConversations((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, read: !readStatus } : c))
+        );
+        readStatusOperations.current.delete(id);
+      });
+  }, [service, userConversations, getOtherParticipantUsername]);
 
-  const handleToggleBlock = useCallback(async (id, isBlocked) => {
-    if (!currentUser) return;
+  // Add an effect to filter out subscription updates for in-progress operations
+  useEffect(() => {
+    if (readStatusOperations.current.size === 0) return;
+    
+    // Filter incoming conversation updates to preserve our optimistic updates
+    const filteredConversations = userConversations.map(conv => {
+      if (readStatusOperations.current.has(conv.id)) {
+        // Keep our optimistically updated read status
+        return { 
+          ...conv, 
+          read: readStatusOperations.current.get(conv.id) 
+        };
+      }
+      return conv;
+    });
+    
+    // Only update if there's a difference
+    if (JSON.stringify(filteredConversations) !== JSON.stringify(userConversations)) {
+      setUserConversations(filteredConversations);
+    }
+  }, [userConversations]);
 
-    await service.toggleUserBlock(currentUser, id, isBlocked);
-    // We don't need to update selectedConversation here as it will be updated
-    // via the userConversations effect
+  const handleToggleBlock = useCallback((id, usernameToToggle, isBlocked) => { // id is conversation id
+    if (!currentUser || !usernameToToggle) return;
+    
+    // Optimistically update UI if needed
+    // (Add UI state updates here for blocking if applicable)
+    
+    // Make the API call without awaiting
+    service.toggleUserBlock(usernameToToggle, id)
+      .catch(err => {
+        console.error("Error toggling user block status:", err);
+        // Consider reverting any UI updates on error
+      }); 
   }, [currentUser, service]);
 
-  const handleSendMessage = useCallback(async (receiverName, message, mediaFiles) => {
-    const result = await service.sendMessage(receiverName, message, mediaFiles);
-    if (!(result?.success && result.message)) return;
-
-    const newMsg = result.message;
-
-    setMessages((prev) => [...prev, {
-      messageId: newMsg.messageId,
-      sender: newMsg.sender,
-      receiver: newMsg.receiver,
-      content: newMsg.content,
-      timestamp: newMsg.timestamp,
-      read: newMsg.read,
-      mediaUrl: newMsg.mediaUrls?.[0] || null,
-    }]);
-
-  }, [service]);
-
-  const handleSetTypingIndicator = useCallback((userName, convId, isTyping) => {
-    service.updateTypingStatus(userName, convId, isTyping);
+  const handleSendMessage = useCallback((receiverName, message, mediaFiles) => {
+    if (!message.trim() && (!mediaFiles || mediaFiles.length === 0)) return;
     
+    const newMessage = {
+      id: crypto.randomUUID(), // Generate a proper UUID instead of using message as ID
+      read: false,
+      receiverName,
+      timestamp: new Date().toISOString(),
+      senderName: currentUser,
+      isDeleted: false,
+      messageContent: [
+        ...(message.trim() ? [{ type: 'text', content: message.trim() }] : []),
+        ...(mediaFiles?.length ? mediaFiles.map(file => ({ type: 'media', content: file })) : [])
+      ],
+    };
+    
+    // Optimistically update UI
+    setMessages(prevMessages => [...prevMessages, newMessage]);
+    
+    // Make the API call without awaiting
+    service.sendMessage(receiverName, message, mediaFiles)
+      .catch(error => {
+        console.error("Failed to send message:", error);
+        // Optionally remove the failed message from the UI
+        setMessages(prevMessages => 
+          prevMessages.filter(msg => msg.id !== newMessage.id)
+        );
+        // Could also show an error toast/notification here
+      });
+  }, [currentUser, service]);
+
+  const handleSetTypingIndicator = useCallback((userName, convId, isTyping) => { // convId is conversation id
+    service.updateTypingStatus(userName, convId, isTyping); // Use convId (which is the id)
   }, [service]);
 
   const handleOpenConnections = useCallback(async () => {
     setShowConnectionsModal(true);
     setLoadingConnections(true);
-
     try {
-      const connections = await service.getUserConnections();
+      const connections = await service.getUserConnections(); 
       setUserConnections(Array.isArray(connections) ? connections : []);
     } catch (err) {
       console.error("Error fetching user connections:", err);
@@ -159,40 +279,127 @@ export function MessagingContainer({ currentUser }) {
   }, [service]);
 
   const handleStartConversation = useCallback(async (connection) => {
-    if (!connection?.username) return;
+    if (!connection?.username || !currentUser) return;
 
-    const existing = userConversations.find((c) => c.participants.includes(connection.username));
-    if (existing) {
-      handleSelectConversation(existing.id);
-    } else {
-      const newConv = await service.createConversation(connection.username, currentUser);
-      if (newConv?.id) {
-        const conv = {
-          id: newConv.id,
-          participants: [currentUser, connection.username],
-          lastMessage: { text: "", timestamp: new Date() },
-          read: true,
-          createdAt: new Date(),
-          timestamp: new Date(),
-        };
-        setUserConversations((prev) => [...prev, conv]);
-        handleSelectConversation(newConv.id);
+    // First disable all URL-based selections
+    preventSelectionRef.current = true;
+    
+    try {
+      // Check if conversation exists
+      const existing = userConversations.find((c) => 
+          c.participants.some(p => p.username === connection.username)
+      );
+
+      if (existing) {
+        // Directly update state without using handleSelectConversation to avoid side effects
+        setSelectedConversation(existing);
+      } else {
+        // Create new conversation
+        const newConvData = await service.createConversation(connection.username, currentUser); 
+        if (newConvData?.id) {
+          setSelectedConversation(newConvData);
+        }
       }
+    } catch (error) {
+      console.error("Error in conversation handling:", error);
+    } finally {
+      // Close modal first
+      setShowConnectionsModal(false);
+      
+      // Keep prevention longer to ensure all updates settle
+      setTimeout(() => {
+        preventSelectionRef.current = false;
+      }, 500);
     }
+  }, [userConversations, currentUser, service]);
 
-    setShowConnectionsModal(false);
-  }, [userConversations, currentUser, service, handleSelectConversation]);
-
+  // Simplified back button handling
   const handleBack = useCallback(() => {
     if (!selectedConversation) return;
-    setIsNavigatingBack(true);
+    
+    // Block all URL-based selection
+    preventSelectionRef.current = true;
+    
+    // Clear selection and URL in one operation
     setSelectedConversation(null);
-    router.push(pathname, { scroll: false });
+    router.replace(pathname, { scroll: false });
+    
+    // Keep prevention active for longer to ensure all updates settle
+    setTimeout(() => {
+      preventSelectionRef.current = false;
+    }, 500);
   }, [selectedConversation, pathname, router]);
+
+  // Single consolidated effect for URL/conversation synchronization
+  useEffect(() => {
+    // Skip all synchronization if prevention is active
+    if (preventSelectionRef.current) return;
+    
+    const syncTimeout = setTimeout(() => {
+      // Case 1: URL has username but conversation doesn't match
+      if (usernameParam) {
+        const currentOtherUsername = getOtherParticipantUsername(selectedConversation);
+        
+        if (usernameParam !== currentOtherUsername) {
+          // Find conversation matching URL
+          const matchingConversation = userConversations.find(c => 
+            c.participants.some(p => p.username === usernameParam && p.username !== currentUser)
+          );
+          
+          if (matchingConversation) {
+            // Block further synchronization during this update
+            preventSelectionRef.current = true;
+            setSelectedConversation(matchingConversation);
+            
+            // Reset after selection update completes
+            setTimeout(() => preventSelectionRef.current = false, 500);
+          }
+        }
+      } 
+      // Case 2: URL has no username but conversation is selected
+      else if (!usernameParam && selectedConversation) {
+        // Don't trigger URL update if we just cleared the selection
+        // This prevents oscillation when going back
+      }
+      // Case 3: URL has username but no matching conversation found
+      // Just leave as is, don't clear selection
+    }, 50); // Small delay for batching
+    
+    return () => clearTimeout(syncTimeout);
+  }, [usernameParam, selectedConversation, userConversations, currentUser, getOtherParticipantUsername]);
+
+  // Effect specifically for updating URL when selection changes (ONE WAY only)
+  useEffect(() => {
+    // Only run if we have a selected conversation and prevention is not active
+    if (selectedConversation && !preventSelectionRef.current) {
+      const otherUsername = getOtherParticipantUsername(selectedConversation);
+      
+      if (otherUsername && usernameParam !== otherUsername) {
+        // Block further synchronization during URL update
+        preventSelectionRef.current = true;
+        
+        // Update URL to match selection
+        router.replace(`${pathname}?username=${otherUsername}`, { scroll: false });
+        
+        // Reset after URL update completes
+        setTimeout(() => preventSelectionRef.current = false, 500);
+      }
+    }
+  }, [selectedConversation, getOtherParticipantUsername, usernameParam, pathname, router]);
+
+  // Simple popstate handler that just blocks synchronization during navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      preventSelectionRef.current = true;
+      setTimeout(() => preventSelectionRef.current = false, 300);
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   return (
     <>
-
       <MessagingPresentation
         userConversations={userConversations}
         selectedConversation={selectedConversation}
@@ -206,7 +413,6 @@ export function MessagingContainer({ currentUser }) {
         onSetTypingIndicator={handleSetTypingIndicator}
         onBack={handleBack}
         onOpenConnections={handleOpenConnections}
-        
       />
 
       {showConnectionsModal && (
