@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "node swEnvBuild.js && next dev ",
+    "build": "next build && node swEnvBuild.js",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -38,6 +38,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "firebase": "^11.6.0",
     "firebase-admin": "^12.2.0",
     "input-otp": "^1.4.2",
