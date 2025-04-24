@@ -7,7 +7,7 @@ export default function SafeImage({ src, alt, ...props }) {
   return (
     <Image
       {...props}
-      src={hasError ? "/placeholder.svg" : imgSrc}
+      src={hasError ? "/placeholder.svg" : imgSrc || "/placeholder.svg"}
       alt={alt}
       onError={() => {
         if (!hasError) {
