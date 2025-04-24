@@ -24,6 +24,8 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "sha8alny.uaenorth.cloudapp.azure.com",
+      },
         hostname: "testcompany.com",
       },
       {
@@ -34,7 +36,6 @@ const nextConfig = {
         protocol: "https",
         hostname: "d2zp5xs5cp8zlg.cloudfront.net",
       }
-
     ],
   },
 };

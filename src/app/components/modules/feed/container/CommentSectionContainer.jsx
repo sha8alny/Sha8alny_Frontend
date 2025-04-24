@@ -1,6 +1,6 @@
 "use client";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { addComment, getCommentReplies } from "@/app/services/post";
+import { addComment, determineAge, getCommentReplies } from "@/app/services/post";
 import { useMutation } from "@tanstack/react-query";
 import CommentSectionPresentation from "../presentation/CommentSectionPresentation";
 import { useState, useEffect } from "react";
@@ -9,7 +9,6 @@ import { usePathname, useRouter } from "next/navigation";
 export default function CommentSectionContainer({ username, postId }) {
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
-  const [isCommenting, setIsCommenting] = useState(false);
 
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -48,9 +47,9 @@ export default function CommentSectionContainer({ username, postId }) {
       const perPage = 5;
       return data.length === perPage ? lastPage.pageParam + 1 : undefined;
     },
-    staleTime: 1000 * 60, // 1 minute
+    staleTime: Infinity,
+    retry: 0,
     refetchOnWindowFocus: false,
-    refetchOnMount: true,
   });
 
   const comments =
@@ -85,11 +84,74 @@ export default function CommentSectionContainer({ username, postId }) {
         text: params.comment,
         tags: [],
       }),
-    onSuccess: () => {
-      setComment("");
+    onSuccess: (newComment) => {
       setError(null);
-      setIsCommenting(false);
-      queryClient.invalidateQueries(["comments", postId]);
+      const oldComment = comment;
+      setComment(""); // Clear input field immediately for better UX
+
+      queryClient.setQueryData(["comments", postId], (oldData) => {
+        // Create the comment object with all required fields
+        const commentObj = {
+          commentId: newComment.commentId,
+          text: oldComment.trim(),
+          username: queryClient.getQueryData(["sidebarInfo"])?.username || "user",
+          profilePicture:
+            queryClient.getQueryData(["sidebarInfo"])?.profilePicture || "",
+          fullName: queryClient.getQueryData(["sidebarInfo"])?.name || "User",
+          time: new Date().toISOString(),
+          numLikes: 0,
+          numCelebrates: 0,
+          numLoves: 0,
+          numSupports: 0,
+          numFunnies: 0,
+          numInsightfuls: 0,
+          numComments: 0,
+          numReacts: 0,
+          reaction: null,
+          connectionDegree: 0,
+          headline: queryClient.getQueryData(["sidebarInfo"])?.headline || "",
+          isFollowed: false,
+          age: determineAge(new Date()),
+        };
+
+        if (!oldData || !oldData.pages || !oldData.pages[0]) {
+          return {
+            pages: [{ data: [commentObj] }],
+            pageParams: [1],
+          };
+        }
+
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              data: Array.isArray(oldData.pages[0].data)
+                ? [commentObj, ...oldData.pages[0].data]
+                : [commentObj],
+            },
+            ...oldData.pages.slice(1),
+          ],
+        };
+      });
+
+      // Update the post's comment count
+      queryClient.setQueryData(["posts"], (oldData) => {
+        if (!oldData || !oldData.pages) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) =>
+            Array.isArray(page)
+              ? page.map((p) =>
+                  p.postId === postId
+                    ? { ...p, numComments: (p.numComments || 0) + 1 }
+                    : p
+                )
+              : page
+          ),
+        };
+      });
     },
     onError: (error) => {
       setError(error.message);
@@ -102,12 +164,18 @@ export default function CommentSectionContainer({ username, postId }) {
 
   const isPost = currentPath.includes("/post/");
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleComment();
+    }
+  };
+
   const handleComment = () => {
     if (!comment.trim()) {
       setError("Comment cannot be empty");
       return;
     }
-    setIsCommenting(true);
     handleCommentMutation.mutate({
       postId,
       commentId: null,
@@ -121,9 +189,10 @@ export default function CommentSectionContainer({ username, postId }) {
       hasMore={hasMore}
       loadMore={loadMore}
       handleComment={handleComment}
+      handleKeyPress={handleKeyPress}
       comment={comment}
       setComment={setComment}
-      isSubmittingComment={isCommenting}
+      isSubmittingComment={handleCommentMutation.isPending}
       error={error}
       postId={postId}
       navigateTo={navigateTo}

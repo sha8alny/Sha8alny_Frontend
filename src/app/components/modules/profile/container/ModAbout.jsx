@@ -56,6 +56,7 @@ export default function ModAbout({ about, adding = false }) {
       className="min-w-[60vh]"
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
+      testId="about-button"
       AlertContent={
         <ModAboutPresentation
           error={error}

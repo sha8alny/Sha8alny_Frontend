@@ -545,6 +545,7 @@ export default function ModExperience({ experience, adding }) {
       onOpenChange={setOpen}
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
+      testId={adding ? "add-experience-button" : "edit-experience-" + experience?._id}
       AlertContent={
         <ModExperiencePresentation
           form={form}

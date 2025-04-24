@@ -7,7 +7,7 @@ export const connectUser = async (username) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ targetId: username }),
+    body: JSON.stringify({ targetUsername: username }),
   });
   if (!response.ok) {
     throw new Error("Failed to connect user");
@@ -21,7 +21,7 @@ export const followUser = async (username) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ targetId: username }),
+    body: JSON.stringify({ username: username }),
   });
   if (!response.ok) {
     throw new Error("Failed to follow user");

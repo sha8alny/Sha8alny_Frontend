@@ -2,10 +2,10 @@ import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getMyPosts = async (pageNum, companyId) => {
+export const getMyPosts = async (pageNum, companyUsername) => {
   try {
     const response = await fetchWithAuth(
-      `${apiURL}/myPosts?pageNum=${pageNum}&companyId=${companyId}`,
+      `${apiURL}/myPosts?pageNum=${pageNum}&companyUsername=${companyUsername}`,
       {
         method: "GET",
         headers: {
@@ -91,18 +91,28 @@ export const getPosts = async (pageNum) => {
   return await response.json();
 };
 
-export const createPost = async (postData, companyUsername) => {
-  console.log("Post data:", postData);
+export const createPost = async (postData, companyUsername = null) => {
   let url = `${apiURL}/posts`;
   if (companyUsername) {
-    url += `?companyUsername=${companyUsername}`;
+    url = `${apiURL}/posts?companyUsername=${companyUsername}`;
   }
-  const response = await fetchWithAuth(url, {
-    method: "POST",
-    body: postData,
-  });
-  if (!response.ok) throw new Error("Failed to create post");
-  return response.json();
+  
+  try {
+    const response = await fetchWithAuth(url, {
+      method: "POST",
+      body: postData,
+    });
+    
+    if (!response.ok) {
+      throw new Error("Failed to create post");
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating post:", error);
+    throw error;
+  }
 };
 
 export const getPost = async (postId) => {
@@ -154,7 +164,7 @@ export const savePost = async (postId) => {
 };
 
 export const deletePost = async (postId) => {
-  const response = await fetchWithAuth(`${apiURL}/myposts/${postId}`, {
+  const response = await fetchWithAuth(`${apiURL}/myPosts/${postId}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete post");

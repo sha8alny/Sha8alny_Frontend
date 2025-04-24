@@ -350,7 +350,6 @@ export default function NavbarPresentation({
             SHA<span className="text-secondary">غ</span>ALNY
           </span>
         </div>
-
         {/* Desktop Search Bar - Hidden on small screens */}
         <div className="ml-4 relative hidden lg:block flex-1 max-w-md">
           <div className="relative group">
