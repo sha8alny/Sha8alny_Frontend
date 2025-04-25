@@ -24,13 +24,14 @@ import  CompanySectionAllPresentation  from "../presentation/CompanySectionAllPr
     data: companies,
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["searchCompanies", query],
     queryFn: () => searchCompany(query, 1),
+  retry:1
   });
 
   const router = useRouter();
-
   const handleViewMore = () => {
     router.push("/search/results?keyword=" + query + "&type=company");
   };
@@ -40,6 +41,7 @@ import  CompanySectionAllPresentation  from "../presentation/CompanySectionAllPr
       companies={companies}
       isLoading={isLoading}
       isError={isError}
+      error={error?.message}
       onViewMore={handleViewMore}
     />
   );

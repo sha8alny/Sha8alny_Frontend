@@ -413,6 +413,7 @@ export default function ModCertificate({ certificate, adding }) {
       onOpenChange={setOpen}
       useRegularButton
       buttonData={adding ? <AddButton /> : <EditButton />}
+      testId={adding ? "add-button" : "edit-certificate-" + certificate?._id}
       AlertContent={
         <ModCertificatePresentation
           form={form}

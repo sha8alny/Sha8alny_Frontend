@@ -17,21 +17,32 @@ import ModAbout from "../container/ModAbout";
 export default function About({ about, isMyProfile }) {
   return (
     (about || isMyProfile) && (
-    <Container className="dark:border dark:border-[#111] shadow-lg mt-4 p-8">
-      <h3 className="justify-between flex text-2xl mb-4 font-bold">
-        About
-        {isMyProfile && <ModAbout about={about} />}
-      </h3>
-      <p className="text-muted break-words">{about ?? ""}</p>
-      {((!about || about?.length === 0) && isMyProfile) && (
-        <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
-          <p>
-            Add a short description about yourself to let others know more about
-            you.{" "}
-          </p>
-        </div>
-      )}
-    </Container>
+      <Container
+        className="border dark:border-[#111] shadow-lg mt-4 p-8"
+        data-testid="about-section-container"
+      >
+        <h3
+          className="justify-between flex text-2xl mb-4 font-bold"
+          data-testid="about-section-heading"
+        >
+          About
+          {isMyProfile && <ModAbout about={about} />}
+        </h3>
+        <p className="text-muted break-words" data-testid="about-section-text">
+          {about ?? ""}
+        </p>
+        {(!about || about?.length === 0) && isMyProfile && (
+          <div
+            className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center"
+            data-testid="about-section-placeholder"
+          >
+            <p>
+              Add a short description about yourself to let others know more
+              about you.{" "}
+            </p>
+          </div>
+        )}
+      </Container>
     )
   );
 }

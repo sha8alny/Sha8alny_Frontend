@@ -112,6 +112,8 @@ export default function ModVisibility({ userInfo }) {
       open={open}
       onOpenChange={setOpen}
       buttonClass="hover:cursor-pointer size-4 mr-2"
+      className="max-w-screen"
+      testId="mod-visibility"
       buttonData={<Pencil />}
       AlertContent={
         <ModVisibilityPresentation

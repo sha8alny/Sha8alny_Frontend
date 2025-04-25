@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/Avatar";
 
 export default function ProfileCard({ userInfo, navigateTo }) {
   return (
-    <Container className="w-full dark:border dark:border-[#111] rounded-2xl shadow-lg">
+    <Container className="w-full border dark:border-[#111] rounded-2xl shadow-md">
       <div className="relative w-full flex">
         <div className="absolute top-0 left-0 w-full h-20 bg-gray-700 rounded-t-xl">
           <Image

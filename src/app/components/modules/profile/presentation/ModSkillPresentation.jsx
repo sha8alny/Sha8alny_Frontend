@@ -23,7 +23,7 @@ export default function ModSkillPresentation({
   searchTerm,
 }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="mod-skill-presentation">
       <div className="flex gap-2 justify-between items-center">
         <div className="relative w-full">
           <input
@@ -32,6 +32,7 @@ export default function ModSkillPresentation({
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full p-3 pl-10 bg-foreground text-primary border border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             value={searchTerm}
+            data-testid="mod-skill-search-input"
           />
           <svg
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary"
@@ -43,17 +44,26 @@ export default function ModSkillPresentation({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            aria-hidden="true"
           >
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
         </div>
-        <AddButton onClick={() => updateSkill(0, searchTerm)} />
+        <AddButton
+          onClick={() => updateSkill(0, searchTerm)}
+          data-testid="mod-skill-add-button"
+        />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3" data-testid="mod-skill-grid">
         {skills.length === 0 ? (
-          <p className="text-center text-muted py-4 col-span-2">No skills found.</p>
+          <p
+            className="text-center text-muted py-4 col-span-2"
+            data-testid="mod-skill-no-skills"
+          >
+            No skills found.
+          </p>
         ) : (
           skills.map((skill) => (
             <ModSkillCard
@@ -71,7 +81,7 @@ export default function ModSkillPresentation({
 
 /**
  * A component that renders a skill card with delete functionality.
- * 
+ *
  * @component
  * @param {Object} props - The component props
  * @param {Object} props.skill - The skill object containing skill information
@@ -81,14 +91,21 @@ export default function ModSkillPresentation({
  * @returns {JSX.Element} A card displaying the skill name with a delete button
  */
 const ModSkillCard = ({ skill, removeSkill, isLoading }) => {
+  const skillTestId = skill?.skillName?.replace(/\s+/g, "-") || "unknown-skill";
   return (
-    <div>
-      <div className="flex justify-between items-center p-3 dark:border dark:border-[#111] bg-foreground rounded-md">
-        <h3 className="font-semibold text-primary truncate">{skill?.skillName}</h3>
+    <div data-testid={`mod-skill-card-${skillTestId}`}>
+      <div className="flex justify-between items-center p-3 border dark:border-[#111] bg-foreground rounded-md">
+        <h3
+          className="font-semibold text-primary truncate"
+          data-testid={`mod-skill-name-${skillTestId}`}
+        >
+          {skill?.skillName}
+        </h3>
         <button
           onClick={() => removeSkill(2, skill?.skillName)}
           className="text-primary font-semibold p-1 rounded-md hover:bg-foreground cursor-pointer duration-250"
           disabled={isLoading}
+          data-testid={`mod-skill-delete-button-${skillTestId}`}
         >
           <Trash className="size-4" />
         </button>

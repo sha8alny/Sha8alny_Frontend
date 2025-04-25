@@ -3,10 +3,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignInForm from "../presentation/SignInForm";
-import { handleSignIn } from "../../../../services/userManagement";
+import { handleSignIn, handleGoogleSignIn } from "../../../../services/userManagement";
 import { useToast } from "@/app/context/ToastContext";
 import { set } from "date-fns";
 import {useAuth} from "@/app/context/AuthContext";
+import { auth, provider } from "@/firebase/firebase";
+import { signInWithPopup } from "firebase/auth";
 
 /**
  * @namespace signin
@@ -107,6 +109,34 @@ const validateForm = () => {
     }
   }
 
+  const handleGoogleLogIn = async () => {
+    try{
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const token = await user.getIdToken(true);
+
+        const loginResult = await handleGoogleSignIn(token);
+        if (loginResult.success) {
+            toast("Welcome back!");
+            setTimeout(() => {
+              if (isCompleteProfile === "false") {
+                router.push("/complete-profile");
+                return;
+              }
+              const redirectPath = Auth.getRedirectPath();
+              Auth.clearRedirectPath();
+              router.push(redirectPath);
+            }, 3000);
+        } else {
+            toast("Error signing in with Google. Please try again.", false);
+        }
+
+}catch(error){
+    console.error("Error signing in with Google:", error);
+    toast("Error signing in with Google. Please try again.", false);
+}
+};
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background ">
       <SignInForm
@@ -118,6 +148,7 @@ const validateForm = () => {
         isSubmitting={loginMutation.isPending}
         error={error}
         handleChange={handleChange}
+        handleGoogleSignIn={handleGoogleLogIn}
       />
     </div>
   );

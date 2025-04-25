@@ -75,6 +75,7 @@ export default function ModSkill({ skills }) {
       className="min-w-max"
       useRegularButton
       buttonData={<AddButton />}
+      testId="mod-skills"
       AlertContent={
         <ModSkillPresentation
           skills={filteredSkills}

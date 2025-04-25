@@ -28,7 +28,8 @@ function NavbarContainer() {
     const { theme, toggleTheme } = useTheme();
     const [open, setOpen] = useState(false);
     const router = useRouter();
-  
+    const [showMobileSearch, setShowMobileSearch] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const {
       data: userProfile,
       isLoading,
@@ -41,12 +42,23 @@ function NavbarContainer() {
   
     const handleNavigation = (path) => {
       router.push(path);
+      window.location.reload();
     };
 
     const handleLogOut = () => {
       handleLogout();
     }
   
+  
+    const handleSearch = (e) => {
+      if (e.key === "Enter" || e.type === "click") {
+        const query = searchQuery.trim();
+        if (query) {
+          handleNavigation(`/search/all?query=${encodeURIComponent(query)}`);
+          setShowMobileSearch(false);
+        }
+      }
+    };
     if (isLoading) {
       return (
         <NavBarPresentationSkeleton
@@ -72,7 +84,6 @@ function NavbarContainer() {
         />
       );
     }
-    console.log("navbar", userProfile);
     return (
       <NavbarPresentation
         userInfo={userProfile}
@@ -83,6 +94,11 @@ function NavbarContainer() {
         open={open}
         setOpen={setOpen}
         handleLogOut={handleLogOut}
+        setShowMobileSearch={setShowMobileSearch}
+        showMobileSearch={showMobileSearch}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleSearch={handleSearch}
       />
     );
   }

@@ -13,18 +13,150 @@ import {
 } from "@tanstack/react-query";
 import CommentPresentation from "../presentation/CommentPresentation";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { followUser } from "@/app/services/connectionManagement";
 import { Reactions } from "@/app/utils/Reactions";
 
-export default function CommentContainer({ postId, comment }) {
+function updateAncestorCommentCounts(
+  queryClient,
+  postId,
+  startParentId,
+  delta
+) {
+  let currentParentId = startParentId;
+  let nextParentId = null;
+
+  if (!currentParentId) {
+    
+    const updatePostCommentCount = (oldData) => {
+      if (!oldData) return oldData;
+      if (oldData.pages) {
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) =>
+            Array.isArray(page)
+              ? page.map((p) =>
+                  p.postId === postId
+                    ? {
+                        ...p,
+                        numComments: Math.max(0, (p.numComments || 0) + delta),
+                      }
+                    : p
+                )
+              : page &&
+                typeof page === "object" &&
+                "postId" in page &&
+                page.postId === postId
+              ? {
+                  ...page,
+                  numComments: Math.max(0, (page.numComments || 0) + delta),
+                }
+              : page
+          ),
+        };
+      }
+      if (oldData.postId === postId) {
+        return {
+          ...oldData,
+          numComments: Math.max(0, (oldData.numComments || 0) + delta),
+        };
+      }
+      return oldData;
+    };
+
+    queryClient.setQueryData(["posts"], updatePostCommentCount);
+    queryClient.setQueryData(["post", postId], updatePostCommentCount);
+    
+    return;
+  }
+
+  let parentFound = false;
+  const findAndUpdateComment = (oldData, queryKey) => {
+    if (
+      !oldData ||
+      !oldData.pages ||
+      !Array.isArray(oldData.pages) ||
+      parentFound
+    )
+      return oldData;
+
+    let found = false;
+    const newPages = oldData.pages.map((page) => {
+      if (found || !page || !page.data || !Array.isArray(page.data))
+        return page;
+      let pageModified = false;
+      const newData = page.data.map((c) => {
+        if (c?.commentId === currentParentId) {
+          found = true;
+          parentFound = true;
+          pageModified = true;
+          nextParentId = c.parentId;
+          const newNumComments = Math.max(0, (c.numComments || 0) + delta);
+          return {
+            ...c,
+            numComments: newNumComments,
+          };
+        }
+        return c;
+      });
+      return pageModified ? { ...page, data: newData } : page;
+    });
+    return found ? { ...oldData, pages: newPages } : oldData;
+  };
+
+  
+  queryClient.setQueryData(["comments", postId], (old) =>
+    findAndUpdateComment(old, ["comments", postId])
+  );
+
+  if (!parentFound) {
+    
+    const replyQueryKeys = queryClient.getQueryCache().findAll({
+      queryKey: ["commentReplies", postId],
+      exact: false,
+    });
+
+
+    for (const query of replyQueryKeys) {
+      const queryKey = query.queryKey;
+      if (parentFound) break;
+      
+      queryClient.setQueryData(queryKey, (old) =>
+        findAndUpdateComment(old, queryKey)
+      );
+    }
+  }
+
+  if (parentFound) {
+    updateAncestorCommentCounts(queryClient, postId, nextParentId, delta);
+  } else {
+    updateAncestorCommentCounts(queryClient, postId, null, delta);
+  }
+}
+
+export default function CommentContainer({
+  postId,
+  comment,
+  postUsername,
+  nestCount = 0,
+}) {
   const [isLiked, setIsLiked] = useState(comment?.reaction || false);
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [reactionCount, setReactionCount] = useState(
+    (comment?.numLikes || 0) +
+      (comment?.numCelebrates || 0) +
+      (comment?.numLoves || 0) +
+      (comment?.numSupports || 0) +
+      (comment?.numFunnies || 0) +
+      (comment?.numInsightfuls || 0)
+  );
+  const [isFollowing, setIsFollowing] = useState(comment?.isFollowed || false);
   const queryClient = useQueryClient();
   const router = useRouter();
+  const pathname = usePathname();
 
   const {
     data,
@@ -64,6 +196,11 @@ export default function CommentContainer({ postId, comment }) {
       return data.length === perPage ? lastPage.pageParam + 1 : undefined;
     },
     enabled: !!comment?.commentId && showReplies,
+    staleTime: Infinity,
+    retry: 0,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const displayedReplies =
@@ -71,39 +208,47 @@ export default function CommentContainer({ postId, comment }) {
       Array.isArray(page.data) ? page.data : []
     ) || [];
 
+  const navigateTo = (link) => {
+    router.push(link);
+  };
+
   const loadMoreReplies = () => {
     fetchNextPage();
   };
 
-  const navigateTo = (username) => {
-    router.push(username);
-  };
-
   const handleFollowMutation = useMutation({
-    mutationFn: followUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["comments", postId]);
-      queryClient.invalidateQueries([
-        "commentReplies",
-        postId,
-        comment?.commentId,
-      ]);
+    mutationFn: () => followUser(comment?.username),
+    onMutate: () => {
+      setIsFollowing(true);
+
+      queryClient.setQueryData(["comments", postId], (oldData) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            data: page.data.map((c) =>
+              c.commentId === comment.commentId ? { ...c, isFollowed: true } : c
+            ),
+          })),
+        };
+      });
+
+      return { previousFollowingState: !isFollowing };
     },
-    onError: (error) => {
+    onError: (error, username, context) => {
+      setIsFollowing(context.previousFollowingState);
       console.error("Error following user:", error);
     },
   });
 
   const handleReactMutation = useMutation({
     mutationFn: (params) => {
-      const { postId, commentId, reaction } = params;
-      isLiked ? setIsLiked(false) : setIsLiked(reaction); // Optimistic update
-      return isLiked && comment?.reaction === reaction
+      const { postId, commentId, reaction, previousReaction } = params;
+      return previousReaction && previousReaction === reaction
         ? reactToContent(postId, commentId, null, true)
         : reactToContent(postId, commentId, reaction);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["comments", postId]);
     },
   });
 
@@ -115,19 +260,80 @@ export default function CommentContainer({ postId, comment }) {
         text: params.text,
         tags: params.tags || [],
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["comments", postId]);
-      queryClient.invalidateQueries([
-        "commentReplies",
-        postId,
-        comment?.commentId,
-      ]);
+    onSuccess: (newReplyData, variables) => {
+      if (nestCount > 2) {
+        navigateTo(
+          `/u/${postUsername}/post/${postId}/comment/${comment?.commentId}`
+        );
+        window.location.reload();
+        return;
+      }
+      const oldCommentText = replyText;
       setReplyText("");
-      setShowReplies(true);
       setIsReplying(false);
+
+      const newCommentId = newReplyData.commentId;
+      if (!newCommentId) {
+        queryClient.invalidateQueries({ queryKey: ["commentReplies", postId] });
+        queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        return;
+      }
+
+      const sidebarInfo = queryClient.getQueryData(["sidebarInfo"]) || {};
+      const optimisticReply = {
+        commentId: newCommentId,
+        parentId: comment?.commentId,
+        text: oldCommentText.trim(),
+        username: sidebarInfo.username || "user",
+        profilePicture: sidebarInfo.profilePicture || "",
+        fullName: sidebarInfo.name || "User",
+        headline: sidebarInfo.headline || "",
+        time: new Date().toISOString(),
+        numLikes: 0,
+        numCelebrates: 0,
+        numLoves: 0,
+        numSupports: 0,
+        numFunnies: 0,
+        numInsightfuls: 0,
+        numComments: 0,
+        numReacts: 0,
+        reaction: null,
+        connectionDegree: 0,
+        isFollowed: false,
+        age: determineAge(new Date()),
+      };
+
+      queryClient.setQueryData(
+        ["commentReplies", postId, comment?.commentId],
+        (oldData) => {
+          if (!oldData || !oldData.pages || !oldData.pages[0]) {
+            return {
+              pages: [{ data: [optimisticReply], pageParam: 1 }],
+              pageParams: [1],
+            };
+          }
+          return {
+            ...oldData,
+            pages: [
+              {
+                ...oldData.pages[0],
+                data: [optimisticReply, ...(oldData.pages[0].data || [])],
+              },
+              ...oldData.pages.slice(1),
+            ],
+          };
+        }
+      );
+
+      // 2. Update ancestor counts recursively (updates B in A's cache, A in post cache, etc.)
+      updateAncestorCommentCounts(queryClient, postId, comment?.commentId, 1); // Start update from B
+
+      setShowReplies(true); // Show C's section within B's container
     },
     onError: (error) => {
-      console.error("Error adding comment/reply:", error);
+      console.error("Error adding reply:", error);
+      setReplyText("");
+      setIsReplying(false);
     },
   });
 
@@ -136,27 +342,131 @@ export default function CommentContainer({ postId, comment }) {
       const { postId, commentId } = params;
       return deleteComment(postId, commentId);
     },
-    onMutate: () => {
-      setIsDeleting(true);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["comments", postId]);
-      queryClient.invalidateQueries([
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: ["commentReplies", postId, comment?.commentId],
+      });
+      await queryClient.cancelQueries({ queryKey: ["comments", postId] });
+      await queryClient.cancelQueries({
+        queryKey: ["commentReplies", postId, comment?.parentId],
+      });
+
+      const previousReplies = queryClient.getQueryData([
         "commentReplies",
         postId,
-        comment?.commentId,
+        comment?.parentId,
       ]);
+      const previousComments = queryClient.getQueryData(["comments", postId]);
+      const previousPost = queryClient.getQueryData(["post", postId]);
+      const previousPosts = queryClient.getQueryData(["posts"]);
+
+      setIsDeleting(true);
+
+      const commentToDelete = comment;
+      const numChildren = commentToDelete?.numComments || 0;
+      const delta = -(numChildren + 1);
+
+      if (commentToDelete?.parentId) {
+        queryClient.setQueryData(
+          ["commentReplies", postId, commentToDelete.parentId],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: (page.data || []).filter(
+                  (c) => c.commentId !== commentToDelete.commentId
+                ),
+              })),
+            };
+          }
+        );
+      } else {
+        queryClient.setQueryData(["comments", postId], (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: (page.data || []).filter(
+                (c) => c.commentId !== commentToDelete.commentId
+              ),
+            })),
+          };
+        });
+      }
+
+      updateAncestorCommentCounts(
+        queryClient,
+        postId,
+        commentToDelete?.parentId,
+        delta
+      );
+
+      return {
+        previousReplies,
+        previousComments,
+        previousPost,
+        previousPosts,
+        commentToDelete,
+        delta,
+      };
     },
-    onSettled: () => {
+    onSuccess: (data, variables, context) => {
+      queryClient.removeQueries({
+        queryKey: [
+          "commentReplies",
+          postId,
+          context.commentToDelete?.commentId,
+        ],
+      });
+      
+    },
+    onError: (err, variables, context) => {
+      console.error("Error deleting comment:", err);
+      if (context?.previousReplies) {
+        queryClient.setQueryData(
+          ["commentReplies", postId, context.commentToDelete?.parentId],
+          context.previousReplies
+        );
+      }
+      if (!context?.commentToDelete?.parentId && context?.previousComments) {
+        queryClient.setQueryData(
+          ["comments", postId],
+          context.previousComments
+        );
+      }
+      if (context?.previousPost) {
+        queryClient.setQueryData(["post", postId], context.previousPost);
+      }
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["posts"], context.previousPosts);
+      }
+    },
+    onSettled: (data, error, variables, context) => {
       setIsDeleting(false);
     },
   });
 
-  const handleLike = (reaction = "Like") => {
+  const handleLike = (reaction) => {
+    const previousReaction = isLiked;
+
+    if (isLiked && isLiked === reaction) {
+      setIsLiked(false);
+      setReactionCount((prev) => prev - 1);
+    } else {
+      if (!isLiked) {
+        setReactionCount((prev) => prev + 1);
+      }
+      setIsLiked(reaction);
+    }
+
     handleReactMutation.mutate({
       postId,
       commentId: comment?.commentId,
       reaction: reaction,
+      previousReaction,
     });
   };
 
@@ -183,7 +493,13 @@ export default function CommentContainer({ postId, comment }) {
   };
 
   const handleShowReplies = () => {
-    setShowReplies(true);
+    if (nestCount > 2) {
+      navigateTo(
+        `/u/${postUsername}/post/${postId}/comment/${comment?.commentId}`
+      );
+    } else {
+      setShowReplies(true);
+    }
   };
 
   const handleHideReplies = () => {
@@ -203,6 +519,13 @@ export default function CommentContainer({ postId, comment }) {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleReply();
+    }
+  };
+
   const commentAge = determineAge(comment?.time || new Date());
   const hasRepliesSection = showReplies;
   const hasReplies = comment?.numComments > 0;
@@ -214,13 +537,7 @@ export default function CommentContainer({ postId, comment }) {
         age: commentAge,
         username: encodeURIComponent(comment?.username),
         relation: convertRelation(comment?.connectionDegree),
-        numReacts:
-          (comment?.numLikes || 0) +
-          (comment?.numCelebrates || 0) +
-          (comment?.numLoves || 0) +
-          (comment?.numSupports || 0) +
-          (comment?.numFunnies || 0) +
-          (comment?.numInsightfuls || 0),
+        numReacts: reactionCount,
       }}
       isLiked={isLiked}
       onLike={handleLike}
@@ -246,6 +563,11 @@ export default function CommentContainer({ postId, comment }) {
       onDelete={handleDelete}
       hasReplies={hasReplies}
       isDeleting={isDeleting}
+      nestCount={nestCount}
+      postUsername={postUsername}
+      isFollowing={isFollowing}
+      onKeyPress={handleKeyPress}
+      isCommenting={handleCommentMutation.isPending}
     />
   );
 }

@@ -34,6 +34,7 @@ export default function PostPageContainer({ username, logo }) {
       console.log("Post created:", createdPost);
       router.push(`/company/${username}/admin/posts`);
       queryClient.invalidateQueries(["posts", username]);
+      window.location.reload();
     } catch (error) {
       console.error("Failed to create post:", error);
     }

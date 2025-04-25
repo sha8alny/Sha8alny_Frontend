@@ -55,6 +55,11 @@ export default function CommentPresentation({
   hasReplies,
   onDelete,
   isDeleting,
+  nestCount,
+  postUsername,
+  isFollowing,
+  onKeyPress,
+  isCommenting
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
@@ -69,7 +74,7 @@ export default function CommentPresentation({
         >
           <AvatarImage src={comment?.profilePicture} alt={comment?.fullName} />
           <AvatarFallback>
-            {comment?.fullName.substring(0, 2).toUpperCase()}
+            {comment?.fullName?.substring(0, 2).toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 space-y-1">
@@ -100,21 +105,21 @@ export default function CommentPresentation({
                   {comment?.connectionDegree !== 0 &&
                     comment?.connectionDegree !== -1 && (
                       <button
-                        disabled={comment?.isFollowed}
+                        disabled={isFollowing}
                         onClick={() => onFollow(comment?.username)}
                         className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
-                          comment?.isFollowed
+                          isFollowing
                             ? "bg-secondary/80 text-background dark:text-primary cursor-default"
                             : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
                         } transition-colors duration-200`}
                       >
-                        {comment?.isFollowed ? (
+                        {isFollowing ? (
                           <Person sx={{ fontSize: "0.75rem" }} />
                         ) : (
                           <PersonAdd sx={{ fontSize: "0.75rem" }} />
                         )}
                         <span className="max-w-0 overflow-hidden group-hover:max-w-24 group-hover:ml-2 group-hover:mr-1 transition-all duration-300 whitespace-nowrap">
-                          {comment?.isFollowed ? "Following" : "Follow"}
+                          {isFollowing ? "Following" : "Follow"}
                         </span>
                       </button>
                     )}
@@ -125,7 +130,7 @@ export default function CommentPresentation({
                 {comment.age}
               </span>
             </div>
-            <p className="text-sm">{comment?.text}</p>
+            <p className="text-sm">{comment?.text} {comment?.parentId}</p>
           </div>
 
           <div className="flex items-center gap-4 pl-1">
@@ -133,7 +138,6 @@ export default function CommentPresentation({
               className={`flex items-center gap-1 text-xs transition-colors ${
                 isLiked ? "text-primary" : "text-muted hover:text-foreground"
               }`}
-              onClick={onLike}
             >
               <TooltipProvider>
                 <Tooltip>
@@ -142,24 +146,21 @@ export default function CommentPresentation({
                       onClick={() => onLike("Like")}
                       className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
                     >
-                      {comment?.reaction === "Like" && <Like size="1.3rem" />}
-                      {comment?.reaction === "Insightful" && (
-                        <Insightful size="1.3rem" />
-                      )}
-                      {comment?.reaction === "Support" && (
-                        <Support size="1.3rem" />
-                      )}
-                      {comment?.reaction === "Funny" && <Funny size="1.3rem" />}
-                      {comment?.reaction === "Love" && <Love size="1.3rem" />}
-                      {comment?.reaction === "Celebrate" && (
-                        <Celebrate size="1.3rem" />
-                      )}
-                      {!!comment?.reaction || (
-                        <ThumbUpOutlined sx={{ fontSize: "1rem" }} className="rotate-y-180"/>
+                      {isLiked === "Like" && <Like size="1.3rem" />}
+                      {isLiked === "Insightful" && <Insightful size="1.3rem" />}
+                      {isLiked === "Support" && <Support size="1.3rem" />}
+                      {isLiked === "Funny" && <Funny size="1.3rem" />}
+                      {isLiked === "Love" && <Love size="1.3rem" />}
+                      {isLiked === "Celebrate" && <Celebrate size="1.3rem" />}
+                      {!isLiked && (
+                        <ThumbUpOutlined
+                          sx={{ fontSize: "1rem" }}
+                          className="rotate-y-180"
+                        />
                       )}
                       <span
                         className={`text-muted ${
-                          comment?.reaction ? "text-secondary" : ""
+                          isLiked ? "text-secondary" : ""
                         }`}
                       >
                         {comment?.numReacts}
@@ -245,17 +246,19 @@ export default function CommentPresentation({
             <div className="flex items-end gap-2 mt-2">
               <Textarea
                 placeholder="Write a reply..."
-                className="min-h-[80px] flex-1 text-sm"
+                className="flex-1 text-sm"
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
+                onKeyDown={onKeyPress}
+                rows={1}
               />
               <Button
                 size="icon"
                 onClick={onReply}
-                disabled={!replyText.trim()}
+                disabled={!replyText.trim() || isCommenting}
                 className="cursor-pointer bg-secondary/80 dark:text-primary hover:bg-secondary/60 transition-colors duration-200"
               >
-                <Send sx={{ fontSize: "1rem" }} />
+                {isCommenting ? <div className="size-4 animate-spin border-2 border-t-transparent rounded-full border-primary"/> : <Send sx={{ fontSize: "1rem" }} />}
               </Button>
             </div>
           )}
@@ -265,8 +268,10 @@ export default function CommentPresentation({
       {hasRepliesSection && (
         <div className="ml-10 mt-2 border-l border-primary/20 pl-4 space-y-4">
           {isLoadingReplies && !isFetchingMoreReplies ? (
-            <div className="flex justify-center p-4">
-              <CommentSkeleton />
+            <div className="flex flex-col justify-center p-4">
+              {Array.from({ length: 2 }).map((_, index) => (
+                <CommentSkeleton key={index} />
+              ))}
             </div>
           ) : (
             <>
@@ -274,7 +279,9 @@ export default function CommentPresentation({
                 <CommentContainer
                   key={reply.commentId}
                   postId={postId}
-                  comment={{ ...reply, isReply: true }}
+                  comment={{ ...reply, isReply: true, parentId: comment.commentId }}
+                  nestCount={nestCount + 1}
+                  postUsername={postUsername}
                 />
               ))}
 

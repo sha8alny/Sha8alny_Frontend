@@ -39,27 +39,30 @@ function PersonCardPresentation({
   return (
     <div
       onClick={onNavigateToProfile}
-      className="bg-foreground text-text border-t dark:border-gray-500 hover:bg-hover p-3 py-3 cursor-pointer  duration-200"
+      className="bg-foreground text-text border-t dark:border-gray-500 hover:bg-hover p-3 py-3 cursor-pointer duration-200"
+      data-testid={`person-card-${username}`}
     >
       <div className="flex items-start gap-3 rounded-lg ">
         <Avatar
           className="w-10 h-10 cursor-pointer"
           onClick={onNavigateToProfile}
+          data-testid={`person-avatar-${username}`}
         >
           <AvatarImage src={avatarUrl} alt={name} />
-          <AvatarFallback>{name.substring(0, 2).toUpperCase()}</AvatarFallback>
+          <AvatarFallback>{name?.substring(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="flex items-center gap-1.5">
             <h3
               className="text-sm font-medium cursor-pointer hover:underline"
               onClick={onNavigateToProfile}
+              data-testid={`person-name-${username}`}
             >
               {name}
             </h3>
           </div>
           <p className="text-gray-400 text-xs flex items-center gap-1">
-            <Briefcase className="h-3 w-3" /> {headline}
+            <Briefcase className="h-3 w-3" /> {headline || "N/A"}
           </p>
           <p className="text-gray-400 text-xs flex items-center gap-1">
             <MapPin className="h-3 w-3" /> {location}
@@ -72,6 +75,7 @@ function PersonCardPresentation({
             e.stopPropagation();
             onConnectClick();
           }}
+          data-testid={`person-connect-button-${username}`}
         >
           {isConnected ? "Message" : "Connect"}
         </Button>

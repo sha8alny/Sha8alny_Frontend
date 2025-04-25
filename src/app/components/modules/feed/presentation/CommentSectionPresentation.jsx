@@ -9,6 +9,7 @@ export default function CommentSectionPresentation({
   hasMore,
   loadMore,
   handleComment,
+  handleKeyPress,
   comment,
   setComment,
   isSubmittingComment,
@@ -16,6 +17,7 @@ export default function CommentSectionPresentation({
   navigateTo,
   isPost,
   isLoadingComments,
+  postUsername
 }) {
   return (
     <section className="flex flex-col gap-4 w-full">
@@ -27,6 +29,7 @@ export default function CommentSectionPresentation({
               placeholder="Add a comment..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              onKeyDown={handleKeyPress}
               className="w-full py-2 text-primary px-4 bg-foreground rounded-md border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
             <Button
@@ -50,15 +53,17 @@ export default function CommentSectionPresentation({
             key={comment.commentId}
             comment={comment}
             postId={postId}
+            postUsername={postUsername}
+            nestCount={0}
           />
         ))}
-        {isLoading && <CommentSkeleton />}
-        {isLoadingComments && <CommentSkeleton />}
+        {isLoading && Array.from({length: 2}).map((_, index) => (<CommentSkeleton key={index} />))}
+        {isLoadingComments && Array.from({length: 2}).map((_, index) => (<CommentSkeleton key={index} />))}
       </div>
-      {hasMore && (
+      {hasMore && !isLoadingComments && (
         <button
           className="text-primary font-semibold text-sm flex gap-1 items-center group justify-center cursor-pointer"
-          onClick={comments?.length > 10 && !isPost ? navigateTo : loadMore}
+          onClick={comments?.length > 5 && !isPost ? navigateTo : loadMore}
         >
           <ExpandMore sx={{ fontSize: "1rem" }} />
           <span className="group-hover:underline">Load more comments</span>

@@ -7,7 +7,7 @@ import { Shield } from "lucide-react";
  */
 /**
  * A component that displays a profile strength indicator with a progress bar and checklist.
- * 
+ *
  * @component
  * @param {Object} props
  * @param {Object} props.profileStrength - Object containing profile strength information
@@ -24,86 +24,136 @@ import { Shield } from "lucide-react";
  */
 export default function ProfileStrength({ profileStrength }) {
   return (
-    <Container className="dark:border dark:border-[#111] shadow-lg p-4">
-      <h2 className="text-lg font-semibold mb-4 flex items-center">
+    <Container
+      className="border dark:border-[#111] shadow-lg p-4"
+      data-testid="profile-strength-container"
+    >
+      <h2
+        className="text-lg font-semibold mb-4 flex items-center"
+        data-testid="profile-strength-title"
+      >
         <Shield className="size-5 mr-2 fill-current" />
         Profile Strength
       </h2>
-      <div className="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
+      <div
+        className="w-full h-2 rounded-full bg-gray-800 overflow-hidden"
+        data-testid="profile-strength-progress-bar-container"
+      >
         <div
           className={`h-2 rounded-full transition-all duration-300 ${profileStrength?.color}`}
           style={{ width: `${profileStrength?.strength}%` }}
+          data-testid="profile-strength-progress-bar"
         />
       </div>
-      <h6 className="text-sm mt-2 text-muted">
+      <h6
+        className="text-sm mt-2 text-muted"
+        data-testid="profile-strength-level-text"
+      >
         Your profile's level is{" "}
         <span
           className={`${profileStrength?.color} font-semibold text-transparent bg-clip-text`}
+          data-testid="profile-strength-level-label"
         >
           {profileStrength?.label}
         </span>
         .
       </h6>
-      <div className="mt-4 space-y-2">
-        <div className="flex gap-2 items-center text-sm">
+      <div className="mt-4 space-y-2" data-testid="profile-strength-checklist">
+        <div
+          className="flex gap-2 items-center text-sm"
+          data-testid="profile-strength-item-profile"
+        >
           <span
             className={`flex items-center justify-center w-5 h-5 text-xs text-white ${
               profileStrength?.hasProfile ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
+            data-testid="profile-strength-icon-profile"
           >
             {profileStrength?.hasProfile ? "✓" : "×"}
           </span>
-          <span>Add a profile photo</span>
+          <span data-testid="profile-strength-text-profile">
+            Add a profile photo
+          </span>
         </div>
-        <div className="flex gap-2 items-center text-sm">
+        <div
+          className="flex gap-2 items-center text-sm"
+          data-testid="profile-strength-item-about"
+        >
           <span
             className={`flex items-center justify-center w-5 h-5 text-xs text-white ${
               profileStrength?.hasAbout ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
+            data-testid="profile-strength-icon-about"
           >
             {profileStrength?.hasAbout ? "✓" : "×"}
           </span>
-          <span>Add an about section</span>
+          <span data-testid="profile-strength-text-about">
+            Add an about section
+          </span>
         </div>
-        <div className="flex gap-2 items-center text-sm">
+        <div
+          className="flex gap-2 items-center text-sm"
+          data-testid="profile-strength-item-skills"
+        >
           <span
             className={`flex items-center justify-center w-5 h-5 text-xs text-white ${
               profileStrength?.hasSkills ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
+            data-testid="profile-strength-icon-skills"
           >
             {profileStrength?.hasSkills ? "✓" : "×"}
           </span>
-          <span>Add your skills</span>
+          <span data-testid="profile-strength-text-skills">
+            Add your skills
+          </span>
         </div>
-        <div className="flex gap-2 items-center text-sm">
+        <div
+          className="flex gap-2 items-center text-sm"
+          data-testid="profile-strength-item-education"
+        >
           <span
             className={`flex items-center justify-center w-5 h-5 text-xs text-white ${
               profileStrength?.hasEducation ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
+            data-testid="profile-strength-icon-education"
           >
             {profileStrength?.hasEducation ? "✓" : "×"}
           </span>
-          <span>Add your education</span>
+          <span data-testid="profile-strength-text-education">
+            Add your education
+          </span>
         </div>
-        <div className="flex gap-2 items-center text-sm">
+        <div
+          className="flex gap-2 items-center text-sm"
+          data-testid="profile-strength-item-experience"
+        >
           <span
             className={`flex items-center justify-center w-5 h-5 text-xs text-white ${
               profileStrength?.hasExperience ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
+            data-testid="profile-strength-icon-experience"
           >
             {profileStrength?.hasExperience ? "✓" : "×"}
           </span>
-          <span>Add your experience</span>
+          <span data-testid="profile-strength-text-experience">
+            Add your experience
+          </span>
         </div>
-        <div className="flex gap-2 items-center text-sm">
+        <div
+          className="flex gap-2 items-center text-sm"
+          data-testid="profile-strength-item-connections"
+        >
           <span
             className={`flex items-center justify-center w-5 h-5 text-xs text-white ${
               profileStrength?.hasConnections ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
+            data-testid="profile-strength-icon-connections"
           >
             {profileStrength?.hasConnections ? "✓" : "×"}
           </span>
-          <span>Connect with others</span>
+          <span data-testid="profile-strength-text-connections">
+            Connect with others
+          </span>
         </div>
       </div>
     </Container>

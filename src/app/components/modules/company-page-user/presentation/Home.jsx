@@ -5,6 +5,7 @@ import PostCard from "./PostCard";
  * @namespace Home
  */
 
+
 /**
  * Home component - Displays an overview of the company and a horizontal list of recent posts.
  *

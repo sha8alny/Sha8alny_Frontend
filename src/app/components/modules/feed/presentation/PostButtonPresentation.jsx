@@ -1,27 +1,42 @@
+import React from "react";
 import { Separator } from "@/app/components/ui/Separator";
-import Image from "next/image";
 import {
   AccessTimeOutlined,
   ImageOutlined,
   LocalOfferOutlined,
   PersonAddOutlined,
   VideocamOutlined,
+  DescriptionOutlined,
 } from "@mui/icons-material";
 import { Button } from "@/app/components/ui/Button";
+import { XIcon } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/components/ui/Avatar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/Popover";
+import { Badge } from "@/app/components/ui/Badge";
 
 export default function PostButtonPresentation({
   text,
   setText,
   onPost,
-  onAddMedia,
   onRemoveMedia,
-  images,
-  videos,
-  error,
-  onAddTag,
+  onRemoveDocument,
+  onImageInputChange,
+  onVideoInputChange,
+  onDocumentInputChange,
+  tagInput,
+  setTagInput,
+  onAddTagKeyDown,
+  onAddTagClick,
   onRemoveTag,
   tags,
-  setTags,
   taggedUser,
   setTaggedUser,
   taggedUsers,
@@ -29,25 +44,35 @@ export default function PostButtonPresentation({
   onRemoveTaggedUser,
   searchResults,
   setSearchResults,
-  currentState,
   fileInputRef,
   videoInputRef,
+  documentInputRef,
   userInfo,
   isLoading,
+  error,
+  tagPopoverOpen,
+  setTagPopoverOpen,
+  taggedUserPopoverOpen,
+  setTaggedUserPopoverOpen,
+  imagePreviews,
+  videoPreview,
+  documentPreview,
 }) {
   return (
     <div className="flex flex-col gap-2 w-full">
       <div className="flex items-center gap-2">
         <div className="relative size-10 bg-gray-700 rounded-full">
-          <Image
-            src={userInfo?.profilePicture}
-            fill
-            alt="User Avatar"
-            className="rounded-full"
-          />
+          <Avatar className="size-10">
+            <AvatarImage src={userInfo?.profilePicture} alt={userInfo?.name} />
+            <AvatarFallback>
+              {userInfo?.name?.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
         </div>
         <div className="flex flex-col">
-          <h4 className="text-primary font-bold">{userInfo?.name}</h4>
+          <h4 className="text-primary text-start font-bold">
+            {userInfo?.name}
+          </h4>
           <p className="text-sm text-muted">{userInfo?.headline}</p>
         </div>
       </div>
@@ -58,50 +83,55 @@ export default function PostButtonPresentation({
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        {/* Media Preview */}
         <div className="flex gap-2 flex-wrap">
-          {images?.map((image, index) => (
-            <div
-              key={index}
-              className="relative size-12 bg-gray-700 rounded-lg"
-            >
-              <Image
-                src={URL.createObjectURL(image)}
-                fill
-                alt="Media Preview"
-                className="rounded-lg object-cover"
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80 dark:hover:bg-foreground/80 cursor-pointer"
-                onClick={() => onRemoveMedia(index, "image")}
-              >
-                &times;
-              </Button>
-            </div>
-          ))}
-          {/* For single video file */}
-          {videos && (
-            <div
-              className="relative w-24 min-h-24 bg-gray-700 rounded-lg mb-4"
-            >
-              <video
-                src={URL.createObjectURL(videos)}
-                controls
-                className="rounded-lg"
-              ></video>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-foreground text-primary hover:bg-foreground/80 dark:hover:bg-foreground/80 cursor-pointer"
-                onClick={() => onRemoveMedia(0, "video")}
-              >
-                &times;
-              </Button>
-            </div>
-          )}
+          {imagePreviews}
+          {videoPreview}
+          {documentPreview}
         </div>
+        {(tags.length > 0 || taggedUsers.length > 0) && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <div
+                key={tag}
+                className="flex items-center gap-1 px-2 py-1 bg-secondary rounded-2xl text-background dark:text-primary"
+              >
+                <span className="text-background dark:text-primary font-semibold text-xs flex items-center">
+                  #{tag}
+                </span>
+                <button
+                  onClick={() => onRemoveTag(tag)}
+                  className="px-1 py-1 rounded-full hover:bg-background/20 duration-200 cursor-pointer ml-1"
+                >
+                  <XIcon className="size-3" />
+                </button>
+              </div>
+            ))}
+            {taggedUsers.map((user) => (
+              <Badge
+                key={user?._id}
+                variant="outline"
+                className="flex items-center gap-1 px-2 py-1 bg-muted/50"
+              >
+                <Avatar className="h-5 w-5 mr-1">
+                  <AvatarImage
+                    src={user?.profilePicture}
+                    alt={user?.fullName}
+                  />
+                  <AvatarFallback>
+                    {user?.fullName?.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                {user?.fullName}
+                <button
+                  onClick={() => onRemoveTaggedUser(user?._id)}
+                  className="h-4 w-4 rounded-full hover:bg-primary/20 duration-200 cursor-pointer flex items-center justify-center ml-1"
+                >
+                  <XIcon className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        )}
         <Separator />
         <div className="flex gap-2 mt-4 justify-between items-center">
           <span className="text-sm font-semibold">Add to your post</span>
@@ -110,9 +140,7 @@ export default function PostButtonPresentation({
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-full text-green-500 cursor-pointer"
-              onClick={() => {
-                fileInputRef.current?.click();
-              }}
+              onClick={() => fileInputRef.current?.click()}
             >
               <ImageOutlined sx={{ fontSize: "1rem" }} />
             </Button>
@@ -120,19 +148,53 @@ export default function PostButtonPresentation({
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-full text-blue-500 cursor-pointer"
-              onClick={() => {
-                videoInputRef.current?.click();
-              }}
+              onClick={() => videoInputRef.current?.click()}
             >
               <VideocamOutlined sx={{ fontSize: "1rem" }} />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full text-yellow-500 cursor-pointer"
+              className="h-8 w-8 rounded-full text-orange-500 cursor-pointer"
+              onClick={() => documentInputRef.current?.click()}
             >
-              <LocalOfferOutlined sx={{ fontSize: "1rem" }} />
+              <DescriptionOutlined sx={{ fontSize: "1rem" }} />
             </Button>
+            <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full text-yellow-500 cursor-pointer"
+                >
+                  <LocalOfferOutlined sx={{ fontSize: "1rem" }} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-3" align="start">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold">
+                    Add tags to your post
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={onAddTagKeyDown}
+                      className="flex-1 h-9 px-3 rounded-md border border-input bg-transparent text-sm ring-offset-background"
+                      placeholder="Add a tag..."
+                    />
+                    <Button
+                      size="sm"
+                      disabled={!tagInput.trim()}
+                      onClick={onAddTagClick}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button
               variant="ghost"
               size="icon"
@@ -159,29 +221,27 @@ export default function PostButtonPresentation({
           {isLoading ? "Posting..." : "Post"}
         </Button>
       </div>
-
       <input
         type="file"
         ref={fileInputRef}
         className="hidden"
         accept="image/*"
         multiple
-        onChange={(e) => {
-          if (e.target.files.length > 0) {
-            Array.from(e.target.files).forEach((file) => onAddMedia(file));
-          }
-        }}
+        onChange={onImageInputChange}
       />
       <input
         type="file"
         ref={videoInputRef}
         className="hidden"
         accept="video/*"
-        onChange={(e) => {
-          if (e.target.files.length > 0) {
-            onAddMedia(e.target.files[0]);
-          }
-        }}
+        onChange={onVideoInputChange}
+      />
+      <input
+        type="file"
+        ref={documentInputRef}
+        className="hidden"
+        accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        onChange={onDocumentInputChange}
       />
     </div>
   );

@@ -35,39 +35,57 @@ export default function ProfileHeader({
 }) {
   return (
     <>
-      <Container className="dark:border-[#111] dark:border shadow-lg">
+      <Container
+        className="dark:border-[#111] border shadow-lg"
+        data-testid="profile-header-container"
+      >
         <div className="w-full h-max rounded-xl">
           <div className="relative w-full flex">
             {/* Cover photo with hover effect */}
-            <div className="absolute top-0 left-0 w-full h-40 bg-gray-700 rounded-t-xl overflow-hidden">
+            <div
+              className="absolute top-0 left-0 w-full h-40 bg-gray-700 rounded-t-xl overflow-hidden"
+              data-testid="profile-cover-photo-section"
+            >
               {userProfile?.coverPhoto && (
-                <div 
+                <div
                   className="group relative w-full h-full"
                   onMouseEnter={() => setHoverCover(true)}
                   onMouseLeave={() => setHoverCover(false)}
                   onClick={() => openFullscreen(userProfile.coverPhoto)}
+                  data-testid="profile-cover-photo-clickable"
                 >
                   <Image
                     src={userProfile.coverPhoto}
                     fill
                     alt="Cover Photo"
                     className="rounded-t-xl object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                    data-testid="profile-cover-photo-image"
                   />
-                  <div className={`absolute inset-0 bg-black/30 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
-                    <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
+                  <div
+                    className={`absolute inset-0 bg-black/30 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                    data-testid="profile-cover-photo-overlay"
+                  >
+                    <div
+                      className="bg-black/50 p-2 rounded-full backdrop-blur-sm"
+                      data-testid="profile-cover-photo-maximize-icon"
+                    >
                       <Maximize2 className="text-white" size={20} />
                     </div>
                   </div>
                 </div>
               )}
             </div>
-            
+
             {/* Profile picture with hover effect */}
-            <div 
+            <div
               className="relative size-48 z-10 ml-6 bg-gray-500 rounded-full border-8 border-foreground mt-10 overflow-hidden group"
               onMouseEnter={() => setHoverProfile(true)}
               onMouseLeave={() => setHoverProfile(false)}
-              onClick={() => userProfile?.profilePicture && openFullscreen(userProfile.profilePicture)}
+              onClick={() =>
+                userProfile?.profilePicture &&
+                openFullscreen(userProfile.profilePicture)
+              }
+              data-testid="profile-picture-section"
             >
               {userProfile?.profilePicture ? (
                 <>
@@ -76,47 +94,83 @@ export default function ProfileHeader({
                     alt="User Avatar"
                     fill
                     className="rounded-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                    data-testid="profile-picture-image"
                   />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                    <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
+                  <div
+                    className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    data-testid="profile-picture-overlay"
+                  >
+                    <div
+                      className="bg-black/50 p-2 rounded-full backdrop-blur-sm"
+                      data-testid="profile-picture-maximize-icon"
+                    >
                       <Maximize2 className="text-white" size={18} />
                     </div>
                   </div>
                 </>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-4xl font-semibold text-gray-100">
-                  {userProfile?.name?.slice(0,2).toUpperCase() || "U"}
+                <div
+                  className="w-full h-full flex items-center justify-center text-4xl font-semibold text-gray-100"
+                  data-testid="profile-picture-fallback"
+                >
+                  {userProfile?.name?.slice(0, 2).toUpperCase() || "U"}
                 </div>
               )}
             </div>
           </div>
         </div>
-        <div className="py-4 px-8 flex">
+        <div className="py-4 px-8 flex" data-testid="profile-info-section">
           <div>
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold">{userProfile?.name}</h1>
+              <h1 className="text-2xl font-bold" data-testid="profile-name">
+                {userProfile?.name}
+              </h1>
               {!userProfile?.isMyProfile && (
                 <h6 className="text-muted ml-2">•</h6>
               )}
               {!userProfile?.isMyProfile && (
-                <span className="text-muted ml-2">{userProfile?.relation}</span>
+                <span
+                  className="text-muted ml-2"
+                  data-testid="profile-relation"
+                >
+                  {userProfile?.relation}
+                </span>
               )}
             </div>
-            <h2 className="text-muted font-medium">{userProfile?.headline}</h2>
-            <p className="text-muted text-sm mt-2">{userProfile?.industry}</p>
+            <h2
+              className="text-muted font-medium"
+              data-testid="profile-headline"
+            >
+              {userProfile?.headline}
+            </h2>
+            <p
+              className="text-muted text-sm mt-2"
+              data-testid="profile-industry"
+            >
+              {userProfile?.industry}
+            </p>
             <div className="flex gap-2 items-center">
-              <p className="text-muted text-sm">{userProfile?.location}</p>
+              <p className="text-muted text-sm" data-testid="profile-location">
+                {userProfile?.location}
+              </p>
               <h6 className="text-muted">•</h6>
-              <ContactInfoPresentation
-                userInfo={userProfile}
-                onCopy={onCopy}
-                onEmail={onEmail}
-                copied={copied}
-              />
+              <div data-testid="profile-contact-info">
+                <ContactInfoPresentation
+                  userInfo={userProfile}
+                  onCopy={onCopy}
+                  onEmail={onEmail}
+                  copied={copied}
+                />
+              </div>
             </div>
-            <Connections userInfo={userProfile} />
+            <div data-testid="profile-connections">
+              <Connections userInfo={userProfile} />
+            </div>
           </div>
-          <div className="flex ml-auto self-end">
+          <div
+            className="flex ml-auto self-end"
+            data-testid="profile-mod-header"
+          >
             <ModHeader userInfo={userProfile} />
           </div>
         </div>
@@ -124,28 +178,42 @@ export default function ProfileHeader({
 
       {/* Enhanced Fullscreen Image Modal */}
       {fullscreenImage && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center animate-fadeIn"
           onClick={closeFullscreen}
+          data-testid="fullscreen-image-modal"
         >
-          <div 
+          <div
             className="relative max-w-[95vw] max-h-[95vh] animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
+            data-testid="fullscreen-image-container"
           >
-            <button 
-              className="absolute -top-12 right-0 text-white bg-black/60 rounded-full cursor-pointer p-2.5 hover:bg-black/20 transition-colors duration-200 shadow-lg"
+            <button
+              className="absolute -top-12 right-0 text-white dark:text-black dark:bg-white dark:hover:bg-white/70 bg-black/60 rounded-full cursor-pointer p-2.5 hover:bg-black/20 transition-colors duration-200 shadow-lg"
               onClick={closeFullscreen}
               aria-label="Close fullscreen image"
+              data-testid="fullscreen-image-close-button"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
-            <img 
-              src={fullscreenImage} 
-              alt="Full screen" 
+            <img
+              src={fullscreenImage}
+              alt="Full screen"
               className="max-w-full max-h-[80vh] object-contain rounded-md shadow-2xl"
+              data-testid="fullscreen-image"
             />
           </div>
         </div>

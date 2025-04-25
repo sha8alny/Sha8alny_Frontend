@@ -318,7 +318,7 @@ export const ModifyProfileContainer = ({ userInfo }) => {
   const removeResume = () => {
     if (userInfo?.resume) {
       profileUpdate.mutate({
-        api: "profile/upload-resume",
+        api: "profile/delete-resume",
         method: "DELETE",
       });
     }
