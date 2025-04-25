@@ -1,8 +1,24 @@
 /**
- * @namespace company-page-form
- * @module company-page-form
+ * @namespace TagLine
  */
-function TagLine({label, maxLength, id, name, placeholder, value, onChange, isFirstTagline}) {
+/**
+ * A reusable component for rendering a tagline input field with a `textarea` element.
+ * This component includes a label, character count, and a helper text if it's the first tagline.
+ * @component
+ * @param {Object} props - The component's props.
+ * @param {string} props.label - The label text to display for the tagline field.
+ * @param {number} props.maxLength - The maximum length of characters allowed in the tagline.
+ * @param {string} props.id - The id attribute for the tagline field, used for linking the label.
+ * @param {string} props.name - The name attribute for the tagline field, used for form submission.
+ * @param {string} props.placeholder - The placeholder text to display when the field is empty.
+ * @param {string} props.value - The current value of the tagline input.
+ * @param {function} props.onChange - The function to handle changes to the tagline input value.
+ * @param {boolean} props.isFirstTagline - If true, displays a helper text for the first tagline input.
+ *
+ * @returns {JSX.Element} The rendered tagline input field with associated elements.
+ */
+
+export default function TagLine({label, maxLength, id, name, placeholder, value, onChange, isFirstTagline}) {
     return (
       <div className="flex flex-col">
           <label htmlFor={name} className="mb-2 text-text" data-testid={`${name}-label`}> 
@@ -17,5 +33,3 @@ function TagLine({label, maxLength, id, name, placeholder, value, onChange, isFi
     );
 
 }
-
-export default TagLine;

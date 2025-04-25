@@ -1,6 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { getCompany } from "@/app/services/companyManagement";
 import ProfileHeader from "../presentation/ProfileHeader";
 
@@ -39,6 +40,7 @@ export default function ProfileHeaderContainer({ userProfile }) {
     const [company, setCompany] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
     const [followerCount, setFollowerCount] = useState(company?.followers || 0);
+    const router = useRouter();
 
     const handleFollowClick = () => {
         setIsFollowing(!isFollowing);
@@ -55,10 +57,18 @@ export default function ProfileHeaderContainer({ userProfile }) {
         };
         if (userProfile) fetchCompany();
     }, [userProfile]);
+
+    const visitWebsite = () =>{
+      router.push(`/company/${userProfile}/user/posts`);
+    }
+
+    const OpenCompanyAdminPage =() =>{
+      router.push(`/company/${userProfile}/admin/dashboard`);
+    }
     
   return (
     <div>
-      <ProfileHeader userProfile={userProfile} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} />
+      <ProfileHeader userProfile={userProfile} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} />
     </div>
   );
 }

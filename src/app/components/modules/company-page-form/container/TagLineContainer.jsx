@@ -13,7 +13,7 @@ import TagLine from "../presentation/TagLine";
  * @returns {JSX.Element} The rendered TagLineContainer component.
  */
 
-function TagLineContainer({companyTagline, setCompanyTagline,companyDescription, setCompanyDescription, isEditing=false}){    
+export default function TagLineContainer({companyTagline, setCompanyTagline,companyDescription, setCompanyDescription, isEditing=false}){    
     return(
         <>
             <TagLine label="Tagline" maxLength={120} id = "company-tagline"  name= "company-tagline" placeholder="ex:An information services firm helping small businesses succeed" value={companyTagline} onChange={setCompanyTagline} isEditing={isEditing} isFirstTagline={true}/>
@@ -23,5 +23,3 @@ function TagLineContainer({companyTagline, setCompanyTagline,companyDescription,
     );
 
 }
-
-export default TagLineContainer;

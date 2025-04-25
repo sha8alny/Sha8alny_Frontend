@@ -4,34 +4,21 @@ import { useRouter } from "next/navigation";
 import EditPage from "../presentation/EditPage";
 import { updateCompany } from "@/app/services/companyManagement";
 
-
 /**
- * @namespace company-page-author
- * @module company-page-author
+ * @namespace EditPageComponents
  */
 /**
- * EditPageContainer manages the state and logic for editing company details.
- * It provides input fields for company attributes and handles saving and discarding changes.
- *
+ * EditPageContainer component manages the state for editing company details.
+ * It allows users to update various company attributes, including name, industry, tagline, and more.
+ * After saving the changes, the component submits the data and redirects to the company edit page.
  * @component
+ * @param {Object} props - The props for the EditPageContainer component.
+ * @param {string} props.username - The username of the company to be edited.
+ * 
  * @returns {JSX.Element} The rendered EditPageContainer component.
  */
 
-/**
- * @typedef {Object} CompanyData
- * @property {string} name - The company name.
- * @property {string} username - A URL-friendly version of the company name.
- * @property {string} URL - The company website URL.
- * @property {string} industry - The industry the company belongs to.
- * @property {string} description - The company's tagline or description.
- * @property {string} orgSize - The size of the company.
- * @property {string} orgType - The type of the company (e.g., private, public).
- * @property {string} logo - The company logo URL (currently empty).
- * @property {string} location - The company's physical location.
- */
-
-
-function EditPageContainer({username}){
+export default function EditPageContainer({username}){
     const [companyName, setCompanyName] = useState("");
     const [companyIndustry, setCompanyIndustry] = useState("");
     const [companyTagline, setCompanyTagline] = useState("");
@@ -109,4 +96,3 @@ function EditPageContainer({username}){
         </div>
     );
 }
-export default EditPageContainer;

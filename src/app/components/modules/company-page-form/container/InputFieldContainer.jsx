@@ -20,7 +20,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
  * @returns {JSX.Element} The rendered InputFieldContainer component
  */
 
-function InputFieldContainer({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyLocation, setCompanyLocation, companyUsername, companyWebsite, setCompanyWebsite, setCompanyUsername, companyDate, setCompanyDate ,companyPhone,  setCompanyPhone,errors={}, setErrors, isEditing=false}) {
+export default function InputFieldContainer({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyLocation, setCompanyLocation, companyUsername, companyWebsite, setCompanyWebsite, setCompanyUsername, companyDate, setCompanyDate ,companyPhone,  setCompanyPhone,errors={}, setErrors, isEditing=false}) {
   const [isCompanyUsernameEdited, setIsCompanyUsernameEdited ]= useState(false);
 
   const handleNameError = (e) =>{
@@ -155,5 +155,3 @@ function InputFieldContainer({companyName, setCompanyName, companyIndustry, setC
     </div> 
   );
 }
-
-export default InputFieldContainer;

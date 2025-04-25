@@ -26,7 +26,7 @@ import { createCompany } from "@/app/services/companyManagement";
  */
 
 
-function CreateCompanySectionContainer({companyName, setcompanyName,companyIndustry,setcompanyIndustry,companyTagline,setcompanyTagline,file,setFile}){
+export default function CreateCompanySectionContainer({companyName, setcompanyName,companyIndustry,setcompanyIndustry,companyTagline,setcompanyTagline,file,setFile}){
     const [companyUsername, setCompanyUsername] = useState("");
     const [companySize, setCompanySize] = useState("");
     const [companyType, setCompanyType] = useState("");
@@ -126,5 +126,3 @@ function CreateCompanySectionContainer({companyName, setcompanyName,companyIndus
     );
 
 }
-
-export default CreateCompanySectionContainer;

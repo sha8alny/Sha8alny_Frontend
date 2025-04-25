@@ -9,12 +9,12 @@ export default function Posts() {
     <div className="max-w-7xl mx-auto px-4">
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Company info */}
-        <div className="hidden lg:block w-full lg:w-55 xl:w-72">
+        <div className="hidden lg:block w-full lg:w-55 xl:w-72 2xl:w-[300px] ">
           <CompanyFollowersContainer username={username} />
         </div>
 
         {/* Posts */}
-        <div className="flex-1">
+        <div className="flex-1 ">
           <PostsContainer companyUsername={username} />
         </div>
       </div>

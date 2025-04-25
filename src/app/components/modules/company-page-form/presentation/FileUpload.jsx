@@ -2,11 +2,22 @@ import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 
 /**
- * @namespace company-page-form
- * @module company-page-form
+ * @namespace FileUpload
+ */
+/**
+ * A component that allows the user to upload a file (typically an image), displays a preview of the file if uploaded,
+ * and allows the user to remove the file if needed.
+ * @component
+ * @param {Object} props - The component's props.
+ * @param {function} props.onChange - Function to handle file selection and upload.
+ * @param {string} [props.preview] - The URL or base64 string for the file preview.
+ * @param {File|null} [props.file] - The uploaded file, if any.
+ * @param {function} props.onRemove - Function to handle file removal.
+ *
+ * @returns {JSX.Element} The rendered file upload component.
  */
 
-function FileUpload({onChange, preview, file, onRemove}){
+export default function FileUpload({onChange, preview, file, onRemove}){
     return(
         <div>
             <label className="text-text mb-2">
@@ -32,5 +43,3 @@ function FileUpload({onChange, preview, file, onRemove}){
         </div>
     );
 }
-
-export default FileUpload;

@@ -9,26 +9,28 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import React from "react";
 
 /**
- * `CompanyAdminContent` is a React functional component that displays a company's admin page.
- * It includes dynamic loading states, error handling, and toggles for sidebar and analytics components.
+ * @namespace CompanyAdminComponents
+ */
+/**
+ * CompanyAdminContent component that displays the main content of the company admin page.
+ * It includes a sidebar and an analytics section that can be toggled, as well as different states for loading or missing company data.
+ * @component
+ * @param {Object} company - The company object containing details of the company.
+ * @param {Function} setCompany - Function to update the company data.
+ * @param {string} username - The username of the company admin.
+ * @param {string} logo - The logo URL or data of the company.
+ * @param {Function} setLogo - Function to update the company logo.
+ * @param {boolean} isSidebarOpen - State to determine if the sidebar is open or closed.
+ * @param {boolean} isAnalyticsOpen - State to determine if the analytics section is open or closed.
+ * @param {Function} setIsSidebarOpen - Function to toggle the sidebar's visibility.
+ * @param {Function} setIsAnalyticsOpen - Function to toggle the analytics section's visibility.
+ * @param {boolean} loading - A loading state to display a loading message.
+ * @param {React.ReactNode} children - Any child components passed to the CompanyAdminContent.
+ * @param {Function} onClick - Function to handle the "Go Back" button click.
+ * @param {Function} toggleSidebar - Function to toggle the sidebar.
+ * @param {Function} toggleAnalytics - Function to toggle the analytics section.
  * 
- * @param {Object} props - The properties passed to the component.
- * @param {string} props.company - The company object or a string that represents the company's state.
- * @param {Function} props.setCompany - A function to update the company state.
- * @param {string} props.username - The username of the logged-in user.
- * @param {string} props.logo - The logo URL or the company logo.
- * @param {Function} props.setLogo - A function to update the logo state.
- * @param {boolean} props.isSidebarOpen - A boolean indicating whether the sidebar is open.
- * @param {boolean} props.isAnalyticsOpen - A boolean indicating whether the analytics view is open.
- * @param {Function} props.setIsSidebarOpen - A function to toggle the sidebar open state.
- * @param {Function} props.setIsAnalyticsOpen - A function to toggle the analytics view state.
- * @param {boolean} props.loading - A boolean indicating whether the component is in a loading state.
- * @param {ReactNode} props.children - The children to render inside the main content area.
- * @param {Function} props.onClick - A function to handle the "Go Back" button click.
- * @param {Function} props.toggleSidebar - A function to toggle the sidebar visibility.
- * @param {Function} props.toggleAnalytics - A function to toggle the analytics visibility.
- * 
- * @returns {JSX.Element} - The rendered JSX for the company admin page.
+ * @returns {JSX.Element} The rendered CompanyAdminContent component.
  */
 
 export default function CompanyAdminContent({ company,setCompany, username,logo,setLogo,isSidebarOpen, isAnalyticsOpen, setIsSidebarOpen, setIsAnalyticsOpen,loading,children, onClick, toggleSidebar, toggleAnalytics }) {
