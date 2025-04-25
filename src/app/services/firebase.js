@@ -23,13 +23,7 @@ try {
 
   console.log("Firebase initialized successfully");
 } catch (error) {
-  console.error("Firebase initialization error:", error);
-  // Fallback to mock if Firebase initialization fails
-  const mockServices = createMockFirebase();
-  app = mockServices.app;
-  db = mockServices.db;
-  storage = mockServices.storage;
-  auth = mockServices.auth;
+  throw new Error("Firebase initialization failed. Please check your configuration.");
 }
 
 export { app, db, storage, auth };
