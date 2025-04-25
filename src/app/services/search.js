@@ -27,8 +27,8 @@ export const searchCompany = async (
     &pageSize=${pageSize}
     &industry=${encodeURIComponent(industry || "")}
     &location=${encodeURIComponent(location || "")}
-    &size=${encodeURIComponent(size || "")}
-    &type=${encodeURIComponent(type || "")}`.replace(/\s+/g, ""),
+    &orgSize=${encodeURIComponent(size || "")}
+    &orgType=${encodeURIComponent(type || "")}`.replace(/\s+/g, ""),
     {
       method: "GET",
       headers: {
@@ -37,8 +37,13 @@ export const searchCompany = async (
     }
   );
 
-  const data = await response.json();
-
+  let data;
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    data = null;
+  }
   if (!response.ok) {
     const message =
       data?.message || data?.error || "Failed to search companies";
