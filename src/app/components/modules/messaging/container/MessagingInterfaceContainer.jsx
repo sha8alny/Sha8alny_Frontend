@@ -69,7 +69,7 @@ export function MessagingContainer({ currentUser }) {
 
     selectedConversationIdRef.current = selectedConversation.id;
     
-    const unsubscribe = service.subscribeToConversationMessages(selectedConversation.id, (newMessages) => {
+    const unsubscribe = service.subscribeToConversationMessages(selectedConversation.id, currentUser,(newMessages) => {
       if (Array.isArray(newMessages)) {
         setMessages(newMessages);
       }
