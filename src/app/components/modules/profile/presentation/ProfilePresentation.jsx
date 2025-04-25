@@ -8,6 +8,7 @@ import ChangeURL from "./ChangeURL";
 import ExperienceContainer from "../container/ExperienceContainer";
 import EducationContainer from "../container/EducationContainer";
 import CertificationsContainer from "../container/CertificationsContainer";
+import PostsContainer from "../container/PostsContainer";
 
 export function ProfileSkeleton() {}
 
@@ -58,6 +59,7 @@ export default function ProfilePresentation({
             openFullscreen={openFullscreen}
             closeFullscreen={closeFullscreen}
           />
+          <PostsContainer username={userProfile.username} />
           <About about={userProfile.about} isMyProfile={isMyProfile} />
           <ExperienceContainer experience={userProfile.experience} />
           <EducationContainer education={userProfile.education} />

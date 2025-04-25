@@ -15,6 +15,20 @@ export const connectUser = async (username) => {
   return response.status;
 };
 
+export const removeConnection = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/connection`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ targetUsername: username }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to remove connection");
+  }
+  return response.status;
+}
+
 export const followUser = async (username) => {
   const response = await fetchWithAuth(`${apiURL}/follow`, {
     method: "POST",
@@ -25,6 +39,20 @@ export const followUser = async (username) => {
   });
   if (!response.ok) {
     throw new Error("Failed to follow user");
+  }
+  return response.status;
+};
+
+export const unfollowUser = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/unfollow`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username: username }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to unfollow user");
   }
   return response.status;
 };
