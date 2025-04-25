@@ -18,7 +18,7 @@ import { Reactions } from "@/app/utils/Reactions";
 import { followUser } from "@/app/services/connectionManagement";
 import { report } from "@/app/services/privacy";
 
-export default function PostContainer({ post }) {
+export default function PostContainer({ post, singlePost = false }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(post?.reaction || false);
   const [isSaved, setIsSaved] = useState(post?.isSaved || false);
@@ -161,6 +161,9 @@ export default function PostContainer({ post }) {
           ),
         };
       });
+      if (singlePost) {
+        router.push("/");
+      }
     },
   });
 
@@ -371,6 +374,7 @@ export default function PostContainer({ post }) {
       reportType={reportType}
       setReportType={setReportType}
       reportState={reportState}
+      isSinglePost={singlePost}
     />
   );
 }
@@ -387,5 +391,5 @@ export const PostContent = ({ postId }) => {
     staleTime: Infinity,
   });
   if (isLoading || isError) return <PostSkeleton />;
-  return <PostContainer post={post} />;
+  return <PostContainer post={post} singlePost={true} />;
 };

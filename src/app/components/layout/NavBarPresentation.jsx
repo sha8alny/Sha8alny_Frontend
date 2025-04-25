@@ -157,12 +157,10 @@ export default function NavbarPresentation({
   setShowMobileSearch,
   searchQuery,
   setSearchQuery,
-  handleSearch
+  handleSearch,
 }) {
-
-
   return (
-    <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6 relative">
+    <nav className="w-full flex justify-center bg-foreground drop-shadow-lg md:sticky top-0 z-30 px-6 relative">
       {/* Mobile Search Overlay - this will slide in from top when activated */}
       {showMobileSearch && (
         <div className="absolute inset-0 bg-foreground z-50 px-4 py-3 flex items-center animate-in slide-in-from-top duration-300">
@@ -177,7 +175,7 @@ export default function NavbarPresentation({
               autoFocus
             />
             <div className="absolute right-12 top-1/2 -translate-y-1/2">
-              <Button 
+              <Button
                 size="sm"
                 data-testid="search-submit-button"
                 className="h-8 bg-secondary hover:bg-secondary/80 text-background rounded-full px-3"
@@ -314,6 +312,21 @@ export default function NavbarPresentation({
 
               <Button
                 variant="ghost"
+                onClick={toggleTheme}
+                data-testid="theme-toggle-button"
+                title="Toggle Theme"
+                className="justify-start gap-3 cursor-pointer hover:bg-primary/10"
+              >
+                {theme === "dark" ? (
+                  <Sun sx={{ fontSize: 20 }} />
+                ) : (
+                  <Moon sx={{ fontSize: 20 }} />
+                )}
+                <span>{theme === "dark" ? "Light" : "Dark"} Mode</span>
+              </Button>
+
+              <Button
+                variant="ghost"
                 data-testid="mobile-logout-button"
                 className="justify-start gap-3 cursor-pointer hover:bg-primary/10"
                 onClick={() => {
@@ -413,7 +426,10 @@ export default function NavbarPresentation({
 
         {/* User Dropdown - Modified for responsiveness */}
         <DropdownMenu>
-          <DropdownMenuTrigger className="ml-4 flex items-center space-x-2" data-testid="user-dropdown-trigger">
+          <DropdownMenuTrigger
+            className="ml-4 flex items-center space-x-2"
+            data-testid="user-dropdown-trigger"
+          >
             <div className="relative rounded-full size-9">
               <Image
                 src={userInfo?.profilePicture}
@@ -438,7 +454,7 @@ export default function NavbarPresentation({
               <User sx={{ fontSize: 16 }} />
               <span>View Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem 
+            <DropdownMenuItem
               data-testid="settings-dropdown-button"
               onClick={() => navigateTo("/settings")}
             >
@@ -446,7 +462,7 @@ export default function NavbarPresentation({
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               data-testid="logout-dropdown-button"
               onClick={() => handleLogOut()}
             >
@@ -596,9 +612,9 @@ export const NavBarPresentationSkeleton = ({
               ))}
 
               {/* Messages & Notifications Skeleton for Mobile */}
-              <Button 
-                variant="ghost" 
-                className="justify-start gap-3" 
+              <Button
+                variant="ghost"
+                className="justify-start gap-3"
                 disabled
                 data-testid="skeleton-messages-button"
               >
@@ -611,9 +627,9 @@ export const NavBarPresentationSkeleton = ({
                 />
               </Button>
 
-              <Button 
-                variant="ghost" 
-                className="justify-start gap-3" 
+              <Button
+                variant="ghost"
+                className="justify-start gap-3"
                 disabled
                 data-testid="skeleton-notifications-button"
               >
@@ -627,9 +643,9 @@ export const NavBarPresentationSkeleton = ({
               </Button>
 
               {/* Settings & Logout Skeleton */}
-              <Button 
-                variant="ghost" 
-                className="justify-start gap-3" 
+              <Button
+                variant="ghost"
+                className="justify-start gap-3"
                 disabled
                 data-testid="skeleton-settings-button"
               >
@@ -637,9 +653,9 @@ export const NavBarPresentationSkeleton = ({
                 <span>Settings</span>
               </Button>
 
-              <Button 
-                variant="ghost" 
-                className="justify-start gap-3" 
+              <Button
+                variant="ghost"
+                className="justify-start gap-3"
                 disabled
                 data-testid="skeleton-logout-button"
               >

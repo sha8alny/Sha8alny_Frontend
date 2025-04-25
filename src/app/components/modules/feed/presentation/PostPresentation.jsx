@@ -57,6 +57,7 @@ import SharePresentation from "../presentation/SharePresentation";
 import { usePathname } from "next/navigation";
 import DeletePostPresentation from "./DeletePostPresentation";
 import ReportPostPresentation from "./ReportPostPresentation";
+import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 
 // TODO: Add image modal to view all images in a carousel
 // TODO: Modify Icons (choose what goes where)
@@ -105,6 +106,7 @@ export default function PostPresentation({
   setReportText,
   reportType,
   setReportType,
+  isSinglePost,
 }) {
   console.log({
     isDocument: isDocument,
@@ -563,14 +565,20 @@ export default function PostPresentation({
         buttonClass="hidden"
         className="min-w-max"
         AlertContent={
-          <DeletePostPresentation
-            post={post}
-            deletePost={onDelete}
+          <GeneralDeletePresentation
+            onConfirmDelete={onDelete}
             isLoading={isDeleting}
             isError={errorDeleting}
             error={errorDeleteMessage}
             onOpenChange={setDeleteModalOpen}
-            reportState={reportState}
+            itemType="Post"
+            loadingText="Deleting post..."
+            errorTitle="Error"
+            errorMessage="Failed to delete post"
+            confirmTitle="Delete"
+            confirmMessage="This action cannot be undone. Are you sure you want to delete this post?"
+            confirmButtonText="Delete"
+            cancelButtonText="Cancel"  
           />
         }
       />

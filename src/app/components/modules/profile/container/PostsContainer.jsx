@@ -17,6 +17,7 @@ export default function PostsContainer({ username }) {
     queryFn: () => getProfilePosts(1, username, false),
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
+    retry: 0,
   });
 
   const navigateTo = (path) => {
@@ -44,9 +45,13 @@ export default function PostsContainer({ username }) {
     }
   };
 
+  const filteredPosts = posts?.filter((post) => {
+    return post?.isShared === null || (post?.isShared !== null && post?.username !== post?.isShared?.username);
+  });
+
   return (
     <PostsPresentation
-      posts={posts}
+      posts={filteredPosts}
       isLoading={isLoading}
       isError={isError}
       navigateTo={navigateTo}

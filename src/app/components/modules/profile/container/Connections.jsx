@@ -1,18 +1,24 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import Dialog from "@/app/components/ui/DialogMod";
 import { fetchUserConnections } from "@/app/services/userProfile";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
-import ConnectionsPresentation from "../presentation/ConnectionsPresentation";
+import ConnectionsPresentation, {
+  ConnectionsCard,
+} from "../presentation/ConnectionsPresentation";
 import { useState } from "react";
+import { blockUser } from "@/app/services/privacy";
+import { removeConnection } from "@/app/services/connectionManagement";
 
 export default function Connections({ userInfo }) {
   const observerTarget = useRef(null);
   const router = useRouter();
   const { isMyProfile } = useIsMyProfile();
-  const [blockModalOpen, setBlockModalOpen] = useState(false);
-
 
   const {
     data,
@@ -60,7 +66,6 @@ export default function Connections({ userInfo }) {
 
   const connections = data?.pages.flatMap((page) => page) || [];
 
-
   const formatConnectedDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -81,14 +86,14 @@ export default function Connections({ userInfo }) {
       return `Connected ${years} ${years === 1 ? "year" : "years"} ago`;
     }
   };
-  
+
   const allConnections = [...connections].map((connection) => ({
     ...connection,
     connectedAt: formatConnectedDate(connection?.connectedAt),
   }));
 
   console.log(allConnections);
-  
+
   return (
     <Dialog
       useRegularButton
@@ -114,3 +119,63 @@ export default function Connections({ userInfo }) {
     />
   );
 }
+
+export const ConnectionsCardContainer = ({
+  connection,
+  navigateTo,
+  isMyProfile,
+}) => {
+  const [blockModalOpen, setBlockModalOpen] = useState(false);
+  const [removeConnectionModalOpen, setRemoveConnectionModalOpen] =
+    useState(false);
+  const queryClient = useQueryClient();
+
+  const handleBlock = () => {
+    handleBlockMutation.mutate(connection?.username);
+  };
+
+  const handleRemoveConnection = () => {
+    handleDeleteMutation.mutate(connection?.username);
+  };
+
+  const handleBlockMutation = useMutation({
+    mutationFn: (username) => blockUser(username),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["connections"]);
+      queryClient.invalidateQueries(["userProfile"]);
+      setBlockModalOpen(false);
+    },
+  });
+
+  const handleDeleteMutation = useMutation({
+    mutationFn: (username) => removeConnection(username),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["connections"]);
+      queryClient.invalidateQueries(["userProfile"]);
+      setRemoveConnectionModalOpen(false);
+    },
+  });
+
+  const isBlocking = handleBlockMutation.isPending;
+  const isBlockingError = handleBlockMutation.isError;
+  const isDeleting = handleDeleteMutation.isPending;
+  const isDeletingError = handleDeleteMutation.isError;
+
+  return (
+    <ConnectionsCard
+      connection={connection}
+      navigateTo={navigateTo}
+      isMyProfile={isMyProfile}
+      blockModalOpen={blockModalOpen}
+      setBlockModalOpen={setBlockModalOpen}
+      removeConnectionModalOpen={removeConnectionModalOpen}
+      setRemoveConnectionModalOpen={setRemoveConnectionModalOpen}
+      onRemove={handleRemoveConnection}
+      onBlock={handleBlock}
+      isBlocking={isBlocking}
+      isBlockingError={isBlockingError}
+      isRemoving={isDeleting}
+      isRemovingError={isDeletingError}
+    />
+  );
+};

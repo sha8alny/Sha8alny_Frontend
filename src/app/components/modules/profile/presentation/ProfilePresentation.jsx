@@ -42,6 +42,10 @@ export default function ProfilePresentation({
   setHoverProfile,
   openFullscreen,
   closeFullscreen,
+  fetchPeopleAlsoViewed,
+  fetchPeopleYouMayKnow,
+  navigateTo,
+  changeRelations,
 }) {
   return (
     <div>
@@ -75,8 +79,20 @@ export default function ProfilePresentation({
               <ProfileStrength profileStrength={profileStrength} />
             </>
           )}
-          <SuggestedUsersContainer title="People Also Viewed" />
-          <SuggestedUsersContainer title="People You May Know" />
+          <SuggestedUsersContainer
+            title="People Also Viewed"
+            username={userProfile?.username}
+            fetchFunction={fetchPeopleAlsoViewed}
+            navigateTo={navigateTo}
+            helperFunction={changeRelations}
+          />
+          <SuggestedUsersContainer
+            title="People You May Know"
+            username={userProfile?.username}
+            fetchFunction={fetchPeopleYouMayKnow}
+            navigateTo={navigateTo}
+            helperFunction={changeRelations}
+          />
           <Footer />
         </section>
       </main>

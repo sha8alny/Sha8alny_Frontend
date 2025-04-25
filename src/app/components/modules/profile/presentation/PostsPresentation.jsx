@@ -55,9 +55,8 @@ export default function PostsPresentation({
             ))}
 
           {(isError || posts?.length === 0) && !isLoading && (
-            <div className="snap-start shrink-0 w-full flex justify-center items-center h-32 text-muted">
-              No posts to show.
-            </div>
+            <>
+            </>
           )}
         </div>
 
@@ -84,9 +83,7 @@ export default function PostsPresentation({
               <PostPresentationSkeleton key={index} isLoading={isLoading} />
             ))}
         {(isError || posts?.length === 0) && !isLoading && (
-          <div className="col-span-5 flex justify-center items-center h-32 text-muted">
-            No posts to show.
-          </div>
+          <></>
         )}
         {!isLoading &&
           !isError &&

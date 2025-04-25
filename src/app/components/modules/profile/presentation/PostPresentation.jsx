@@ -4,7 +4,13 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/app/components/ui/Avatar";
-import { CommentOutlined, FavoriteBorder, Repeat } from "@mui/icons-material";
+import SafeVideo from "@/app/components/ui/SafeVideo";
+import {
+  CommentOutlined,
+  Description,
+  FavoriteBorder,
+  Repeat,
+} from "@mui/icons-material";
 
 export default function PostPresentation({
   post,
@@ -12,12 +18,26 @@ export default function PostPresentation({
   isVideo,
   isDocument,
 }) {
-    console.log(post.text, isVideo, isDocument);
   return (
     <Container
       onClick={() => navigateTo(`${post?.username}/post/${post?.postId}`)}
-      className="p-4 flex flex-col hover:bg-primary/10 cursor-pointer duration-200"
+      className="p-4 flex flex-col hover:bg-primary/10 cursor-pointer duration-200 shadow-md"
+      data-testid={`post-container-${post?.postId}`}
     >
+      {post?.isShared && (
+        <div className="flex items-center gap-1 mb-2 text-xs pb-2">
+          <Avatar className="size-5">
+            <AvatarImage src={post?.isShared?.profilePicture} alt="Shared by" />
+            <AvatarFallback>
+              {post?.isShared?.fullName?.substring(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <h5 className="font-semibold">
+            {post?.isShared?.fullName}
+          </h5>
+          shared this
+        </div>
+      )}
       <section className="flex gap-2 items-center">
         <Avatar
           className="size-7 cursor-pointer"
@@ -25,7 +45,7 @@ export default function PostPresentation({
             e.stopPropagation();
             navigateTo(post?.username);
           }}
-          data-testid={`connection-avatar-${post?.username}`}
+          data-testid={`post-avatar-${post?.username}`}
         >
           <AvatarImage src={post?.profilePicture} alt={post?.name} />
           <AvatarFallback>
@@ -40,29 +60,48 @@ export default function PostPresentation({
                 e.stopPropagation();
                 navigateTo(post?.username);
               }}
-              data-testid={`post-name-${post?.username}`}
+              data-testid={`post-fullname-${post?.username}`}
             >
               {post?.fullName}
             </h5>
-            <p className="text-xs text-muted truncate">{post?.age}</p>
+            <p
+              className="text-xs text-muted truncate"
+              data-testid={`post-age-${post?.postId}`}
+            >
+              {post?.age}
+            </p>
           </div>
-          <h6 className="text-xs text-muted">{post?.headline}</h6>
+          <h6
+            className="text-xs text-muted"
+            data-testid={`post-headline-${post?.username}`}
+          >
+            {post?.headline}
+          </h6>
         </div>
       </section>
       <div className="mt-4 flex flex-col items-center">
-        <p className="text-xs text-primary break-all self-start">
+        <p
+          className="text-xs text-primary break-all self-start"
+          data-testid={`post-text-${post?.postId}`}
+        >
           {post?.text}
         </p>
         {isDocument && (
-          <iframe
-            className="w-full aspect-square px-2 mt-4 rounded-lg"
-            src={post?.media[0]}
-            title="Document"
-            sandbox="allow-scripts"
-          />
+          <div
+            className="w-full aspect-square bg-primary/5 flex flex-col items-center justify-center p-4 mt-4 rounded-lg border border-dashed border-primary/50"
+            data-testid={`post-document-preview-${post?.postId}`}
+          >
+            <Description
+              className="text-primary/70"
+              sx={{ fontSize: "3rem" }}
+            />
+            <span className="text-xs text-primary/70 mt-2 text-center break-all">
+              Document
+            </span>
+          </div>
         )}
         {isVideo && (
-          <video
+          <SafeVideo
             className="w-full aspect-square mt-4 rounded-lg"
             onContextMenu={(e) => e.preventDefault()}
             autoPlay={false}
@@ -70,6 +109,7 @@ export default function PostPresentation({
             muted={true}
             poster={post.media[0]}
             src={post?.media[0]}
+            data-testid={`post-video-${post?.postId}`}
           />
         )}
         {post?.media[0] && !isVideo && !isDocument && (
@@ -77,29 +117,44 @@ export default function PostPresentation({
             className="w-full px-2 mt-4 rounded-lg"
             src={post?.media[0]}
             alt="Post Media"
+            data-testid={`post-image-${post?.postId}`}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/placeholder.svg";
+            }}
           />
         )}
       </div>
       <div className="flex flex-col mt-auto">
-        <div className="flex flex-wrap gap-2 pt-2">
-          {post?.keywords?.slice(0,5).map((keyword, index) => (
+        <div
+          className="flex flex-wrap gap-2 pt-2"
+          data-testid={`post-keywords-${post?.postId}`}
+        >
+          {post?.keywords?.slice(0, 5).map((keyword, index) => (
             <span
               key={index}
               className="text-xs text-background bg-secondary rounded-full px-2 py-1"
+              data-testid={`post-keyword-${post?.postId}-${index}`}
             >
               #{keyword}
             </span>
           ))}
         </div>
         <div className="flex justify-between mt-2">
-          <span className="text-xs flex">
+          <span
+            className="text-xs flex"
+            data-testid={`post-reacts-${post?.postId}`}
+          >
             <FavoriteBorder
               className="text-primary"
               sx={{ fontSize: "1rem" }}
             />
             <span className="text-primary text-xs ml-1">{post?.numReacts}</span>
           </span>
-          <span className="text-xs flex">
+          <span
+            className="text-xs flex"
+            data-testid={`post-comments-${post?.postId}`}
+          >
             <CommentOutlined
               className="text-primary"
               sx={{ fontSize: "1rem" }}
@@ -108,7 +163,10 @@ export default function PostPresentation({
               {post?.numComments}
             </span>
           </span>
-          <span className="text-xs flex">
+          <span
+            className="text-xs flex"
+            data-testid={`post-shares-${post?.postId}`}
+          >
             <Repeat className="text-primary" sx={{ fontSize: "1rem" }} />
             <span className="text-primary text-xs ml-1">{post?.numShares}</span>
           </span>
