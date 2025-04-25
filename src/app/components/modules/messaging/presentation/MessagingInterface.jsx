@@ -28,10 +28,11 @@ export function MessagingPresentation({
             <div className="flex w-full h-full flex-row overflow-hidden">
                 {/* Conversation List Panel */}
                 <aside 
-                    className={`${hasSelectedConversation ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-1/3 lg:w-1/4 md:border-r overflow-hidden`}
+                    className={`${hasSelectedConversation ? 'translate-x-[-100%] w-0 md:translate-x-0 md:w-1/3 lg:w-1/4' : 'translate-x-0 w-full md:w-1/3 lg:w-1/4'} 
+                      flex flex-col min-w-0 md:min-w-fit md:border-r overflow-hidden transition-all duration-300 ease-in-out`}
                     aria-label="Conversation list"
                 >
-                    <div className="flex-1 overflow-hidden ">
+                    <div className="flex-1 overflow-hidden">
                         <ConversationListContainer
                             conversations={userConversations}
                             onSelectConversation={onSelectConversation}
@@ -57,7 +58,8 @@ export function MessagingPresentation({
 
                 {/* Chat Panel */}
                 <main 
-                    className={`${hasSelectedConversation ? 'flex' : 'hidden md:flex'} flex-col w-full md:w-2/3 lg:w-3/4 overflow-hidden`}
+                    className={`${hasSelectedConversation ? 'translate-x-0 opacity-100 w-full' : 'translate-x-full opacity-0 w-0 md:translate-x-0 md:opacity-100 md:w-2/3 lg:w-3/4'} 
+                      flex flex-col overflow-hidden transition-all duration-300 ease-in-out`}
                     aria-label="Chat area"
                 >
                     {hasSelectedConversation ? (
@@ -71,7 +73,7 @@ export function MessagingPresentation({
                             onSetTypingIndicator={onSetTypingIndicator}
                         />
                     ) : (
-                        <div className="hidden md:flex flex-col items-center justify-center h-full p-4">
+                        <div className="flex flex-col items-center justify-center h-full p-4 md:opacity-100 opacity-0 transition-opacity duration-300">
                             <div className="text-center mb-6">
                                 <h2 className="text-lg font-medium">Select a conversation</h2>
                                 <p className="text-muted-foreground">
