@@ -1,4 +1,3 @@
-// ChatPresentation.jsx
 import React, { useMemo } from "react";
 
 // UI Components

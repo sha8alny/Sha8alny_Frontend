@@ -18,7 +18,7 @@ import {
 // Icons
 import { Search, MoreVertical, Check } from "lucide-react";
 // Utils
-import { formatDistanceToNow } from "@/app/utils/utils";
+import { formatDistanceToNow } from "@/app/utils/messagingUtils";
 
 // Conversation item component
 const ConversationItem = React.memo(

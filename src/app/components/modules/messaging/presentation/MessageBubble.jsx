@@ -17,7 +17,7 @@ import MovieIcon from "@mui/icons-material/Movie";
 import { green } from "@mui/material/colors";
 
 // Utils
-import { formatTime } from "@/app/utils/utils";
+import { formatTime } from "@/app/utils/messagingUtils";
 
 // Helper function to format date for day separators
 export function formatMessageDate(timestamp) {
