@@ -20,7 +20,7 @@ import CompanyPreviewSection from "../presentation/CompanyPreviewSection";
  */
 
 
-function CompanyPreviewSectionContainer({companyName,companyTagline,companyIndustry,file}){
+export default function CompanyPreviewSectionContainer({companyName,companyTagline,companyIndustry,file}){
     const [preview, setPreview] = useState(null);
     useEffect(() => {
         if (file) {
@@ -39,5 +39,3 @@ function CompanyPreviewSectionContainer({companyName,companyTagline,companyIndus
 
     );
 }
-
-export default CompanyPreviewSectionContainer;

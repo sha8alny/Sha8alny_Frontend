@@ -4,45 +4,42 @@ import TagLineContainer from "../../company-page-form/container/TagLineContainer
 import SelectFieldContainer from "../../company-page-form/container/SelectFieldContainer";
 
 /**
- * `EditPage` is a React functional component that provides a form for editing a company's details.
- * It includes input fields for various company information and buttons to save or discard changes.
+ * @namespace EditPageComponents
+ */
+/**
+ * EditPage component for editing company details.
+ * @param {string} companyName - The name of the company.
+ * @param {Function} setCompanyName - Function to update company name state.
+ * @param {string} companyIndustry - The industry of the company.
+ * @param {Function} setCompanyIndustry - Function to update company industry state.
+ * @param {string} companyTagline - The tagline of the company.
+ * @param {Function} setCompanyTagline - Function to update company tagline state.
+ * @param {string} companySize - The size of the company.
+ * @param {Function} setCompanySize - Function to update company size state.
+ * @param {string} companyType - The type of the company.
+ * @param {Function} setCompanyType - Function to update company type state.
+ * @param {string} companyLocation - The location of the company.
+ * @param {Function} setCompanyLocation - Function to update company location state.
+ * @param {string} companyUsername - The username of the company.
+ * @param {Function} setCompanyUsername - Function to update company username state.
+ * @param {string} companyWebsite - The website of the company.
+ * @param {Function} setCompanyWebsite - Function to update company website state.
+ * @param {string} companyDate - The date associated with the company (e.g., founded date).
+ * @param {Function} setCompanyDate - Function to update company date state.
+ * @param {string} companyPhone - The phone number of the company.
+ * @param {Function} setCompanyPhone - Function to update company phone state.
+ * @param {string} companyDescription - The description of the company.
+ * @param {Function} setCompanyDescription - Function to update company description state.
+ * @param {Function} onSave - Function to handle saving the edited company details.
+ * @param {Function} onDiscard - Function to handle discarding the changes.
+ * @param {boolean} loading - A boolean indicating if the save action is in progress.
+ * @param {object} errors - An object containing any validation errors.
+ * @param {Function} setErrors - Function to update the errors object.
  * 
- * @namespace company-page-author
- * @module company-page-author
- * 
- * @param {Object} props - The properties passed to the component.
- * @param {string} props.companyName - The name of the company.
- * @param {Function} props.setCompanyName - Function to set the company name.
- * @param {string} props.companyIndustry - The industry of the company.
- * @param {Function} props.setCompanyIndustry - Function to set the company industry.
- * @param {string} props.companyTagline - The tagline of the company.
- * @param {Function} props.setCompanyTagline - Function to set the company tagline.
- * @param {string} props.companySize - The size of the company (e.g., small, medium, large).
- * @param {Function} props.setCompanySize - Function to set the company size.
- * @param {string} props.companyType - The type of the company (e.g., private, public).
- * @param {Function} props.setCompanyType - Function to set the company type.
- * @param {string} props.companyLocation - The location of the company.
- * @param {Function} props.setCompanyLocation - Function to set the company location.
- * @param {string} props.companyURL - The URL of the company.
- * @param {Function} props.setCompanyURL - Function to set the company URL.
- * @param {string} props.companyWebsite - The website of the company.
- * @param {Function} props.setCompanyWebsite - Function to set the company website.
- * @param {string} props.companyDate - The founding date of the company.
- * @param {Function} props.setCompanyDate - Function to set the company founding date.
- * @param {string} props.companyPhone - The phone number of the company.
- * @param {Function} props.setCompanyPhone - Function to set the company phone number.
- * @param {string} props.companyDescription - The description of the company.
- * @param {Function} props.setCompanyDescription - Function to set the company description.
- * @param {Function} props.onSave - Function to save the changes.
- * @param {Function} props.onDiscard - Function to discard the changes.
- * @param {boolean} props.loading - A boolean indicating whether the form is in a loading state (e.g., while saving).
- * @param {Object} props.errors - An object containing validation errors for the form fields.
- * @param {Function} props.setErrors - Function to set the form validation errors.
- * 
- * @returns {JSX.Element} - The rendered JSX for the edit page form.
+ * @returns {JSX.Element} The rendered EditPage component.
  */
 
-function EditPage({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyTagline, setCompanyTagline, companySize, setCompanySize, companyType, setCompanyType, companyLocation, setCompanyLocation,companyUsername, setCompanyUsername, companyWebsite, setCompanyWebsite, companyDate, setCompanyDate, companyPhone, setCompanyPhone, companyDescription, setCompanyDescription, onSave, onDiscard, loading, errors, setErrors}){
+export default function EditPage({companyName, setCompanyName, companyIndustry, setCompanyIndustry, companyTagline, setCompanyTagline, companySize, setCompanySize, companyType, setCompanyType, companyLocation, setCompanyLocation,companyUsername, setCompanyUsername, companyWebsite, setCompanyWebsite, companyDate, setCompanyDate, companyPhone, setCompanyPhone, companyDescription, setCompanyDescription, onSave, onDiscard, loading, errors, setErrors}){
     return(
         <div>
             <div className="p-4 bg-[var(--foreground)] border rounded-lg">
@@ -64,6 +61,3 @@ function EditPage({companyName, setCompanyName, companyIndustry, setCompanyIndus
     );
 
 }
-
-export default EditPage;
-

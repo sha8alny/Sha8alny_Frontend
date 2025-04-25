@@ -1,7 +1,3 @@
-/**
- * @namespace company-page-author
- * @module company-page-author
- */
 "use client";
 import {
   AccessTimeOutlined,
@@ -12,7 +8,44 @@ import {
 } from "@mui/icons-material";
 import { Maximize2 } from "lucide-react";
 
-function WritePost({company, text, setText,onImageUpload,videoUpload, preview, triggerFileInput,imageInputRef, videoInputRef, onSubmit}) {
+/**
+ * @namespace WritePost
+ * @component
+ * 
+ * A component that provides a text input area for users to create and submit posts. It includes options to upload images, videos, and tags, as well as buttons for filtering posts based on different categories.
+ */
+/**
+ * WritePost component - A user interface for writing a post, with features to upload media, add tags, and filter posts.
+ *
+ * @param {WritePost.Props} props - The component's props.
+ * @param {Object} props.company - The company data, including logo and information about the company.
+ * @param {string} props.text - The current content of the post.
+ * @param {Function} props.setText - A function to update the content of the post.
+ * @param {Function} props.onImageUpload - A function to handle the image upload.
+ * @param {Function} props.videoUpload - A function to handle video upload.
+ * @param {boolean} props.preview - A flag indicating whether the post has a preview media.
+ * @param {Function} props.triggerFileInput - A function to trigger the file input for media.
+ * @param {Object} props.imageInputRef - The ref for the image input.
+ * @param {Object} props.videoInputRef - The ref for the video input.
+ * @param {Function} props.onSubmit - A function to handle the submission of the post.
+ * 
+ * @returns {JSX.Element} The rendered WritePost component.
+ */
+/**
+ * @typedef {Object} WritePost.Props
+ * @property {Object} company - The company object containing details like the company logo.
+ * @property {string} text - The current text value of the post.
+ * @property {Function} setText - A function to update the post text.
+ * @property {Function} onImageUpload - Function to handle image uploads.
+ * @property {Function} videoUpload - Function to handle video uploads.
+ * @property {boolean} preview - A flag indicating if there is a media preview.
+ * @property {Function} triggerFileInput - Function to trigger the file input for media upload.
+ * @property {Object} imageInputRef - A reference to the image input element.
+ * @property {Object} videoInputRef - A reference to the video input element.
+ * @property {Function} onSubmit - Function to handle the post submission.
+ */
+
+export default function WritePost({company, text, setText,onImageUpload,videoUpload, preview, triggerFileInput,imageInputRef, videoInputRef, onSubmit}) {
   return (
     <div className="text-text">
         <div className="bg-[var(--foreground)] border rounded-lg p-4">
@@ -99,4 +132,3 @@ function WritePost({company, text, setText,onImageUpload,videoUpload, preview, t
     </div>
   );
 }
-export default WritePost;

@@ -4,15 +4,29 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCompany } from "@/app/services/companyManagement";
 import { getProfilePosts } from "@/app/services/post";
-import { getCompanyId } from "@/app/services/companyManagement";
 
 /**
- * HomeContainer component - Handles data fetching and navigation for the Home page.
+ * @namespace company-user
+ * @module HomeContainer
+ */
+
+/**
+ * HomeContainer component - A container for the company profile's home page.
+ *
+ * This component is responsible for:
+ * - Fetching company details using the provided `username`
+ * - Fetching the company's posts
+ * - Handling navigation to the about and posts pages
+ *
+ * It passes all required props to the `Home` presentation component.
  *
  * @component
- * @param {Object} props - The component props.
- * @param {string} props.username - The username used to fetch company and post data.
- * @returns {JSX.Element} The rendered component.
+ * @param {Object} props - Component props
+ * @param {string} props.username - The username or identifier for the company
+ * @returns {JSX.Element} The rendered `Home` component with fetched data and navigation handlers
+ *
+ * @example
+ * <HomeContainer username="acmeInc" />
  */
 
 export default function HomeContainer({ username }) {
