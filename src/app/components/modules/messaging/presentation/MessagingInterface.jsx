@@ -9,6 +9,7 @@ const NewConversationButton = ({ onClick }) => (
     onClick={onClick}
     className="w-full max-w-lg px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
     aria-label="Start new conversation"
+    data-testid="new-conversation-button"
   >
     <AddIcon className="h-5 w-5" aria-hidden="true" />
     <span>New Conversation</span>
