@@ -1,12 +1,45 @@
-// ConversationListContainer.jsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ConversationListPresentation } from "../presentation/ConversationList";
 import { messagingService } from "@/app/services/messagingService";
 
+// Helper function extracted outside component
+const processConversation = async (conversation, currentUser) => {
+    if (!conversation || !currentUser) return null;
+    
+    const otherParticipantDetails = conversation.participants?.find(
+        (p) => p.username !== currentUser
+    ) || { username: "Unknown", name: "Unknown" };
+    
+    const isOtherParticipantBlocked = otherParticipantDetails?.isBlocked === true;
+    
+    const isOtherParticipantTyping = otherParticipantDetails?.username 
+        ? conversation.typingStatus?.[otherParticipantDetails.username] === true 
+        : false;
+    
+    let unseenCount = 0;
+    if (otherParticipantDetails?.username && !conversation.readStatus) {
+        try {
+            unseenCount = await messagingService.getUnseenMessagesCountFirestore(
+                otherParticipantDetails.username
+            ); 
+        } catch (error) {
+            console.error(`Error getting unseen count: ${error}`);
+        }
+    }
+    
+    return {
+        ...conversation,
+        otherParticipantDetails,
+        isOtherParticipantTyping,
+        isOtherParticipantBlocked,
+        unseenCount
+    };
+};
+
 export function ConversationListContainer({
-    conversations,
+    conversations = [],
     onSelectConversation,
     selectedConversationId,
     currentUser,
@@ -14,97 +47,69 @@ export function ConversationListContainer({
     onToggleRead,
     onToggleBlock
 }) {
-    
     const [searchQuery, setSearchQuery] = useState("");
     const [processedConversations, setProcessedConversations] = useState([]);
 
+    // Process conversations with useEffect
     useEffect(() => {
-        const processConversations = async () => {
+        const processData = async () => {
             if (!Array.isArray(conversations) || !currentUser) {
-                setProcessedConversations([]); // Clear if input is invalid
+                setProcessedConversations([]);
                 return;
             }
             
-            const processed = await Promise.all(conversations.map(async (conversation) => {
-                // Find the participant object who is not the current user
-                const otherParticipantDetails = conversation.participants?.find(
-                    (p) => p.username !== currentUser
-                );
-                
-                // Find the current user's participant object to check block status
-                const currentUserParticipant = conversation.participants?.find(
-                    (p) => p.username === currentUser
-                );
-
-                // Determine if the *other* participant is blocked *by the current user*
-                // This interpretation depends on how the backend sets the `isBlocked` flag.
-                // Assuming `otherParticipantDetails.isBlocked` means "is this participant blocked by the current user"
-                const isOtherParticipantBlocked = otherParticipantDetails?.isBlocked === true;
-
-                // Check typing status using the other participant's username
-                const isOtherParticipantTyping = otherParticipantDetails?.username 
-                    ? conversation.typingStatus?.[otherParticipantDetails.username] === true 
-                    : false;
-                
-                // Get unread message count using the other participant's username
-                let unseenCount = 0;
-                if (otherParticipantDetails?.username && !conversation.readStatus) { // Only count if unread
-                    try {
-                        // Assuming service method takes username
-                        unseenCount = await messagingService.getUnseenMessagesCountFirestore(otherParticipantDetails.username); 
-                    } catch (error) {
-                        console.error(`Error getting unseen count for ${otherParticipantDetails.username}:`, error);
-                    }
-                }
-                
-                return {
-                    ...conversation, // Spread original conversation data (conversationId, lastMessage, timestamp, readStatus etc.)
-                    otherParticipantDetails: otherParticipantDetails || { username: "Unknown", name: "Unknown" }, // Provide fallback object
-                    isOtherParticipantTyping,
-                    isOtherParticipantBlocked, // Add the calculated block status
-                    unseenCount
-                };
-            }));
+            const processed = await Promise.all(
+                conversations.map(conv => processConversation(conv, currentUser))
+            );
             
-            // Sort conversations, e.g., by timestamp descending
+            // Sort by timestamp descending
             processed.sort((a, b) => {
-                const dateA = typeof a.timestamp?.toDate === 'function' ? a.timestamp.toDate() : new Date(a.timestamp || 0);
-                const dateB = typeof b.timestamp?.toDate === 'function' ? b.timestamp.toDate() : new Date(b.timestamp || 0);
+                const dateA = typeof a.timestamp?.toDate === 'function' 
+                    ? a.timestamp.toDate() 
+                    : new Date(a.timestamp || 0);
+                const dateB = typeof b.timestamp?.toDate === 'function' 
+                    ? b.timestamp.toDate() 
+                    : new Date(b.timestamp || 0);
                 return dateB - dateA;
             });
 
             setProcessedConversations(processed);
         };
 
-        processConversations();
-    }, [conversations, currentUser]); // Rerun when conversations or currentUser changes
+        processData();
+    }, [conversations, currentUser]);
 
-    const handleMarkAsRead = async (conversationId) => {
-        await onMarkAsRead(conversationId);
-    };
-
-    const handleToggleRead = async (conversationId, readStatus) => { // Parameter name can remain conversationId for clarity
-        // Pass through to the parent container's handler, which expects id
-        await onToggleRead(conversationId, readStatus); 
-    };
-
-    const handleToggleBlock = async (conversationId, usernameToToggle, isBlocked) => { // Parameter name can remain conversationId
-         // Pass through to the parent container's handler, which expects id
-        await onToggleBlock(conversationId, usernameToToggle, isBlocked);
-    };
-
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
-    };
-
-    // Filter conversations based on search query (checking name and username)
-    const filteredConversations = processedConversations.filter(
-        conversation => {
-            const nameMatch = conversation.otherParticipantDetails.name?.toLowerCase().includes(searchQuery.toLowerCase());
-            const usernameMatch = conversation.otherParticipantDetails.username.toLowerCase().includes(searchQuery.toLowerCase());
-            return nameMatch || usernameMatch;
-        }
+    // Memoize handlers to prevent unnecessary rerenders
+    const handleMarkAsRead = useCallback(
+        async (conversationId) => await onMarkAsRead(conversationId),
+        [onMarkAsRead]
     );
+
+    const handleToggleRead = useCallback(
+        async (conversationId, readStatus) => await onToggleRead(conversationId, readStatus),
+        [onToggleRead]
+    );
+
+    const handleToggleBlock = useCallback(
+        async (conversationId, usernameToToggle, isBlocked) => 
+            await onToggleBlock(conversationId, usernameToToggle, isBlocked),
+        [onToggleBlock]
+    );
+
+    const handleSearchChange = useCallback(
+        (e) => setSearchQuery(e.target.value),
+        []
+    );
+
+    // Memoize filtered conversations
+    const filteredConversations = useMemo(() => {
+        return processedConversations.filter(conversation => {
+            const query = searchQuery.toLowerCase();
+            const name = conversation.otherParticipantDetails.name?.toLowerCase() || "";
+            const username = conversation.otherParticipantDetails.username.toLowerCase();
+            return name.includes(query) || username.includes(query);
+        });
+    }, [processedConversations, searchQuery]);
 
     return (
         <ConversationListPresentation
