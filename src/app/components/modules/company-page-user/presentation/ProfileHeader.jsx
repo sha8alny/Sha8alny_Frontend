@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 /**
  * @namespace profile
@@ -27,7 +28,7 @@ import CheckIcon from '@mui/icons-material/Check';
  * @param {string} [props.company.location] - Company location
  * @returns {JSX.Element} Profile header component with company branding and navigation
  */
-export default function ProfileHeader({ userProfile, isActive, company, handleFollowClick, isFollowing }) {
+export default function ProfileHeader({ userProfile, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage }) {
   return (
     <Container className="border-[#111] border shadow-lg">
       <div className="h-max rounded-xl">
@@ -76,9 +77,14 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
                 </div>
               )}
             </button>
-            <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity" data-testid="visit-website-button">
+            <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity" data-testid="visit-website-button" onClick={visitWebsite}>
               Visit website
             </button>
+            {company?.isOwner && (
+              <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity" onClick={OpenCompanyAdminPage} data-testid="view-as-admin-button">
+                <VisibilityIcon className="transition-transform duration-200 group-hover:scale-110" /> View as admin
+              </button>
+            )}
           </div>
         </div>
         <div className="border-t border-[var(--text)] flex flex-row space-x-6  cursor-pointer ">

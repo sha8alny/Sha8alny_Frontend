@@ -3,11 +3,24 @@ import AddIcon from '@mui/icons-material/Add';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 
 /**
- * @namespace company-page-form
- * @module company-page-form
+ * @namespace PreviewComponents
  */
 
-function CompanyPreviewSection({companyName, companyTagline, companyIndustry, preview}){
+/**
+ * A component that displays a preview of a company's page, including the company's logo, name, tagline, and industry.
+ * The component conditionally renders the company logo if available or an icon if not, along with the company name,
+ * tagline, and industry. It also includes a follow button.
+ * @component
+ * @param {Object} props - The component's props.
+ * @param {string} props.companyName - The name of the company to display.
+ * @param {string} props.companyTagline - The tagline of the company to display.
+ * @param {string} props.companyIndustry - The industry the company belongs to.
+ * @param {string} [props.preview] - The URL of the company logo. If not provided, an icon will be displayed instead.
+ * 
+ * @returns {JSX.Element} The rendered company preview section.
+ */
+
+export default function CompanyPreviewSection({companyName, companyTagline, companyIndustry, preview}){
     return (
         <div>
             <div className="text-text bg-[var(--foreground)] p-2 rounded-t-lg">
@@ -28,5 +41,3 @@ function CompanyPreviewSection({companyName, companyTagline, companyIndustry, pr
 
     );
 }
-
-export default CompanyPreviewSection;

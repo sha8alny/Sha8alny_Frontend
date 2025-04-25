@@ -253,12 +253,11 @@ export const getCompany = async (companyUsername) => {
     try{
         const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
             method: "GET",
-            headers: { "Content-Type": "application/json", 
-                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}` 
+            headers: { "Content-Type": "application/json",
             },
         });
         const responseText = await response.text(); 
-        //console.log("Raw response text:", responseText); 
+        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
             console.error("Error response:", responseText);
@@ -466,6 +465,33 @@ export const deleteCompanyMedia = async (companyUsername, mediaType) =>{
     }
 };
 
+export const getCompanies = async (companyUsername)=>{
+    try{
+        console.log("company username" , companyUsername);
+        const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}/alsoView`, {
+            method: "GET",
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+        if (response.status === 204) {
+            return [];
+        }
+        
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get analytics: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+
 export const fetchCompanyPeople = async (username) => {
     try{
         const response = await fetchWithAuth(`${apiURL}/company/${username}/people`, {
@@ -476,7 +502,7 @@ export const fetchCompanyPeople = async (username) => {
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
+        console.log("Raw response text of companypeople:", responseText); 
 
         if (!response.ok) {
             console.error("Error response:", responseText);

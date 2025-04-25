@@ -1,5 +1,4 @@
 "use client";
-import Navbar from "@/app/components/layout/NavBar";
 import SuggestedPagesContainer from "@/app/components/modules/company-page-user/container/SuggestedPagesContainer";
 import ProfileHeaderContainer from "@/app/components/modules/company-page-user/container/ProfileHeaderContainer";
 import Footer from "@/app/components/layout/Footer";
@@ -9,14 +8,14 @@ export default function CompanyUserAdminLayout({children}){
     return(
         <div>
             <div className="flex flex-1 font-sans">
-                <div className="w-450 p-4">
+                <div className="w-280 2xl:w-350 p-4">
                     <ProfileHeaderContainer userProfile={username}/>
                     <main className="flex-1 overflow-auto mt-4">
                         {children}
                     </main>
                 </div>
-                <div className="p-4">
-                    <SuggestedPagesContainer title="Pages people also viewed"/>
+                <div className="p-4 w-100 2xl:w-150">
+                    <SuggestedPagesContainer username={username} title="Pages people also viewed"/>
                     <Footer/>
                 </div>
             </div>
