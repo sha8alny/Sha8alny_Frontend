@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignUpForm from "../presentation/SignUpForm";
-import { handleSignup, sendVerificationEmail, verifyEmail, checkSignupData,checkVerifiedEmail } from "../../../../services/userManagement";
+import { handleSignup, sendVerificationEmail, verifyEmail, checkSignupData,checkVerifiedEmail, handleGoogleSignIn } from "../../../../services/userManagement";
 import { RememberMe } from "@mui/icons-material";
 import { useToast } from "@/app/context/ToastContext";
 import VerifyEmail from "../presentation/VerifyEmail";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth, provider } from "@/firebase/firebase";
 
 /**
  * @namespace signup
@@ -85,7 +87,7 @@ const SignUpContainer = () => {
     const { username, email, password, isAdmin, recaptcha, rememberMe } = formData;
     
     signupMutation.mutate(
-        { username, email, password, isAdmin, recaptcha, rememberMe },
+        { username, email, password, isAdmin, recaptcha, rememberMe, signUpType: "email",token: "" },
         {
             onSuccess: () => {
                 toast("Registration Successful & Auto-Login Successful!");
@@ -215,6 +217,27 @@ const SignUpContainer = () => {
         }
     }
 
+    const handleGoogleSignUp = async () => {
+        try{
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            const token = await user.getIdToken(true);
+
+            const loginResult = await handleGoogleSignIn(token);
+            if(loginResult.success){
+                toast("Google Sign-Up Successful!");
+                router.push('/complete-profile');
+            }else{
+                toast("Error during Google Sign-In. Please try again.", false);
+                console.error("Google Sign-In Error:", loginResult.message);
+            }
+
+    }catch(error){
+        console.error("Error signing up with Google:", error);
+        toast("Error signing up with Google. Please try again.", false);
+    }
+    };
+
     return(
         <div className="flex flex-col h-screen bg-background overflow-x-hidden overflow-y-scroll">
               {!isEmailSent? (
@@ -225,7 +248,9 @@ const SignUpContainer = () => {
                 error={error}
                 handleSubmit={handleSubmit} 
                 isSubmitting={signupMutation.isPending}
-                onRecaptchaChange={handleRecaptchaChange}                />
+                onRecaptchaChange={handleRecaptchaChange}
+                onGoogleSignUp={handleGoogleSignUp}
+                />
               ): (
                 <VerifyEmail 
                 verifyCode={verifyCode}
@@ -238,6 +263,7 @@ const SignUpContainer = () => {
                 verifyCodeError={verifyCodeError}
                 isFormValid={verifyCode.length === 6}
                 handleResendEmail={handleResendEmail}
+                emailToVerify={formData.email}
                 />
               )}
            </div>

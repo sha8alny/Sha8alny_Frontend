@@ -258,13 +258,10 @@ export const getCompany = async (companyUsername) => {
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
+        //console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
             console.error("Error response:", responseText);
-            if (response.status === 400 || responseText.includes("Company not found")) {
-                return { notFound: true }; 
-            }
             throw new Error(`Failed to view company profile: ${response.status} ${responseText}`);
         }
         try {
@@ -279,8 +276,6 @@ export const getCompany = async (companyUsername) => {
 
 export const updateCompany = async (companyUsername, companyData) => {
     try{
-        console.log("Updating company with data:", companyData);
-        console.log("received username: ", companyUsername);
         const response = await fetchWithAuth(`${apiURL}/company/${companyUsername}`, {
             method: "PATCH",
             body: companyData,
@@ -379,7 +374,7 @@ export const restoreCompany = async (companyUsername) => {
     }
 };
 
-export const serachCompany = async(text, pageNum = 1)=>{
+export const searchCompany = async(text, pageNum = 1)=>{
     try{
         const response = fetchWithAuth (`${apiURL}/company/search?text=${encodeURIComponent(text)}&pageNum=${pageNum}`,{
             method:"GET",
@@ -415,3 +410,85 @@ export const followCompany = async (companyUsername) => {
     if (!response.ok) throw new Error("Failed to follow company");
     return await response.json();
 }
+
+export const getAnalytics = async (companyUsername) => {
+    try{
+        const response = await fetchWithAuth(`${apiURL}/analytics/${companyUsername}`, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get analytics: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+};
+
+export const deleteCompanyMedia = async (companyUsername, mediaType) =>{
+    try{
+        const url = `${apiURL}/company/${companyUsername}/media?mediaType=${encodeURIComponent(mediaType)}`;
+        console.log("Deleting media from:", url);
+        const response = await fetchWithAuth(url, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error(`Failed to delete media: ${response.status} ${responseText}`);
+            throw new Error(`Failed to delete media: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+};
+
+export const fetchCompanyPeople = async (username) => {
+    try{
+        const response = await fetchWithAuth(`${apiURL}/company/${username}/people`, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+            },
+        });
+        const responseText = await response.text(); 
+        console.log("Raw response text:", responseText); 
+
+        if (!response.ok) {
+            console.error("Error response:", responseText);
+            throw new Error(`Failed to get analytics: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+};

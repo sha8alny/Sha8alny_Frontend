@@ -15,6 +15,10 @@ const nextConfig = {
         hostname: "example.com",
       },
       {
+        protocol: "https",
+        hostname: "sha8alny.uaenorth.cloudapp.azure.com",
+      },
+      {
         protocol: "http",
         hostname: "sha8alny.uaenorth.cloudapp.azure.com",
       },
@@ -22,6 +26,16 @@ const nextConfig = {
         protocol: "https",
         hostname: "sha8alny.uaenorth.cloudapp.azure.com",
       },
+        hostname: "testcompany.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "d2zp5xs5cp8zlg.cloudfront.net",
+      }
     ],
   },
 };

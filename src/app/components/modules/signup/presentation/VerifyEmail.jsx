@@ -15,7 +15,8 @@ const VerifyEmail =({
     loading,
     verifyCodeError,
     isFormValid,
-    handleResendEmail
+    handleResendEmail,
+    emailToVerify
 
 }) => {
     return(
@@ -26,6 +27,7 @@ const VerifyEmail =({
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
+            <h2 className="text-sm font-bold text-center text-text">We have sent a verification code to <strong className="text-secondary hover:underline">{emailToVerify}</strong></h2>
             <div className="flex items-center justify-center w-70 h-5  text-background rounded-full mx-auto">
             <h2 className="text-l font-bold text-center text-text">Enter The Verification Code:</h2>
             </div>
@@ -66,7 +68,7 @@ const VerifyEmail =({
                     {loading ? "Verifying..." : "Verify Email"}
                 </button>
                 <p className="text-center flex flex-col text-text text-sm mt-4">
-                    Code Expired or Didn't Recieve Email?
+                    Code Expired or Didn't Recieve an Email?
                     <button
                         onClick={handleResendEmail}
                         className="text-secondary font-semibold hover:underline"

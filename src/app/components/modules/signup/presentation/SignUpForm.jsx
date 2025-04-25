@@ -40,6 +40,7 @@ const SignUpForm = ({
     handleChange,
     isSubmitting,
     onRecaptchaChange,
+    onGoogleSignUp
 }) => {
 
     return(
@@ -165,7 +166,7 @@ const SignUpForm = ({
                     data-testid="google-signup-button"
                     type="button"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
-                    onClick={()=>alert("Google Sign In coming soon")}>
+                    onClick={onGoogleSignUp}>
                   <img src="/google-color-svgrepo-com.svg" alt="Google Logo" className="w-6 h-6 inline-block mr-2.5" />
 
                     Continue with Google
