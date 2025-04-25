@@ -12,50 +12,65 @@ export function ChatContainer({
   onToggleBlock,
   onSetTypingIndicator,
 }) {
+  // State
   const [message, setMessage] = useState("");
   const [mediaFiles, setMediaFiles] = useState([]);
+  
+  // Refs
   const fileInputRef = useRef(null);
   const scrollAreaRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  
+  // Extract common data
+  const conversationId = selectedConversation.id;
+  const otherParticipant = selectedConversation.participants.find(
+    p => p.username !== currentUser
+  );
+  const receiverUsername = otherParticipant?.username;
 
+  // Scroll to bottom when messages change
   useEffect(() => {
     const scrollToBottom = () => {
-      if (scrollAreaRef.current) {
-        const scrollElement = scrollAreaRef.current;
-        scrollElement.scrollTop = scrollElement.scrollHeight;
+      if (!scrollAreaRef.current) return;
+      
+      const scrollableElement = 
+        scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]') || 
+        scrollAreaRef.current;
+      
+      if (scrollableElement) {
+        requestAnimationFrame(() => {
+          scrollableElement.scrollTop = scrollableElement.scrollHeight;
+        });
       }
     };
 
     scrollToBottom();
-    const timeoutId = setTimeout(scrollToBottom, 100);
+    const timeouts = [
+      setTimeout(scrollToBottom, 100),
+      setTimeout(scrollToBottom, 500)
+    ];
 
-    return () => clearTimeout(timeoutId);
-  }, [messages.length]);
+    return () => timeouts.forEach(clearTimeout);
+  }, [messages.length, mediaFiles]);
 
+  // Message handlers
   const handleSendMessage = useCallback(async () => {
-    if (message.trim() || mediaFiles.length > 0) {
-      try {
-        // Get participant name - this should be the other participant in the selectedConversation
-        const receiverName = selectedConversation.participants.find(
-          (participant) => participant !== currentUser
-        );
-
-        // Pass the receiver name and message directly to the onSendMessage handler
-        await onSendMessage(receiverName, message, mediaFiles);
-
-        setMessage("");
-        setMediaFiles([]);
-
-        if (typingTimeoutRef.current) {
-          clearTimeout(typingTimeoutRef.current);
-          typingTimeoutRef.current = null;
-        }
-        onSetTypingIndicator(currentUser, selectedConversation.id, false);
-      } catch (error) {
-        console.error("Error sending message:", error);
+    if (!(message.trim() || mediaFiles.length > 0) || !receiverUsername) return;
+    
+    try {
+      await onSendMessage(receiverUsername, message, mediaFiles);
+      setMessage("");
+      setMediaFiles([]);
+      
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
       }
+      onSetTypingIndicator(currentUser, conversationId, false);
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
-  }, [message, mediaFiles, selectedConversation, currentUser, onSendMessage, onSetTypingIndicator]);
+  }, [message, mediaFiles, receiverUsername, currentUser, conversationId, onSendMessage, onSetTypingIndicator]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -64,21 +79,8 @@ export function ChatContainer({
     }
   }, [handleSendMessage]);
 
-  const handleFileSelect = useCallback((e) => {
-    if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
-      setMediaFiles((prev) => [...prev, ...filesArray]);
-    }
-  }, []);
-
-  const handleRemoveFile = useCallback((index) => {
-    setMediaFiles((prev) => prev.filter((_, i) => i !== index));
-  }, []);
-
   const handleTyping = useCallback((e) => {
     setMessage(e.target.value);
-
-    const conversationId = selectedConversation.id;
 
     if (!typingTimeoutRef.current) {
       onSetTypingIndicator(currentUser, conversationId, true);
@@ -92,15 +94,31 @@ export function ChatContainer({
       onSetTypingIndicator(currentUser, conversationId, false);
       typingTimeoutRef.current = null;
     }, 2000);
-  }, [currentUser, selectedConversation.id, onSetTypingIndicator]);
+  }, [currentUser, conversationId, onSetTypingIndicator]);
 
+  // File handling
+  const handleFileSelect = useCallback((e) => {
+    if (e.target.files) {
+      setMediaFiles(prev => [...prev, ...Array.from(e.target.files)]);
+    }
+  }, []);
+
+  const handleRemoveFile = useCallback((index) => {
+    setMediaFiles(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  // Blocking handlers
   const handleBlockUser = useCallback(async () => {
-    await onToggleBlock(selectedConversation.id, true);
-  }, [selectedConversation.id, onToggleBlock]);
+    if (receiverUsername) {
+      await onToggleBlock(conversationId, receiverUsername, true);
+    }
+  }, [conversationId, receiverUsername, onToggleBlock]);
 
   const handleUnblockUser = useCallback(async () => {
-    await onToggleBlock(selectedConversation.id, false);
-  }, [selectedConversation.id, onToggleBlock]);
+    if (receiverUsername) {
+      await onToggleBlock(conversationId, receiverUsername, false);
+    }
+  }, [conversationId, receiverUsername, onToggleBlock]);
 
   return (
     <ChatPresentation
