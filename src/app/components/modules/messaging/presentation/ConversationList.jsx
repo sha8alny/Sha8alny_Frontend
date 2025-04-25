@@ -1,5 +1,3 @@
-// ConversationListPresentation.jsx
-
 import {
   Avatar,
   AvatarFallback,
@@ -21,11 +19,9 @@ import { formatDistanceToNow } from "@/app/utils/utils";
 export function ConversationListPresentation({
   filteredConversations,
   selectedConversationId,
-  currentUser,
   searchQuery,
   onSearchChange,
   onSelectConversation,
-  onMarkAsRead,
   onToggleRead,
   onToggleBlock,
 }) {
@@ -48,6 +44,10 @@ export function ConversationListPresentation({
         <div className="py-2">
           {filteredConversations.length > 0 ? (
             filteredConversations.map((conversation) => {
+              // Extract participant details from the processed conversation object
+              const otherParticipant = conversation.otherParticipantDetails; 
+              const isBlockedByCurrentUser = conversation.isOtherParticipantBlocked; // Assuming this is processed in container
+
               return (
                 <div
                   key={conversation.id}
@@ -58,23 +58,23 @@ export function ConversationListPresentation({
                   }`}
                   onClick={() => {
                     onSelectConversation(conversation.id);
-                    onMarkAsRead(conversation.id);
                   }}
                 >
                   <Avatar className="flex-shrink-0">
                     <AvatarImage
-                      src={`/placeholder.svg`}
-                      alt={conversation.otherParticipant}
+                      src={otherParticipant?.profilePicture || `/placeholder.svg`}
+                      alt={otherParticipant?.name || otherParticipant?.username}
                     />
                     <AvatarFallback>
-                      {conversation.otherParticipant?.substring(0, 2).toUpperCase() || "??"}
+                      {/* Use name or username for fallback */}
+                      {otherParticipant?.name?.substring(0, 2).toUpperCase() || otherParticipant?.username?.substring(0, 2).toUpperCase() || "??"}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium truncate text-text">
-                        {conversation.otherParticipant}
-                        {conversation.isBlocked && (
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <div className="flex items-center justify-between w-full">
+                      <div className="font-medium truncate max-w-[60%] text-text">
+                        {otherParticipant?.name || otherParticipant?.username} 
+                        {isBlockedByCurrentUser && (
                           <span className="ml-2 text-xs text-muted-foreground">
                             (Blocked)
                           </span>
@@ -83,13 +83,15 @@ export function ConversationListPresentation({
                       <div className="text-xs text-muted-foreground whitespace-nowrap ml-2 flex-shrink-0">
                         {conversation?.timestamp
                           ? formatDistanceToNow(
-                              new Date(conversation.timestamp.seconds * 1000)
+                              typeof conversation.timestamp?.toDate === 'function' 
+                                ? conversation.timestamp.toDate() 
+                                : new Date(conversation.timestamp)
                             )
                           : ""}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between mt-1">
-                      <div className="text-sm text-muted-foreground truncate max-w-[180px] sm:max-w-[220px] md:max-w-[250px]">
+                    <div className="flex items-center justify-between mt-1 w-full">
+                      <div className="text-sm text-muted-foreground truncate pr-2 max-w-3xs" >
                         {conversation.isOtherParticipantTyping ? (
                           <span className="italic">Typing...</span>
                         ) : conversation?.lastMessage ? (
@@ -101,7 +103,7 @@ export function ConversationListPresentation({
                       {!conversation.read ? (
                         <Badge
                           variant="default"
-                          className="rounded-full px-2 py-2 text-xs"
+                          className="rounded-full h-5 w-5 flex-shrink-0 flex items-center justify-center min-w-[1.25rem]"
                         >
                           {conversation.unseenCount > 0 ? conversation.unseenCount : ''}
                         </Badge>
@@ -109,7 +111,7 @@ export function ConversationListPresentation({
                         conversation.unseenCount > 0 && (
                           <Badge
                             variant="default"
-                            className="rounded-full text-xs"
+                            className="rounded-full h-5 w-5 flex-shrink-0 flex items-center justify-center min-w-[1.25rem]"
                           >
                             {conversation.unseenCount}
                           </Badge>
@@ -122,50 +124,54 @@ export function ConversationListPresentation({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 flex-shrink-0"
+                        className="h-8 w-8 flex-shrink-0 ml-1"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="w-48">
                       {conversation.read ? (
                         <DropdownMenuItem
+                          className="flex items-center"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onToggleRead();
+                            onToggleRead(conversation.id, false);
                           }}
                         >
-                          Mark as unread
+                          <span className="truncate">Mark as unread</span>
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem
+                          className="flex items-center"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onToggleRead();
+                            onToggleRead(conversation.id, true);
                           }}
                         >
-                          Mark as read
+                          <span className="truncate">Mark as read</span>
                         </DropdownMenuItem>
                       )}
-                      {conversation.isBlocked ? (
+                      {isBlockedByCurrentUser ? (
                         <DropdownMenuItem
+                          className="flex items-center"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onToggleBlock(conversation.id, false);
+                            onToggleBlock(conversation.id, otherParticipant.username, false); 
                           }}
                         >
-                          <Check className="mr-2 h-4 w-4" />
-                          Unblock user
+                          <Check className="mr-2 h-4 w-4 flex-shrink-0" />
+                          <span className="truncate">Unblock user</span>
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem
+                          className="flex items-center"
                           onClick={(e) => {
                             e.stopPropagation();
-                            onToggleBlock(conversation.id, true);
+                            onToggleBlock(conversation.id, otherParticipant.username, true);
                           }}
                         >
-                          Block user
+                          <span className="truncate">Block user</span>
                         </DropdownMenuItem>
                       )}
                     </DropdownMenuContent>
