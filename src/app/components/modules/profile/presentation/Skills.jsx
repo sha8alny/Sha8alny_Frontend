@@ -24,31 +24,56 @@ import ModSkill from "../container/ModSkill";
  * @returns {JSX.Element} A skill card component with name, level, progress bar and endorsement button
  */
 export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
+  const skillTestId = skill?.skillName?.replace(/\s+/g, "-") || "unknown-skill"; // Create a test-friendly ID
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" data-testid={`skill-card-${skillTestId}`}>
+      {" "}
+      {/* Added data-testid */}
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold truncate">{skill?.skillName}</h3>
-        <span className="text-xs font-medium text-background bg-secondary px-2 py-0.5 rounded-full">
+        <h3
+          className="font-semibold truncate"
+          data-testid={`skill-name-${skillTestId}`}
+        >
+          {skill?.skillName}
+        </h3>{" "}
+        {/* Added data-testid */}
+        <span
+          className="text-xs font-medium text-background bg-secondary px-2 py-0.5 rounded-full"
+          data-testid={`skill-level-${skillTestId}`}
+        >
+          {" "}
+          {/* Added data-testid */}
           {level.level}
         </span>
       </div>
-      <div className="h-2 bg-gray-300 rounded-full dark:bg-gray-800">
+      <div
+        className="h-2 bg-gray-300 rounded-full dark:bg-gray-800"
+        data-testid={`skill-progress-bar-container-${skillTestId}`}
+      >
+        {" "}
+        {/* Added data-testid */}
         <div
           className="h-2 bg-secondary rounded-full"
           style={{ width: `${level.width}%` }}
+          data-testid={`skill-progress-bar-${skillTestId}`} // Added data-testid
         />
       </div>
       <div className="flex items-center justify-between text-xs text-muted">
-        <span>{skill?.endorsementsCount ?? 0} endorsements</span>
+        <span data-testid={`skill-endorsements-count-${skillTestId}`}>
+          {skill?.endorsementsCount ?? 0} endorsements
+        </span>{" "}
+        {/* Added data-testid */}
         <Button
           variant="ghost"
           size="sm"
           disabled={isMyProfile || skill.isEndorsed}
           onClick={() => handleEndorsement(skill.skillName)}
           className={`h-7 px-2 hover:bg-foreground hover:cursor-pointer ${
-            skill.isEndorsed ? "text-secondary font-bold" : "text-primary"}
+            skill.isEndorsed ? "text-secondary font-bold" : "text-primary"
+          }
             ${isMyProfile ? "cursor-not-allowed" : ""}
           `}
+          data-testid={`skill-endorse-button-${skillTestId}`} // Added data-testid
         >
           <ThumbsUp className="w-3 h-3 mr-1" />
           Endorse{skill.isEndorsed && "d"}
@@ -69,24 +94,47 @@ export const SkillCard = ({ skill, level, isMyProfile, handleEndorsement }) => {
 export default function Skills({ skills, isMyProfile }) {
   return (
     (skills?.length > 0 || isMyProfile) && (
-    <Container className="border dark:border-[#111] shadow-lg p-8 mt-4">
-      <h3 className="flex justify-between text-2xl mb-4 font-bold">
-        Skills
-        {isMyProfile && <ModSkill skills={skills} />}
-      </h3>
-      {(isMyProfile || skills?.length > 0) && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {skills.map((skill, index) => (
-            <SkillContainer key={index} skill={skill} />
-          ))}
-        </div>
-      )}
-      {skills?.length === 0 && isMyProfile && (
-        <div className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center">
-          <p>Add a skill to let others know more about your expertise.</p>
-        </div>
-      )}
-    </Container>
+      <Container
+        className="border dark:border-[#111] shadow-lg p-8 mt-4"
+        data-testid="skills-section-container"
+      >
+        {" "}
+        {/* Added data-testid */}
+        <h3
+          className="flex justify-between text-2xl mb-4 font-bold"
+          data-testid="skills-section-title"
+        >
+          {" "}
+          {/* Added data-testid */}
+          Skills
+          {isMyProfile && (
+            <ModSkill skills={skills} data-testid="skills-mod-button" />
+          )}{" "}
+          {/* Added data-testid */}
+        </h3>
+        {(isMyProfile || skills?.length > 0) && (
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            data-testid="skills-grid"
+          >
+            {" "}
+            {/* Added data-testid */}
+            {skills.map((skill, index) => (
+              <SkillContainer key={index} skill={skill} />
+            ))}
+          </div>
+        )}
+        {skills?.length === 0 && isMyProfile && (
+          <div
+            className="w-full border-dashed rounded-2xl border-primary/30 text-muted border-2 p-4 mt-4 flex items-center justify-center"
+            data-testid="skills-empty-placeholder"
+          >
+            {" "}
+            {/* Added data-testid */}
+            <p>Add a skill to let others know more about your expertise.</p>
+          </div>
+        )}
+      </Container>
     )
   );
 }

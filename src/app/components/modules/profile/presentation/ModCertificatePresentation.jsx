@@ -45,19 +45,37 @@ export default function ModCertificatePresentation({
   setSubmitError,
   adding = false,
   handleDeleteCertificate,
+  stageTitles = [
+    "Certificate Info",
+    "Time Period",
+    "Skills",
+    "Review",
+  ],
 }) {
-  const stageTitles = ["Certificate Info", "Time Period", "Skills", "Review"];
 
   return (
-    <div className="p-4 text-primary overflow-y-auto">
-      <div className="text-xl font-bold text-center mb-4">
+    <div
+      className="p-4 text-primary overflow-y-auto"
+      data-testid="mod-certificate-presentation"
+    >
+      <div
+        className="text-xl font-bold text-center mb-4"
+        data-testid="mod-certificate-title"
+      >
         Certificate Information
       </div>
 
       {/* Progress indicator */}
-      <div className="flex justify-between mb-6 px-2">
+      <div
+        className="flex justify-between mb-6 px-2"
+        data-testid="mod-certificate-progress"
+      >
         {stageTitles.map((title, index) => (
-          <div key={index} className="flex flex-col items-center">
+          <div
+            key={index}
+            className="flex flex-col items-center"
+            data-testid={`mod-certificate-stage-${index + 1}`}
+          >
             <div
               className={`rounded-full h-8 w-8 flex items-center justify-center mb-1
                 ${
@@ -67,6 +85,7 @@ export default function ModCertificatePresentation({
                     ? "bg-emerald-500 text-background"
                     : "bg-muted text-foreground"
                 }`}
+              data-testid={`mod-certificate-stage-indicator-${index + 1}`}
             >
               {index + 1}
             </div>
@@ -74,6 +93,7 @@ export default function ModCertificatePresentation({
               className={`text-xs ${
                 index + 1 === currentStage ? "font-semibold" : ""
               }`}
+              data-testid={`mod-certificate-stage-title-${index + 1}`}
             >
               {title}
             </span>
@@ -83,7 +103,10 @@ export default function ModCertificatePresentation({
 
       {/* Enhanced Loading Indicator - Global overlay when submitting */}
       {isLoading && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 rounded-lg">
+        <div
+          className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 rounded-lg"
+          data-testid="mod-certificate-loading-overlay"
+        >
           <div className="bg-background p-4 rounded-md shadow-lg flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-secondary" />
             <p className="font-medium">
@@ -95,7 +118,10 @@ export default function ModCertificatePresentation({
 
       {/* Enhanced Error Message */}
       {submitError && (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded shadow-sm">
+        <div
+          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded shadow-sm"
+          data-testid="mod-certificate-submit-error"
+        >
           <div className="flex items-start">
             <div className="flex-shrink-0">
               <svg
@@ -115,6 +141,7 @@ export default function ModCertificatePresentation({
               <button
                 onClick={() => setSubmitError(null)}
                 className="text-xs text-red-600 font-medium underline mt-1"
+                data-testid="mod-certificate-dismiss-error-button"
               >
                 Dismiss
               </button>
@@ -124,10 +151,17 @@ export default function ModCertificatePresentation({
       )}
 
       {/* Replace Form with regular form element */}
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(handleFormSubmit)}
+        className="space-y-4"
+        data-testid="mod-certificate-form"
+      >
         {/* Stage 1: Certificate Info */}
         {currentStage === 1 && (
-          <div className="space-y-4">
+          <div
+            className="space-y-4"
+            data-testid="mod-certificate-stage1-content"
+          >
             <div className="flex gap-2">
               {/* Replace FormField with direct input */}
               <div className="flex-1">
@@ -139,9 +173,15 @@ export default function ModCertificatePresentation({
                   value={watch("name")}
                   onChange={(e) => setValue("name", e.target.value)}
                   placeholder="Enter the certification name."
+                  data-testid="mod-certificate-name-input"
                 />
                 {errors.name && (
-                  <p className="text-red-500 text-xs mt-2">{errors.name}</p>
+                  <p
+                    className="text-red-500 text-xs mt-2"
+                    data-testid="mod-certificate-name-error"
+                  >
+                    {errors.name}
+                  </p>
                 )}
               </div>
               <div className="flex-1 min-w-0">
@@ -158,9 +198,13 @@ export default function ModCertificatePresentation({
                     setValue("issuingOrganization", e.target.value)
                   }
                   placeholder="Enter the organization."
+                  data-testid="mod-certificate-org-input"
                 />
                 {errors.issuingOrganization && (
-                  <p className="text-red-500 text-xs mt-2">
+                  <p
+                    className="text-red-500 text-xs mt-2"
+                    data-testid="mod-certificate-org-error"
+                  >
                     {errors.issuingOrganization}
                   </p>
                 )}
@@ -171,12 +215,16 @@ export default function ModCertificatePresentation({
 
         {/* Stage 2: Time Period */}
         {currentStage === 2 && (
-          <div className="space-y-4">
+          <div
+            className="space-y-4"
+            data-testid="mod-certificate-stage2-content"
+          >
             <div className="flex items-start gap-2">
               <Checkbox
                 id="neverExpires"
                 checked={neverExpires}
                 onCheckedChange={(value) => handleNeverExpires(value)}
+                data-testid="mod-certificate-never-expires-checkbox"
               />
               <Label className="font-semibold" htmlFor="neverExpires">
                 This certificate does not expire
@@ -195,19 +243,29 @@ export default function ModCertificatePresentation({
                       setValue("issueDate.month", value)
                     }
                   >
-                    <SelectTrigger id="issueMonth">
+                    <SelectTrigger
+                      id="issueMonth"
+                      data-testid="mod-certificate-issue-month-trigger"
+                    >
                       <SelectValue placeholder="Select Month" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent data-testid="mod-certificate-issue-month-content">
                       {months.map((month) => (
-                        <SelectItem key={month} value={month}>
+                        <SelectItem
+                          key={month}
+                          value={month}
+                          data-testid={`mod-certificate-issue-month-${month}`}
+                        >
                           {month}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   {errors.issueDate?.month && (
-                    <p className="text-red-500 text-xs mt-2">
+                    <p
+                      className="text-red-500 text-xs mt-2"
+                      data-testid="mod-certificate-issue-month-error"
+                    >
                       {errors.issueDate.month}
                     </p>
                   )}
@@ -220,19 +278,29 @@ export default function ModCertificatePresentation({
                     value={watch("issueDate.year")}
                     onValueChange={(value) => setValue("issueDate.year", value)}
                   >
-                    <SelectTrigger id="issueYear">
+                    <SelectTrigger
+                      id="issueYear"
+                      data-testid="mod-certificate-issue-year-trigger"
+                    >
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent data-testid="mod-certificate-issue-year-content">
                       {years.map((year) => (
-                        <SelectItem key={year} value={year}>
+                        <SelectItem
+                          key={year}
+                          value={year}
+                          data-testid={`mod-certificate-issue-year-${year}`}
+                        >
                           {year}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   {errors.issueDate?.year && (
-                    <p className="text-red-500 text-xs mt-2">
+                    <p
+                      className="text-red-500 text-xs mt-2"
+                      data-testid="mod-certificate-issue-year-error"
+                    >
                       {errors.issueDate.year}
                     </p>
                   )}
@@ -255,19 +323,29 @@ export default function ModCertificatePresentation({
                       }
                       disabled={neverExpires}
                     >
-                      <SelectTrigger id="expirationMonth">
+                      <SelectTrigger
+                        id="expirationMonth"
+                        data-testid="mod-certificate-exp-month-trigger"
+                      >
                         <SelectValue placeholder="Select Month" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent data-testid="mod-certificate-exp-month-content">
                         {months.map((month) => (
-                          <SelectItem key={month} value={month}>
+                          <SelectItem
+                            key={month}
+                            value={month}
+                            data-testid={`mod-certificate-exp-month-${month}`}
+                          >
                             {month}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     {errors.expirationDate && (
-                      <p className="text-red-500 text-xs mt-2">
+                      <p
+                        className="text-red-500 text-xs mt-2"
+                        data-testid="mod-certificate-exp-date-error"
+                      >
                         {errors.expirationDate}
                       </p>
                     )}
@@ -286,12 +364,19 @@ export default function ModCertificatePresentation({
                       }
                       disabled={neverExpires}
                     >
-                      <SelectTrigger id="expirationYear">
+                      <SelectTrigger
+                        id="expirationYear"
+                        data-testid="mod-certificate-exp-year-trigger"
+                      >
                         <SelectValue placeholder="Select Year" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent data-testid="mod-certificate-exp-year-content">
                         {years.map((year) => (
-                          <SelectItem key={year} value={year}>
+                          <SelectItem
+                            key={year}
+                            value={year}
+                            data-testid={`mod-certificate-exp-year-${year}`}
+                          >
                             {year}
                           </SelectItem>
                         ))}
@@ -306,7 +391,10 @@ export default function ModCertificatePresentation({
 
         {/* Stage 3: Skills */}
         {currentStage === 3 && (
-          <div className="space-y-4">
+          <div
+            className="space-y-4"
+            data-testid="mod-certificate-stage3-content"
+          >
             <div className="space-y-2">
               <Label className="font-semibold mb-2">Skills & Knowledge</Label>
               <p className="text-sm text-muted-foreground">
@@ -324,19 +412,28 @@ export default function ModCertificatePresentation({
                       addSkill(e);
                     }
                   }}
+                  data-testid="mod-certificate-skill-input"
                 />
-                <AddButton onClick={addSkill} />
+                <AddButton
+                  onClick={addSkill}
+                  data-testid="mod-certificate-add-skill-button"
+                />
               </div>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div
+                className="flex flex-wrap gap-2 mt-2"
+                data-testid="mod-certificate-skills-list"
+              >
                 {skills.map((skill, index) => (
                   <div
                     key={index}
                     className="rounded-full flex justify-between font-semibold items-center gap-1 bg-secondary text-background text-xs px-2 py-1"
+                    data-testid={`mod-certificate-skill-item-${index}`}
                   >
                     {skill}
                     <X
                       className="size-3 hover:cursor-pointer"
                       onClick={() => removeSkill(skill)}
+                      data-testid={`mod-certificate-remove-skill-${index}-button`}
                     />
                   </div>
                 ))}
@@ -347,12 +444,18 @@ export default function ModCertificatePresentation({
 
         {/* Stage 4: Review */}
         {currentStage === 4 && (
-          <div className="space-y-6">
+          <div
+            className="space-y-6"
+            data-testid="mod-certificate-stage4-content"
+          >
             <h3 className="text-lg font-semibold">
               Review Your Certificate Information
             </h3>
 
-            <div className="border rounded-md p-4 bg-muted/20 space-y-4">
+            <div
+              className="border rounded-md p-4 bg-muted/20 space-y-4"
+              data-testid="mod-certificate-review-details"
+            >
               <div>
                 <h4 className="font-semibold text-sm text-muted-foreground">
                   Basic Information
@@ -362,13 +465,21 @@ export default function ModCertificatePresentation({
                     <p className="text-xs text-muted-foreground">
                       Certificate Name
                     </p>
-                    <p className="font-medium">{watch("name")}</p>
+                    <p
+                      className="font-medium"
+                      data-testid="mod-certificate-review-name"
+                    >
+                      {watch("name")}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">
                       Issuing Organization
                     </p>
-                    <p className="font-medium">
+                    <p
+                      className="font-medium"
+                      data-testid="mod-certificate-review-org"
+                    >
                       {watch("issuingOrganization")}
                     </p>
                   </div>
@@ -382,13 +493,19 @@ export default function ModCertificatePresentation({
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <div>
                     <p className="text-xs text-muted-foreground">Issue Date</p>
-                    <p className="font-medium">{`${watch(
-                      "issueDate.month"
-                    )} ${watch("issueDate.year")}`}</p>
+                    <p
+                      className="font-medium"
+                      data-testid="mod-certificate-review-issue-date"
+                    >{`${watch("issueDate.month")} ${watch(
+                      "issueDate.year"
+                    )}`}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Expiration</p>
-                    <p className="font-medium">
+                    <p
+                      className="font-medium"
+                      data-testid="mod-certificate-review-exp-date"
+                    >
                       {neverExpires
                         ? "This certificate does not expire"
                         : `${watch("expirationDate.month")} ${watch(
@@ -405,18 +522,25 @@ export default function ModCertificatePresentation({
                 </h4>
                 <div className="space-y-2 mt-2">
                   <div>
-                    <div className="flex flex-wrap gap-2">
+                    <div
+                      className="flex flex-wrap gap-2"
+                      data-testid="mod-certificate-review-skills-list"
+                    >
                       {skills.length > 0 ? (
                         skills.map((skill, index) => (
                           <span
                             key={index}
                             className="rounded-full bg-secondary text-background text-xs px-2 py-1"
+                            data-testid={`mod-certificate-review-skill-${index}`}
                           >
                             {skill}
                           </span>
                         ))
                       ) : (
-                        <span className="text-sm text-muted-foreground italic">
+                        <span
+                          className="text-sm text-muted-foreground italic"
+                          data-testid="mod-certificate-review-no-skills"
+                        >
                           No skills added
                         </span>
                       )}
@@ -437,6 +561,7 @@ export default function ModCertificatePresentation({
                 disabled={isLoading}
                 onClick={() => validateStageAndProceed("prev")}
                 className="hover:cursor-pointer p-2 text-sm font-semibold bg-secondary/50 hover:bg-secondary/70 duration-200 text-foreground rounded-md px-4 disabled:opacity-50"
+                data-testid="mod-certificate-previous-button"
               >
                 Previous
               </button>
@@ -447,6 +572,7 @@ export default function ModCertificatePresentation({
                 disabled={isLoading}
                 onClick={() => handleDeleteCertificate()}
                 className="hover:cursor-pointer p-2 text-sm font-semibold bg-red-500 dark:bg-red-800 text-background rounded-md disabled:opacity-50"
+                data-testid="mod-certificate-delete-button"
               >
                 Delete
               </button>
@@ -459,6 +585,7 @@ export default function ModCertificatePresentation({
               disabled={isLoading}
               onClick={() => validateStageAndProceed("next")}
               className="hover:cursor-pointer p-2 text-sm font-semibold bg-secondary text-background rounded-md px-4 ml-auto disabled:opacity-50"
+              data-testid="mod-certificate-next-button"
             >
               Next
             </button>
@@ -470,6 +597,7 @@ export default function ModCertificatePresentation({
                 className="hover:cursor-pointer disabled:bg-foreground/30 disabled:cursor-default p-2 text-sm font-semibold bg-secondary text-background rounded-md ml-auto flex items-center gap-2"
                 type="submit"
                 disabled={!isValid || isLoading || showSuccess}
+                data-testid="mod-certificate-save-button"
               >
                 {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
                 {isLoading ? "Saving..." : "Save"}
@@ -480,7 +608,10 @@ export default function ModCertificatePresentation({
 
         {/* Status banner for successful saves */}
         {showSuccess && (
-          <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+          <div
+            className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+            data-testid="mod-certificate-success-banner"
+          >
             <span className="block sm:inline">
               Certificate information saved successfully!
             </span>

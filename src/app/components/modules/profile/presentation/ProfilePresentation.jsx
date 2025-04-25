@@ -61,10 +61,10 @@ export default function ProfilePresentation({
           <About about={userProfile.about} isMyProfile={isMyProfile} />
           <ExperienceContainer experience={userProfile.experience} />
           <EducationContainer education={userProfile.education} />
-          <Skills skills={userProfile.skills} isMyProfile={isMyProfile} />
           <CertificationsContainer
             certifications={userProfile.certifications}
           />
+          <Skills skills={userProfile.skills} isMyProfile={isMyProfile} />
         </section>
         <section className="flex-1 hidden md:block rounded-3xl space-y-2">
           {isMyProfile && (

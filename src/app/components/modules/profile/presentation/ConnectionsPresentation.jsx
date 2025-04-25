@@ -27,18 +27,30 @@ export default function ConnectionsPresentation({
   observerTarget,
 }) {
   return (
-    <div className="max-h-96 overflow-y-auto text-primary">
-      <h2 className="text-lg font-semibold pb-2 sticky top-0 bg-background z-40">
+    <div
+      className="max-h-96 overflow-y-auto text-primary"
+      data-testid="connections-presentation-container"
+    >
+      <h2
+        className="text-lg font-semibold pb-2 sticky top-0 bg-background z-40"
+        data-testid="connections-heading"
+      >
         {isMyProfile ? "Your" : `${userInfo?.name.split(" ")[0]}'s`} Connections
       </h2>
       {isLoading ? (
-        Array(10)
-          .fill(0)
-          .map((_, index) => <ConnectionsSkeleton key={index} />)
+        <div data-testid="connections-loading">
+          {Array(10)
+            .fill(0)
+            .map((_, index) => (
+              <ConnectionsSkeleton key={index} />
+            ))}
+        </div>
       ) : isError ? (
-        <p className="text-muted text-sm">Failed to load connections</p>
+        <p className="text-muted text-sm" data-testid="connections-error">
+          Failed to load connections
+        </p>
       ) : connections?.length > 0 ? (
-        <ul className="space-y-3">
+        <ul className="space-y-3" data-testid="connections-list">
           {connections.map((connection) => (
             <ConnectionsCard
               key={connection?._id}
@@ -47,32 +59,40 @@ export default function ConnectionsPresentation({
               isMyProfile={isMyProfile}
             />
           ))}
-          <div ref={observerTarget} className="h-5">
+          <div
+            ref={observerTarget}
+            className="h-5"
+            data-testid="connections-observer-target"
+          >
             {isFetchingNextPage && <ConnectionsSkeleton />}
           </div>
         </ul>
       ) : (
-        // Only show "No connections" when we've finished loading and there are none
-        <p>No connections found</p>
+        <p data-testid="no-connections-message">No connections found</p>
       )}
     </div>
   );
 }
 
 const ConnectionsCard = ({ connection, navigateTo, isMyProfile }) => {
+  const connectionId = connection?._id;
   return (
-    <div className="flex items-center justify-between gap-3 p-2 border-b border-primary/20 pb-4 px-4">
+    <div
+      className="flex items-center justify-between gap-3 p-2 border-b border-primary/20 pb-4 px-4"
+      data-testid={`connection-card-${connectionId}`}
+    >
       <div className="flex items-center gap-3">
         <Avatar
           className="size-10 cursor-pointer"
           onClick={() => navigateTo(connection?.username)}
+          data-testid={`connection-avatar-${connectionId}`}
         >
           <AvatarImage
             src={connection?.profilePicture}
             alt={connection?.name}
           />
           <AvatarFallback>
-            {connection?.name.substring(0, 2).toUpperCase()}
+            {connection?.name?.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div>
@@ -80,40 +100,69 @@ const ConnectionsCard = ({ connection, navigateTo, isMyProfile }) => {
             <h3
               onClick={() => navigateTo(connection?.username)}
               className="text-sm font-semibold truncate cursor-pointer hover:underline"
+              data-testid={`connection-name-${connectionId}`}
             >
               {connection?.name}
             </h3>
             {!isMyProfile && <span className="text-muted ml-2">•</span>}
             {!isMyProfile && (
-              <span className="text-muted ml-2">{connection?.relation}</span>
+              <span
+                className="text-muted ml-2"
+                data-testid={`connection-relation-${connectionId}`}
+              >
+                {connection?.relation}
+              </span>
             )}
           </div>
-          <p className="text-xs text-muted truncate">{connection?.headline}</p>
+          <p
+            className="text-xs text-muted truncate"
+            data-testid={`connection-headline-${connectionId}`}
+          >
+            {connection?.headline}
+          </p>
           {isMyProfile && (
-            <p className="text-xs text-muted mt-1">{connection?.connectedAt}</p>
+            <p
+              className="text-xs text-muted mt-1"
+              data-testid={`connection-connectedAt-${connectionId}`}
+            >
+              {connection?.connectedAt}
+            </p>
           )}
         </div>
       </div>
       {isMyProfile && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors">
+            <button
+              className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
+              data-testid={`connection-options-trigger-${connectionId}`}
+            >
               <MoreHoriz className="text-muted" sx={{ fontSize: "1rem" }} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
             className="bg-foreground text-primary border"
+            data-testid={`connection-options-content-${connectionId}`}
           >
-            <DropdownMenuItem className="hover:bg-primary/20 flex items-center cursor-pointer">
+            <DropdownMenuItem
+              className="hover:bg-primary/20 flex items-center cursor-pointer"
+              data-testid={`connection-message-option-${connectionId}`}
+            >
               <ChatBubbleOutline className="mr-2" sx={{ fontSize: "1rem" }} />
               <span>Message</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="hover:bg-primary/20 cursor-pointer">
+            <DropdownMenuItem
+              className="hover:bg-primary/20 cursor-pointer"
+              data-testid={`connection-remove-option-${connectionId}`}
+            >
               <PersonRemove className="mr-2" sx={{ fontSize: "1rem" }} />
               <span>Remove connection</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="hover:bg-primary/20 cursor-pointer text-red-400 hover:text-red-400">
+            <DropdownMenuItem
+              className="hover:bg-primary/20 cursor-pointer text-red-400 hover:text-red-400"
+              data-testid={`connection-block-option-${connectionId}`}
+            >
               <PersonAddAlt1 className="mr-2" sx={{ fontSize: "1rem" }} />
               <span>Block</span>
             </DropdownMenuItem>
@@ -121,7 +170,10 @@ const ConnectionsCard = ({ connection, navigateTo, isMyProfile }) => {
         </DropdownMenu>
       )}
       {!isMyProfile && (
-        <button className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors">
+        <button
+          className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
+          data-testid={`connection-message-button-${connectionId}`}
+        >
           <ChatBubbleOutline className="text-muted" sx={{ fontSize: "1rem" }} />
         </button>
       )}
@@ -131,7 +183,10 @@ const ConnectionsCard = ({ connection, navigateTo, isMyProfile }) => {
 
 const ConnectionsSkeleton = () => {
   return (
-    <div className="flex items-center gap-3 p-2 border-b animate-pulse border-primary/20 pb-4 px-4">
+    <div
+      className="flex items-center gap-3 p-2 border-b animate-pulse border-primary/20 pb-4 px-4"
+      data-testid="connection-skeleton"
+    >
       <Avatar className="size-10 bg-primary/20 animate-pulse">
         <AvatarImage src="" alt="" />
       </Avatar>

@@ -269,6 +269,7 @@ export const handleSignupCross = async ({
 
 export const completeProfile = async ({ formData, profilePic, coverPic }) => {
   try {
+    if (profilePic ){
     const profileFormData = new FormData();
     profileFormData.append("profilePicture", profilePic);
     console.log("profileFormData", profileFormData);
@@ -281,7 +282,8 @@ export const completeProfile = async ({ formData, profilePic, coverPic }) => {
     );
     if (!profileResponse.ok)
       throw new Error("Failed to upload profile picture");
-
+  }
+  if (coverPic) {
     const coverFormData = new FormData();
     coverFormData.append("coverPhoto", coverPic);
     console.log("coverFormData", coverFormData);
@@ -290,6 +292,7 @@ export const completeProfile = async ({ formData, profilePic, coverPic }) => {
       body: coverFormData,
     });
     if (!coverResponse.ok) throw new Error("Failed to upload cover photo");
+  }
 
     const data = await fetchWithAuth(`${apiURL}/profile/edit`, {
       method: "PATCH",

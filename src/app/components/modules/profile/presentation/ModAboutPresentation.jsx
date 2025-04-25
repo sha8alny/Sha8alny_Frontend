@@ -20,28 +20,43 @@ export default function ModAboutPresentation({
   handleSubmit,
 }) {
   return (
-    <div className="p-4 text-primary">
-      <h3 className="text-2xl mb-4 text-center font-bold">About</h3>
+    <div className="p-4 text-primary" data-testid="mod-about-presentation">
+      <h3
+        className="text-2xl mb-4 text-center font-bold"
+        data-testid="mod-about-heading"
+      >
+        About
+      </h3>
       <Textarea
         onChange={(e) => handleAbout(e.target.value)}
         placeholder="Write about yourself."
         value={about}
         className="w-full h-52 bg-foreground"
         style={{ resize: "none" }}
+        data-testid="mod-about-textarea"
       />
       <div className="flex justify-start text-xs font-semibold text-muted mt-2">
-        <span className={about?.length > 1000 ? "text-red-500" : ""}>
+        <span
+          className={about?.length > 1000 ? "text-red-500" : ""}
+          data-testid="mod-about-char-count"
+        >
           {about?.length ?? 0}
         </span>
         /1000
       </div>
       {error && (
-        <p className="text-red-500 text-center text-sm mt-2">{error}</p>
+        <p
+          className="text-red-500 text-center text-sm mt-2"
+          data-testid="mod-about-error"
+        >
+          {error}
+        </p>
       )}
       <button
         onClick={() => handleSubmit(about)}
         disabled={error}
         className="disabled:bg-red-800 bg-secondary w-full disabled:cursor-default hover:cursor-pointer disabled:hover:opacity-100 hover:bg-secondary hover:opacity-80 duration-250 text-background font-semibold px-4 py-2 rounded-md mt-4"
+        data-testid="mod-about-save-button"
       >
         Save
       </button>
