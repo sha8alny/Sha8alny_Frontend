@@ -14,7 +14,6 @@ import { Modal, Box, Button, Typography } from "@mui/material";
  * 
  * The modal can be used to either deactivate a page (removes access to the page) or to create posts/jobs.
  */
-
 /**
  * SideBarModal component displays a modal with different content based on the type passed to it.
  * The modal can either show a "deactivate page" prompt or options to create posts and jobs.

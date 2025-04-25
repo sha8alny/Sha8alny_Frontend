@@ -81,7 +81,7 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
               Visit website
             </button>
             {company?.isOwner && (
-              <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity" onClick={OpenCompanyAdminPage} data-testid="view-as-admin-button">
+              <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity flex-end" onClick={OpenCompanyAdminPage} data-testid="view-as-admin-button">
                 <VisibilityIcon className="transition-transform duration-200 group-hover:scale-110" /> View as admin
               </button>
             )}
