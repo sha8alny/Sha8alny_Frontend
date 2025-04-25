@@ -44,13 +44,13 @@ function PostsContainer({ companyUsername = null , keyword }) {
 
       return undefined;
     },
-    staleTime: Infinity,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    staleTime: 0, 
+    refetchOnMount: "always", 
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     retry: 0,
     refetchInterval: false,
-    cacheTime: 1000 * 60 * 60, // 1 hour cache
+    gcTime: 0, 
   });
 
   const lastElementRef = useCallback(
