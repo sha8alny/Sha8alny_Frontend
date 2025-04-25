@@ -167,7 +167,7 @@ export default function NavbarPresentation({
   handleSearch
 }) {
 
-
+console.log(userInfo)
   return (
     <nav className="w-full flex justify-center bg-foreground drop-shadow-lg sticky top-0 z-30 px-6 relative">
       {/* Mobile Search Overlay - this will slide in from top when activated */}

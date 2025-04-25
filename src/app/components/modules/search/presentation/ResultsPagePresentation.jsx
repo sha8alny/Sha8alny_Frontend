@@ -127,13 +127,25 @@ const UserFilters = ({
           onValueChange={setConnectionDegree}
           data-testid="user-connection-select"
         >
-          <SelectTrigger className="h-9 w-full" data-testid="user-connection-trigger">
+          <SelectTrigger
+            className="h-9 w-full"
+            data-testid="user-connection-trigger"
+          >
             <SelectValue placeholder="Connection degree" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={1} data-testid="user-connection-1st">1st Degree</SelectItem>
-            <SelectItem value={2} data-testid="user-connection-2nd">2nd Degree</SelectItem>
-            <SelectItem value={3} data-testid="user-connection-3rd">3rd Degree</SelectItem>
+            <SelectItem value={1} data-testid="user-connection-1st">
+              1st Degree
+            </SelectItem>
+            <SelectItem value={2} data-testid="user-connection-2nd">
+              2nd Degree
+            </SelectItem>
+            <SelectItem value={3} data-testid="user-connection-3rd">
+              3rd Degree
+            </SelectItem>
+            <SelectItem value={null} data-testid="all-degrees">
+              All
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -225,30 +237,69 @@ const CompanyFilters = ({
         <label className="text-xs font-medium text-muted-foreground">
           Organization Size
         </label>
-        <Select 
-          value={orgSizeFilter} 
+        <Select
+          value={orgSizeFilter}
           onValueChange={setOrgSizeFilter}
           data-testid="company-size-select"
         >
-          <SelectTrigger className="h-9 w-full" data-testid="company-size-trigger">
+          <SelectTrigger
+            className="h-9 w-full"
+            data-testid="company-size-trigger"
+          >
             <SelectValue placeholder="Select size" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="0-1 employees" data-testid="company-size-0-1">0-1 employees</SelectItem>
-            <SelectItem value="2-10 employees" data-testid="company-size-2-10">2-10 employees</SelectItem>
-            <SelectItem value="11-50 employees" data-testid="company-size-11-50">11-50 employees</SelectItem>
-            <SelectItem value="51-200 employees" data-testid="company-size-51-200">51-200 employees</SelectItem>
-            <SelectItem value="201-500 employees" data-testid="company-size-201-500">201-500 employees</SelectItem>
-            <SelectItem value="501-1,000 employees" data-testid="company-size-501-1000">
+            <SelectItem value={null} data-testid="all-size">
+              All
+            </SelectItem>
+            <SelectItem value="0-1 employees" data-testid="company-size-0-1">
+              0-1 employees
+            </SelectItem>
+            <SelectItem value="2-10 employees" data-testid="company-size-2-10">
+              2-10 employees
+            </SelectItem>
+            <SelectItem
+              value="11-50 employees"
+              data-testid="company-size-11-50"
+            >
+              11-50 employees
+            </SelectItem>
+            <SelectItem
+              value="51-200 employees"
+              data-testid="company-size-51-200"
+            >
+              51-200 employees
+            </SelectItem>
+            <SelectItem
+              value="201-500 employees"
+              data-testid="company-size-201-500"
+            >
+              201-500 employees
+            </SelectItem>
+            <SelectItem
+              value="501-1,000 employees"
+              data-testid="company-size-501-1000"
+            >
               501-1,000 employees
             </SelectItem>
-            <SelectItem value="1,001-5,000 employees" data-testid="company-size-1001-5000">
+            <SelectItem
+              value="1,001-5,000 employees"
+              data-testid="company-size-1001-5000"
+            >
               1,001-5,000 employees
             </SelectItem>
-            <SelectItem value="5,001-10,000 employees" data-testid="company-size-5001-10000">
+            <SelectItem
+              value="5,001-10,000 employees"
+              data-testid="company-size-5001-10000"
+            >
               5,001-10,000 employees
             </SelectItem>
-            <SelectItem value="10,000+ employees" data-testid="company-size-10000plus">10,000+ employees</SelectItem>
+            <SelectItem
+              value="10,000+ employees"
+              data-testid="company-size-10000plus"
+            >
+              10,000+ employees
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -257,24 +308,57 @@ const CompanyFilters = ({
         <label className="text-xs font-medium text-muted-foreground">
           Organization Type
         </label>
-        <Select 
-          value={orgTypeFilter} 
+        <Select
+          value={orgTypeFilter}
           onValueChange={setOrgTypeFilter}
           data-testid="company-type-select"
         >
-          <SelectTrigger className="h-9 w-full" data-testid="company-type-trigger">
+          <SelectTrigger
+            className="h-9 w-full"
+            data-testid="company-type-trigger"
+          >
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Public company" data-testid="company-type-public">Public company</SelectItem>
-            <SelectItem value="Self employed" data-testid="company-type-self">Self employed</SelectItem>
-            <SelectItem value="Government agency" data-testid="company-type-government">Government agency</SelectItem>
-            <SelectItem value="Nonprofit" data-testid="company-type-nonprofit">Nonprofit</SelectItem>
-            <SelectItem value="Sole proprietorship" data-testid="company-type-sole">
+            <SelectItem value={null} data-testid="all-type">
+              All
+            </SelectItem>
+            <SelectItem
+              value="Public company"
+              data-testid="company-type-public"
+            >
+              Public company
+            </SelectItem>
+            <SelectItem value="Self employed" data-testid="company-type-self">
+              Self employed
+            </SelectItem>
+            <SelectItem
+              value="Government agency"
+              data-testid="company-type-government"
+            >
+              Government agency
+            </SelectItem>
+            <SelectItem value="Nonprofit" data-testid="company-type-nonprofit">
+              Nonprofit
+            </SelectItem>
+            <SelectItem
+              value="Sole proprietorship"
+              data-testid="company-type-sole"
+            >
               Sole proprietorship
             </SelectItem>
-            <SelectItem value="Privately held" data-testid="company-type-private">Privately held</SelectItem>
-            <SelectItem value="Partnership" data-testid="company-type-partnership">Partnership</SelectItem>
+            <SelectItem
+              value="Privately held"
+              data-testid="company-type-private"
+            >
+              Privately held
+            </SelectItem>
+            <SelectItem
+              value="Partnership"
+              data-testid="company-type-partnership"
+            >
+              Partnership
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -363,9 +447,8 @@ const ResultsPagePresentation = ({
   setTempLocation,
   tempCompanyIndustry,
   setTempCompanyIndustry,
-  error
+  error,
 }) => {
-
   if (type === "post") {
     return (
       <>
@@ -384,8 +467,6 @@ const ResultsPagePresentation = ({
       </>
     );
   }
-
-
 
   return (
     <div className="max-w-6xl mx-auto text-text px-4 py-6">
@@ -406,10 +487,7 @@ const ResultsPagePresentation = ({
                 {results.map((item, index) => {
                   if (type === "company") {
                     return (
-                      <CompanyCardContainer
-                        key={item.companyUsername || index}
-                        {...item}
-                      />
+                      <CompanyCardContainer key={item.companyId} {...item} />
                     );
                   }
                   if (type === "user") {
@@ -430,7 +508,6 @@ const ResultsPagePresentation = ({
                       />
                     );
                   }
-                  
                 })}
               </>
             ) : (

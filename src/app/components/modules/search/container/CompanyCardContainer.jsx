@@ -1,8 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {  followUser } from "@/app/services/connectionManagement";
-import  CompanyCardPresentation  from "@/app/components/modules/search/presentation/CompanyCardPresentation";
+import { followUser, unFollowUser } from "@/app/services/connectionManagement";
+import CompanyCardPresentation from "@/app/components/modules/search/presentation/CompanyCardPresentation";
+import { useState, useEffect } from "react";
+
 /**
  * @namespace search
  * @module search
@@ -10,8 +12,10 @@ import  CompanyCardPresentation  from "@/app/components/modules/search/presentat
 /**
  * CompanyCardContainer is a container component that manages the logic for displaying
  * a company's card and handling user interactions such as navigation and following a company.
+ * Implements optimistic updates for follow state and follower count.
  *
  * @param {Object} props - The props object for the component.
+ * @param {string} props.companyId - The unique ID of the company.
  * @param {string} props.companyUsername - The unique username of the company.
  * @param {string} props.logo - The URL of the company's logo.
  * @param {string} props.industry - The industry in which the company operates.
@@ -21,8 +25,7 @@ import  CompanyCardPresentation  from "@/app/components/modules/search/presentat
  * @param {number} props.numFollowers - The number of followers the company has.
  * @param {boolean} props.isFollowed - Indicates whether the current user is following the company.
  */
-
- function CompanyCardContainer({
+function CompanyCardContainer({
   companyId,
   companyUsername,
   logo,
@@ -35,11 +38,71 @@ import  CompanyCardPresentation  from "@/app/components/modules/search/presentat
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  
+  const [optimisticIsFollowed, setOptimisticIsFollowed] = useState(isFollowed);
+  const [optimisticNumFollowers, setOptimisticNumFollowers] = useState(numFollowers);
+  
+  useEffect(() => {
+    setOptimisticIsFollowed(isFollowed);
+    setOptimisticNumFollowers(numFollowers);
+  }, [isFollowed, numFollowers]);
 
-  const followMutate = useMutation({
-    mutationFn: () => followUser(companyUsername),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["searchCompanies"]);
+  const toggleFollowMutation = useMutation({
+    mutationFn: () => {
+      return !optimisticIsFollowed
+        ? unFollowUser(companyUsername)
+        : followUser(companyUsername);
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({queryKey: ["searchCompanies"]});
+      
+      const previousData = queryClient.getQueryData(["searchCompanies"]);
+      
+      setOptimisticIsFollowed(!optimisticIsFollowed);
+      setOptimisticNumFollowers(
+        optimisticIsFollowed
+        ? optimisticNumFollowers - 1
+        : optimisticNumFollowers + 1
+      );
+      
+      if (previousData?.pages) {
+        const updatedPages = previousData.pages.map(page => {
+          console.log("prev data",previousData)
+          return {
+            ...page,
+            companies: page.companies.map(company => {
+              if (company.companyUsername === companyUsername) {
+                return {
+                  ...company,
+                  isFollowed: !optimisticIsFollowed,
+                  numFollowers: optimisticIsFollowed 
+                    ? company.numFollowers - 1 
+                    : company.numFollowers + 1
+                };
+              }
+              return company;
+            })
+          };
+        });
+        
+        queryClient.setQueryData(["searchCompanies"], {
+          ...previousData,
+          pages: updatedPages
+        });
+      }
+      
+      return { previousData };
+    },
+    onError: (err, variables, context) => {
+      setOptimisticIsFollowed(isFollowed);
+      setOptimisticNumFollowers(numFollowers);
+      
+      if (context.previousData) {
+        queryClient.setQueryData(["searchCompanies"], context.previousData);
+      }
+    },
+    onSettled: () => {
+      // queryClient.invalidateQueries(["searchCompanies"]);
     },
   });
 
@@ -47,8 +110,9 @@ import  CompanyCardPresentation  from "@/app/components/modules/search/presentat
     router.push(`/company/${companyUsername}/user/about`);
   };
 
-  const handleFollowClick = () => {
-    followMutate.mutate();
+  const handleFollowClick = (e) => {
+    e?.stopPropagation();
+    toggleFollowMutation.mutate();
   };
 
   return (
@@ -59,11 +123,12 @@ import  CompanyCardPresentation  from "@/app/components/modules/search/presentat
       description={description}
       location={location}
       foundingDate={foundingDate}
-      numFollowers={numFollowers}
-      isFollowed={isFollowed}
+      numFollowers={optimisticNumFollowers}
+      isFollowed={optimisticIsFollowed}
       onNavigateToCompany={handleNavigateToCompany}
       onFollowClick={handleFollowClick}
     />
   );
 }
-export default CompanyCardContainer
+
+export default CompanyCardContainer;

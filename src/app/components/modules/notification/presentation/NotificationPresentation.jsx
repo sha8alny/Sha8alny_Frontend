@@ -12,6 +12,8 @@ import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/app/components/ui/Alert"
 
 /**
+ * @namespace notification
+ * @module notification
  * Notification presentation component that renders the UI for notifications
  * 
  * @param {Object} props Component props
@@ -26,7 +28,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/Alert"
  * @param {boolean} props.isMarkingAsRead Whether a notification is currently being marked as read
  * @returns {JSX.Element} Rendered component
  */
-export default function NotificationPresentation({
+function NotificationPresentation({
   notifications,
   loading,
   error,
@@ -37,18 +39,17 @@ export default function NotificationPresentation({
   getNotificationLink,
   isMarkingAsRead
 }) {
-  // Loading state
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Notifications</h1>
+        <h1 className="text-2xl font-bold mb-6 text-text">Notifications</h1>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-start space-x-4">
-              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-10 w-10 rounded-full bg-gray-400" />
               <div className="space-y-2 flex-1">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-full bg-gray-400 " />
+                <Skeleton className="h-4 w-24 bg-gray-400" />
               </div>
             </div>
           ))}
@@ -57,7 +58,6 @@ export default function NotificationPresentation({
     )
   }
 
-  // Error state
   if (error) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
@@ -122,7 +122,7 @@ export default function NotificationPresentation({
                 <div className="flex items-start gap-4">
                   <Avatar>
                     <AvatarImage
-                      src={notification.data?.avatar || "/placeholder.svg"}
+                      src={notification.data?.fromProfilePicture || "/placeholder.svg"}
                       alt={notification.data?.userName || "User"}
                     />
                     <AvatarFallback>
@@ -164,3 +164,5 @@ export default function NotificationPresentation({
     )
   }
 }
+
+export default NotificationPresentation;

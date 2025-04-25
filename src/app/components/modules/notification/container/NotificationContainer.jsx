@@ -48,12 +48,18 @@ export default function NotificationContainer() {
   const getNotificationLink = (notification) => {
     switch (notification.type) {
       case "Like":
+      case "Love":
+      case "Funny": 
+      case "Support": 
+      case "Insightful":
       case "Comment":
-        return `/posts/${notification.data?.postId || ''}`;
-      case "Follow":
-        return `/profile/${notification.data?.userId || ''}`;
+        return `/u/${notification?.toUserId?.username}/post/${notification.data?.postId || ''}`;
+      // case "Follow":
+      //   return `/profile/${notification.data?.userId || ''}`;
       case "Message":
-        return `/messages/${notification.data?.conversationId || ''}`;
+        return `/messages/?${notification.data?.fromUsername || ''}`;
+      case "ConnectionRequest":
+        return `/network`;
       default:
         return "#";
     }
