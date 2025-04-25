@@ -17,38 +17,7 @@ import MovieIcon from "@mui/icons-material/Movie";
 import { green } from "@mui/material/colors";
 
 // Utils
-import { formatTime } from "@/app/utils/messagingUtils";
-
-// Helper function to format date for day separators
-export function formatMessageDate(timestamp) {
-  const date =
-    typeof timestamp?.toDate === "function"
-      ? timestamp.toDate()
-      : new Date(timestamp);
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  if (date.toDateString() === today.toDateString()) {
-    return "Today";
-  } else if (date.toDateString() === yesterday.toDateString()) {
-    return "Yesterday";
-  } else {
-    return date.toLocaleDateString(undefined, {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    });
-  }
-}
-
-export const DateSeparator = memo(({ date }) => (
-  <div className="flex items-center justify-center my-4">
-    <div className="bg-primary/60 px-3 py-1 rounded-full text-xs text-foreground">
-      {date}
-    </div>
-  </div>
-));
+import { DateSeparator, formatMessageDate, formatTime } from "@/app/utils/messagingUtils";
 
 // File type identification helper
 function getFileTypeInfo(file) {
