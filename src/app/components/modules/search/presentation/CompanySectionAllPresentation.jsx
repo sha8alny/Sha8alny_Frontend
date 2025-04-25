@@ -48,7 +48,7 @@ const CompanySectionAllPresentation = ({
           .slice(0, 3)
           .map((company, index) => (
             <CompanyCardContainer
-              key={company.companyId || index}
+              key={company.companyId}
               {...company}
               data-testid={`company-card-${company.companyId || index}`}
             />
