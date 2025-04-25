@@ -101,7 +101,7 @@ export const ConnectionsCard = ({
       <div className="flex items-center gap-3">
         <Avatar
           className="size-10 cursor-pointer"
-          onClick={() => navigateTo(connection?.username)}
+          onClick={() => navigateTo(`/u/${connection?.username}`)}
           data-testid={`connection-avatar-${connection?._id}`}
         >
           <AvatarImage
@@ -115,7 +115,7 @@ export const ConnectionsCard = ({
         <div>
           <div className="flex items-center gap-2">
             <h3
-              onClick={() => navigateTo(connection?.username)}
+              onClick={() => navigateTo(`/u/${connection?.username}`)}
               className="text-sm font-semibold truncate cursor-pointer hover:underline"
               data-testid={`connection-name-${connection?._id}`}
             >
@@ -164,6 +164,9 @@ export const ConnectionsCard = ({
           >
             <DropdownMenuItem
               className="hover:bg-primary/20 flex items-center cursor-pointer"
+              onClick={() =>
+                navigateTo(`/messages?username=${connection?.username}`)
+              }
               data-testid={`connection-message-option-${connection?._id}`}
             >
               <ChatBubbleOutline className="mr-2" sx={{ fontSize: "1rem" }} />
@@ -190,6 +193,9 @@ export const ConnectionsCard = ({
       )}
       {!isMyProfile && (
         <button
+          onClick={() =>
+            navigateTo(`/messages?username=${connection?.username}`)
+          }
           className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
           data-testid={`connection-message-button-${connection?._id}`}
         >

@@ -29,12 +29,18 @@ export default function SuggestedUsersContainer({
   if (isLoading || isError)
     return <SuggestedUsersSkeleton isLoading={isLoading} title={title} />;
 
-  const filteredUsers = helperFunction(suggestedUsers);
+  if (helperFunction) {
+    const filteredUsers = helperFunction(suggestedUsers);
+    return (
+      <SuggestedUsers
+        title={title}
+        users={filteredUsers}
+        onClick={navigateTo}
+      />
+    );
+  }
+
   return (
-    <SuggestedUsers
-      title={title}
-      users={filteredUsers}
-      onClick={navigateTo}
-    />
+    <SuggestedUsers title={title} users={suggestedUsers} onClick={navigateTo} />
   );
 }

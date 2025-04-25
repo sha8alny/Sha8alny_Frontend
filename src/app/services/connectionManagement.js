@@ -63,7 +63,7 @@ export const handleConnectionRequest = async (username, action) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: { "status": action === "ACCEPT" ? "accepted" : "declined" },
+    body: JSON.stringify({ status: action === "ACCEPT" ? "accepted" : "declined" }),
   });
   if (!response.ok) {
     throw new Error("Failed to handle connection");

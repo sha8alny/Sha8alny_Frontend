@@ -42,8 +42,8 @@ export default function Connections({ userInfo }) {
     initialPageParam: 1,
   });
 
-  const navigateTo = (username) => {
-    router.push(`/u/${username}`);
+  const navigateTo = (path) => {
+    router.push(path);
   };
 
   useEffect(() => {
@@ -91,8 +91,6 @@ export default function Connections({ userInfo }) {
     ...connection,
     connectedAt: formatConnectedDate(connection?.connectedAt),
   }));
-
-  console.log(allConnections);
 
   return (
     <Dialog
