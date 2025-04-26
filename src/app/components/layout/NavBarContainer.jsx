@@ -42,7 +42,6 @@ function NavbarContainer() {
   
     const handleNavigation = (path) => {
       router.push(path);
-      window.location.reload();
     };
 
     const handleLogOut = () => {

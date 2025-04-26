@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { fetchCompanyPeople } from "@/app/services/companyManagement";
+import { connectUser } from "@/app/services/connectionManagement";
 import CompanyPeople from "../presentation/CompanyPeople";
 
 /**
@@ -29,6 +31,7 @@ export default function CompanyPeopleContainer({username}) {
     const [people, setPeople] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const getCompanyPeople = async () => {
@@ -45,9 +48,17 @@ export default function CompanyPeopleContainer({username}) {
         if (username) getCompanyPeople();
     }, [username]); 
 
+    const goToPeoplePage = (person) => {
+        if (person?.username) {
+          router.push(`/u/${person.username}`);
+        }
+    };
+      
+    
+
   return (
       <div className="flex flex-wrap gap-6 bg-foreground rounded-lg">
-        <CompanyPeople people={people} />
+        <CompanyPeople people={people} goToPeoplePage={goToPeoplePage} />
       </div>
   );
 }

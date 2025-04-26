@@ -1,5 +1,6 @@
 "use Client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchJobListings } from "@/app/services/jobs";
 import CompanyJobs from "../presentation/CompanyJobs";
@@ -28,6 +29,7 @@ import CompanyJobs from "../presentation/CompanyJobs";
 
 export default function CompanyJobsContainer ({username}){
     const [page, setPage] = useState(1);
+    const router = useRouter();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["companyJobs", username, page],
@@ -40,13 +42,20 @@ export default function CompanyJobsContainer ({username}){
         keepPreviousData: true,
         enabled: !!username, 
     });
-    console.log("data of jobs: ", data);
+
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Failed to load jobs.</div>;
 
+    
+    const goToJobPage = (job) => {
+        router.push(`/jobs/${job._id}?title=${job.title}&company=${job.companyData?.name}`);
+    };
+      
+    
+
     return(
         <div>
-            <CompanyJobs jobs={data?.data || []}/>
+            <CompanyJobs jobs={data?.data || []} goToJobPage={goToJobPage}/>
         </div>
     );
 }
