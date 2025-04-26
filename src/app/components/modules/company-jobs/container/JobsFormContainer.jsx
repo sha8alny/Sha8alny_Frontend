@@ -86,6 +86,9 @@ const JobsFormContainer = ({ username }) => {
       const response = await deleteJob({ companyUsername: username, jobId });
       if (response) {
         toast("Job deleted successfully!");
+        if (jobs.length === 1 && page > 1) {
+          setPage(page - 1);
+        }
         queryClient.invalidateQueries(["companyJobs", page, username]);
         queryClient.invalidateQueries(["deletedCompanyJobs", deletedJobsPage, username]);
         setIsDeleting(false);
@@ -172,12 +175,13 @@ const JobsFormContainer = ({ username }) => {
       const response = await restoreJob({ companyUsername: username, jobId });
       if (response) {
         toast("Job restored successfully!");
+        if (deletedJobs.length === 1 && deletedJobsPage > 1) {
+          setDeletedJobsPage(deletedJobsPage - 1);
+        }
         queryClient.invalidateQueries(["deletedCompanyJobs", deletedJobsPage, username]);
         queryClient.invalidateQueries(["companyJobs", page, username]);
         setIsRestoring(false);
-        setTimeout(() => {
-          setOpenDeleteDialogForId(null);
-        }, 5000);
+        setOpenDeleteDialogForId(null);
         setShowDeletedJobs(false);
       } else {
         toast("Error restoring job", false);
