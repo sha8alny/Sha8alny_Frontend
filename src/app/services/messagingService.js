@@ -9,8 +9,9 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import { db } from "./firebase";
+
 import { fetchWithAuth } from "./userAuthentication";
+import { db } from "@/firebase/firebase";
 
 export const messagingService = {
   // --- Connection Management ---

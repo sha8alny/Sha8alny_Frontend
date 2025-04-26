@@ -526,7 +526,6 @@ export function MessagingContainer({ currentUser }) {
             // Update the full list of conversations
             setUserConversations(updatedConversations);
 
-            // *** Add this block to update the selectedConversation state ***
             // If a conversation is currently selected, find its updated version
             // in the new list and update the selectedConversation state.
             // This ensures the ChatContainer receives the latest snapshot.
