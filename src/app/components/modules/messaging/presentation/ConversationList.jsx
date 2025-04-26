@@ -25,11 +25,12 @@ const ConversationItem = React.memo(
   ({ conversation, isSelected, onSelect, onToggleRead, onToggleBlock }) => {
     const otherParticipant = conversation.otherParticipantDetails;
     const isBlocked = conversation.isOtherParticipantBlocked;
+    const otherUsername = conversation.otherUsername;
 
-    const displayName = otherParticipant?.name || otherParticipant?.username;
+    const displayName = otherParticipant?.name || otherUsername;
     const avatarFallback = (
       otherParticipant?.name?.substring(0, 2) ||
-      otherParticipant?.username?.substring(0, 2) ||
+      otherUsername?.substring(0, 2) ||
       "??"
     ).toUpperCase();
 
@@ -98,7 +99,6 @@ const ConversationItem = React.memo(
 
         <ConversationActions
           conversation={conversation}
-          otherParticipant={otherParticipant}
           onToggleRead={onToggleRead}
           onToggleBlock={onToggleBlock}
           onMenuClick={handleMenuClick}
@@ -112,7 +112,6 @@ const ConversationItem = React.memo(
 const ConversationActions = React.memo(
   ({
     conversation,
-    otherParticipant,
     onToggleRead,
     onToggleBlock,
     onMenuClick,
@@ -149,7 +148,7 @@ const ConversationActions = React.memo(
             e.stopPropagation();
             onToggleBlock(
               conversation.id,
-              otherParticipant.username,
+              conversation.otherUsername,
               !conversation.isOtherParticipantBlocked
             );
           }}

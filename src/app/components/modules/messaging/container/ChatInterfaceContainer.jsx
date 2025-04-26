@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { ChatPresentation } from "../presentation/ChatInterface";
 
 export function ChatContainer({
@@ -11,6 +11,7 @@ export function ChatContainer({
   onSendMessage,
   onToggleBlock,
   onSetTypingIndicator,
+  onLoadMoreMessages,
 }) {
   // State
   const [message, setMessage] = useState("");
@@ -23,9 +24,27 @@ export function ChatContainer({
   
   // Extract common data
   const conversationId = selectedConversation.id;
-  const otherParticipant = selectedConversation.participants.find(
-    p => p.username !== currentUser
-  );
+  
+  // Get other participant from the new structure
+  const otherParticipantUsername = useMemo(() => {
+    if (!selectedConversation?.participants || !currentUser) return null;
+    const usernames = Object.keys(selectedConversation.participants);
+    return usernames.find(username => username !== currentUser);
+  }, [selectedConversation, currentUser]);
+  
+  const otherParticipant = useMemo(() => {
+    if (!otherParticipantUsername || !selectedConversation?.participants) return null;
+    return {
+      ...selectedConversation.participants[otherParticipantUsername],
+      username: otherParticipantUsername
+    };
+  }, [selectedConversation, otherParticipantUsername]);
+  
+  const isOtherParticipantTyping = useMemo(() => {
+    if (!otherParticipantUsername || !selectedConversation?.participantMetadata) return false;
+    return selectedConversation.participantMetadata[otherParticipantUsername]?.typingStatus === true;
+  }, [selectedConversation, otherParticipantUsername]);
+  
   const receiverUsername = otherParticipant?.username;
 
   // Scroll to bottom when messages change
@@ -107,6 +126,13 @@ export function ChatContainer({
     setMediaFiles(prev => prev.filter((_, i) => i !== index));
   }, []);
 
+  // Handle loading more messages
+  const handleLoadMoreMessages = useCallback(() => {
+    if (selectedConversation && selectedConversation.id) {
+      onLoadMoreMessages(selectedConversation.id, messages.length > 0 ? messages[0].id : null);
+    }
+  }, [selectedConversation, messages, onLoadMoreMessages]);
+
   // Blocking handlers
   const handleBlockUser = useCallback(async () => {
     if (receiverUsername) {
@@ -124,6 +150,8 @@ export function ChatContainer({
     <ChatPresentation
       selectedConversation={selectedConversation}
       currentUser={currentUser}
+      otherParticipant={otherParticipant}
+      isOtherParticipantTyping={isOtherParticipantTyping}
       messages={messages}
       message={message}
       mediaFiles={mediaFiles}
@@ -137,6 +165,7 @@ export function ChatContainer({
       onTyping={handleTyping}
       onBlockUser={handleBlockUser}
       onUnblockUser={handleUnblockUser}
+      onLoadMoreMessages={handleLoadMoreMessages}
     />
   );
 }

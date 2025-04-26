@@ -29,6 +29,7 @@ export function MessagingPresentation({
   onSetTypingIndicator,
   onBack,
   onOpenConnections,
+  onLoadMoreMessages,
 }) {
   const hasSelectedConversation = Boolean(selectedConversation);
 
@@ -87,6 +88,7 @@ export function MessagingPresentation({
               onSendMessage={onSendMessage}
               onToggleBlock={onToggleBlock}
               onSetTypingIndicator={onSetTypingIndicator}
+              onLoadMoreMessages={onLoadMoreMessages}
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-4 md:opacity-100 opacity-0 transition-opacity duration-300">

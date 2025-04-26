@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useRef } from "react";
 
 // UI Components
 import {
@@ -25,19 +25,7 @@ import SendIcon from "@mui/icons-material/Send";
 import ImageIcon from "@mui/icons-material/Image";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckIcon from "@mui/icons-material/Check";
-
-// Helper functions
-const isSameDay = (date1, date2) => {
-  const d1 =
-    typeof date1?.toDate === "function" ? date1.toDate() : new Date(date1);
-  const d2 =
-    typeof date2?.toDate === "function" ? date2.toDate() : new Date(date2);
-  return (
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate()
-  );
-};
+import { isSameDay } from "date-fns";
 
 // Sub-components
 const ChatHeader = React.memo(
@@ -117,7 +105,7 @@ const ChatHeader = React.memo(
 );
 
 const MessageList = React.memo(
-  ({ messages, currentUser, otherParticipant }) => (
+  ({ messages, currentUser, otherParticipant, onLoadMoreMessages }) => (
     <div className="space-y-4 pb-2">
       {messages.map((msg, index) => {
         const showDateSeparator =
@@ -214,8 +202,10 @@ const ChatInput = React.memo(
 export function ChatPresentation({
   selectedConversation,
   currentUser,
-  message,
+  otherParticipant,
+  isOtherParticipantTyping,
   messages,
+  message,
   mediaFiles,
   fileInputRef,
   scrollAreaRef,
@@ -227,25 +217,30 @@ export function ChatPresentation({
   onTyping,
   onBlockUser,
   onUnblockUser,
+  onLoadMoreMessages,
 }) {
-  const otherParticipant = useMemo(
-    () =>
-      selectedConversation.participants?.find(
-        (p) => p.username !== currentUser
-      ),
-    [selectedConversation.participants, currentUser]
-  );
-
-  const isOtherParticipantTyping = useMemo(
-    () =>
-      otherParticipant?.username
-        ? selectedConversation.typingStatus?.[otherParticipant.username] ===
-          true
-        : false,
-    [otherParticipant, selectedConversation.typingStatus]
-  );
-
   const isOtherUserBlocked = otherParticipant?.isBlocked === true;
+  const scrollAreaViewportRef = useRef(null);
+
+  // Add scroll detection to load more messages when reaching top
+  useEffect(() => {
+    if (!scrollAreaRef.current) return;
+    
+    const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+    if (!viewport) return;
+    
+    scrollAreaViewportRef.current = viewport;
+    
+    const handleScroll = () => {
+      // If user has scrolled near the top (20px threshold), trigger load more
+      if (viewport.scrollTop < 20) {
+        onLoadMoreMessages && onLoadMoreMessages();
+      }
+    };
+    
+    viewport.addEventListener('scroll', handleScroll);
+    return () => viewport.removeEventListener('scroll', handleScroll);
+  }, [onLoadMoreMessages]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -266,6 +261,7 @@ export function ChatPresentation({
           messages={messages}
           currentUser={currentUser}
           otherParticipant={otherParticipant}
+          onLoadMoreMessages={onLoadMoreMessages}
         />
       </ScrollArea>
 

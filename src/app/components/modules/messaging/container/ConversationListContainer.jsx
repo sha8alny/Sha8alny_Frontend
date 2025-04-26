@@ -5,36 +5,42 @@ import { ConversationListPresentation } from "../presentation/ConversationList";
 import { messagingService } from "@/app/services/messagingService";
 
 // Helper function extracted outside component
-const processConversation = async (conversation, currentUser) => {
+const processConversation = (conversation, currentUser) => {
     if (!conversation || !currentUser) return null;
     
-    const otherParticipantDetails = conversation.participants?.find(
-        (p) => p.username !== currentUser
-    ) || { username: "Unknown", name: "Unknown" };
+    // Get other participant username from the keys of participants object
+    const participantUsernames = Object.keys(conversation.participants || {});
+    const otherUsername = participantUsernames.find(
+        (username) => username !== currentUser
+    );
     
+    if (!otherUsername) return null;
+    
+    // Get details of the other participant
+    const otherParticipantDetails = conversation.participants[otherUsername];
     const isOtherParticipantBlocked = otherParticipantDetails?.isBlocked === true;
     
-    const isOtherParticipantTyping = otherParticipantDetails?.username 
-        ? conversation.typingStatus?.[otherParticipantDetails.username] === true 
-        : false;
+    // Get metadata for both participants
+    const otherParticipantMetadata = conversation.participantMetadata?.[otherUsername];
+    const currentUserMetadata = conversation.participantMetadata?.[currentUser];
     
-    let unseenCount = 0;
-    if (otherParticipantDetails?.username && !conversation.readStatus) {
-        try {
-            unseenCount = await messagingService.getUnseenMessagesCountFirestore(
-                otherParticipantDetails.username
-            ); 
-        } catch (error) {
-            console.error(`Error getting unseen count: ${error}`);
-        }
-    }
+    // Get typing status from metadata
+    const isOtherParticipantTyping = otherParticipantMetadata?.typingStatus === true;
+    
+    // Get unread count from current user's metadata
+    const unseenCount = currentUserMetadata?.unreadCount || 0;
+    
+    // Check if the conversation is read by current user
+    const isRead = currentUserMetadata?.readFlag === true;
     
     return {
         ...conversation,
         otherParticipantDetails,
+        otherUsername,
         isOtherParticipantTyping,
         isOtherParticipantBlocked,
-        unseenCount
+        unseenCount,
+        read: isRead
     };
 };
 
@@ -52,15 +58,15 @@ export function ConversationListContainer({
 
     // Process conversations with useEffect
     useEffect(() => {
-        const processData = async () => {
+        const processData = () => {
             if (!Array.isArray(conversations) || !currentUser) {
                 setProcessedConversations([]);
                 return;
             }
             
-            const processed = await Promise.all(
-                conversations.map(conv => processConversation(conv, currentUser))
-            );
+            const processed = conversations
+                .map(conv => processConversation(conv, currentUser))
+                .filter(Boolean); // Remove null values
             
             // Sort by timestamp descending
             processed.sort((a, b) => {
@@ -105,8 +111,8 @@ export function ConversationListContainer({
     const filteredConversations = useMemo(() => {
         return processedConversations.filter(conversation => {
             const query = searchQuery.toLowerCase();
-            const name = conversation.otherParticipantDetails.name?.toLowerCase() || "";
-            const username = conversation.otherParticipantDetails.username.toLowerCase();
+            const name = conversation.otherParticipantDetails?.name?.toLowerCase() || "";
+            const username = conversation.otherUsername?.toLowerCase() || "";
             return name.includes(query) || username.includes(query);
         });
     }, [processedConversations, searchQuery]);
