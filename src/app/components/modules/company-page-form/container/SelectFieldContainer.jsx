@@ -15,7 +15,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
  * @returns {JSX.Element} The rendered SelectFieldContainer component
  */
 
-function SelectFieldContainer({companySize, setCompanySize, companyType, setCompanyType, errors={}, setErrors,isEditing=false}){
+export default function SelectFieldContainer({companySize, setCompanySize, companyType, setCompanyType, errors={}, setErrors,isEditing=false}){
     const handleCompanySizeChange = (e) => {
         const selectedSize = e.target.value;
         setCompanySize(selectedSize);
@@ -67,4 +67,3 @@ function SelectFieldContainer({companySize, setCompanySize, companyType, setComp
     );
 
 }
-export default SelectFieldContainer;

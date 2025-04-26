@@ -83,7 +83,8 @@ const ResultsPageContainer = () => {
     error
   } = useQuery({
     queryKey: [
-      "search",
+      "searchCompanies",
+      "searchUsers",
       type,
       keyword,
       industryFilter,
@@ -97,7 +98,6 @@ const ResultsPageContainer = () => {
     ],
     queryFn,
     retry:1,
-    keepPreviousData: true,
   });
 
   const showNext = results?.length === 10;

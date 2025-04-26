@@ -5,36 +5,29 @@ import { getCompany } from "@/app/services/companyManagement";
 import { useRouter } from "next/navigation";
 
 /**
- * AboutContainer component
- * 
- * This component fetches and displays company information associated with a given username.
- * It handles loading, error, and success states, and renders the <About /> presentation component accordingly.
- *
+ * @namespace AboutContainer
  * @component
- * @param {Object} props - Component props
- * @param {string} props.username - The username used to fetch the corresponding company data
- * @returns {JSX.Element} The rendered component with conditional UI based on fetch state
+ * 
+ * A container component that fetches and displays company information based on a given username. 
+ * Handles loading and error states and passes the company data to the `About` component.
  */
 
 /**
- * @typedef {Object} Company
- * @property {string} name - The name of the company
- * @property {string} [description] - Optional description of the company
- * @property {string} [industry] - Optional industry sector
- * // Add more fields here depending on what getCompany returns
- */
-
-/**
- * Fetches company data based on the provided username.
- * Sets appropriate loading and error states.
+ * AboutContainer component - Fetches company data from an API and renders the About component.
  *
- * @async
- * @function fetchCompany
- * @returns {Promise<void>}
+ * @param {AboutContainer.Props} props - The component props.
+ * @param {string} props.username - The username for which to fetch the company information.
+ * 
+ * @returns {JSX.Element} The rendered AboutContainer component.
  */
-/** @type {[Company|null, Function]} */
-/** @type {[boolean, Function]} */
-/** @type {[string|null, Function]} */
+/**
+ * @namespace AboutContainer
+ */
+
+/**
+ * @typedef {Object} AboutContainer.Props
+ * @property {string} username - The username for which to fetch the company information.
+ */
 
 export default function AboutContainer({ username }) {
     const [company, setCompany] = useState(null);

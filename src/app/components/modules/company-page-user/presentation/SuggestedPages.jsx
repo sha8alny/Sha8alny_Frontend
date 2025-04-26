@@ -21,9 +21,14 @@ export default function SuggestedPages({ pages, title, onClick }){
         <h2 className="text-lg font-semibold mb-4 flex items-center">
           {title}
         </h2>
-        {pages.map((user, index) => (
-          <PageSmallCard key={index} userInfo={user} onClick={onClick} />
-        ))}
+        {Array.isArray(pages) && pages.length > 0 ? (
+          pages.map((company, index) => (
+            <PageSmallCard key={company.username || index} companyInfo={company} onClick={onClick} />
+          ))
+        ) : (
+          <p className="text-gray-500">No suggested pages available.</p>
+        )}
+
       </Container>
     );
   };

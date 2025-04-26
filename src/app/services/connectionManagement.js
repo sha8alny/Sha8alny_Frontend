@@ -21,7 +21,20 @@ export const followUser = async (username) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ username: username }),
+    body: JSON.stringify({ username }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to follow user");
+  }
+  return response.status;
+};
+
+export const unFollowUser = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/follow/${username}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) {
     throw new Error("Failed to follow user");

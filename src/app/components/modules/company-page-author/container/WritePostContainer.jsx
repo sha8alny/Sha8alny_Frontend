@@ -2,41 +2,25 @@
 import { useState, useRef} from "react";
 import WritePost from "../presentation/WritePost";
 
-
 /**
- * @namespace company-page-author
- * @module company-page-author
- */
-/**
- * A container component for handling post creation, including text input and image upload.
- *
- * @component
- * @param {Object} props - Component props
- * @param {Function} props.onPostSubmit - Callback function to handle post submission
- * @param {string} props.logoPreview - URL of the logo preview image
- * @returns {JSX.Element} The WritePostContainer component
+ * @namespace WritePostComponents
  */
 
-/** @state {string} text - The text content of the post */
-/** @state {string|null} preview - URL for the image preview */
-/** @state {string|null} file - Name of the selected file */
-/** @ref {Object} fileInputRef - Reference to the hidden file input element */
-
 /**
- * Handles file selection and sets preview image.
+ * WritePostContainer component manages the state and actions for composing a post. 
+ * It handles the text input, media uploads (images and videos), and submits the post data.
  * 
- * @param {Event} e - The file input change event
+ * @component
+ * 
+ * @param {Object} props - The props for the WritePostContainer component.
+ * @param {Object} props.company - The company object containing company details.
+ * @param {function} props.onPostSubmit - The function to handle post submission. It receives form data as a parameter.
+ * @param {string} props.logo - The company logo URL.
+ * 
+ * @returns {JSX.Element} The rendered WritePostContainer component.
  */
 
-/**
- * Triggers the hidden file input when the user clicks on the upload button.
- */
-
-/**
- * Handles post submission. Prevents empty posts from being submitted.
- */
-
-function WritePostContainer({company, onPostSubmit, logo}){
+export default function WritePostContainer({company, onPostSubmit, logo}){
     const [text, setText] = useState("");
     const [preview, setPreview]= useState(null);
     const [tags, setTags]= useState([]);
@@ -103,4 +87,3 @@ function WritePostContainer({company, onPostSubmit, logo}){
     );
 
 }
-export default WritePostContainer;

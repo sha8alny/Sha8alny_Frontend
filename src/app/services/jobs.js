@@ -17,6 +17,7 @@ export const fetchJobListings = async ({
   filters = {},
   sortBy = null,
   itemsPerPage = 10,
+  company
 }) => {
   const url = new URL(`${apiURL}/jobs/search/${pageParam}/${itemsPerPage}`);
   

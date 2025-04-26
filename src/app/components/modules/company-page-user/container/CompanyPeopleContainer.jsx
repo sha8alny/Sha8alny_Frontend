@@ -3,6 +3,28 @@ import { useEffect, useState } from "react";
 import { fetchCompanyPeople } from "@/app/services/companyManagement";
 import CompanyPeople from "../presentation/CompanyPeople";
 
+/**
+ * @namespace company-user
+ * @module CompanyPeopleContainer
+ */
+
+/**
+ * Container component that fetches and displays the list of people working at a specific company.
+ * 
+ * Fetches company people data using the provided `username`, manages loading and error states,
+ * and passes the result to the `CompanyPeople` presentational component.
+ *
+ * This component runs only on the client side (using `"use client"` directive).
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.username - The username/identifier of the company
+ * @returns {JSX.Element} A styled wrapper that contains the rendered `CompanyPeople` component
+ *
+ * @example
+ * <CompanyPeopleContainer username="exampleCompany" />
+ */
+
 export default function CompanyPeopleContainer({username}) {
     const [people, setPeople] = useState([]);
     const [error, setError] = useState(null);
@@ -13,8 +35,7 @@ export default function CompanyPeopleContainer({username}) {
             try {
                 console.log("hi")
                 const data = await fetchCompanyPeople(username);
-                console.log("people data", data);
-                setPeople(data.people);
+                setPeople(data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -23,14 +44,10 @@ export default function CompanyPeopleContainer({username}) {
             };
         if (username) getCompanyPeople();
     }, [username]); 
+
   return (
-    <div className="p-6 bg-foreground rounded-lg">
-      <h2 className="text-xl font-bold mb-4 text-text">People you may know</h2>
-      <div className="flex flex-wrap gap-6">
-        {people.map((people, index) => (
-          <CompanyPeople key={index} people={people} />
-        ))}
+      <div className="flex flex-wrap gap-6 bg-foreground rounded-lg">
+        <CompanyPeople people={people} />
       </div>
-    </div>
   );
 }
