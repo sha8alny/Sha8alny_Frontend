@@ -57,6 +57,9 @@ const Connections = ({
                     profilePic={connection.profilePic}
                     coverPic={connection.coverPic}
                     buttonText="Message"
+                    buttonAction={() => {
+                        window.location.href = `/messages/${connection.username}`;
+                    }}
                     showButton={true}
                     showRemoveButton={true}
                     onRemove={() => {
