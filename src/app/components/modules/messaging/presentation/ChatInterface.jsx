@@ -225,21 +225,23 @@ export function ChatPresentation({
   // Add scroll detection to load more messages when reaching top
   useEffect(() => {
     if (!scrollAreaRef.current) return;
-    
-    const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+
+    const viewport = scrollAreaRef.current.querySelector(
+      "[data-radix-scroll-area-viewport]"
+    );
     if (!viewport) return;
-    
+
     scrollAreaViewportRef.current = viewport;
-    
+
     const handleScroll = () => {
       // If user has scrolled near the top (20px threshold), trigger load more
       if (viewport.scrollTop < 20) {
         onLoadMoreMessages && onLoadMoreMessages();
       }
     };
-    
-    viewport.addEventListener('scroll', handleScroll);
-    return () => viewport.removeEventListener('scroll', handleScroll);
+
+    viewport.addEventListener("scroll", handleScroll);
+    return () => viewport.removeEventListener("scroll", handleScroll);
   }, [onLoadMoreMessages]);
 
   return (

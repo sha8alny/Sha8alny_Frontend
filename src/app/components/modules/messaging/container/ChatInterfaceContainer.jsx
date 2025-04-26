@@ -43,7 +43,12 @@ export function ChatContainer({
   const isOtherParticipantTyping = useMemo(() => {
     if (!otherParticipantUsername || !selectedConversation?.participantMetadata) return false;
     return selectedConversation.participantMetadata[otherParticipantUsername]?.typingStatus === true;
-  }, [selectedConversation, otherParticipantUsername]);
+  }, [
+    selectedConversation, 
+    otherParticipantUsername,
+    // Add the specific property path to the dependency array
+    selectedConversation?.participantMetadata?.[otherParticipantUsername]?.typingStatus
+  ]);
   
   const receiverUsername = otherParticipant?.username;
 

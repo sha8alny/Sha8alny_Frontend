@@ -53,7 +53,6 @@ export const messagingService = {
     }
   },
 
-
   toggleConversationReadStatusFirestore: async (conversationId, username) => {
     try {
       if (!conversationId || !username) {
@@ -166,77 +165,81 @@ export const messagingService = {
   },
 
   markMessagesAsRead: async (receiverName) => {
-    try {
-      if (!receiverName) {
-        throw new Error("Receiver name is required");
-      }
+    console.log("Marking messages as read for:", receiverName);
+    // try {
+    //   if (!receiverName) {
+    //     throw new Error("Receiver name is required");
+    //   }
 
-      const response = await fetchWithAuth(
-        `${process.env.NEXT_PUBLIC_API_URL}/Conversation/markMessagesAsRead`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            receiverName: receiverName, // Using camelCase as expected by the backend
-          }),
-        }
-      );
+    //   const response = await fetchWithAuth(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/Conversation/markMessagesAsRead`,
+    //     {
+    //       method: "PATCH",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         receiverName: receiverName, // Using camelCase as expected by the backend
+    //       }),
+    //     }
+    //   );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message ||
-            errorData.error ||
-            `HTTP error! Status: ${response.status}`
-        );
-      }
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     throw new Error(
+    //       errorData.message ||
+    //         errorData.error ||
+    //         `HTTP error! Status: ${response.status}`
+    //     );
+    //   }
 
-      return await response.json();
-    } catch (error) {
-      console.error("Error marking messages as read:", error);
-      throw new Error("Error marking messages as read: " + error.message);
-    }
+    //   return await response.json();
+    // } catch (error) {
+    //   console.error("Error marking messages as read:", error);
+    //   throw new Error("Error marking messages as read: " + error.message);
+    // }
+    return;
   },
 
   // Firestore version of marking messages as read
-    markMessagesAsReadFirestore: async (conversationId, username) => {
-      try {
-        if (!conversationId || !username) {
-          throw new Error("Conversation ID and username are required");
-        }
-        console.log("Marking messages as read for:", username, conversationId);
-        // Get the conversation document reference
-        const conversationRef = doc(db, "conversations", conversationId);
-        const conversationSnap = await getDoc(conversationRef);
-
-        if (!conversationSnap.exists()) {
-          throw new Error(`Conversation with ID ${conversationId} not found`);
-        }
-
-        const conversationData = conversationSnap.data();
-
-        // Check if the user is a participant in the conversation
-        if (!conversationData.participantMetadata?.[username]) {
-          throw new Error(`User ${username} is not a participant in this conversation`);
-        }
-
-        // Update the read status
-        await updateDoc(conversationRef, {
-          [`participantMetadata.${username}.readFlag`]: true,
-          [`participantMetadata.${username}.lastReadAt`]: new Date(),
-          [`participantMetadata.${username}.unreadCount`]: 0,
-        });
-
-        return {
-          success: true
-        };
-      } catch (error) {
-        console.error("Error marking messages as read:", error);
-        throw new Error(`Failed to mark messages as read: ${error.message}`);
+  markMessagesAsReadFirestore: async (conversationId, username) => {
+    try {
+      if (!conversationId || !username) {
+        throw new Error("Conversation ID and username are required");
       }
-    },
+      console.log("Marking messages as read for:", username, conversationId);
+      // Get the conversation document reference
+      const conversationRef = doc(db, "conversations", conversationId);
+      const conversationSnap = await getDoc(conversationRef);
+
+      if (!conversationSnap.exists()) {
+        throw new Error(`Conversation with ID ${conversationId} not found`);
+      }
+
+      const conversationData = conversationSnap.data();
+
+      // Check if the user is a participant in the conversation
+      if (!conversationData.participantMetadata?.[username]) {
+        throw new Error(
+          `User ${username} is not a participant in this conversation`
+        );
+      }
+
+      // Update the read status
+      await updateDoc(conversationRef, {
+        [`participantMetadata.${username}.readFlag`]: true,
+        [`participantMetadata.${username}.lastReadAt`]: new Date(),
+        [`participantMetadata.${username}.unreadCount`]: 0,
+      });
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+      throw new Error(`Failed to mark messages as read: ${error.message}`);
+    }
+  },
 
   // --- Real-time Subscriptions ---
   subscribeToConversations: (username, callback) => {
@@ -256,64 +259,67 @@ export const messagingService = {
         });
 
         console.log("Conversations data:", conversations);
+
         callback(conversations);
       },
       (error) => {
-        console.error("Error subscribing to conversations:", error);
+      console.error("Error subscribing to conversations:", error);
       }
     );
-    },
+  },
 
-    subscribeToConversationMessages: (
+  subscribeToConversationMessages: (
+    conversationId,
+    currentUser,
+    callback,
+    messageLimit = null
+  ) => {
+    const messagesRef = collection(
+      db,
+      "conversations",
       conversationId,
-      currentUser,
-      callback,
-      messageLimit = null
-    ) => {
-      const messagesRef = collection(
-        db,
-        "conversations",
-        conversationId,
-        "messages"
-      );
+      "messages"
+    );
 
-      // Build the query with or without limit
-      let queryConstraints = [orderBy("timestamp", "desc")]; // Changed to desc to get newest first
-      if (messageLimit && typeof messageLimit === "number" && messageLimit > 0) {
-        queryConstraints.push(limit(messageLimit));
-      }
-      console.log("Query constraints:", messageLimit);
-      const q = query(messagesRef, ...queryConstraints);
+    // Build the query with or without limit
+    let queryConstraints = [orderBy("timestamp", "desc")]; // Changed to desc to get newest first
+    if (messageLimit && typeof messageLimit === "number" && messageLimit > 0) {
+      queryConstraints.push(limit(messageLimit));
+    }
+    console.log("Query constraints:", messageLimit);
+    const q = query(messagesRef, ...queryConstraints);
 
-      return onSnapshot(
-        q,
-        (querySnapshot) => {
-          const messages = [];
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            if (!data.isDeleted) {
-              messages.push({ id: doc.id, ...data });
+    return onSnapshot(
+      q,
+      (querySnapshot) => {
+        const messages = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (!data.isDeleted) {
+            messages.push({ id: doc.id, ...data });
 
-              // Mark unread messages as read
-              if (data.senderName !== currentUser && data.read === false) {
-                updateDoc(doc.ref, { read: true }).catch((err) =>
-                  console.error("Error marking message as read:", err)
-                );
-              }
+            // Mark unread messages as read
+            if (data.senderName !== currentUser && data.read === false) {
+              updateDoc(doc.ref, { read: true }).catch((err) =>
+                console.error("Error marking message as read:", err)
+              );
             }
-          });
+          }
+        });
 
-          // Reverse the array to maintain chronological order
-          messages.reverse();
-
-          console.log("Messages data:", messages);
-          callback(messages);
-        },
-        (error) => {
-          console.error("Error subscribing to conversation messages:", error);
-        }
-      );
-    },
+        // Reverse the array to maintain chronological order
+        messages.reverse();
+        messagingService.markMessagesAsReadFirestore(conversationId, currentUser).catch((err) =>
+          console.error("Error marking messages as read in Firestore:", err)
+        );
+        console.log("Messages data:", messages);
+        callback(messages);
+      },
+      (error) => {
+        console.error("Error subscribing to conversation messages:", error);
+      }
+    );
+  },
 
   // --- Status Updates ---
   updateTypingStatus: async (username, conversationId, isTyping) => {
@@ -331,11 +337,14 @@ export const messagingService = {
       }
 
       const data = conversationSnap.data();
-      const currentTypingStatus = data.participantMetadata?.[username]?.typingStatus || false;
+      const currentTypingStatus =
+        data.participantMetadata?.[username]?.typingStatus || false;
 
       // Only update if the status is different
       if (currentTypingStatus !== isTyping) {
-        const updateData = { [`participantMetadata.${username}.typingStatus`]: isTyping };
+        const updateData = {
+          [`participantMetadata.${username}.typingStatus`]: isTyping,
+        };
         await updateDoc(conversationRef, updateData);
       }
 
@@ -346,28 +355,5 @@ export const messagingService = {
     }
   },
 
-  toggleUserBlock: async (username, conversationId, isBlocked) => {
-    try {
-      if (!conversationId) {
-        throw new Error("Conversation ID is required");
-      }
-
-      const conversationRef = doc(db, "conversations", conversationId);
-      const conversationSnap = await getDoc(conversationRef);
-
-      if (!conversationSnap.exists()) {
-        throw new Error(`Conversation with ID ${conversationId} not found`);
-      }
-
-      await updateDoc(conversationRef, {
-        isDeleted: true,
-        deletedAt: new Date(),
-      });
-
-      return { success: true };
-    } catch (error) {
-      console.error("Error deleting conversation:", error);
-      throw new Error(`Failed to delete conversation: ${error.message}`);
-    }
-  },
+  toggleUserBlock: async (username, conversationId, isBlocked) => {},
 };

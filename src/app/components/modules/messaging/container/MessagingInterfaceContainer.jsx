@@ -19,11 +19,12 @@ export function MessagingContainer({ currentUser }) {
   // ---- REFS ----
   const selectedConversationIdRef = useRef(null);
   const readStatusOperations = useRef(new Map());
-  const navigationInitiatedRef = useRef(false);
+  const navigationInitiatedRef = useRef(null);
   const conversationsSubscriptionRef = useRef(null);
   const messagesSubscriptionRef = useRef(null);
   const lastSubscriptionParams = useRef({ conversationId: null, currentUser: null });
-
+  const typingTimeoutRef = useRef(null);
+  
   // ---- STATE MANAGEMENT ----
   // Conversations
   const [userConversations, setUserConversations] = useState([]);
@@ -368,7 +369,7 @@ export function MessagingContainer({ currentUser }) {
     // Optimistically add new messages to the state
     setMessages((prevMessages) => [...prevMessages, ...newMessages]);
 
-
+    handleSetTypingIndicator(currentUser, selectedConversationIdRef.current, false);
     // Call the mutation
     sendMessageMutation.mutate({ 
       receiver: receiverName, 
@@ -387,8 +388,14 @@ export function MessagingContainer({ currentUser }) {
 
   // Update typing indicator for new schema
   const handleSetTypingIndicator = useCallback(
-    debounce((receiverUsername, convId, isTyping) => {
+    (username, convId, isTyping) => {
       if (!currentUser || !convId) return;
+      
+      // Clear any existing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
       
       // Optimistically update UI
       setUserConversations((prev) =>
@@ -409,9 +416,45 @@ export function MessagingContainer({ currentUser }) {
         })
       );
       
-      service.updateTypingStatus(currentUser, convId, isTyping);
-    }, 300),
-    [service, currentUser]
+      // Safety timeout: always reset typing status after 10 seconds
+      // This prevents "stuck" typing indicators if network requests fail
+      if (isTyping) {
+        typingTimeoutRef.current = setTimeout(() => {
+          handleSetTypingIndicator(username, convId, false);
+        }, 10000);
+      }
+      
+      // Use debounced function for the actual API call
+      const updateTypingDebounced = debounce(() => {
+        service.updateTypingStatus(currentUser, convId, isTyping)
+          .catch(error => {
+            console.error("Failed to update typing status:", error);
+            // On error, make sure to reset UI
+            if (isTyping) {
+              setUserConversations((prev) =>
+                prev.map((c) => {
+                  if (c.id === convId && c.participantMetadata) {
+                    return {
+                      ...c,
+                      participantMetadata: {
+                        ...c.participantMetadata,
+                        [currentUser]: {
+                          ...c.participantMetadata[currentUser],
+                          typingStatus: false
+                        }
+                      }
+                    };
+                  }
+                  return c;
+                })
+              );
+            }
+          });
+      }, 300);
+      
+      updateTypingDebounced();
+    },
+    [service, currentUser, debounce]
   );
 
   // ---- CONNECTION HANDLERS ----
@@ -480,12 +523,40 @@ export function MessagingContainer({ currentUser }) {
         currentUser, 
         (updatedConversations) => {
           if (Array.isArray(updatedConversations)) {
+            // Update the full list of conversations
             setUserConversations(updatedConversations);
+
+            // *** Add this block to update the selectedConversation state ***
+            // If a conversation is currently selected, find its updated version
+            // in the new list and update the selectedConversation state.
+            // This ensures the ChatContainer receives the latest snapshot.
+            if (selectedConversationIdRef.current) {
+              const currentlySelectedId = selectedConversationIdRef.current;
+              const updatedSelectedConversation = updatedConversations.find(
+                (conv) => conv.id === currentlySelectedId
+              );
+
+              // Update the state only if the found conversation is different
+              // or if it wasn't found (meaning it was deleted/removed)
+              setSelectedConversation(prevSelected => {
+                if (updatedSelectedConversation) {
+                  // Check if the relevant metadata actually changed to avoid unnecessary updates
+                  if (JSON.stringify(prevSelected?.participantMetadata) !== JSON.stringify(updatedSelectedConversation.participantMetadata)) {
+                    return updatedSelectedConversation;
+                  }
+                  return prevSelected; // No relevant change, keep the current state reference
+                } else {
+                  // Conversation no longer exists in the updated list
+                  selectedConversationIdRef.current = null; // Clear the ref
+                  return null;
+                }
+              });
+            }
           }
         }
       );
     }, 300),
-    [currentUser, service]
+    [currentUser, service] // Removed selectedConversationIdRef from deps as it's a ref
   );
   
   useEffect(() => {
@@ -542,8 +613,11 @@ export function MessagingContainer({ currentUser }) {
   // Optimize message subscription with proper limits and prevent excessive re-subscriptions
   const subscribeToMessages = useCallback(
     debounce(() => {
-      const conversationId = selectedConversation?.id;
+      const conversationId = selectedConversation?.id; // Use state directly
       
+      // Update the ref whenever selectedConversation changes
+      selectedConversationIdRef.current = conversationId;
+
       if (!conversationId) {
         setMessages([]);
         if (messagesSubscriptionRef.current) {
@@ -566,7 +640,6 @@ export function MessagingContainer({ currentUser }) {
         messagesSubscriptionRef.current = null;
       }
       
-      selectedConversationIdRef.current = conversationId;
       lastSubscriptionParams.current = { conversationId, currentUser };
       
       // Now subscribe with limit parameter
