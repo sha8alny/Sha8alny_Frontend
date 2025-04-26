@@ -18,6 +18,9 @@ const ResetPasswordContainer = () => {
     const [isFormValid, setIsFormValid] = useState(false);
     const toast = useToast();
     const router = useRouter();
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [confirmPasswordError, setConfirmPasswordError] = useState(null);
+    const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
 
 
     useEffect(() => {
@@ -25,14 +28,15 @@ const ResetPasswordContainer = () => {
             newPassword.trim() !== "" &&
             resetCode.trim() !== "" &&
             isPasswordValid &&
-            isResetCodeValid
+            isResetCodeValid &&
+            isConfirmPasswordValid
         );
     }, [newPassword, resetCode, isPasswordValid, isResetCodeValid]);
     const validatePassword = (value) => {
-        const valid = value.length >= 6;
+        const valid = value.length >= 8;
         setIsPasswordValid(valid);
         if (!valid) {
-            setPasswordError("Password must be 6 characters or more.");
+            setPasswordError("Password must be 8 characters or more.");
           } else {
             setPasswordError(null);
           }
@@ -46,6 +50,16 @@ const ResetPasswordContainer = () => {
             setResetCodeError(null);
             }
     };
+    const validateConfirmPassword = (value) => {
+        const valid = value === newPassword;
+        setIsConfirmPasswordValid(valid);
+        if (!valid) {
+            setConfirmPasswordError("Passwords do not match.");
+        }
+        else {
+            setConfirmPasswordError(null);
+        }
+    };
 
     const handleChange = (name,value) => {
         if(name === "resetCode") {
@@ -56,6 +70,10 @@ const ResetPasswordContainer = () => {
         else if (name === "newPassword") {
             setNewPassword(value);
             validatePassword(value);
+        }
+        else if (name === "confirmPassword") {
+            setConfirmPassword(value);
+            validateConfirmPassword(value);
         }
         
     };
@@ -95,6 +113,8 @@ const ResetPasswordContainer = () => {
             resetCodeError={resetCodeError}
             resetCode={resetCode}
             isFormValid={isFormValid}
+            confirmPassword={confirmPassword}
+            confirmPasswordError={confirmPasswordError}
         />
     );
 }

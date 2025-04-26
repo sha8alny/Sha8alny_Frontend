@@ -17,7 +17,9 @@ const ResetPassword =({
     loading,
     passwordError,
     resetCodeError,
-    isFormValid
+    isFormValid,
+    confirmPassword,
+    confirmPasswordError
 
 }) => {
     return(
@@ -69,6 +71,21 @@ const ResetPassword =({
                 {passwordError && (
                     <p className="text-red-500 text-sm mt-2">
                         {passwordError}
+                    </p>
+                )}
+                <input
+                    data-testid="confirm-password-input"
+                    type="password"
+                    placeholder="Confirm Password"
+                    name="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    className="w-full p-3 border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary bg-background text-text"
+                    required
+                />
+                {confirmPasswordError && (
+                    <p className="text-red-500 text-sm mt-2">
+                        {confirmPasswordError}
                     </p>
                 )}
 
