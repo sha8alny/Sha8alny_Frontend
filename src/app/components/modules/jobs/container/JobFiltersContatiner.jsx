@@ -7,7 +7,8 @@ import {
     filtersToUrlParams, 
     createSelectedFiltersArray,
     getDefaultFilters,
-    getDefaultFilterOptions
+    getDefaultFilterOptions,
+    setMaxSalary
 } from "@/app/utils/jobFilters";
 /**
  * @namespace jobs
@@ -44,6 +45,24 @@ function JobsFilterContainer() {
             try {
                 const options = await fetchFilterOptions();
                 setFilterOptions(prev => ({ ...prev, ...options }));
+                
+                // When maxSalary changes from the API, update filters accordingly
+                if (options.maxSalary) {
+                    setMaxSalary(options.maxSalary);
+                    setFilters(prev => {
+                        // Only update the max if it's the default or higher than API value
+                        if (prev.salaryRange.max === 100000 || prev.salaryRange.max > options.maxSalary) {
+                            return {
+                                ...prev,
+                                salaryRange: {
+                                    ...prev.salaryRange,
+                                    max: options.maxSalary
+                                }
+                            };
+                        }
+                        return prev;
+                    });
+                }
             } catch (error) {
                 console.error("Error fetching filter options:", error);
             } finally {
@@ -53,18 +72,16 @@ function JobsFilterContainer() {
 
         loadFilterOptions();
     }, []);
-
     // Initialize filters from URL
     useEffect(() => {
         if (!isLoading) {
-            const initialFilters = parseUrlToFilters(searchParams);
+            const initialFilters = parseUrlToFilters(searchParams, filterOptions.maxSalary);
             setFilters(initialFilters);
-            setSelectedFilters(createSelectedFiltersArray(initialFilters));
+            setSelectedFilters(createSelectedFiltersArray(initialFilters, filterOptions.maxSalary));
         }
-    }, [searchParams, isLoading]);
-
+    }, [searchParams, isLoading, filterOptions.maxSalary]);
     const updateUrlWithFilters = (newFilters) => {
-        const params = filtersToUrlParams(newFilters);
+        const params = filtersToUrlParams(newFilters, filterOptions.maxSalary);
         router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
@@ -96,7 +113,7 @@ function JobsFilterContainer() {
         let updatedFilters = { ...filters };
 
         if (filterToRemove.type === "salaryRange") {
-            updatedFilters.salaryRange = { min: 0, max: 100000 };
+            updatedFilters.salaryRange = { min: 0, max: filterOptions.maxSalary || 100000 };
         } else if (filterToRemove.type === "keyword" || filterToRemove.type === "sortBySalary") {
             updatedFilters[filterToRemove.type] = "";
         } else if (Array.isArray(updatedFilters[filterToRemove.type])) {
@@ -111,13 +128,20 @@ function JobsFilterContainer() {
     };
 
     const clearAllFilters = () => {
-        const resetFilters = getDefaultFilters();
+        const resetFilters = getDefaultFilters(filterOptions.maxSalary);
         
         setFilters(resetFilters);
         setSelectedFilters([]);
         updateUrlWithFilters(resetFilters);
     };
-
+    const filterSections = [
+        { title: "Location", type: "location", options: filterOptions.location, selected: filters.location },
+        { title: "Industry", type: "industry", options: filterOptions.industry, selected: filters.industry },
+        { title: "Experience Level", type: "experienceLevel", options: filterOptions.experienceLevel, selected: filters.experienceLevel },
+        { title: "Company", type: "company", options: filterOptions.company, selected: filters.company },
+        { title: "Employment Type", type: "employmentType", options: filterOptions.employmentType, selected: filters.employmentType },
+        { title: "Location Type", type: "workLocation", options: filterOptions.workLocation, selected: filters.workLocation },
+      ];
     return (
         <JobsFilterPresentation
             filters={filters}
@@ -127,6 +151,7 @@ function JobsFilterContainer() {
             onFilterChange={handleFilterChange}
             onRemoveFilter={removeFilter}
             onClearAllFilters={clearAllFilters}
+            filterSections={filterSections}
         />
     );
 }

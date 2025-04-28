@@ -181,6 +181,10 @@ function MyJobsContainer() {
       loadMoreJobs={loadMoreJobs}
       isLoadingMore={isLoadingMore}
       errorMessage={errorMessage}
+      isLoading={isLoading}
+      isError={isAllError}
+      handleRetry={() => router.refresh()}
+      error={errorMessage}
     />
   );
 }
