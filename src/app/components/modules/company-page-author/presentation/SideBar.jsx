@@ -14,35 +14,34 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { Upload, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
-
 /**
- * `SideBar` is a React functional component that displays the sidebar navigation for a company page,
- * including the company's logo, cover image, name, follower count, and menu items. It also allows the user 
- * to edit the company's logo and cover image and includes actions such as creating a post and logging out.
+ * SideBar component displays a sidebar with a company's details, logo, cover image,
+ * and various navigation menu items. It allows the user to edit the company's logo and
+ * cover image, and provides options to view the company as a member, create new content, 
+ * and log out.
+ *
+ * @namespace Sidebar
+ * @component
  * 
- * @namespace company-page-author
- * @module company-page-author
- * 
- * @param {Object} props - The properties passed to the component.
- * @param {Object} props.company - The company object containing the company's details.
- * @param {string} props.company.name - The name of the company.
- * @param {string} props.company.cover - The URL of the company's cover image.
- * @param {string} props.company.logo - The URL of the company's logo.
- * @param {number} props.company.numFollowers - The number of followers the company has.
- * @param {Array} [props.menuItems] - A list of menu items to display in the sidebar.
- * @param {boolean} props.isActive - A function that checks whether a given menu item is active.
- * @param {Function} props.setModalOpen - Function to open or close the modal.
- * @param {Function} props.onChangeCover - Function to handle cover image file changes.
- * @param {Function} props.onChangeLogo - Function to handle logo file changes.
- * @param {Object} props.coverInputRef - A ref for the cover image file input element.
- * @param {Object} props.logoInputRef - A ref for the logo file input element.
+ * @param {Object} props - The props for the SideBar component.
+ * @param {Object} props.company - The company details.
+ * @param {Array} props.menuItems - The list of menu items to display in the sidebar.
+ * @param {Function} props.isActive - A function that determines if a menu item is active.
+ * @param {Function} props.setModalOpen - A function to open the modal for creating new content.
+ * @param {Function} props.onChangeCover - Function to handle changing the cover image.
+ * @param {Function} props.onChangeLogo - Function to handle changing the logo image.
+ * @param {Object} props.coverInputRef - Ref for the cover image input element.
+ * @param {Object} props.logoInputRef - Ref for the logo image input element.
  * @param {Function} props.OpenCompanyUserPage - Function to navigate to the company user page.
+ * @param {Function} props.handleLogout - Function to handle user logout.
+ * @param {Function} props.onRemoveLogo - Function to remove the company logo.
+ * @param {Function} props.onRemoveCover - Function to remove the company cover image.
  * 
- * @returns {JSX.Element} - The rendered JSX for the sidebar component.
+ * @returns {JSX.Element} The rendered SideBar component.
  */
 
 
-function SideBar({company, menuItems=[], isActive, setModalOpen, onChangeCover,  onChangeLogo, coverInputRef,  logoInputRef, OpenCompanyUserPage, handleLogout, onRemoveLogo, onRemoveCover}){
+export default function SideBar({company, menuItems=[], isActive, setModalOpen, onChangeCover,  onChangeLogo, coverInputRef,  logoInputRef, OpenCompanyUserPage, handleLogout, onRemoveLogo, onRemoveCover}){
     const [isEditingLogo, setIsEditingLogo] = useState(false)
     const [isEditingCover, setIsEditingCover] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -239,5 +238,3 @@ function SideBar({company, menuItems=[], isActive, setModalOpen, onChangeCover, 
         </aside>
     );
 }
-
-export default SideBar;

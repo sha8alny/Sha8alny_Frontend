@@ -5,12 +5,20 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import { Modal, Box, Button, Typography } from "@mui/material";
-
+/**
+ * @namespace SideBarModal
+ * @component
+ * 
+ * A modal component that displays either a "deactivate page" prompt or options to create posts and jobs. 
+ * The content of the modal depends on the `type` prop passed to it.
+ * 
+ * The modal can be used to either deactivate a page (removes access to the page) or to create posts/jobs.
+ */
 /**
  * SideBarModal component displays a modal with different content based on the type passed to it.
  * The modal can either show a "deactivate page" prompt or options to create posts and jobs.
  *
- * @param {Object} props - The props for the SideBarModal component.
+ * @param {SideBarModal.Props} props - The props for the SideBarModal component.
  * @param {boolean} props.open - Determines if the modal is open or closed.
  * @param {Function} props.onClose - The function to call when the modal should be closed.
  * @param {string} props.type - The type of modal to show. It can either be "deactivate" or "create".
@@ -19,6 +27,15 @@ import { Modal, Box, Button, Typography } from "@mui/material";
  * @param {Function} props.openJobsPage - The function to call when the user wants to post a job.
  *
  * @returns {JSX.Element} The rendered SideBarModal component.
+ */
+/**
+ * @typedef {Object} SideBarModal.Props
+ * @property {boolean} open - Determines if the modal is open or closed.
+ * @property {Function} onClose - The function to call when the modal should be closed.
+ * @property {string} type - The type of modal to show. It can either be "deactivate" or "create".
+ * @property {Function} onDeactivate - The function to call when the user confirms deactivation.
+ * @property {Function} onCreatePost - The function to call when the user wants to create a post.
+ * @property {Function} openJobsPage - The function to call when the user wants to post a job.
  */
 
 export default function SideBarModal({ open, onClose, type, onDeactivate, onCreatePost, openJobsPage }) {

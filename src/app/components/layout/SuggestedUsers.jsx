@@ -23,9 +23,11 @@ export default function SuggestedUsers({ users, title, onClick }) {
           <Users className="size-5 mr-2 fill-current" />
           {title}
         </h2>
+        <div className="flex flex-col gap-2 ">
         {users.map((user, index) => (
           <UserSmallCard key={index} userInfo={user} onClick={onClick} />
         ))}
+        </div>
       </Container>
     );
 };

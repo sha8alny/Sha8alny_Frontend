@@ -8,17 +8,21 @@ import { QueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 /**
- * PostPageContainer component handles the display of the write post form and the list of posts for a company.
- * It fetches the company details and allows the user to create a post, while also updating the list of posts.
- *
+ * @namespace PostPageComponents
+ */
+
+/**
+ * PostPageContainer component handles the post creation and display of posts for a given company.
+ * It fetches company data, allows users to create new posts, and displays existing posts.
+ * @component
  * @param {Object} props - The props for the PostPageContainer component.
- * @param {string} props.username - The username of the company whose posts are being managed.
- * @param {string} props.logo - The logo URL of the company.
+ * @param {string} props.username - The username of the company.
+ * @param {string} props.logo - The company logo URL.
  * 
  * @returns {JSX.Element} The rendered PostPageContainer component.
  */
 
-function PostPageContainer({ username, logo }) {
+export default function PostPageContainer({ username, logo }) {
   const [company, setCompany] = useState(null);
   const [error, setError] = useState(null);
   const queryClient = new QueryClient();
@@ -61,5 +65,3 @@ function PostPageContainer({ username, logo }) {
     </div>
   );
 }
-
-export default PostPageContainer;

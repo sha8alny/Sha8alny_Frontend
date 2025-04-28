@@ -1,5 +1,5 @@
 "use client";
-import JobsFormContainer from "@/app/components/modules/company-author/container/JobsFormContainer";
+import JobsFormContainer from "@/app/components/modules/company-jobs/container/JobsFormContainer";
 import { useParams } from "next/navigation";
 import { Suspense } from "react";
 const CompanyJobs = () => {
