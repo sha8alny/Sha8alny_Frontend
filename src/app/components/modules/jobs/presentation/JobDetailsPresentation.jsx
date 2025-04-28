@@ -37,11 +37,6 @@ function JobDetailsPresentation({
     return <JobError errorMessage={errorMessage || "An error occurred"} onRetry={onRetry} />;
   }
 
-  // Handle case when job is null, undefined, or empty but not in error state
-  if (!isLoading && (!job || (typeof job === 'object' && Object.keys(job).length === 0))) {
-    return <JobError errorMessage="Job information not available" onRetry={onRetry} />;
-  }
-
   return (
     <div className="job-details">
       <JobHeader job={job || {}} isLoading={isLoading} />

@@ -5,14 +5,19 @@
 /**
  * Parses URL search parameters into a filter object
  * @param {URLSearchParams} params - URL search parameters
+ * @param {number} [maxSalary=100000] - Maximum salary value
  * @returns {Object} Filter object with all filter values
  */
+let maxSalary = 100000000; // Default max salary value
+export function setMaxSalary(value) {
+    maxSalary = value;
+}
 export function parseUrlToFilters(params) {
     // Only apply filters if we're on the jobs page
     if (typeof window !== 'undefined') {
         const pathname = window.location.pathname;
         if (pathname !== '/jobs') {
-            return getDefaultFilters();
+            return getDefaultFilters(maxSalary);
         }
     }
     
@@ -24,7 +29,7 @@ export function parseUrlToFilters(params) {
         company: params.get("company")?.split(",").filter(Boolean) || [],
         salaryRange: {
             min: parseInt(params.get("minSalary") || "0", 10),
-            max: parseInt(params.get("maxSalary") || "100000", 10),
+            max: parseInt(params.get("maxSalary") || maxSalary.toString(), 10),
         },
         employmentType: params.get("employmentType")?.split(",").filter(Boolean) || [],
         workLocation: params.get("workLocation")?.split(",").filter(Boolean) || [],
@@ -32,14 +37,14 @@ export function parseUrlToFilters(params) {
     };
 }
   
-  /**
-   * Converts filter object to URL search parameters
-   * @param {Object} filters - Filter object
-   * @returns {URLSearchParams} URL search parameters object
-   */
-  export function filtersToUrlParams(filters) {
+/**
+ * Converts filter object to URL search parameters
+ * @param {Object} filters - Filter object
+ * @returns {URLSearchParams} URL search parameters object
+ */
+export function filtersToUrlParams(filters) {
     const params = new URLSearchParams();
-  
+
     if (filters.keyword) params.set("keyword", filters.keyword);
     if (filters.location.length) params.set("location", filters.location.join(","));
     if (filters.industry.length) params.set("industry", filters.industry.join(","));
@@ -47,16 +52,15 @@ export function parseUrlToFilters(params) {
     if (filters.company.length) params.set("company", filters.company.join(","));
     if (filters.employmentType.length) params.set("employmentType", filters.employmentType.join(","));
     if (filters.salaryRange.min > 0) params.set("minSalary", filters.salaryRange.min.toString());
-    if (filters.salaryRange.max < 100000) params.set("maxSalary", filters.salaryRange.max.toString());
+    if (filters.salaryRange.max < maxSalary) params.set("maxSalary", filters.salaryRange.max.toString());
     if (filters.workLocation.length) params.set("workLocation", filters.workLocation.join(","));
     if (filters.sortBySalary) params.set("sortBySalary", filters.sortBySalary);
   
     return params;
-  }
+}
 
-  export function formatFiltersForApi(filters) {
+export function formatFiltersForApi(filters) {
     const formatted = {};
-  
     if (filters.keyword) formatted.keyword = filters.keyword;
     if (filters.location.length) formatted.location = filters.location.join(',');
     if (filters.industry.length) formatted.industry = filters.industry.join(',');
@@ -64,19 +68,20 @@ export function parseUrlToFilters(params) {
     if (filters.company.length) formatted.company = filters.company.join(',');
     if (filters.employmentType.length) formatted.employmentType = filters.employmentType.join(',');
     if (filters.salaryRange.min > 0) formatted.minSalary = filters.salaryRange.min;
-    if (filters.salaryRange.max < 100000) formatted.maxSalary = filters.salaryRange.max;
+    if (filters.salaryRange.max) formatted.maxSalary = filters.salaryRange.max;
     if (filters.workLocation.length) formatted.workLocation = filters.workLocation.join(',');
     if (filters.sortBySalary) formatted.sortBySalary = filters.sortBySalary;
   
     return formatted;
-  }
+}
   
-  /**
-   * Creates an array of selected filters for display
-   * @param {Object} filters - Current filter values
-   * @returns {Array} Array of selected filter objects with type and value
-   */
-  export function createSelectedFiltersArray(filters) {
+/**
+ * Creates an array of selected filters for display
+ * @param {Object} filters - Current filter values
+ * @param {number} [maxSalary=100000] - Maximum salary value
+ * @returns {Array} Array of selected filter objects with type and value
+ */
+export function createSelectedFiltersArray(filters) {
     const selected = [];
     
     Object.entries(filters).forEach(([key, value]) => {
@@ -84,7 +89,7 @@ export function parseUrlToFilters(params) {
         value.forEach((val) => selected.push({ type: key, value: val }));
       } else if (key === "keyword" && value) {
         selected.push({ type: key, value });
-      } else if (key === "salaryRange" && (value.min > 0 || value.max < 100000)) {
+      } else if (key === "salaryRange" && (value.min > 0 || value.max < maxSalary)) {
         selected.push({
           type: key,
           value: `$${value.min.toLocaleString()} - $${value.max.toLocaleString()}`,
@@ -98,37 +103,38 @@ export function parseUrlToFilters(params) {
     });
     
     return selected;
-  }
+}
   
-  /**
-   * Get default filter values
-   * @returns {Object} Default filter object
-   */
-  export function getDefaultFilters() {
+/**
+ * Get default filter values
+ * @returns {Object} Default filter object
+ */
+export function getDefaultFilters() {
     return {
       keyword: "",
       location: [],
       industry: [],
       experienceLevel: [],
       company: [],
-      salaryRange: { min: 0, max: 100000 },
+      salaryRange: { min:0 , max:maxSalary  },
       employmentType: [],
       workLocation: [],
       sortBySalary: "",
     };
-  }
+}
   
-  /**
-   * Get default filter options
-   * @returns {Object} Default filter options
-   */
-  export function getDefaultFilterOptions() {
-    return {
-      location: [],
-      industry: [],
-      experienceLevel: [],
-      company: [],
-      employmentType: ["Full-time", "Part-time", "Internship"],
-      workLocation: ["Remote", "Onsite", "Hybrid"],
-    };
-  }
+/**
+ * Get default filter options
+ * @returns {Object} Default filter options
+ */
+export function getDefaultFilterOptions() {
+  return {
+    location: [],
+    industry: [],
+    experienceLevel: [],
+    company: [],
+    employmentType: ["Full-time", "Part-time", "Internship"],
+    workLocation: ["Remote", "Onsite", "Hybrid"],
+    salaryRange: { min: 0, max: maxSalary || 100000 },
+  };
+}

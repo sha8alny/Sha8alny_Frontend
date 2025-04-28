@@ -40,6 +40,7 @@ const MyItemsLayout = ({ children, activeContent }) => {
                       ? "bg-blue-100 text-secondary dark:bg-secondary dark:text-primary"
                       : "text-gray-700 hover:bg-primary/10 dark:text-gray-300 dark:hover:bg-background/30"
                   }`}
+                  data-testid="sidebar-my-applications-link"
                 >
                   <JobsIcon className="h-5 w-5 mr-3" />
                   <span className="font-medium">My Applications</span>
@@ -52,6 +53,7 @@ const MyItemsLayout = ({ children, activeContent }) => {
                       ? "bg-blue-100 text-secondary dark:bg-secondary dark:text-primary"
                       : "text-gray-700 hover:bg-primary/10 dark:text-gray-300 dark:hover:bg-background/30"
                   }`}
+                  data-testid="sidebar-saved-jobs-link"
                 >
                   <SavedIcon className="h-5 w-5 mr-3" />
                   <span className="font-medium">Saved Jobs</span>
@@ -64,6 +66,7 @@ const MyItemsLayout = ({ children, activeContent }) => {
                       ? "bg-blue-100 text-secondary dark:bg-secondary dark:text-primary"
                       : "text-gray-700 hover:bg-primary/10 dark:text-gray-300 dark:hover:bg-background/30"
                   }`}
+                  data-testid="sidebar-saved-posts-link"
                 >
                   <PostsIcon className="h-5 w-5 mr-3" />
                   <span className="font-medium">Saved Posts</span>

@@ -60,7 +60,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
         );
     }
 
-    if (company === "notOwner") {
+    if (!company?.isOwner ) {
         return (
             <div className="flex flex-col items-center justify-center w-screen h-screen bg-background text-white">
                 <div className="mx-auto w-18 h-18 rounded-full bg-foreground flex items-center justify-center">

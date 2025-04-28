@@ -2,6 +2,7 @@
 import SuggestedPages from "../presentation/SuggestedPages";
 import { useRouter } from "next/navigation";
 import { getCompanies } from "@/app/services/companyManagement";
+import { followCompany, unfollowCompany } from "@/app/services/companyManagement";
 import { useState, useEffect } from "react";
 
 /**
@@ -32,7 +33,30 @@ import { useState, useEffect } from "react";
 export default function SuggestedPagesContainer({username, title }) {
   const [companies, setCompanies]= useState(null);
   const [error, setError] = useState(null);
+  const [followStatus, setFollowStatus] = useState({});
+  const [followerCount, setFollowerCount] = useState(null);
+  const [company, setCompany] = useState(null);
   const router = useRouter();
+
+  const handleFollowClick = async (companyUsername) => {
+    try {
+      const currentlyFollowing = followStatus[companyUsername] || false;
+      const newIsFollowing = !currentlyFollowing;
+
+      if (newIsFollowing) {
+        await followCompany(companyUsername);
+      } else {
+        await unfollowCompany(companyUsername);
+      }
+
+      setFollowStatus((prev) => ({
+        ...prev,
+        [companyUsername]: newIsFollowing,
+      }));
+    } catch (err) {
+      setError("Could not update follow status.");
+    }
+  };
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -40,20 +64,24 @@ export default function SuggestedPagesContainer({username, title }) {
         const data = await getCompanies(username);
         if (Array.isArray(data)) {
           setCompanies(data);
+          const followMap = {};
+          data.forEach((company) => {
+            followMap[company.companyUsername] = company.isFollowed || false;
+          });
+          setFollowStatus(followMap);
         } else {
-          setCompanies([]); // fallback to empty array
-          console.warn("Expected array, got:", data);
+          setCompanies([]);
         }
       } catch (err) {
         setError(err.message);
       }
-    };  
+    };
     if (username) fetchCompanies();
-  }, [username]);
+  }, [username]);    
   
   const navigateToProfile = (username) => {
     router.push(`/company/${username}/user/posts`);
   };
 
-  return <SuggestedPages title={title} pages={companies || []} onClick={navigateToProfile} />;
+  return <SuggestedPages title={title} pages={companies || []} onClick={navigateToProfile} handleFollowClick={handleFollowClick} followStatus={followStatus} />;
 }

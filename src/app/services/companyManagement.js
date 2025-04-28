@@ -1,5 +1,4 @@
 
-import { use } from "react";
 import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
@@ -113,7 +112,45 @@ export const editJob = async ({companyUsername, jobId, jobData}) => {
         throw new Error(error.message);
     }
 }
-  
+
+export const deletedJobs = async ({page, companyUsername}) => {
+    try{
+       const queryParams = new URLSearchParams({
+            pageNum: page,
+        });
+        const deletedJobsResponse = await fetchWithAuth(`${apiURL}/restore/company/${companyUsername}/job?${queryParams}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!deletedJobsResponse.ok) {
+            throw new Error("Failed to fetch deleted jobs");
+        }
+        if (deletedJobsResponse.status === 204) {
+            return [];
+        }
+        console.log("Deleted jobs response:", deletedJobsResponse.json);
+        return deletedJobsResponse.json();
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+};
+
+export const restoreJob = async ({companyUsername, jobId}) => {
+    try{
+        const restoreJobResponse = await fetchWithAuth(`${apiURL}/restore/company/${companyUsername}/job/${jobId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!restoreJobResponse.ok) {
+            throw new Error("Failed to restore job");
+        }
+        return true;
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+};
 
 
 export const JobApplicants = async (jobId, page = 1) => {
@@ -190,10 +227,8 @@ export const getCompanyId = async (companyUsername) => {
         });
         console.log("Raw response object:", response);
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to get companyId: ${response.status} ${responseText}`);
         }
         try {
@@ -232,10 +267,8 @@ export const createCompany = async (companyData) => {
             body: companyData,
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to create company: ${response.status} ${responseText}`);
         }
         try {
@@ -257,10 +290,8 @@ export const getCompany = async (companyUsername) => {
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to view company profile: ${response.status} ${responseText}`);
         }
         try {
@@ -280,10 +311,8 @@ export const updateCompany = async (companyUsername, companyData) => {
             body: companyData,
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to update company: ${response.status} ${responseText}`);
         }
         try {
@@ -306,10 +335,8 @@ export const deleteCompany = async (companyUsername) => {
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to delete company: ${response.status} ${responseText}`);
         }
         try {
@@ -332,10 +359,8 @@ export const getDeletedCompanies = async(pageNum = 1)=>{
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to get deleted company: ${response.status} ${responseText}`);
         }
         try {
@@ -357,10 +382,8 @@ export const restoreCompany = async (companyUsername) => {
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to restore company: ${response.status} ${responseText}`);
         }
         try {
@@ -383,10 +406,8 @@ export const searchCompany = async(text, pageNum = 1)=>{
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to get searched company: ${response.status} ${responseText}`);
         }
         try {
@@ -399,16 +420,54 @@ export const searchCompany = async(text, pageNum = 1)=>{
     }
 };
 
-export const followCompany = async (companyUsername) => {
-    const response = await fetch(`http://localhost:5000/company/${companyUsername}/follow`, {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-        },
-    });
-    if (!response.ok) throw new Error("Failed to follow company");
-    return await response.json();
-}
+
+export const followCompany = async(username)=>{
+    try{
+        const response = await fetchWithAuth(`${apiURL}/follow`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username }),
+          });
+        const responseText = await response.text(); 
+
+        if (!response.ok) {
+            throw new Error(`Failed to follow company: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
+};
+
+export const unfollowCompany = async(username)=>{
+    try{
+        const response = await fetchWithAuth(`${apiURL}/follow/${username}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username }),
+          });
+        const responseText = await response.text(); 
+
+        if (!response.ok) {
+            throw new Error(`Failed to unfollow company: ${response.status} ${responseText}`);
+        }
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            return { message: responseText };
+        }
+    }catch(error){
+        throw new Error(error.message);
+    }
+};
 
 export const getAnalytics = async (companyUsername) => {
     try{
@@ -420,10 +479,8 @@ export const getAnalytics = async (companyUsername) => {
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to get analytics: ${response.status} ${responseText}`);
         }
         try {
@@ -448,7 +505,6 @@ export const deleteCompanyMedia = async (companyUsername, mediaType) =>{
             },
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
 
         if (!response.ok) {
             console.error(`Failed to delete media: ${response.status} ${responseText}`);
@@ -472,13 +528,11 @@ export const getCompanies = async (companyUsername)=>{
             method: "GET",
         });
         const responseText = await response.text(); 
-        console.log("Raw response text:", responseText); 
         if (response.status === 204) {
             return [];
         }
         
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to get analytics: ${response.status} ${responseText}`);
         }
         try {
@@ -505,7 +559,6 @@ export const fetchCompanyPeople = async (username) => {
         console.log("Raw response text of companypeople:", responseText); 
 
         if (!response.ok) {
-            console.error("Error response:", responseText);
             throw new Error(`Failed to get analytics: ${response.status} ${responseText}`);
         }
         try {
@@ -518,3 +571,4 @@ export const fetchCompanyPeople = async (username) => {
         throw new Error(error.message);
     }
 };
+

@@ -1,4 +1,5 @@
 import { Plus, UserPlus } from "lucide-react";
+import CheckIcon from '@mui/icons-material/Check';
 import Image from "next/image";
 /**
  * @namespace layout
@@ -18,7 +19,7 @@ import Image from "next/image";
  * @param {Function} props.onClick - Callback function when the user name is clicked, receives username as parameter
  * @returns {JSX.Element} A user card with profile image, name, job, and connect button
  */
-export default function PageSmallCard({ companyInfo, onClick }){
+export default function PageSmallCard({ companyInfo, onClick, handleFollowClick,followStatus }){
     return (
       <div className="flex gap-2 items-center">
         <div className="relative w-12 h-12 bg-gray-800 rounded-full border-2 border-gray-400">
@@ -41,8 +42,18 @@ export default function PageSmallCard({ companyInfo, onClick }){
 
         </div>
         <div className="ml-auto">
-          <button className="rounded-full flex items-center gap-2 border-2 border-secondary dark:border-text hover:cursor-pointer hover:text-black hover:bg-secondary hover:dark:bg-white ease-in-out duration-300 text-xs p-3 font-[550]">
-            <UserPlus className="size-4" /> Follow
+          <button className="rounded-full flex items-center gap-2 border-2 border-secondary dark:border-text hover:cursor-pointer hover:text-black hover:bg-secondary hover:dark:bg-white ease-in-out duration-300 text-xs p-3 font-[550]" onClick={handleFollowClick}>
+            {followStatus ? (
+              <>
+                <CheckIcon className="size-4" />
+                Following
+              </>
+            ) : (
+              <>
+                <UserPlus className="size-4" />
+                Follow
+              </>
+            )}
           </button>
         </div>
       </div>

@@ -20,7 +20,7 @@ import { Card,CardContent } from "@/app/components/ui/Card";
  * @returns {JSX.Element} The rendered component with job listings.
  */
 
-export default function CompanyJobs({jobs=[]}){
+export default function CompanyJobs({jobs=[], goToJobPage}){
     const getRelativeTimeString = (date) => {
         try {
           if (!date) return "Recently";
@@ -54,14 +54,14 @@ export default function CompanyJobs({jobs=[]}){
                 <h2 className="text-text text-xl font-bold mb-4">Posted Jobs</h2>
                 <div className="flex flex-wrap gap-6">
                     {jobs.map((job, index) => (
-                        <Card key={job.id || index} className="w-60 rounded-xl shadow-md bg-foreground">
+                        <Card key={job.id || index} className="w-60 rounded-xl bg-foreground">
                             <CardContent className="flex flex-col pt-12 pl-6 pb-6">
                                 <img
                                     src={job?.companyData.logo}
                                     alt="Profile picture"
                                     className="w-30 h-30 rounded-lg -mt-10"
                                 />
-                                <h3 className="mt-2 font-semibold text-xl">{job.title}</h3>
+                                <h3 className="mt-2 font-semibold text-xl cursor-pointer hover:underline transition-all duration-150" onClick={() => goToJobPage(job)}>{job.title}</h3>
                                 <p className="text-text text mb-1">{job.companyData.name}</p>
                                 <p className="text-muted-foreground text-sm mb-1">{job.location}</p>
                                 <p className="text-muted-foreground text-sm mb-1">

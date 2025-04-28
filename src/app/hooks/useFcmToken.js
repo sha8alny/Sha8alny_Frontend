@@ -8,7 +8,6 @@ import { sendFCMtoken } from "../services/notificationService";
 
 async function getNotificationPermissionAndToken() {
   if (!("Notification" in window)) {
-    console.info("This browser does not support desktop notification");
     return null;
   }
 
@@ -23,7 +22,6 @@ async function getNotificationPermissionAndToken() {
     }
   }
 
-  console.log("Notification permission not granted.");
   return null;
 }
 
@@ -36,7 +34,7 @@ const useFcmToken = () => {
   const retryLoadToken = useRef(0); 
   const isLoading = useRef(false);
   
-  const isHomePage = pathname === "/" || pathname === "/home";
+  const isHomePage = pathname === "/";
 
   const loadToken = async () => {
     if (isLoading.current) return;
@@ -46,27 +44,17 @@ const useFcmToken = () => {
     console.log("Token fetched:", token);
     if (Notification.permission === "denied") {
       setNotificationPermissionStatus("denied");
-      console.info(
-        "%cPush Notifications issue - permission denied",
-        "color: green; background: #c7c7c7; padding: 8px; font-size: 20px"
-      );
       isLoading.current = false;
       return;
     }
 
     if (!token) {
       if (retryLoadToken.current >= 3) {
-        alert("Unable to load token, refresh the browser");
-        console.info(
-          "%cPush Notifications issue - unable to load token after 3 retries",
-          "color: green; background: #c7c7c7; padding: 8px; font-size: 20px"
-        );
         isLoading.current = false;
         return;
       }
 
       retryLoadToken.current += 1;
-      console.error("An error occurred while retrieving token. Retrying...");
       isLoading.current = false;
       await loadToken();
       return;

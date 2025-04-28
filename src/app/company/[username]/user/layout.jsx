@@ -9,7 +9,7 @@ export default function CompanyUserAdminLayout({children}){
         <div>
             <div className="flex flex-1 font-sans">
                 <div className="w-280 2xl:w-350 p-4">
-                    <ProfileHeaderContainer userProfile={username}/>
+                    <ProfileHeaderContainer username={username}/>
                     <main className="flex-1 overflow-auto mt-4">
                         {children}
                     </main>
