@@ -21,20 +21,20 @@ import Image from "next/image";
  */
 export default function UserSmallCard({ userInfo, onClick }) {
   return (
-    <div className="flex gap-2 items-center">
-      <div className="relative w-12 h-12 bg-gray-800 rounded-full border dark:border-[#111]">
-        <Image
+    <div className="flex gap-2 items-start mb-2 flex-wrap xl:flex-nowrap ">
+      <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-foreground rounded-full border dark:border-[#111] flex-shrink-0">
+      <Image
           src={userInfo.image}
           alt="User Avatar"
           fill
-          className="rounded-full"
+          className="rounded-full object-cover"
         />
       </div>
-      <div className="text-left">
-        <div className="flex gap-1">
+      <div className="text-left flex-1 min-w-[140px]">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-x-1">
           <button
             onClick={() => onClick(userInfo.username)}
-            className="hover:underline hover:cursor-pointer truncate text-sm font-[525]"
+            className="hover:underline hover:cursor-pointer truncate text-sm font-[525] max-w-[120px] sm:max-w-[160px]"
           >
             {userInfo.name}
           </button>
@@ -50,9 +50,15 @@ export default function UserSmallCard({ userInfo, onClick }) {
         </div>
       </div>
       <div className="ml-auto">
-        <button className="rounded-2xl flex items-center gap-2 bg-secondary text-background hover:bg-secondary/80 cursor-pointer ease-in-out duration-300 text-xs p-3 font-[550]">
-          <PersonAdd sx={{ fontSize: "1rem" }} /> Connect
+      <div className="relative group w-fit mx-auto sm:mx-0">
+        <button className="rounded-2xl flex items-center justify-center bg-secondary text-background hover:bg-secondary/80 cursor-pointer ease-in-out duration-300 text-xs p-3 sm:p-2">
+          <PersonAdd sx={{ fontSize: "1rem" }} />
         </button>
+        <span className="absolute left-1/2 -translate-x-1/2 mt-1 text-[10px] sm:text-xs text-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+          Connect
+        </span>
+      </div>
+
       </div>
     </div>
   );
