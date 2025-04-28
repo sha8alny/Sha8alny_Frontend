@@ -16,7 +16,6 @@ const BlockedUsersContainer = ({ toggleForm }) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['blockedUsers', searchTerm, currentPage],
     queryFn: () => fetchBlockedUsers(searchTerm, currentPage, pageSize),
-    staleTime: 1000 * 60 * 5,
   });
 
   const router = useRouter();
@@ -36,14 +35,15 @@ const BlockedUsersContainer = ({ toggleForm }) => {
     setCurrentPage(1);
   };
 
-  const handleUnblockClick = (username, name) => {
-    setUserToUnblock({ username: username, name: name });
+  const handleUnblockClick = (user) => {
+    setUserToUnblock({ username: user.username, name: user.name });
     setIsModalOpen(true);
   };
 
   const handleConfirmUnblock = () => {
     if (userToUnblock) {
-      unblockMutation.mutate(userToUnblock.id);
+      console.log("confirmed to block",userToUnblock.username )
+      unblockMutation.mutate(userToUnblock.username);
     }
   };
 
@@ -65,7 +65,7 @@ const BlockedUsersContainer = ({ toggleForm }) => {
   };
 
   const blockedUsers = data?.blockedUsers || [];
-  const totalCount = data?.totalCount || 0;
+  const totalCount = data?.numBlocks || 0;
   const isEmpty = !isLoading && !isError && blockedUsers.length === 0;
 
   return (

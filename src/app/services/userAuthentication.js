@@ -1,4 +1,4 @@
-import { getOrCreateSessionTime, getSessionTime } from "../utils/sessionTime";
+import { resetSessionTime, getSessionTime } from "../utils/sessionTime";
 
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -13,24 +13,24 @@ export const fetchWithAuth = async (url, options = {}) => {
     ...options.headers,
     ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
   };
+  
   // session time logic
   try {
     const urlObj = new URL(url, window.location.origin);
     const pageNum = urlObj.searchParams.get("pageNum");
-  
     
-      const page = parseInt(pageNum, 10);
-      console.log("page", page);
-  
-      let sessionTime =
-        page === 1 || !getSessionTime()
-          ? getOrCreateSessionTime()
-          : getSessionTime();
-  
-      if (sessionTime) {
-        urlObj.searchParams.set("sessionTime", sessionTime);
-        url = urlObj.toString();
-      }
+   
+    let sessionTime;
+    if (pageNum === "1" || !getSessionTime()) {
+      sessionTime = resetSessionTime();
+    } else {
+      sessionTime = getSessionTime();
+    }
+    
+    if (sessionTime) {
+      urlObj.searchParams.set("sessionTime", sessionTime);
+      url = urlObj.toString();
+    }
     
   } catch (err) {
     console.error("Invalid URL passed to fetchWithAuth:", url);

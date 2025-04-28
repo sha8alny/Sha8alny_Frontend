@@ -44,7 +44,38 @@ function MyJobsPresentation({
   loadMoreJobs,
   isLoadingMore,
   errorMessage,
+  isLoading = false,
+  isError = false,
+  error = null,
 }) {
+  if (isLoading) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-64 bg-foreground rounded-xl shadow-lg">
+        <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">Loading saved jobs...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-8 bg-foreground rounded-xl text-center mx-auto">
+      <ErrorOutlineIcon sx={{ fontSize: "3rem" }} className=" text-red-500 mx-auto mb-4" />
+      <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
+        Unable to load saved jobs
+      </p>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        {error?.message || "Something went wrong. Please try again."}
+      </p>
+      <Button
+        variant="default"
+        onClick={handleRetry}
+        className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"  >
+        Try Again
+      </Button>
+      </div>
+    );
+  }
   // Filter jobs based on tab
   const filteredJobs = (tabValue) => {
     if (!Array.isArray(jobs) || jobs.length === 0) return [];
@@ -70,52 +101,57 @@ function MyJobsPresentation({
       </div>
 
       {/* Show error message if needed */}
-      {errorMessage && (
-        <div className="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
-          {errorMessage} Some job categories may be incomplete.
-        </div>
-      )}
-
-      <Tabs defaultValue="all" className="w-full ">
-        <div className="flex flex-col justify-between items-center mb-6 md:flex-row gap-4">
-          <TabsList className="border-b order-last md:order-first bg-hover">
-            <TabsTrigger
-              value="all"
-              className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
-            >
-              All ({countByStatus.all})
-            </TabsTrigger>
-            <TabsTrigger
-              value="accepted"
-              className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
-            >
-              Accepted ({countByStatus.accepted})
-            </TabsTrigger>
-            <TabsTrigger
-              value="rejected"
-              className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
-            >
-              Rejected ({countByStatus.rejected})
-            </TabsTrigger>
-            <TabsTrigger
-              value="pending"
-              className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
-            >
-              Pending ({countByStatus.pending})
-            </TabsTrigger>
-          </TabsList>
-          <div className="flex space-x-2 order-first md:order-last">
-            <button
-              className="flex items-center px-4 py-2 bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200 rounded-md "
-              onClick={onMoreJobsClick}
-            >
-              <AddIcon className="h-4 w-4 mr-2" />
-              Apply to Jobs
-            </button>
+        {errorMessage && (
+          <div className="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
+            {errorMessage} Some job categories may be incomplete.
           </div>
-        </div>
+        )}
 
-        {/* All Applications Tab */}
+        <Tabs defaultValue="all" className="w-full ">
+          <div className="flex flex-col justify-between items-center mb-6 md:flex-row gap-4">
+            <TabsList className="border-b order-last md:order-first bg-hover">
+          <TabsTrigger
+            value="all"
+            className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
+            data-testid="tab-all"
+          >
+            All ({countByStatus.all})
+          </TabsTrigger>
+          <TabsTrigger
+            value="accepted"
+            className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
+            data-testid="tab-accepted"
+          >
+            Accepted ({countByStatus.accepted})
+          </TabsTrigger>
+          <TabsTrigger
+            value="rejected"
+            className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
+            data-testid="tab-rejected"
+          >
+            Rejected ({countByStatus.rejected})
+          </TabsTrigger>
+          <TabsTrigger
+            value="pending"
+            className="px-4 py-2 text-black data-[state=active]:text-text dark:data-[state=active]:text-white dark:text-gray-500"
+            data-testid="tab-pending"
+          >
+            Pending ({countByStatus.pending})
+          </TabsTrigger>
+            </TabsList>
+            <div className="flex space-x-2 order-first md:order-last">
+          <button
+            className="flex items-center px-4 py-2 bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200 rounded-md "
+            onClick={onMoreJobsClick}
+            data-testid="apply-to-jobs-btn"
+          >
+            <AddIcon className="h-4 w-4 mr-2" />
+            Apply to Jobs
+          </button>
+            </div>
+          </div>
+
+          {/* All Applications Tab */}
         <TabsContent value="all" className="space-y-4 ">
           {filteredJobs("all").length > 0 ? (
             <>
@@ -132,6 +168,7 @@ function MyJobsPresentation({
                     onClick={() => loadMoreJobs()}
                     disabled={isLoadingMore}
                     className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-800"
+                    data-testid="load-more-jobs-btn"
                   >
                     {isLoadingMore ? "Loading more..." : "Load more jobs"}
                   </button>
@@ -297,6 +334,7 @@ const employerFeedback = (job) => {
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the row click event
             }}
+            data-testid="feedback-btn"
           >
             <FeedbackIcon sx={{ fontSize: "1.75rem" }} />
           </button>
@@ -315,6 +353,7 @@ const employerFeedback = (job) => {
       className="p-1 text-gray-300 cursor-not-allowed disabled:dark:text-background/80"
       disabled
       title="No feedback available"
+      data-testid="feedback-btn"
     >
       <FeedbackIcon sx={{ fontSize: "1.75rem" }} />
     </button>

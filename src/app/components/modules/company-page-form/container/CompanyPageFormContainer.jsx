@@ -1,18 +1,22 @@
-/**
- * @namespace company-page-form
- * @module company-page-form
- */
 "use client";
 import { useState } from "react";
 import CreateCompanySectionContainer from "./CreateCompanySectionContainer";
 import CompanyPreviewSectionContainer from "./CompanyPreviewSectionContainer";
 
 /**
- * @namespace company-page-form
- * @module company-page-form
+ * @namespace CompanyPageFormComponents
  */
 
-function CompanyPageFormContainer() {
+/**
+ * CompanyPageFormContainer is the main container for the company creation form.
+ * It consists of two sections: a form section to input company details and 
+ * a preview section to display the company preview as it is being filled out.
+ * The form includes fields for company name, industry, tagline, and file (for logo/cover).
+ * @component
+ * @returns {JSX.Element} The rendered CompanyPageFormContainer component containing the form and preview sections.
+ */
+
+export default function CompanyPageFormContainer() {
   const [companyName, setCompanyName] = useState("");
   const [companyIndustry, setCompanyIndustry] = useState("");
   const [companyTagline, setCompanyTagline] = useState("");
@@ -31,5 +35,3 @@ function CompanyPageFormContainer() {
     </div>
   );
 }
-
-export default CompanyPageFormContainer;

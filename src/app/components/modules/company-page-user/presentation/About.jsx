@@ -1,6 +1,11 @@
 import Container from "@/app/components/layout/Container";
 
 /**
+ * @namespace CompanyProfile
+ * @description Namespace for components and types related to the company profile section.
+ */
+
+/**
  * @typedef {Object} Company
  * @property {string} [description] - A short description or overview of the company.
  * @property {string} [URL] - The company's website URL.
@@ -12,10 +17,15 @@ import Container from "@/app/components/layout/Container";
  */
 
 /**
- * Displays detailed information about a company in a styled container.
+ * About component - Displays detailed information about a company in a styled container.
  *
- * @param {{ company: Company }} props - The props object containing company information.
- * @returns {JSX.Element} The rendered component.
+ * @memberof CompanyProfile
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Company} props.company - The company object containing various details.
+ * @param {Function} props.goToCompanyPage - Function to handle navigation to the company's website.
+ *
+ * @returns {JSX.Element} A rendered container showing the company's details.
  */
 
 export default function About({company,goToCompanyPage}){

@@ -17,6 +17,7 @@ export const fetchJobListings = async ({
   filters = {},
   sortBy = null,
   itemsPerPage = 10,
+  company
 }) => {
   const url = new URL(`${apiURL}/jobs/search/${pageParam}/${itemsPerPage}`);
   
@@ -82,6 +83,7 @@ export const fetchFilterOptions = async () => {
       company: data.companies || [],
       employmentType: ["Full-time", "Part-time", "Internship"], // Default options
       workLocation: ["Remote", "Onsite", "Hybrid"], // Default options
+      maxSalary: data.maxSalary || 100000, // Default max salary
     };
   } catch (error) {
     console.error('Error fetching filter options:', error);
@@ -181,8 +183,6 @@ export const fetchInProgressJobs = async ({ pageParam = 1 }) => {
 export const fetchSavedJobs = async ({ pageParam = 1 }) => {
   const itemsPerPage = 5;
   const url = new URL(`${apiURL}/jobs/saved/${pageParam}/${itemsPerPage}`);
-
-  //console.log(url.toString());
   const response = await fetchWithAuth(url.toString());
   if (response.status === 204) {
     return { data: [], nextPage: null };
@@ -211,9 +211,6 @@ export const fetchJobDetails = async (id) => {
 
 export const submitJobApplication = async (jobId, data, resume) => {
   const formData = new FormData();
-  // formData.append("name", data.name);
-  // formData.append("email", data.email);
-  // formData.append("jobId", jobId);
   formData.append("phoneNumber", data.phone);
   if (data.coverLetter) {
     formData.append("coverLetter", data.coverLetter);

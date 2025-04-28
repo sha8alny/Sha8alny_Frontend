@@ -5,25 +5,24 @@ import { getCompany } from "@/app/services/companyManagement";
 import Dashboard from "../presentation/Dashboard";
 
 /**
- * DashboardContainer is a container component responsible for:
- * - Fetching company data based on the provided `username`.
- * - Handling navigation to the posts page.
- * - Passing required props to the `Dashboard` presentation component.
- *
+ * @namespace DashboardContainerComponents
+ */
+/**
+ * DashboardContainer component is responsible for fetching the company data using the `username` prop
+ * and passing the data to the `Dashboard` component. It also provides functionality for navigating
+ * to the posts page.
  * @component
- * @param {Object} props - Component props
- * @param {string} props.username - The username associated with the company
- * @returns {JSX.Element} The rendered Dashboard component with fetched data
+ * @param {Object} props - The props for the DashboardContainer component.
+ * @param {string} props.username - The username of the company whose dashboard is to be displayed.
+ * 
+ * @returns {JSX.Element} The rendered DashboardContainer component that includes company data
+ * and a button to navigate to the posts page.
  */
 
 export default function DashboardContainer({username}){
     const [company, setCompany] = useState(null);
     const [error, setError] = useState(null);
     const router = useRouter();
-
-    /**
-     * Fetch company data when the `username` changes.
-     */
 
     useEffect(() => {
         const fetchCompany = async () => {
@@ -38,9 +37,7 @@ export default function DashboardContainer({username}){
         if (username) fetchCompany();
     }, [username]);
 
-    /**
-     * Redirects the user to the posts page for the company admin.
-     */
+
     const goToPostsPage=()=>{
         router.push(`/company/${username}/admin/posts`);
     }

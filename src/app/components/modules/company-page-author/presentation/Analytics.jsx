@@ -2,22 +2,24 @@ import { Card, CardContent } from "@/app/components/ui/Card"
 import { ArrowUp, BarChart2, MessageSquare, Repeat, Eye, TrendingUp } from "lucide-react"
 
 /**
- * Analytics component displays a set of metric cards representing various analytics data.
- * Each metric card shows the title, current value, percentage change, and an icon.
- *
- * @param {Object} props - The props for the component.
- * @param {Object} props.analytics - The analytics data to be displayed.
- * @param {number} props.analytics.numShares - The number of shares.
- * @param {number} props.analytics.sharesChange - The percentage change in shares.
- * @param {number} props.analytics.numComments - The number of comments.
- * @param {number} props.analytics.commentsChange - The percentage change in comments.
- * @param {number} props.analytics.numReactions - The number of reactions.
- * @param {number} props.analytics.reactionsChange - The percentage change in reactions.
- * @param {number} props.analytics.numImpressions - The number of impressions.
- * @param {number} props.analytics.impressionsChange - The percentage change in impressions.
- * @param {number} props.analytics.numViews - The number of page views.
- * @param {number} props.analytics.viewsChange - The percentage change in page views.
- *
+ * @namespace AnalyticsComponents
+ */
+/**
+ * Analytics component that displays various metrics for the company. 
+ * It renders multiple MetricCard components, each showing a specific metric with its value and percentage change.
+ * @component
+ * @param {Object} analytics - The analytics data object containing the metrics for the company.
+ * @param {number} analytics.numShares - The number of shares for the company.
+ * @param {number} analytics.sharesChange - The percentage change of shares.
+ * @param {number} analytics.numComments - The number of comments for the company.
+ * @param {number} analytics.commentsChange - The percentage change of comments.
+ * @param {number} analytics.numReactions - The number of reactions for the company.
+ * @param {number} analytics.reactionsChange - The percentage change of reactions.
+ * @param {number} analytics.numImpressions - The number of impressions for the company.
+ * @param {number} analytics.impressionsChange - The percentage change of impressions.
+ * @param {number} analytics.numViews - The number of page views for the company.
+ * @param {number} analytics.viewsChange - The percentage change of page views.
+ * 
  * @returns {JSX.Element} The rendered Analytics component.
  */
 

@@ -18,7 +18,7 @@ import FileUpload from "../presentation/FileUpload";
  * @returns {JSX.Element} The rendered FileUploadContainer component
  */
 
-function FileUploadContainer({file, setFile}){
+export default function FileUploadContainer({file, setFile}){
     const [preview, setPreview]= useState(null);
 
     useEffect(() => {
@@ -46,5 +46,3 @@ function FileUploadContainer({file, setFile}){
         </div>
     );
 }
-
-export default FileUploadContainer;

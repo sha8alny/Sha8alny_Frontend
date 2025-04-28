@@ -15,15 +15,21 @@ import Container from "@/app/components/layout/Container";
  * @param {Function} props.onClick - Click handler function for user cards
  * @returns {JSX.Element} A container with a title and a list of user cards
  */
-export default function SuggestedPages({ pages, title, onClick }){
+export default function SuggestedPages({ pages, title, onClick, handleFollowClick, followStatus}){
     return (
       <Container className="border border-[#111] flex flex-col gap-2 shadow-xs p-4">
         <h2 className="text-lg font-semibold mb-4 flex items-center">
           {title}
         </h2>
-        {pages.map((user, index) => (
-          <PageSmallCard key={index} userInfo={user} onClick={onClick} />
-        ))}
+        {Array.isArray(pages) && pages.length > 0 ? (
+          pages.map((company, index) => (
+            <PageSmallCard key={company.username || index} companyInfo={company} onClick={onClick} handleFollowClick={() => handleFollowClick(company.companyUsername)}
+            followStatus={followStatus[company.companyUsername]} />
+          ))
+        ) : (
+          <p className="text-gray-500">No suggested pages available.</p>
+        )}
+
       </Container>
     );
   };

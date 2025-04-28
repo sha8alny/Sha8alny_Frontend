@@ -1,5 +1,6 @@
+import SafeImage from "@/app/components/ui/SafeImage";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import Image from "next/image";
+
 /**
  * @namespace jobs
  * @module jobs
@@ -19,10 +20,9 @@ import Image from "next/image";
  * @returns {JSX.Element} The rendered JobHeader component.
  */
 function JobHeader({ job, isLoading }) {
-  const defaultLogo = "https://picsum.photos/96/96";
   const companyName = job?.company?.name || "";
   const companyLocation = job?.company?.location || "";
-  const companyLogo = job?.company?.logo || defaultLogo;
+  const companyLogo = job?.company?.logo;
   const jobTitle = job?.title || "";
 
   return (
@@ -33,13 +33,12 @@ function JobHeader({ job, isLoading }) {
         </h1>
         {!isLoading && (
           <div className="w-24 h-24 relative flex items-center justify-center border border-blue-300 mr-4 rounded-md">
-            <Image
+            <SafeImage
               src={companyLogo}
-              alt={`${companyName} logo`}
               width={96}
               height={96}
-              className="object-contain"
-            />
+              alt={`${companyName} logo`}
+              className="w-full h-full object-cover rounded-md" />
           </div>
         )}
       </div>

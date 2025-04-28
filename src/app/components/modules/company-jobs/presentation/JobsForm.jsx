@@ -5,6 +5,7 @@ import { Button } from "@/app/components/ui/Button";
 import { ArrowForwardIos, ArrowBackIos } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -71,6 +72,11 @@ const JobsForm = ({
     isDeleting,
     setOpenDeleteDialogForId,
   openDeleteDialogForId,
+  isError,
+  onShowDeletedJobs,
+  showDeletedJobs,
+  onRestoreJob,
+  isRestoring,
 }) => {
   return (
     <div className="flex-grow items-center ">
@@ -90,22 +96,85 @@ const JobsForm = ({
         </div>
       </section>
       <section className="flex-grow p-10 bg-foreground rounded-lg shadow-xl w-full mt-5 min-h-138 ">
+        {!showDeletedJobs && !isLoading ? (
+        <div className="flex justify-between">
         <h1 className="text-3xl justify-center text-semibold text-secondary">
           Posted Jobs
         </h1>
+        <div className="order-last">
+          <Button
+            data-testid="PostNewJob"
+            onClick={()=>onShowDeletedJobs(true)}
+            className=" text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+          >
+            Deleted Jobs
+          </Button>
+          </div>
+        </div>
+        ):(
+          <div className="flex justify-between">
+          <h1 className="text-3xl justify-center text-semibold text-secondary">
+            Deleted Jobs
+          </h1>
+          <div className="order-last">
+            <Button
+              data-testid="postedJobs"
+              onClick={()=>onShowDeletedJobs(false)}
+              className=" text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+            >
+              Posted Jobs
+            </Button>
+            </div>
+          </div>
+        )}
         <hr className="border-secondary  mt-4" />
+        {isError && (
+          <div className="w-full flex flex-col justify-center items-center gap-2 h-full mt-50">
+            <p className="text-red-500 text-lg">
+              An error occurred while retieving the jobs. Please try again later.
+            </p>
+          </div>
+        )}
         {isLoading ? (
           <div className="w-full flex flex-col justify-center items-center gap-2 h-full mt-50">
             <div className="size-12 border-2 border-t-transparent rounded-full animate-spin border-secondary" />
             <span className="text-primary">Loading...</span>{" "}
           </div>
         ) : jobs.length === 0 ? (
-          <p className="text-text text-xl text-semibold">No jobs posted yet</p>
-        ) : (
+          <div className="w-full flex flex-col justify-center items-center gap-2 h-full mt-25 mb-25">
+          <img
+            src="/man_on_chair_light.svg"
+            alt="No connections"
+            className="w-1/2 h-1/2 block dark:hidden"
+          />
+
+          <img
+            src="/man_on_chair.svg"
+            alt="No connections"
+            className="w-1/2 h-1/2 hidden dark:block"
+          />         
+          <span className="text-primary">
+          {showDeletedJobs ? "No Deleted Jobs Yet" : "No Posted Jobs Yet"}
+          </span>{" "}
+          {showDeletedJobs ? (
+            <p className="text-text text-lg mt-4">
+              Deleted jobs will be shown here.
+            </p>
+          ) : (
+            <Button
+              data-testid="firstJob-button"
+              className="text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 mt-4"
+              onClick={onShowPostJobForm}
+            >
+              Post new job
+            </Button>
+          )}
+           </div>
+          ) : (
           jobs.map((job, index) => (
             <form
               key={job._id || index}
-              className=" bg-background flex-grow p-10 w-full rounded-lg mt-8  "
+              className=" bg-background flex-grow p-10 w-full rounded-lg mt-8 min-w-0 "
             >
               <div>
                 <div className="flex flex-col md:flex-row justify-between mb-6">
@@ -126,10 +195,11 @@ const JobsForm = ({
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
                   <div>
-                    <p className="text-text">{job.location}</p>
-                    <p className="text-text">{job.industry}</p>
+                  <p className="text-text break-all max-w-[16rem] w-full overflow-hidden text-ellipsis">
+                  {job.location}</p>
+                    <p className="text-text break-words whitespace-normal max-w-xs sm:max-w-xs xl:max-w-md w-full">{job.industry}</p>
                     <p className="text-secondary">{job.employmentType}</p>
-                    <p className="text-secondary font-bold">${job.salary}</p>
+                    <p className="text-secondary font-bold break-words whitespace-normal">${job.salary}</p>
                   </div>
                   <div className="hidden lg:flex relative  items-center justify-center h-20">
                     <div className="w-[4px] h-17 bg-text"></div>
@@ -140,7 +210,7 @@ const JobsForm = ({
                     <p className="text-text">{job.experience}</p>
                     <p className="text-secondary">{job.workLocation}</p>
                     <p className="text-secondary font-bold">
-                      {new Date(job.createdAt).toLocaleDateString()}
+                      {new Date(showDeletedJobs? job.time: job.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -152,11 +222,13 @@ const JobsForm = ({
                       {" "}
                       views:
                       <p className="text-text text-semibold text-sm text-center font-bold">
-                        {job.views}{" "}
+                        {job.numViews}{" "}
                       </p>
                     </span>
                   </div>
+                  
                   <div>
+                  {!showDeletedJobs && (
                     <AlertDialog open={openDialogForJobId === job._id}>
                       <AlertDialogTrigger asChild>
                         <div
@@ -391,18 +463,25 @@ const JobsForm = ({
                         </form>
                       </AlertDialogContent>
                     </AlertDialog>
+                  )}
                   </div>
                   <div>
-                    <AlertDialog open={openDeleteDialogForId === job._id}>
+                    <AlertDialog open={openDeleteDialogForId ===(showDeletedJobs ? job.jobId : job._id)}>
                       <AlertDialogTrigger asChild>
                         <div
                           data-testid="DeleteJob"
                           className="relative flex flex-col items-center group cursor-pointer"
-                            onClick={() => setOpenDeleteDialogForId(job._id)}
-                        >
+                            onClick={() => setOpenDeleteDialogForId(showDeletedJobs ? job.jobId : job._id)}
+                        > 
+                          {showDeletedJobs ? (
+                            <RestoreFromTrashIcon className="text-secondary" />
+                          ) : (
                           <DeleteIcon className="text-secondary" />
+                          )}
                           <span className="absolute top-8 text-sm text-secondary bg-none p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            Delete Job
+                            {showDeletedJobs
+                              ? "Restore Job"
+                              : "Delete Job"}
                           </span>
                         </div>
                       </AlertDialogTrigger>
@@ -413,8 +492,9 @@ const JobsForm = ({
                             Are you absolutely sure?
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete this job posting.
+                            {showDeletedJobs
+                              ? "This job will be restored and will be visible to applicants again."
+                              : "This job will be currently deleted but not permanently removed. You can restore it later if you wish."}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -422,6 +502,16 @@ const JobsForm = ({
                             data-testid="cancel-delete">
                             Cancel
                           </AlertDialogCancel>
+                          {showDeletedJobs ? (
+                            <button
+                              data-testid="restore-job"
+                              onClick={() => onRestoreJob(job.jobId)}
+                              disabled={isRestoring}
+                              className="bg-secondary rounded-2xl text-background hover:bg-secondary/80 text-sm font-semibold p-2"
+                            >
+                              {isRestoring ? "Restoring..." : "Restore Job"}
+                            </button>
+                          ) : (
                           <button
                             data-testid="confirm-delete"
                             onClick={() => onDeleteJob(job._id)}
@@ -431,6 +521,7 @@ const JobsForm = ({
                             {isDeleting ? "Deleting..." : "Confirm Delete"}
                             
                           </button>
+                          )}
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -441,6 +532,7 @@ const JobsForm = ({
           ))
         )}
       </section>
+      {jobs.length > 0 && (
       <div className="flex justify-between items-center mt-4">
         <Button
           data-testid="prev-page"
@@ -466,6 +558,7 @@ const JobsForm = ({
           <ArrowForwardIos />
         </Button>
       </div>
+      )}
     </div>
   );
 };

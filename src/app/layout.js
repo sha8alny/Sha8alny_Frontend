@@ -6,7 +6,7 @@ import StripeProvider from "./providers/StripeProvider";
 import Navbar from "./components/layout/NavBar";
 import {AuthProvider} from "./context/AuthContext";
 import DynamicFavicon from "./utils/DynamicFavicon";
-
+import NotificationProvider from "./providers/NotificationProvider";
 
 export const metadata = {
   title: "Shaغalny",
@@ -21,6 +21,7 @@ export default function RootLayout({ children }) {
         <ReactQueryProvider>
           <StripeProvider>
             <ThemeProvider>
+              <NotificationProvider>
               <DynamicFavicon />
               <div className="sticky top-0 z-50">
                 <header>
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
                 </header>
               </div>
               <ToastProvider>{children}</ToastProvider>
+              </NotificationProvider>
             </ThemeProvider>
           </StripeProvider>
         </ReactQueryProvider>

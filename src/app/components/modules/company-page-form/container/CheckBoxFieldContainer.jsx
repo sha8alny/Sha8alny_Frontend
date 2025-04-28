@@ -14,8 +14,7 @@ import CheckBoxField from "../presentation/CheckBoxField";
  * @returns {JSX.Element} The rendered CheckBoxFieldContainer component
  */
 
-
-function CheckBoxFieldContainer({errors, setErrors,isChecked, onChange}) {
+export default  function CheckBoxFieldContainer({errors, setErrors,isChecked, onChange}) {
   return (
     <div>
       <CheckBoxField onChange={onChange} checked={isChecked}/>
@@ -24,4 +23,3 @@ function CheckBoxFieldContainer({errors, setErrors,isChecked, onChange}) {
   );
 
 }
-export default CheckBoxFieldContainer;

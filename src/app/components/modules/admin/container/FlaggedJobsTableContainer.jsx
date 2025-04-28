@@ -28,10 +28,16 @@ export function FlaggedJobsTableContainer() {
   const queryClient = useQueryClient();
   const showToast = useToast();
   
-  const { data:reports, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["jobReports", page, sortOrder,selectedStatuses],
+  const { data: reports, isLoading, isError, isFetching } = useQuery({
+    queryKey: ["jobReports", page, sortOrder, selectedStatuses],
     queryFn: () =>
-      fetchReports({ pageParam: page , jobs:true,statuses:selectedStatuses, sortByTime:sortOrder }),
+      fetchReports({ 
+        pageParam: page,
+        pageSize: 10,
+        type: ["Job"], 
+        status: selectedStatuses.map(status => status.toLowerCase()),
+        sortByTime: sortOrder
+      }),
     keepPreviousData: true,
   });
 
@@ -57,8 +63,6 @@ export function FlaggedJobsTableContainer() {
       queryClient.invalidateQueries(["jobReports"]);
     },
   });
-
- 
 
   const handleViewDetails = (report) => {
     setSelectedReport(report);
@@ -104,8 +108,8 @@ export function FlaggedJobsTableContainer() {
 
   return (
     <FlaggedJobsTablePresentation
-    reports={reports?.data ? reports: []}  
-    isDialogOpen={isDialogOpen}
+      reports={reports || { data: [] }}
+      isDialogOpen={isDialogOpen}
       selectedReport={selectedReport}
       handleViewDetails={handleViewDetails}
       handleCloseDialog={handleCloseDialog}
@@ -123,7 +127,6 @@ export function FlaggedJobsTableContainer() {
       getStatusColor={getStatusColor}
       sortOrder={sortOrder} 
       setSortOrder={setSortOrder}
-  
     />
   );
 }

@@ -3,29 +3,31 @@ import { fetchWithAuth } from "@/app/services/userAuthentication";
 
 export const fetchReports = async ({
   pageParam = 1,
-  users = false,
-  jobs = false,
-  comments = false,
-  posts = false,
+  pageSize = 10,
+  type = [],
+  reason = [],
+  status = [],
   sortByTime,
-  statuses = [],
-  TypeFilter = [],
 }) => {
-  const itemsPerPage = 10;
-  const url = new URL(`http://localhost:5000/admin/reports/${pageParam}`);
+  const url = new URL(`${apiURL}/admin/reports/`);
 
-  url.searchParams.append("users", users.toString());
-  url.searchParams.append("jobs", jobs.toString());
-  url.searchParams.append("comments", comments.toString());
-  url.searchParams.append("posts", posts.toString());
+  url.searchParams.append("page", pageParam.toString());
+  url.searchParams.append("pageSize", pageSize.toString());
 
-  statuses.forEach((status) => url.searchParams.append("statuses", status));
-  console.log(sortByTime);
+  if (type.length > 0) {
+    url.searchParams.append("type", type.join(','));
+  }
+
+  if (reason.length > 0) {
+    url.searchParams.append("reason", reason.join(','));
+  }
+
+  if (status.length > 0) {
+    url.searchParams.append("status", status.join(','));
+  }
+
   if (sortByTime) {
     url.searchParams.append("sortByTime", sortByTime);
-  }
-  if (TypeFilter.length > 0) {
-    TypeFilter.forEach((type) => url.searchParams.append("TypeFilter", type));
   }
 
   const response = await fetchWithAuth(url.toString(), {
@@ -39,7 +41,7 @@ export const fetchReports = async ({
   const data = await response.json();
   return {
     data,
-    nextPage: data.length === itemsPerPage ? pageParam + 1 : null,
+    nextPage: data.length === pageSize ? pageParam + 1 : null,
     prevPage: pageParam > 1 ? pageParam - 1 : null,
   };
 };
@@ -78,7 +80,7 @@ export const deleteUser = async (userId) => {
 };
 
 export const updateStatusReport = async (reportId, status) => {
-  const response = await fetchWithAuth(`${apiURL}/admin/reports/`, {
+  const response = await fetchWithAuth(`${apiURL}/admin/reports/${reportId}`, {
     method: "PATCH",
 
     body: JSON.stringify({ reportId, status }),
