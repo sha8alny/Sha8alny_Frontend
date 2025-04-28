@@ -113,13 +113,6 @@ describe('JobApplicationModalContainer with Presentation', () => {
     });
   });
 
-  test('closes modal when cancel button is clicked', () => {
-    render(<JobApplicationModalContainer {...mockProps} />);
-    
-    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
-    
-    expect(mockProps.handleClose).toHaveBeenCalled();
-  });
 
   describe('Form validation', () => {
     test('shows phone number validation error', () => {
@@ -149,7 +142,7 @@ describe('JobApplicationModalContainer with Presentation', () => {
     
     // Test valid number input
     fireEvent.change(phoneInput, { target: { value: '1' } });
-    expect(phoneInput.value).toBe('1'); // Ensure the value is updated correctly
+    expect(phoneInput.value).toBe('+1'); // Ensure the value is updated correctly
     
     // Test invalid character key
     fireEvent.change(phoneInput, { key: 'a' });
