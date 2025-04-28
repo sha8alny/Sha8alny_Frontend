@@ -71,12 +71,23 @@ export default function SkillContainer({ skill }) {
       data: { username: username, skill: skillName },
     });
   };
+
+  const unendorseSkill = (skillName, username = user) => {
+    useUpdate.mutate({
+      api: "profile/delete-endorsement",
+      method: "DELETE",
+      data: { username: username, skill: skillName },
+    });
+  };
+
   return (
     <SkillCard
       skill={skill}
       level={level}
       isMyProfile={isMyProfile}
       handleEndorsement={handleEndorsement}
+      handleUnendorsement={unendorseSkill}
+      isEndorsing={useUpdate.isPending}
     />
   );
 }

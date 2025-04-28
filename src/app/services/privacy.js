@@ -1,7 +1,5 @@
 import { fetchWithAuth } from "./userAuthentication";
-
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
-
 
 
 export const fetchBlockedUsers = async (query = "", currentPage, pageSize = 10) => {
@@ -90,3 +88,19 @@ export const report = async (
   }
   return await response.json();
 };
+
+
+export const blockUser = async (username, isCompany = false) => {
+  let url = `${apiURL}/blocks/${username}`;
+  if (isCompany) {
+    url += `?isCompany=${isCompany}`;
+  }
+
+  const response = await fetchWithAuth(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.status;
+}

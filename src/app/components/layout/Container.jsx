@@ -11,9 +11,12 @@
  * @param {React.ReactNode} props.children - The content to be rendered inside the container
  * @returns {JSX.Element} A styled div container with the provided children
  */
-function Container({ className, children }) {
+function Container({ className, children, onClick }) {
   return (
-    <div className={`bg-foreground text-primary rounded-2xl ${className}`}>
+    <div
+      onClick={onClick}
+      className={`bg-foreground text-primary rounded-2xl ${className}`}
+    >
       {children}
     </div>
   );

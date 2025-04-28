@@ -18,7 +18,7 @@ import { Reactions } from "@/app/utils/Reactions";
 import { followUser } from "@/app/services/connectionManagement";
 import { report } from "@/app/services/privacy";
 
-export default function PostContainer({ post }) {
+export default function PostContainer({ post, singlePost = false }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(post?.reaction || false);
   const [isSaved, setIsSaved] = useState(post?.isSaved || false);
@@ -161,6 +161,9 @@ export default function PostContainer({ post }) {
           ),
         };
       });
+      if (singlePost) {
+        router.push("/");
+      }
     },
   });
 
@@ -316,8 +319,53 @@ export default function PostContainer({ post }) {
     return documentExtensions.includes(extension);
   };
 
+  const extractLinks = (text) => {
+    if (!text) return { element: null };
+
+    const urlRegex =
+      /(https?:\/\/[^\s]+)|(\b(?:www\.)?[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?(?:\/[^\s]*)?)/g;
+
+    let lastIndex = 0;
+    const elements = [];
+    let match;
+
+    while ((match = urlRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        elements.push(text.substring(lastIndex, match.index));
+      }
+
+      const url = match[0];
+      const fullUrl = url.startsWith("http") ? url : `https://${url}`;
+
+      elements.push(
+        <a
+          key={match.index}
+          href={fullUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-secondary hover:underline break-all"
+        >
+          {url}
+        </a>
+      );
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text after the last link
+    if (lastIndex < text.length) {
+      elements.push(text.substring(lastIndex));
+    }
+
+    return {
+      element: elements.length > 0 ? elements : text,
+      hasLinks: elements.length > 1,
+    };
+  };
+
   const videoCheck = isVideo(post?.media[0]) || post?.mediaType === "video";
-  const documentCheck = isDocument(post?.media[0]) || post?.mediaType === "document";
+  const documentCheck =
+    isDocument(post?.media[0]) || post?.mediaType === "document";
 
   return (
     <PostPresentation
@@ -335,6 +383,7 @@ export default function PostContainer({ post }) {
       post={{
         ...post,
         age: determineAge(post?.time),
+        textElement: extractLinks(post?.text).element,
         relation: convertRelation(post?.connectionDegree),
         numReacts: reactionCount,
         numShares: numReposts,
@@ -371,6 +420,7 @@ export default function PostContainer({ post }) {
       reportType={reportType}
       setReportType={setReportType}
       reportState={reportState}
+      isSinglePost={singlePost}
     />
   );
 }
@@ -387,5 +437,5 @@ export const PostContent = ({ postId }) => {
     staleTime: Infinity,
   });
   if (isLoading || isError) return <PostSkeleton />;
-  return <PostContainer post={post} />;
+  return <PostContainer post={post} singlePost={true} />;
 };

@@ -27,7 +27,6 @@ function updateAncestorCommentCounts(
   let nextParentId = null;
 
   if (!currentParentId) {
-    
     const updatePostCommentCount = (oldData) => {
       if (!oldData) return oldData;
       if (oldData.pages) {
@@ -66,7 +65,7 @@ function updateAncestorCommentCounts(
 
     queryClient.setQueryData(["posts"], updatePostCommentCount);
     queryClient.setQueryData(["post", postId], updatePostCommentCount);
-    
+
     return;
   }
 
@@ -104,23 +103,20 @@ function updateAncestorCommentCounts(
     return found ? { ...oldData, pages: newPages } : oldData;
   };
 
-  
   queryClient.setQueryData(["comments", postId], (old) =>
     findAndUpdateComment(old, ["comments", postId])
   );
 
   if (!parentFound) {
-    
     const replyQueryKeys = queryClient.getQueryCache().findAll({
       queryKey: ["commentReplies", postId],
       exact: false,
     });
 
-
     for (const query of replyQueryKeys) {
       const queryKey = query.queryKey;
       if (parentFound) break;
-      
+
       queryClient.setQueryData(queryKey, (old) =>
         findAndUpdateComment(old, queryKey)
       );
@@ -139,6 +135,7 @@ export default function CommentContainer({
   comment,
   postUsername,
   nestCount = 0,
+  isSingleComment = false,
 }) {
   const [isLiked, setIsLiked] = useState(comment?.reaction || false);
   const [replyText, setReplyText] = useState("");
@@ -421,7 +418,10 @@ export default function CommentContainer({
           context.commentToDelete?.commentId,
         ],
       });
-      
+      if (isSingleComment) {
+        router.push("/");
+        window.location.reload();
+      }
     },
     onError: (err, variables, context) => {
       console.error("Error deleting comment:", err);

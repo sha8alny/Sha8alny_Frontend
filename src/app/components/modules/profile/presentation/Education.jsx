@@ -227,7 +227,7 @@ export default function Education({
           {education?.length > 3 && (
             <button
               onClick={toggleAllEducation}
-              className="w-full text-center hover:cursor-pointer p-2 duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"
+              className="w-full text-center hover:cursor-pointer p-2 duration-200 ease-in-out hover:bg-primary/20 rounded-md font-[500]"
               data-testid="toggle-education-button" // Added data-testid
             >
               {allEducation ? (

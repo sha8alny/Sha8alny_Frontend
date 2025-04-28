@@ -1,10 +1,19 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import Dialog from "@/app/components/ui/DialogMod";
 import { fetchUserConnections } from "@/app/services/userProfile";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
-import ConnectionsPresentation from "../presentation/ConnectionsPresentation";
+import ConnectionsPresentation, {
+  ConnectionsCard,
+} from "../presentation/ConnectionsPresentation";
+import { useState } from "react";
+import { blockUser } from "@/app/services/privacy";
+import { removeConnection } from "@/app/services/connectionManagement";
 
 export default function Connections({ userInfo }) {
   const observerTarget = useRef(null);
@@ -33,8 +42,8 @@ export default function Connections({ userInfo }) {
     initialPageParam: 1,
   });
 
-  const navigateTo = (username) => {
-    router.push(`/u/${username}`);
+  const navigateTo = (path) => {
+    router.push(path);
   };
 
   useEffect(() => {
@@ -57,159 +66,6 @@ export default function Connections({ userInfo }) {
 
   const connections = data?.pages.flatMap((page) => page) || [];
 
-  const mockData = [
-    {
-      name: "John Doe",
-      headline: "Software Engineer",
-      _id: "1",
-      connectedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Jane Smith",
-      headline: "Product Manager",
-      _id: "2",
-      connectedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Alice Johnson",
-      headline: "UX Designer",
-      _id: "3",
-      connectedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Bob Brown",
-      headline: "Data Scientist",
-      _id: "4",
-      connectedAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Charlie Davis",
-      headline: "DevOps Engineer",
-      _id: "5",
-      connectedAt: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Eve Wilson",
-      headline: "Marketing Specialist",
-      _id: "6",
-      connectedAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Frank Miller",
-      headline: "Sales Executive",
-      _id: "7",
-      connectedAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Grace Lee",
-      headline: "HR Manager",
-      _id: "8",
-      connectedAt: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Hank Green",
-      headline: "Content Writer",
-      _id: "9",
-      connectedAt: new Date(Date.now() - 150 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Ivy Adams",
-      headline: "Graphic Designer",
-      _id: "10",
-      connectedAt: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Jack White",
-      headline: "Web Developer",
-      _id: "11",
-      connectedAt: new Date(Date.now() - 210 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Kathy Black",
-      headline: "SEO Expert",
-      _id: "12",
-      connectedAt: new Date(Date.now() - 240 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Leo King",
-      headline: "Network Administrator",
-      _id: "13",
-      connectedAt: new Date(Date.now() - 270 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Mia Scott",
-      headline: "Business Analyst",
-      _id: "14",
-      connectedAt: new Date(Date.now() - 300 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Nina Young",
-      headline: "Project Coordinator",
-      _id: "15",
-      connectedAt: new Date(Date.now() - 330 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Oscar King",
-      headline: "Financial Analyst",
-      _id: "16",
-      connectedAt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Paula White",
-      headline: "Customer Support",
-      _id: "17",
-      connectedAt: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Quinn Blue",
-      headline: "Social Media Manager",
-      _id: "18",
-      connectedAt: new Date(Date.now() - 450 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Ray Gray",
-      headline: "IT Consultant",
-      _id: "19",
-      connectedAt: new Date(Date.now() - 500 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Sara Red",
-      headline: "Research Scientist",
-      _id: "20",
-      connectedAt: new Date(Date.now() - 550 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Tom Orange",
-      headline: "Operations Manager",
-      _id: "21",
-      connectedAt: new Date(Date.now() - 600 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Uma Purple",
-      headline: "Legal Advisor",
-      _id: "22",
-      connectedAt: new Date(Date.now() - 650 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Vera Pink",
-      headline: "Public Relations",
-      _id: "23",
-      connectedAt: new Date(Date.now() - 700 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Will Brown",
-      headline: "Accountant",
-      _id: "24",
-      connectedAt: new Date(Date.now() - 750 * 24 * 60 * 60 * 1000),
-    },
-    {
-      name: "Xena Grey",
-      headline: "Data Analyst",
-      _id: "25",
-      connectedAt: new Date(Date.now() - 800 * 24 * 60 * 60 * 1000),
-    },
-  ];
-
   const formatConnectedDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -230,14 +86,12 @@ export default function Connections({ userInfo }) {
       return `Connected ${years} ${years === 1 ? "year" : "years"} ago`;
     }
   };
-  
+
   const allConnections = [...connections].map((connection) => ({
     ...connection,
     connectedAt: formatConnectedDate(connection?.connectedAt),
   }));
 
-  console.log(allConnections);
-  
   return (
     <Dialog
       useRegularButton
@@ -263,3 +117,63 @@ export default function Connections({ userInfo }) {
     />
   );
 }
+
+export const ConnectionsCardContainer = ({
+  connection,
+  navigateTo,
+  isMyProfile,
+}) => {
+  const [blockModalOpen, setBlockModalOpen] = useState(false);
+  const [removeConnectionModalOpen, setRemoveConnectionModalOpen] =
+    useState(false);
+  const queryClient = useQueryClient();
+
+  const handleBlock = () => {
+    handleBlockMutation.mutate(connection?.username);
+  };
+
+  const handleRemoveConnection = () => {
+    handleDeleteMutation.mutate(connection?.username);
+  };
+
+  const handleBlockMutation = useMutation({
+    mutationFn: (username) => blockUser(username),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["connections"]);
+      queryClient.invalidateQueries(["userProfile"]);
+      setBlockModalOpen(false);
+    },
+  });
+
+  const handleDeleteMutation = useMutation({
+    mutationFn: (username) => removeConnection(username),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["connections"]);
+      queryClient.invalidateQueries(["userProfile"]);
+      setRemoveConnectionModalOpen(false);
+    },
+  });
+
+  const isBlocking = handleBlockMutation.isPending;
+  const isBlockingError = handleBlockMutation.isError;
+  const isDeleting = handleDeleteMutation.isPending;
+  const isDeletingError = handleDeleteMutation.isError;
+
+  return (
+    <ConnectionsCard
+      connection={connection}
+      navigateTo={navigateTo}
+      isMyProfile={isMyProfile}
+      blockModalOpen={blockModalOpen}
+      setBlockModalOpen={setBlockModalOpen}
+      removeConnectionModalOpen={removeConnectionModalOpen}
+      setRemoveConnectionModalOpen={setRemoveConnectionModalOpen}
+      onRemove={handleRemoveConnection}
+      onBlock={handleBlock}
+      isBlocking={isBlocking}
+      isBlockingError={isBlockingError}
+      isRemoving={isDeleting}
+      isRemovingError={isDeletingError}
+    />
+  );
+};

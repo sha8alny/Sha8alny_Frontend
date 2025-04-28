@@ -51,19 +51,7 @@ export default function PostButton({ userInfo }) {
         postId: response.postId,
         text: text,
         keywords: tags,
-        media: [
-          ...images.map((img) => URL.createObjectURL(img)),
-          videos ? URL.createObjectURL(videos) : null,
-          document ? URL.createObjectURL(document) : null,
-        ].filter(Boolean),
-        mediaType:
-          images.length > 0
-            ? "image"
-            : videos
-            ? "video"
-            : document
-            ? "document"
-            : null,
+        media: response.media,
         username: userInfo.username,
         profilePicture: userInfo.profilePicture,
         fullName: userInfo.name,

@@ -1,6 +1,7 @@
 import { PersonAdd } from "@mui/icons-material";
 import { Plus, UserPlus } from "lucide-react";
 import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/Avatar";
 /**
  * @namespace layout
  * @module layout
@@ -19,34 +20,35 @@ import Image from "next/image";
  * @param {Function} props.onClick - Callback function when the user name is clicked, receives username as parameter
  * @returns {JSX.Element} A user card with profile image, name, job, and connect button
  */
-export default function UserSmallCard({ userInfo, onClick }) {
+export default function UserSmallCard({ userInfo, onClick, onButtonClick }) {
   return (
-    <div className="flex gap-2 items-start mb-2 flex-wrap xl:flex-nowrap ">
-      <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-foreground rounded-full border dark:border-[#111] flex-shrink-0">
-      <Image
-          src={userInfo.image}
-          alt="User Avatar"
-          fill
-          className="rounded-full object-cover"
-        />
-      </div>
-      <div className="text-left flex-1 min-w-[140px]">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-x-1">
+    <div className="flex gap-2 items-center">
+      <Avatar
+        onClick={() => onClick(`/u/${userInfo?.username}`)}
+        className="size-12 cursor-pointer"
+      >
+        <AvatarImage src={userInfo?.profilePicture} alt={userInfo?.name} />
+        <AvatarFallback>
+          {userInfo?.name?.substring(0, 2).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div className="text-left">
+        <div className="flex gap-1">
           <button
-            onClick={() => onClick(userInfo.username)}
-            className="hover:underline hover:cursor-pointer truncate text-sm font-[525] max-w-[120px] sm:max-w-[160px]"
+            onClick={() => onClick(`/u/${userInfo?.username}`)}
+            className="hover:underline hover:cursor-pointer truncate text-sm font-[525]"
           >
-            {userInfo.name}
+            {userInfo?.name}
           </button>
           <div className="text-xs self-center text-muted">•</div>
           <div className="text-xs self-center text-muted">
-            {userInfo.relation}
+            {userInfo?.relation}
           </div>
         </div>
         <div className="text-xs text-muted">
-          {userInfo.job.length > 30
-            ? userInfo.job.substring(0, 20) + "..."
-            : userInfo.job}
+          {userInfo?.headline?.length > 30
+            ? userInfo?.headline?.substring(0, 20) + "..."
+            : userInfo?.headline}
         </div>
       </div>
       <div className="ml-auto">
