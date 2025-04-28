@@ -64,6 +64,9 @@ export default function ModCertificate({ certificate, adding }) {
   const [issuingOrganization, setIssuingOrganization] = useState(
     certificate?.issuingOrganization || ""
   );
+  const [certificateUrl, setCertificateUrl] = useState(
+    certificate?.certificateUrl || ""
+  );
   const [issueDate, setIssueDate] = useState({
     month: certificate?.issueDate?.month || "",
     year: certificate?.issueDate?.year?.toString() || "",
@@ -81,6 +84,7 @@ export default function ModCertificate({ certificate, adding }) {
   const [nameError, setNameError] = useState(null);
   const [issuingOrganizationError, setIssuingOrganizationError] =
     useState(null);
+  const [certificateUrlError, setCertificateUrlError] = useState(null);
   const [issueDateError, setIssueDateError] = useState(null);
   const [expirationDateError, setExpirationDateError] = useState(null);
   const [skillsError, setSkillsError] = useState(null);
@@ -97,6 +101,7 @@ export default function ModCertificate({ certificate, adding }) {
   const errors = {
     name: nameError,
     issuingOrganization: issuingOrganizationError,
+    certificateUrl: certificateUrlError,
     issueDate: {
       month: issueDateError?.month,
       year: issueDateError?.year,
@@ -112,6 +117,7 @@ export default function ModCertificate({ certificate, adding }) {
       const formData = {
         name,
         issuingOrganization,
+        certificateUrl,
         issueDate,
         expirationDate: neverExpires ? null : expirationDate,
         skills,
@@ -130,6 +136,7 @@ export default function ModCertificate({ certificate, adding }) {
         const field = fieldName.split(".")[1];
         setExpirationDate((prev) => ({ ...prev, [field]: value }));
       } else if (fieldName === "skills") setSkills(value);
+      else if (fieldName === "certificateUrl") setCertificateUrl(value);
     },
     watch: (fieldName) => {
       if (!fieldName) {
@@ -137,6 +144,7 @@ export default function ModCertificate({ certificate, adding }) {
           name,
           issuingOrganization,
           issueDate,
+          certificateUrl,
           expirationDate: neverExpires ? null : expirationDate,
           skills,
         };
@@ -144,6 +152,7 @@ export default function ModCertificate({ certificate, adding }) {
       if (fieldName === "name") return name; // Now correctly returns state variable
       if (fieldName === "issuingOrganization") return issuingOrganization;
       if (fieldName === "issueDate") return issueDate;
+      if (fieldName === "certificateUrl") return certificateUrl;
       if (fieldName === "expirationDate")
         return neverExpires ? null : expirationDate;
       if (fieldName === "skills") return skills;

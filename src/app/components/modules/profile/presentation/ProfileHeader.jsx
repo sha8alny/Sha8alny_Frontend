@@ -3,7 +3,14 @@ import Image from "next/image";
 import ModHeader from "../container/ModHeader";
 import ContactInfoPresentation from "./ContactInfoPresentation";
 import Connections from "../container/Connections";
-import { Maximize2 } from "lucide-react"; // Import maximize icon
+import { Maximize2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/app/components/ui/DropDownMenu";
+import { FlagOutlined, MessageOutlined, MoreHoriz, PersonAddAlt1 } from "@mui/icons-material";
 
 /**
  * @namespace profile
@@ -119,22 +126,81 @@ export default function ProfileHeader({
             </div>
           </div>
         </div>
-        <div className="py-4 px-8 flex" data-testid="profile-info-section">
-          <div>
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold" data-testid="profile-name">
-                {userProfile?.name}
-              </h1>
+        <div
+          className="py-4 px-8 flex flex-col md:flex-row"
+          data-testid="profile-info-section"
+        >
+          <div className="w-full">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center">
+                <h1 className="text-2xl font-bold" data-testid="profile-name">
+                  {userProfile?.name}
+                </h1>
+                {!userProfile?.isMyProfile && (
+                  <h6 className="text-muted ml-2">•</h6>
+                )}
+                {!userProfile?.isMyProfile && (
+                  <span
+                    className="text-muted ml-2"
+                    data-testid="profile-relation"
+                  >
+                    {userProfile?.relation}
+                  </span>
+                )}
+              </div>
               {!userProfile?.isMyProfile && (
-                <h6 className="text-muted ml-2">•</h6>
-              )}
-              {!userProfile?.isMyProfile && (
-                <span
-                  className="text-muted ml-2"
-                  data-testid="profile-relation"
-                >
-                  {userProfile?.relation}
-                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
+                      data-testid={`connection-options-trigger-${userProfile?.username}`}
+                    >
+                      <MoreHoriz
+                        className="text-muted"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="bg-foreground text-primary border"
+                    data-testid={`connection-options-content-${userProfile?.username}`}
+                  >
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer"
+                      data-testid={`connection-message-option-${userProfile?.username}`}
+                      onClick={() => {}}
+                    >
+                      <MessageOutlined
+                        className="mr-2"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                      <span>Message</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer"
+                      data-testid={`connection-remove-option-${userProfile?.username}`}
+                      onClick={() => setRemoveConnectionModalOpen(true)}
+                    >
+                      <FlagOutlined
+                        className="mr-2"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                      <span>Report</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer text-red-400 hover:text-red-400"
+                      data-testid={`connection-block-option-${userProfile?.username}`}
+                      onClick={() => setBlockModalOpen(true)}
+                    >
+                      <PersonAddAlt1
+                        className="mr-2"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                      <span>Block</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
             <h2
@@ -163,15 +229,18 @@ export default function ProfileHeader({
                 />
               </div>
             </div>
-            <div data-testid="profile-connections">
+            <div
+              className="w-full md:justify-between flex md:flex-row flex-col"
+              data-testid="profile-connections"
+            >
               <Connections userInfo={userProfile} />
+              <div
+                className="flex flex-wrap mt-4 md:mt-0 md:ml-auto md:self-end"
+                data-testid="profile-mod-header"
+              >
+                <ModHeader userInfo={userProfile} />
+              </div>
             </div>
-          </div>
-          <div
-            className="flex ml-auto self-end"
-            data-testid="profile-mod-header"
-          >
-            <ModHeader userInfo={userProfile} />
           </div>
         </div>
       </Container>

@@ -1,6 +1,9 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "@/app/services/userProfile";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  fetchPeopleAlsoViewed,
+  fetchUserProfile,
+} from "@/app/services/userProfile";
 import ProfilePresentation, {
   ProfileSkeleton,
 } from "../presentation/ProfilePresentation";
@@ -11,6 +14,8 @@ import {
 import { useEffect } from "react";
 import { useToast } from "@/app/context/ToastContext";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { connectUser, fetchPeopleYouMayKnow, handleConnectionRequest } from "@/app/services/connectionManagement";
 
 /**
  * @namespace profile
@@ -111,6 +116,7 @@ function ProfileContent({ username }) {
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [hoverCover, setHoverCover] = useState(false);
   const [hoverProfile, setHoverProfile] = useState(false);
+  const router = useRouter();
 
   const openFullscreen = (imageUrl) => {
     setFullscreenImage(imageUrl);
@@ -219,6 +225,17 @@ function ProfileContent({ username }) {
     }
   };
 
+  const changeRelations = (users) => {
+    return users.map((user) => ({
+      ...user,
+      relation: changeRelation(user?.connectionDegree),
+    }));
+  };
+
+  const navigateTo = (path) => {
+    router.push(path);
+  };
+
   return (
     <ProfilePresentation
       userProfile={{
@@ -235,6 +252,10 @@ function ProfileContent({ username }) {
       setHoverProfile={setHoverProfile}
       openFullscreen={openFullscreen}
       closeFullscreen={closeFullscreen}
+      fetchPeopleAlsoViewed={fetchPeopleAlsoViewed}
+      fetchPeopleYouMayKnow={fetchPeopleYouMayKnow}
+      navigateTo={navigateTo}
+      changeRelations={changeRelations}
     />
   );
 }
