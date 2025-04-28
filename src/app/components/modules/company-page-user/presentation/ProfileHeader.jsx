@@ -28,7 +28,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
  * @param {string} [props.company.location] - Company location
  * @returns {JSX.Element} Profile header component with company branding and navigation
  */
-export default function ProfileHeader({ userProfile, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage }) {
+export default function ProfileHeader({ username, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage }) {
   return (
     <Container className="border-[#111] border shadow-lg">
       <div className="h-max rounded-xl">
@@ -88,15 +88,15 @@ export default function ProfileHeader({ userProfile, isActive, company, handleFo
           </div>
         </div>
         <div className="border-t border-[var(--text)] flex flex-row space-x-6  cursor-pointer ">
-          <Link href={`/company/${userProfile}/user/home`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("home") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="home-page-link">Home</Link>
+          <Link href={`/company/${username}/user/home`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("home") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="home-page-link">Home</Link>
 
-          <Link href={`/company/${userProfile}/user/about`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("about") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="about-page-link">About</Link>
+          <Link href={`/company/${username}/user/about`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("about") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="about-page-link">About</Link>
 
-          <Link href={`/company/${userProfile}/user/posts`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("posts") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="posts-page-link">Posts</Link>
+          <Link href={`/company/${username}/user/posts`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("posts") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="posts-page-link">Posts</Link>
           
-          <Link href={`/company/${userProfile}/user/jobs`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("jobs") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="jobs-page-link">Jobs</Link>
+          <Link href={`/company/${username}/user/jobs`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("jobs") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="jobs-page-link">Jobs</Link>
 
-          <Link href={`/company/${userProfile}/user/people`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("people") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="people-page-link">People</Link>
+          <Link href={`/company/${username}/user/people`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("people") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="people-page-link">People</Link>
         </div>
       </div>
     </Container>

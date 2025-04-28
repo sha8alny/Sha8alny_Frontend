@@ -42,27 +42,36 @@ import { Card,CardContent } from "@/app/components/ui/Card";
  * @property {Array<CompanyPeople.Person>} [people=[]] - A list of people to display.
  */
 
-export default function CompanyPeople({ key, people=[] }) {
+export default function CompanyPeople({ people=[], goToPeoplePage }) {
+    const getRelationText = (relation) => {
+        if (relation === 1) return "1st";
+        if (relation === 2) return "2nd";
+        if (relation === 3) return "3rd";
+        return `${relation}`; 
+    };
+
     return(
-        <Container className="p-4">
-            <h2 className="text-xl font-bold mb-4 text-text">People you may know</h2>
-            <Card className="w-80 rounded-xl bg-foreground">
-            {people.map((person, index)=>(
-                <CardContent key={person.username || index} className="flex flex-col items-center text-center p-4 pt-12 ">
-                    <img
-                    src={person.profilePicture}
-                    alt="Profile picture"
-                    className="w-30 h-30 rounded-full -mt-10 border-4 border-white shadow"
-                    />
-                    <div className="flex flex-row gap-2 mb-1">
-                        <h3 className="mt-2 font-semibold text-lg">{person?.name} . {" "}</h3>
-                        <p className="text-muted-foreground  mt-3">{person?.relation}</p>
-                    </div>
-                    <p className="text-muted-foreground text-sm mb-2">{person?.headline}</p>
-                    <Button variant="default" className="bg-secondary w-full rounded-xl cursor-pointer">Connect</Button>
-                </CardContent>
-            ))}
-            </Card>
+        <Container className="p-6">
+            <h2 className="text-2xl font-bold mb-4 text-text">People you may know</h2>
+            <div className="flex flex-wrap gap-6">
+                {people.map((person, index)=>(
+                    <Card key={person.username || index} className="w-70 rounded-xl bg-foreground">
+                        <CardContent  className="flex flex-col items-center text-center p-4 pt-12 ">
+                            <img
+                            src={person.profilePicture}
+                            alt="Profile picture"
+                            className="w-30 h-30 rounded-full -mt-10 border-4 border-white shadow"
+                            />
+                            <div className="flex flex-row gap-2 mb-1">
+                                <h3 className="mt-2 font-semibold text-lg cursor-pointer hover:underline transition-all duration-150" onClick={()=>goToPeoplePage(person)}>{person?.name} . {" "}</h3>
+                                <p className="text-muted-foreground  mt-3">{getRelationText(person?.relation)}</p>
+                            </div>
+                            <p className="text-muted-foreground text-sm mb-2">{person?.headline}</p>
+                            <Button variant="default" className="bg-secondary w-full rounded-xl cursor-pointer hover:bg-primary">Connect</Button>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
         </Container>
     );
 }

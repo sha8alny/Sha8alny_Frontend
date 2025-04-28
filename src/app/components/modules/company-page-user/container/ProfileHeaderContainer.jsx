@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getCompany } from "@/app/services/companyManagement";
+import { followCompany, unfollowCompany } from "@/app/services/companyManagement";
 import ProfileHeader from "../presentation/ProfileHeader";
 
 /**
@@ -33,42 +34,60 @@ import ProfileHeader from "../presentation/ProfileHeader";
  * @async
  */
 
-export default function ProfileHeaderContainer({ userProfile }) {
+export default function ProfileHeaderContainer({ username }) {
     const pathname = usePathname();
     const isActive = (slug) => pathname.includes(slug);
     const [error, setError] = useState(null);
     const [company, setCompany] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
-    const [followerCount, setFollowerCount] = useState(company?.followers || 0);
+    const [followerCount, setFollowerCount] = useState(null);
     const router = useRouter();
 
-    const handleFollowClick = () => {
-        setIsFollowing(!isFollowing);
-        setFollowerCount(prev => prev + (isFollowing ? -1 : 1));
+
+    const handleFollowClick = async () => {
+      try {
+        const newIsFollowing = !isFollowing;
+    
+        if (newIsFollowing) {
+          await followCompany(username);
+        } else {
+          await unfollowCompany(username);
+        }
+        setIsFollowing(newIsFollowing);
+        setFollowerCount((prev) => prev + (newIsFollowing ? 1 : -1));
+      } catch (err) {
+        setError("Could not update follow status.");
+      }
     };
+    
+
     useEffect(() => {
-        const fetchCompany = async () => {
+      const fetchCompany = async () => {
         try {
-          const data = await getCompany(userProfile);
+          const data = await getCompany(username);
           setCompany(data);
+          setIsFollowing(data.isFollowed || false);
+          setFollowerCount(data.numFollowers || 0);
         } catch (err) {
           setError(err.message);
         }
-        };
-        if (userProfile) fetchCompany();
-    }, [userProfile]);
+      };
+    
+      if (username) fetchCompany();
+    }, [username]);
+    
 
     const visitWebsite = () =>{
-      router.push(`/company/${userProfile}/user/posts`);
+      router.push(`/company/${username}/user/posts`);
     }
 
     const OpenCompanyAdminPage =() =>{
-      router.push(`/company/${userProfile}/admin/dashboard`);
+      router.push(`/company/${username}/admin/dashboard`);
     }
     
   return (
     <div>
-      <ProfileHeader userProfile={userProfile} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} />
+      <ProfileHeader username={username} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} />
     </div>
   );
 }
