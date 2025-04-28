@@ -143,7 +143,7 @@ export default function Certifications({
           {certifications?.length > 3 && (
             <button
               onClick={toggleAllCertificates}
-              className="w-full text-center p-2 hover:cursor-pointer duration-200 ease-in-out hover:bg-[#111] rounded-md font-[500]"
+              className="w-full text-center p-2 hover:cursor-pointer duration-200 ease-in-out hover:bg-primary/20 rounded-md font-[500]"
               data-testid="toggle-certificates-button"
             >
               {allCertificates ? (

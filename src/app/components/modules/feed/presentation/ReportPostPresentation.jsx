@@ -38,7 +38,7 @@ export default function ReportPostPresentation({
                 onClick={() => setReportType(option)}
                 className={`
                   px-3 py-1 rounded-full cursor-pointer text-sm font-medium transition-all duration-200 ease-in-out
-                  border border-border text-background
+                  text-background shadow-md
                   ${
                     reportType === option
                       ? "bg-destructive ring-2 font-semibold ring-destructive ring-offset-2 ring-offset-background"

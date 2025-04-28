@@ -16,12 +16,11 @@ export const connectUser = async (username) => {
 };
 
 export const removeConnection = async (username) => {
-  const response = await fetchWithAuth(`${apiURL}/connection`, {
+  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ targetUsername: username }),
   });
   if (!response.ok) {
     throw new Error("Failed to remove connection");

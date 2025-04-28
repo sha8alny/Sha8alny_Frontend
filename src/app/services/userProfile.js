@@ -54,7 +54,7 @@ export const fetchUserConnections = async (
   pageSize = 10,
   username = null
 ) => {
-  let url = `${process.env.NEXT_PUBLIC_API_URL}/connections/${pageNum}/${pageSize}`;
+  let url = `${apiURL}/connections/${pageNum}/${pageSize}`;
   if (username) {
     url += `?username=${username}`;
   }

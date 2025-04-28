@@ -273,7 +273,7 @@ export default function PostPresentation({
 
       <CardContent>
         <div className="whitespace-pre-line">
-          <p className="mb-3">{post?.text}</p>
+          <p className="mb-3">{post?.textElement}</p>
         </div>
         {isDocument && post?.media && post?.media.length > 0 && (
           <div className="relative w-full rounded-lg overflow-hidden border border-primary/10 bg-primary/5">
@@ -325,20 +325,16 @@ export default function PostPresentation({
             {/* Document preview with React state for loading/error */}
             <div className="relative aspect-[4/3] w-full bg-background">
               {!hasError && (
-                <iframe
-                  src={post?.media[0]}
-                  title={`Document: ${fileName}`}
-                  className="absolute inset-0 w-full h-full border-none"
-                  loading="lazy"
-                  sandbox="allow-scripts allow-same-origin allow-forms allow-downloads"
-                  onLoad={() => {
-                    setIsLoading(false);
-                  }}
-                  onError={() => {
-                    setIsLoading(false);
-                    setHasError(true);
-                  }}
-                />
+                <embed
+                src={post?.media[0]}
+                type="application/pdf"
+                className="absolute inset-0 w-full h-full"
+                onLoad={() => setIsLoading(false)}
+                onError={() => {
+                  setIsLoading(false);
+                  setHasError(true);
+                }}
+              />
               )}
 
               {/* Loading indicator */}
@@ -578,7 +574,7 @@ export default function PostPresentation({
             confirmTitle="Delete"
             confirmMessage="This action cannot be undone. Are you sure you want to delete this post?"
             confirmButtonText="Delete"
-            cancelButtonText="Cancel"  
+            cancelButtonText="Cancel"
           />
         }
       />
