@@ -37,6 +37,10 @@ const nextConfig = {
     {
       protocol: "http",
       hostname: "sha8alny.online",
+    },
+    {
+      protocol: "https",
+      hostname: "sha8alny.online",
     }
     ],
   },
