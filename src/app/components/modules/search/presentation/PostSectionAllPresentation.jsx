@@ -1,5 +1,15 @@
 import PostsContainer from "../../feed/container/PostsContainer";
 import FeedIcon from "@mui/icons-material/Feed";
+/**
+ * @namespace search
+ * @module search
+ * @description Presentation component that renders the posts section header and container for search results
+ * 
+ * @param {Object} props Component props
+ * @param {string} props.query The search query/keyword used to filter posts
+ * @returns {JSX.Element} Rendered component with a header showing the search query and posts container
+ */
+
 const PostSectionAllPresentation = ({ query }) => {
   return (
     <>

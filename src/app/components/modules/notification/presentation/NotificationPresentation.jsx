@@ -47,7 +47,7 @@ function NotificationPresentation({
 }) {
   if (loading && notifications.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 py-8" data-testid="notifications-loading">
         <h1 className="text-2xl font-bold mb-6 text-text"> <NotificationsActiveIcon/> Notifications</h1>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -66,7 +66,7 @@ function NotificationPresentation({
 
   if (error) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 py-8" data-testid="notifications-error">
         <h1 className="text-2xl font-bold mb-6 text-text flex items-center gap-2">
           <NotificationsActiveIcon/> Notifications
         </h1>
@@ -79,15 +79,15 @@ function NotificationPresentation({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6 text-text flex items-center gap-2">
+    <div className="max-w-3xl mx-auto px-4 py-8" data-testid="notifications-container">
+      <h1 className="text-2xl font-bold mb-6 text-text flex items-center gap-2" data-testid="notifications-heading">
         <NotificationsActiveIcon/> Notifications
       </h1>
 
-      <Tabs defaultValue={activeTab} value={activeTab} className="w-full" onValueChange={onTabChange}>
+      <Tabs defaultValue={activeTab} value={activeTab} className="w-full" onValueChange={onTabChange} data-testid="notifications-tabs">
         <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="unread" className="flex items-center justify-center gap-2">
+          <TabsTrigger value="all" data-testid="tab-all">All</TabsTrigger>
+          <TabsTrigger value="unread" className="flex items-center justify-center gap-2" data-testid="tab-unread">
             Unread
             {/* {unreadCount > 0 && (
               <Badge variant="secondary" className="ml-1 h-5 px-2 text-xs text-background">
@@ -97,11 +97,11 @@ function NotificationPresentation({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="mt-0">
+        <TabsContent value="all" className="mt-0" data-testid="tab-content-all">
           {renderNotificationList(notifications)}
         </TabsContent>
 
-        <TabsContent value="unread" className="mt-0">
+        <TabsContent value="unread" className="mt-0" data-testid="tab-content-unread">
           {renderNotificationList(notifications.filter(n => !n.isRead))}
         </TabsContent>
       </Tabs>
@@ -111,7 +111,7 @@ function NotificationPresentation({
   function renderNotificationList(notifications) {
     if (notifications.length === 0) {
       return (
-        <div className="text-center py-8">
+        <div className="text-center py-8" data-testid="empty-notifications">
           <p className="text-muted-foreground">
             {activeTab === "all" ? "You have no notifications yet." : "You have no unread notifications."}
           </p>
@@ -120,13 +120,13 @@ function NotificationPresentation({
     }
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-2" data-testid="notifications-list">
       {notifications.map((notification, index) => (
-        <div key={notification._id}>
+        <div key={notification._id} data-testid={`notification-item-${notification._id}`}>
         <Card className={notification.isRead ? "dark:bg-card bg-muted/50" : "dark:bg-muted/50 bg-card"}>
           <CardContent className="p-4">
           <div className="flex items-start gap-4">
-            <Avatar>
+            <Avatar data-testid="notification-avatar">
             <AvatarImage
               src={notification.data?.fromProfilePicture || "/placeholder.svg"}
               alt={notification.data?.userName || "User"}
@@ -136,15 +136,15 @@ function NotificationPresentation({
             </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-            <Link href={getNotificationLink(notification)} className="text-sm font-medium hover:underline">
+            <Link href={getNotificationLink(notification)} className="text-sm font-medium hover:underline" data-testid="notification-link">
               {notification.text || notification.title}
             </Link>
             <div className="flex items-center gap-2 mt-1">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground" data-testid="notification-time">
               {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
               </p>
               {notification.type && (
-              <Badge variant="outline" className="text-xs text-text">
+              <Badge variant="outline" className="text-xs text-text" data-testid="notification-type">
                 {notification.type === "ConnectionRequest" ? "Connection Request" : notification.type}
               </Badge>
               )}
@@ -156,6 +156,7 @@ function NotificationPresentation({
             size="sm" 
               onClick={() => onMarkAsRead(notification._id)}
               disabled={isMarkingAsRead}
+              data-testid="mark-as-read-button"
             >
               Mark as read
             </Button>
@@ -174,9 +175,10 @@ function NotificationPresentation({
           onClick={onLoadMore} 
           disabled={loadingMore}
           className="w-full"
+          data-testid="load-more-button"
         >
           {loadingMore ? (
-          <span className="flex items-center">
+          <span className="flex items-center" data-testid="loading-more-indicator">
             <span className="mr-2">Loading...</span>
           </span>
           ) : (

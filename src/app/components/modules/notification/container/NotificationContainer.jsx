@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -12,8 +13,22 @@ import {
   markNotificationAsRead,
 } from "@/app/services/notificationService";
 import NotificationPresentation from "../presentation/NotificationPresentation";
-
-export default function NotificationContainer() {
+/**
+ * Container component for notifications that manages state and data fetching.
+ * 
+ * This component:
+ * - Manages active tab state (all or unread notifications)
+ * - Fetches notifications data with infinite scrolling
+ * - Handles marking notifications as read
+ * - Provides navigation links based on notification type
+ * 
+ * @namespace notification
+ * @module notification
+ * @component NotificationContainer
+ * 
+ * @returns {JSX.Element} Rendered NotificationPresentation component with all necessary props
+ */
+function NotificationContainer() {
   const [activeTab, setActiveTab] = useState("all");
   const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
   const queryClient = useQueryClient();
@@ -127,7 +142,7 @@ export default function NotificationContainer() {
       case "Message":
         return `/messages/?${notification.data?.fromUsername || ""}`;
       case "ConnectionRequest":
-        return `/network`;
+        return `/network/pending`;
       default:
         return "#";
     }
@@ -162,3 +177,5 @@ export default function NotificationContainer() {
     />
   );
 }
+
+export default NotificationContainer;
