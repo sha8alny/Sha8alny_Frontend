@@ -2,16 +2,17 @@
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { connectUser } from "@/app/services/connectionManagement";
-import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
+import PersonCardPresentation from "../presentation/PersonCardPresentation";
+import { useState, useEffect } from "react";
 /**
  * @namespace search
  * @module search
- * 
+ *
  * @description
  * The `PersonCardContainer` component serves as a container for the `PersonCardPresentation` component.
  * It handles user interactions such as navigating to a user's profile or connecting with a user.
  * It also manages the connection state and triggers mutations using React Query.
- * 
+ *
  * @param {Object} props - The properties passed to the component.
  * @param {string} props.username - The username of the person displayed on the card.
  * @param {string} props.name - The full name of the person displayed on the card.
@@ -19,11 +20,11 @@ import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
  * @param {string} props.location - The location of the person displayed on the card.
  * @param {string} props.avatarUrl - The URL of the avatar image for the person.
  * @param {boolean} [props.isConnected=false] - Indicates whether the current user is connected with the person.
- * 
+ *
  * @returns {JSX.Element} The rendered `PersonCardPresentation` component with the provided props and event handlers.
  */
 
- function PersonCardContainer({
+function PersonCardContainer({
   username,
   name,
   headline,
@@ -33,10 +34,20 @@ import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  console.log(avatarUrl)
+  const [connectionStatus, setConnectionStatus] = useState(isConnected);
+  
+  useEffect(() => {
+    setConnectionStatus(isConnected);
+  }, [isConnected]);
 
   const connectMutation = useMutation({
     mutationFn: () => connectUser(username),
+    onMutate: async () => {
+      setConnectionStatus("pending");
+    },
+    onError: () => {
+      setConnectionStatus(isConnected);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(["searchUsers"]);
     },
@@ -47,10 +58,12 @@ import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
   };
 
   const handleConnectClick = () => {
-    if (!isConnected) {
+    if (connectionStatus == "rejected") {
       connectMutation.mutate();
-    } else {
-      router.push(`/messages/${username}`);
+    } else if (connectionStatus == "accepted") {
+      router.push(`/messages?username=${username}`);
+    } else if (connectionStatus == "pending") {
+      router.push(`/network/pending`);
     }
   };
 
@@ -61,7 +74,7 @@ import  PersonCardPresentation  from "../presentation/PersonCardPresentation";
       headline={headline}
       location={location}
       avatarUrl={avatarUrl}
-      isConnected={isConnected}
+      isConnected={connectionStatus}
       onNavigateToProfile={handleNavigateToProfile}
       onConnectClick={handleConnectClick}
     />

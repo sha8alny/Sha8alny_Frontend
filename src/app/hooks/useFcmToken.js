@@ -5,6 +5,8 @@ import { getToken, onMessage, Unsubscribe } from "firebase/messaging";
 import { fetchToken, messaging } from "@/firebase/firebase";
 import { useRouter, usePathname } from "next/navigation";
 import { sendFCMtoken } from "../services/notificationService";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 async function getNotificationPermissionAndToken() {
   if (!("Notification" in window)) {
@@ -28,6 +30,7 @@ async function getNotificationPermissionAndToken() {
 const useFcmToken = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const [notificationPermissionStatus, setNotificationPermissionStatus] =
     useState(null); 
   const [token, setToken] = useState(null); 
@@ -92,25 +95,23 @@ const useFcmToken = () => {
         if (Notification.permission !== "granted") return;
 
         console.log("Foreground push notification received:", payload);
+        const title = payload.notification?.title || "New message";
+        const body = payload.notification?.body || "This is a new message";
         const link = payload.fcmOptions?.link || payload.data?.link;
 
-        const n = new Notification(
-          payload.notification?.title || "New message",
-          {
-            body: payload.notification?.body || "This is a new message",
-            data: link ? { url: link } : undefined,
-          }
-        );
+        queryClient.invalidateQueries(["sidebarInfo", "notifications"]);
 
-        n.onclick = (event) => {
-          event.preventDefault();
-          const link = event.target?.data?.url;
-          if (link) {
-            router.push(link);
-          } else {
-            console.log("No link found in the notification payload");
-          }
-        };
+        toast(title, {
+          description: body,
+          action: link ? {
+            label: "View",
+            onClick: () => router.push(link),
+          } : undefined,
+          duration: 5000,
+          position: "top-right",
+          className: "notification-toast",
+          icon: "🔔",
+        });
       });
 
       return unsubscribe;
@@ -125,7 +126,7 @@ const useFcmToken = () => {
     });
 
     return () => unsubscribe?.();
-  }, [token, router, pathname]);
+  }, [token, router, pathname, queryClient]);
 
   return { token, notificationPermissionStatus }; 
 };

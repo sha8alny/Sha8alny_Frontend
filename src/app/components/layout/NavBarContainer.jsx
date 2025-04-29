@@ -35,9 +35,9 @@ function NavbarContainer() {
       isLoading,
       isError,
     } = useQuery({
-      queryKey: ["sidebarInfo"],
+      queryKey: ["sidebarInfo","notifications"],
       queryFn: () => fetchSidebarInfo(),
-      staleTime: 1000 * 30, // 30 seconds
+      staleTime: 1000 * 30, 
     });
   
     const handleNavigation = (path) => {
