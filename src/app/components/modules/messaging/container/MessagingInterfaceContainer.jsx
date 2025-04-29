@@ -7,6 +7,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useConversations } from "@/app/hooks/messaging/useConversations";
 import { useMessages } from "@/app/hooks/messaging/useMessages";
 import { useConnections } from "@/app/hooks/messaging/useConnections";
+import { useMessageRequests } from "@/app/hooks/messaging/useMessageRequests";
 import { getOtherParticipantUsername } from "@/app/utils/participantUtils";
 
 export function MessagingContainer({ currentUser }) {
@@ -53,8 +54,20 @@ export function MessagingContainer({ currentUser }) {
     loadMoreConnections
   } = useConnections(currentUser, userConversations);
   
+  // Message requests hook
+  const {
+    receivedRequests = [],
+    loadingReceived
+  } = useMessageRequests(currentUser) || {};
+  
   // ---- UI STATE ----
   const [isHandlingUrlChange, setIsHandlingUrlChange] = useState(false);
+  // Add the missing state declaration
+  const [showMessageRequests, setShowMessageRequests] = useState(false);
+  
+  // Count pending requests - ensure receivedRequests is an array
+  const pendingRequestCount = Array.isArray(receivedRequests) ? 
+    receivedRequests.filter(req => req.status === "pending").length : 0;
 
   // ---- NAVIGATION FUNCTIONS ----
   const navigateToUser = useCallback((username) => {
@@ -86,6 +99,9 @@ export function MessagingContainer({ currentUser }) {
     console.log('Conversation selected:', conversationId);
     const conversation = userConversations.find(c => c.id === conversationId);
     if (conversation) {
+      // Close message requests if open
+      setShowMessageRequests(false);
+      
       // First select the conversation directly
       selectConversation(conversation);
       
@@ -97,6 +113,17 @@ export function MessagingContainer({ currentUser }) {
       }
     }
   }, [userConversations, selectConversation, currentUser, navigateToUser]);
+
+  // Message requests handlers
+  const handleViewMessageRequests = useCallback(() => {
+    setShowMessageRequests(true);
+    setSelectedConversation(null);
+    navigateToUser(null);
+  }, [setSelectedConversation, navigateToUser]);
+
+  const handleCloseMessageRequests = useCallback(() => {
+    setShowMessageRequests(false);
+  }, []);
 
   // ---- UI SYNC EFFECTS ----
   // Handle URL changes
@@ -111,6 +138,8 @@ export function MessagingContainer({ currentUser }) {
     
     if (matchingConversation && 
         (!selectedConversation || selectedConversation.id !== matchingConversation.id)) {
+      // Close message requests if open
+      setShowMessageRequests(false);
       selectConversation(matchingConversation);
     }
     
@@ -161,6 +190,11 @@ export function MessagingContainer({ currentUser }) {
         onBack={handleBack}
         onOpenConnections={handleOpenConnections}
         onLoadMoreMessages={handleLoadMoreMessages}
+        showMessageRequests={showMessageRequests}
+        onViewMessageRequests={handleViewMessageRequests}
+        onCloseMessageRequests={handleCloseMessageRequests}
+        pendingRequestCount={pendingRequestCount}
+        navigateToUser={navigateToUser}
       />
       
       {showConnectionsModal && (

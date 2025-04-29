@@ -23,7 +23,7 @@ import { formatDistanceToNow } from "@/app/utils/messagingUtils";
 // Conversation actions component
 const ConversationActions = React.memo(
   ({ conversation, onToggleRead, onToggleBlock, onMenuClick }) => (
-    <DropdownMenu>
+    <DropdownMenu className>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
@@ -70,6 +70,16 @@ const ConversationActions = React.memo(
               : "Block user"}
           </span>
         </DropdownMenuItem>
+        <DropdownMenuItem
+          className="flex items-center text-destructive"
+          onClick={(e) => {
+            e.stopPropagation();
+            // Handle delete conversation action
+          }}
+          data-testid={`delete-conversation-button-${conversation.id}`}
+          >
+            <span className="truncate">Delete conversation</span>
+          </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -143,7 +153,7 @@ const ConversationItem = React.memo(
           </div>
 
           <div className="flex items-center justify-between mt-1 w-full">
-            <div className="text-sm text-muted-foreground truncate pr-2 max-w-3xs">
+            <div className="text-sm text-muted-foreground truncate pr-2 w-3xs">
               {conversation.isOtherParticipantTyping ? (
                 <span className="italic">Typing...</span>
               ) : conversation?.lastMessage ? (

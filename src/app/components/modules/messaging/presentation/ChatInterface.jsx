@@ -65,6 +65,11 @@ const ChatHeader = React.memo(
         <div>
           <div className="font-medium text-sm sm:text-base text-text">
             {otherParticipant?.name || otherParticipant?.username}
+            {otherParticipant?.fromRequest && (
+              <span className="ml-2 text-xs bg-secondary px-1.5 py-0.5 rounded text-secondary-foreground">
+                Request Accepted
+              </span>
+            )}
           </div>
           {isOtherParticipantTyping && (
             <div className="text-xs text-muted-foreground">Typing...</div>

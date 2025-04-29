@@ -19,7 +19,7 @@ export const messagingService = {
     messagingService.sendMessage(receiverName, null, []);
   },
 
-  deleteConversation: async (conversationId) => {
+  deleteConversationFirestore: async (conversationId) => {
     try {
       if (!conversationId) {
         throw new Error("Conversation ID is required");
@@ -38,6 +38,40 @@ export const messagingService = {
       });
 
       return { success: true };
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
+      throw new Error(`Failed to delete conversation: ${error.message}`);
+    }
+  },
+
+  deleteConversation: async (recieverName) => {
+    try {
+      if (!recieverName) {
+        throw new Error("Conversation ID is required");
+      }
+
+      // Call backend API to delete conversation
+      const response = await fetchWithAuth(
+        `${process.env.NEXT_PUBLIC_API_URL}/Conversation/delete`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            recieverName: recieverName, // Using the receiver name as specified in API
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || `HTTP error! Status: ${response.status}`
+        );
+      }
+
+      return await response.json();
     } catch (error) {
       console.error("Error deleting conversation:", error);
       throw new Error(`Failed to delete conversation: ${error.message}`);
