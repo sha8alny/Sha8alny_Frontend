@@ -64,6 +64,18 @@ export function ChatContainer({
     [selectedConversation, otherParticipantUsername]
   );
   
+  // Extract blocking information
+  const isOtherParticipantBlocked = useMemo(() => 
+    otherParticipant?.isBlocked === true,
+    [otherParticipant]
+  );
+  
+  const isCurrentUserBlocked = useMemo(() => {
+    if (!currentUser || !selectedConversation?.participants?.[currentUser]) return false;
+    const currentUserDetails = selectedConversation.participants[currentUser];
+    return currentUserDetails?.isBlocked === true;
+  }, [currentUser, selectedConversation, otherParticipantUsername]);
+  
   // Check if other participant is typing
   const isOtherParticipantTyping = useMemo(() => {
     if (!otherParticipantUsername || !selectedConversation?.participantMetadata) return false;
@@ -154,6 +166,8 @@ export function ChatContainer({
       currentUser={currentUser}
       otherParticipant={otherParticipant}
       isOtherParticipantTyping={isOtherParticipantTyping}
+      isOtherParticipantBlocked={isOtherParticipantBlocked}
+      isCurrentUserBlocked={isCurrentUserBlocked}
       messages={messages}
       message={message}
       mediaFiles={mediaFiles}

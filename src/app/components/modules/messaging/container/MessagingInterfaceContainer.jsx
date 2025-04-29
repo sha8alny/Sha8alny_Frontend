@@ -45,9 +45,12 @@ export function MessagingContainer({ currentUser }) {
     showConnectionsModal,
     userConnections,
     loadingConnections,
+    hasMoreConnections,
+    loadingMoreConnections,
     handleOpenConnections,
     handleStartConversation: startConversation,
-    setShowConnectionsModal
+    setShowConnectionsModal,
+    loadMoreConnections
   } = useConnections(currentUser, userConversations);
   
   // ---- UI STATE ----
@@ -166,6 +169,9 @@ export function MessagingContainer({ currentUser }) {
           connections={userConnections}
           onClose={() => setShowConnectionsModal(false)}
           onSelect={handleStartConversation}
+          hasMore={hasMoreConnections}
+          loadingMore={loadingMoreConnections}
+          onLoadMore={loadMoreConnections}
         />
       )}
     </>
