@@ -46,7 +46,8 @@ import TableSkeleton from "./TableSkeleton";
  * such as viewing details, approving, rejecting, or setting the status of a report.
  *
  * @param {Object} props - The component props.
- * @param {Array} props.reports - The list of flagged job reports to display.
+ * @param {Object} props.reports - The object containing report data and pagination info.
+ * @param {Array} props.reports.data - The list of flagged job reports to display.
  * @param {boolean} props.isDialogOpen - Indicates whether the details dialog is open.
  * @param {Object} props.selectedReport - The currently selected report for viewing details.
  * @param {Function} props.handleViewDetails - Function to handle viewing details of a report.
@@ -95,7 +96,7 @@ export function FlaggedJobsTablePresentation({
           {statusOptions.map((status) => (
             <button
               key={status}
-              data-testid={`flagged-jobs-${status}`}
+              data-testid={`flagged-jobs-${status.toLowerCase()}`}
               onClick={() => toggleStatusFilter(status)}
               className={`text-sm px-2 py-0.5 rounded-md border text-secondary cursor-pointer transition-all duration-200 ${
                 selectedStatuses.includes(status)
@@ -125,7 +126,7 @@ export function FlaggedJobsTablePresentation({
         </Select>
       </div>
       <div className="h-screen">
-        <div className="rounded-md border text-text  ">
+        <div className="rounded-md border text-text">
           <Table>
             <TableHeader>
               <TableRow>
@@ -145,7 +146,7 @@ export function FlaggedJobsTablePresentation({
                     Failed to load reports.
                   </TableCell>
                 </TableRow>
-              ) : (
+              ) : reports.data && reports.data.length > 0 ? (
                 reports.data.map((report) => (
                   <TableRow key={report.jobId}>
                     <TableCell>
@@ -237,6 +238,12 @@ export function FlaggedJobsTablePresentation({
                     </TableCell>
                   </TableRow>
                 ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-gray-500">
+                    No reports found.
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
@@ -253,7 +260,7 @@ export function FlaggedJobsTablePresentation({
           </button>
           <button
             data-testid="flagged-jobs-next"
-            disabled={!reports.data?.nextPage || isFetching}
+            disabled={!reports.nextPage || isFetching}
             onClick={() => setPage((prev) => prev + 1)}
             className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >

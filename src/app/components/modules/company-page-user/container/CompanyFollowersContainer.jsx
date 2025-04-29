@@ -4,16 +4,25 @@ import CompanyFollowers from "../presentation/CompanyFollowers";
 import { useEffect, useState } from "react";
 
 /**
- * CompanyFollowersContainer is a container component that fetches company data
- * based on the given `username` prop and passes it to the `CompanyFollowers` presentation component.
+ * @namespace company-user
+ * @module CompanyFollowersContainer
+ */
+
+/**
+ * Container component that fetches and displays a company's followers data.
  * 
- * This component is intended to be used on client-side only (via `"use client"` directive).
+ * This component performs a client-side fetch of the company data using the `username` prop,
+ * and passes the result to the `CompanyFollowers` presentation component.
+ *
+ * It manages loading state internally and only attempts to fetch data when the `username` is provided.
  *
  * @component
  * @param {Object} props - The component props
- * @param {string} props.username - The username of the company to fetch data for
- * 
- * @returns {JSX.Element} A rendered `CompanyFollowers` component with the company data as a prop
+ * @param {string} props.username - The username/identifier of the company
+ * @returns {JSX.Element} A rendered `CompanyFollowers` component with fetched company data
+ *
+ * @example
+ * <CompanyFollowersContainer username="exampleCompany" />
  */
 
 export default function CompanyFollowersContainer({ username }){

@@ -46,3 +46,5 @@ package-lock.json
 .vscode
 docs
 test
+certificates
+swenv.js

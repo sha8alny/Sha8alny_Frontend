@@ -1,10 +1,24 @@
 import { fetchWithAuth } from "./userAuthentication";
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const fetchBlockedUsers = async (query = "", currentPage,pageSize = 1) => {
-  const response = await fetchWithAuth(`${apiURL}/blocks?name=${query}&pageSize=${pageSize}&pageNum=${currentPage}`,{
+
+export const fetchBlockedUsers = async (query = "", currentPage, pageSize = 10) => {
+  const params = new URLSearchParams();
+  params.append('pageNum', currentPage);
+  params.append('pageSize', pageSize);
+  
+  if (query) {
+    params.append('text', query);
+  }
+  
+  const response = await fetchWithAuth(`${apiURL}/blocks?${params.toString()}`, {
     method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
   });
+  
+  console.log("Fetching blocked users with params:", params.toString());
   
   if (response.status === 204) {
     return { blockedUsers: [], totalCount: 0 };
@@ -12,7 +26,7 @@ export const fetchBlockedUsers = async (query = "", currentPage,pageSize = 1) =>
   const data = await response.json();
 
   if (!response.ok) {
-    const message = data?.message || data?.error || "Failed to update username";
+    const message = data?.message || data?.error || "Failed to fetch blocked users";
     throw new Error(message);
   }
 

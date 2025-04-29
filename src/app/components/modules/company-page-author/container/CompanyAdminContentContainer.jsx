@@ -6,16 +6,20 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { getCompany } from "@/app/services/companyManagement";
 
+/**
+ * @namespace CompanyAdminContentContainerComponents
+ */
 
 /**
- * CompanyAdminContent component that renders the admin interface
- * for a specific company. It includes a sidebar, analytics panel,
- * and conditionally rendered content based on company ownership and availability.
- *
+ * CompanyAdminContentContainer is responsible for managing the state and fetching company data
+ * for the given username. It also handles resizing events and provides functions to toggle the
+ * sidebar and analytics sections.
  * @component
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Child components to render within the main content area
- * @returns {JSX.Element} Rendered admin content page
+ * @param {Object} props - The props for the CompanyAdminContentContainer component.
+ * @param {React.ReactNode} props.children - The child components to be rendered inside the container.
+ *
+ * @returns {JSX.Element} The rendered CompanyAdminContentContainer component that includes the company
+ * data and handles sidebar/analytics toggling and navigation.
  */
 
 export default function CompanyAdminContentContainer({ children }) {
@@ -29,15 +33,12 @@ export default function CompanyAdminContentContainer({ children }) {
     const [loading, setLoading] = useState(true);
     const router = useRouter(); 
 
-    /**
-     * Fetches company data using the `getCompany` service.
-     */
+
 
     useEffect(() => {
         const fetchCompany = async () => {
             try {
                 const data = await getCompany(username);
-                console.log("data", data);
                 if (data?.notFound || data === null || data === undefined) {  
                     setCompany("notFound");
                 } 
@@ -58,17 +59,11 @@ export default function CompanyAdminContentContainer({ children }) {
         if (username) fetchCompany();
     }, [username]);
     
-    /**
-     * Updates logo state when the `logo` query param changes.
-     */
 
     useEffect(() => {
         setLogo(searchParams.get("logo") || "");
     }, [searchParams]);
-    
-    /**
-     * Closes sidebar and analytics when screen is resized to large.
-     */
+
 
     useEffect(() => {
         const handleResize = () => {

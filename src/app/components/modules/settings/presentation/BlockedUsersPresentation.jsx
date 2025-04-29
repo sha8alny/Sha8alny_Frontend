@@ -48,15 +48,15 @@ const BlockedUserItem = ({ user, onUnblockClick, navigateToProfile }) => {
             <Briefcase className="h-3 w-3" /> {user.headline}
           </p>
           <p className="text-gray-400 text-xs flex items-center gap-1">
-            <MapPin className="h-3 w-3" /> {user.time}
+            {/* <MapPin className="h-3 w-3" /> {user.time} */}
           </p>
         </div>
         <Button
           size="sm"
-          className="rounded-full text-xs h-7 px-3 bg-secondary text-background hover:bg-secondary/80 cursor-pointer"
+          className="rounded-full text-xs h-7 px-3 bg-secondary text-background hover:bg-secondary/80 cursor-pointer mt-1"
           onClick={(e) => {
             e.stopPropagation();
-            onUnblockClick(user.username, user.name);
+            onUnblockClick(user);
           }}
           data-testid="unblock-button"
         >
@@ -205,9 +205,9 @@ const BlockedUsersPresentation = ({
               Manage blocked users
             </h1>
           </div>
-          {/* <div className="text-sm text-gray-500 text-center sm:text-right mt-2 sm:mt-0">
+          <div className="text-sm text-gray-500 text-center sm:text-right mt-2 sm:mt-0">
             {totalCount} {totalCount === 1 ? "user" : "users"} blocked
-          </div> */}
+          </div>
         </div>
       </div>
 
@@ -238,7 +238,7 @@ const BlockedUsersPresentation = ({
           <div className="space-y-4">
             {blockedUsers.map((user) => (
               <BlockedUserItem
-                key={user.id}
+                key={user.username}
                 user={user}
                 onUnblockClick={onUnblockClick}
                 navigateToProfile={navigateToProfile}

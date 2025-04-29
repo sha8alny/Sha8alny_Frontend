@@ -109,7 +109,7 @@ const Icon = ({ icon, currentPath, navigateTo }) => {
  * @param {number|string} props.badge - Alternative badge content (not used in current implementation).
  * @returns {JSX.Element} The rendered icon with badge component.
  */
-const IconWithBadge = ({ icon, currentPath, navigateTo }) => {
+const IconWithBadge = ({ icon, navigateTo }) => {
   return (
     <div className="relative hidden md:block">
       <Button
@@ -118,6 +118,13 @@ const IconWithBadge = ({ icon, currentPath, navigateTo }) => {
         data-testid={`icon-with-badge-${icon.name.toLowerCase()}`}
         className="rounded-full cursor-pointer hover:bg-primary/10"
         aria-label={icon.name}
+        onClick={() => {
+          if (icon.name === "Notifications") {
+            navigateTo("/notifications");
+          } else if (icon.name === "Messages") {
+            navigateTo("/messages");
+          }
+        }}
       >
         <icon.icon className="text-muted-foreground" sx={{ fontSize: 20 }} />
       </Button>
@@ -420,7 +427,7 @@ export default function NavbarPresentation({
               number: userInfo?.notificationsReceived,
             },
           ].map((icon, index) => (
-            <IconWithBadge key={index} icon={icon} />
+            <IconWithBadge key={index} icon={icon} navigateTo={navigateTo} />
           ))}
         </div>
 

@@ -12,57 +12,25 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteCompany, updateCompany } from "@/app/services/companyManagement";
 import { deleteCompanyMedia } from "@/app/services/companyManagement";
 
+/**
+ * @namespace SideBarComponents
+ */
 
 /**
- * @namespace company-page-author
- * @module company-page-author
- */
-/**
- * SideBarContainer component provides navigation and company management functionalities,
- * including file uploads, modal handling, and page deactivation.
- *
+ * SideBarContainer component manages the logic and actions for the sidebar, including uploading media (logo, cover image), navigation, and deactivating the company page.
+ * 
  * @component
- * @param {Object} props - The component props.
+ * 
+ * @param {Object} props - The props for the SideBarContainer component.
+ * @param {Object} props.company - The company object containing the company's details.
+ * @param {function} props.setCompany - Function to update the company object.
  * @param {string} props.username - The username of the company.
+ * @param {function} props.setLogo - Function to update the company logo.
+ * 
  * @returns {JSX.Element} The rendered SideBarContainer component.
  */
 
-/**
- * Handles the upload of a cover image and sets its preview.
- * @param {Event} e - The file input change event.
- */
-
-/**
- * Handles the upload of a logo image and sets its preview.
- * @param {Event} e - The file input change event.
- */
-
-/**
- * Triggers the file input for cover image upload.
- */
-
-/**
- * Triggers the file input for logo image upload.
- */
-
-/**
- * Opens a modal with the specified type.
- * @param {string} type - The type of the modal (e.g., "deactivate").
- */
-
-/**
- * Confirms the deactivation of the company page by calling deleteCompany service.
- * Closes the modal upon successful deletion.
- * @async
- * @throws {Error} If the company deletion fails.
- */
-
-/** 
- * List of sidebar menu items with their respective icons and actions.
- * @type {Array<{name: string, href: string, icon: JSX.Element, action?: Function}>}
- */
-
-function SideBarContainer({company,setCompany, username ,setLogo }){
+export default function SideBarContainer({company,setCompany, username ,setLogo }){
     const pathname= usePathname();
     const isActive = (href) => pathname.startsWith(href);
     const [isModalOpen, setModalOpen] = useState(false); 
@@ -152,7 +120,7 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
     };
 
     const OpenCompanyUserPage=()=>{
-        router.push(`/company/${username}/user/about`);
+        router.push(`/company/${username}/user/posts`);
     };
 
     const OpenPostsPage=()=>{
@@ -174,7 +142,7 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
         {name: "Page Posts", href:`/company/${username}/admin/posts` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Jobs", href:`/company/${username}/admin/company-author`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Jobs", href:`/company/${username}/admin/jobs`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(
@@ -193,5 +161,3 @@ function SideBarContainer({company,setCompany, username ,setLogo }){
     );
 
 }
-
-export default SideBarContainer;

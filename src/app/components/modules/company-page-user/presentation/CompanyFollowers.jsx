@@ -1,25 +1,22 @@
 import Image from "next/image";
 
 /**
- * CompanyFollowers component that displays a company's logo, name, and the number of followers.
- * 
+ * @namespace CompanyProfile
+ * @description Namespace for components and types related to the company profile section.
+ */
+
+/**
+ * CompanyFollowers component - Displays the company logo, name, and follower count.
+ *
+ * @memberof CompanyProfile
  * @component
- * @example
- * const company = {
- *   logo: "/path/to/logo.svg",
- *   name: "Company Name",
- *   numFollowers: 1200
- * };
- * 
- * return <CompanyFollowers company={company} />;
- * 
- * @param {Object} props - The props for the component.
- * @param {Object} props.company - The company information.
- * @param {string} [props.company.logo] - The URL of the company's logo. Defaults to a placeholder if not provided.
- * @param {string} props.company.name - The name of the company.
- * @param {number} props.company.numFollowers - The number of followers the company has.
- * 
- * @returns {JSX.Element} The rendered JSX element for the company follower information.
+ * @param {Object} props - Component props.
+ * @param {Object} props.company - The company object containing the logo, name, and number of followers.
+ * @param {string} [props.company.logo] - The URL of the company logo. Defaults to a placeholder if not provided.
+ * @param {string} [props.company.name] - The name of the company.
+ * @param {number} [props.company.numFollowers] - The number of followers the company has.
+ *
+ * @returns {JSX.Element} A rendered component displaying the company logo, name, and follower count.
  */
 
 export default function CompanyFollowers({ company }) {

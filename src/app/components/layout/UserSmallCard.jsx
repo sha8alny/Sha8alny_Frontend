@@ -52,9 +52,15 @@ export default function UserSmallCard({ userInfo, onClick, onButtonClick }) {
         </div>
       </div>
       <div className="ml-auto">
-        <button className="rounded-2xl flex items-center gap-2 bg-secondary text-background hover:bg-secondary/80 cursor-pointer ease-in-out duration-300 text-xs p-3 font-[550]">
-          <PersonAdd sx={{ fontSize: "1rem" }} /> Connect
+      <div className="relative group w-fit mx-auto sm:mx-0">
+        <button className="rounded-2xl flex items-center justify-center bg-secondary text-background hover:bg-secondary/80 cursor-pointer ease-in-out duration-300 text-xs p-3 sm:p-2">
+          <PersonAdd sx={{ fontSize: "1rem" }} />
         </button>
+        <span className="absolute left-1/2 -translate-x-1/2 mt-1 text-[10px] sm:text-xs text-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+          Connect
+        </span>
+      </div>
+
       </div>
     </div>
   );

@@ -43,14 +43,19 @@ export default function JobActions({
   }, [job.isSavedByUser]);
 
   return (
-    <div className="mt-8 flex space-x-4">
+    <div className="mt-8 flex space-x-4" data-id="job-actions-container">
       <button
         onClick={handleOpenModal}
-        className="flex items-center gap-2 px-6 py-2 text-white dark:text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200  text-sm font-medium rounded-md shadow-md"
+        className={`flex items-center gap-2 px-6 py-2 text-white dark:text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200 text-sm font-medium rounded-md shadow-md ${
+          !job.isAcceptingApplications ? "opacity-50 cursor-not-allowed" : ""
+        }`}
         aria-label="Apply for this job"
+        data-testid="apply-job-button"
+        disabled={!job.isAcceptingApplications}
+        title={!job.isAcceptingApplications ? "This job is not accepting applications at this time" : "Apply for this position"}
       >
         <CheckCircleIcon className="h-5 w-5" />
-        Apply Now
+        {job.isAcceptingApplications ? "Apply Now" : "Not Accepting Applications"}
       </button>
 
       {modalOpen && (
@@ -66,12 +71,13 @@ export default function JobActions({
         className={`flex items-center gap-2 px-6 py-2 text-sm font-medium rounded-md transition duration-300 ${
           isSaved
             ? "text-white dark:text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
-            : "border border-secondary text-secondary  hover:bg-secondary/80"
-        }`}
+            : "border border-secondary text-secondary hover:bg-secondary/80"
+        } ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
         onClick={handleSaveClick}
         disabled={isSaving}
         aria-label={isSaved ? "Unsave this job" : "Save this job"}
-        title={isSaved ? "Remove from saved jobs" : "Add to saved jobs"}
+        title={isSaving ? "Please wait while we process your request" : isSaved ? "Remove from saved jobs" : "Add to saved jobs"}
+        data-testid="save-job-button"
       >
         <BookmarkIcon
           className={`h-5 w-5 ${

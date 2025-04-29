@@ -90,7 +90,8 @@ return (
           Applicants.map((Applicant, index) => (
             <ProfileCard
               key={`${Applicant.id}-${index}`}
-              name={Applicant.username}
+              username={Applicant.username}
+              name={Applicant.name}
               title={Applicant.headline}
               profilePic={Applicant.profilePicture}
               coverPic={Applicant.coverPhoto}
@@ -98,6 +99,7 @@ return (
               buttonAction={() => onViewApplication(Applicant._id)}
               showButton={true}
               showRemoveButton={false}
+              onRemove={() => {}}
             />
           ))
         )}

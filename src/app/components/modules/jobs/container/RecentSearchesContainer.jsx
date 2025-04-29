@@ -37,24 +37,10 @@ const RecentSearchesContainer = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const paramMapping = {
-    keyword: "Keyword",
-    location: "Location",
-    industry: "Industry",
-    company: "Company",
-    jobType: "Job Type",
-    experience: "Experience",
-    salary: "Salary",
-    remote: "Remote",
-    postedDate: "Posted Date",
-  };
+  const paramMapping = {};
 
   const parseSearchParams = useCallback((params) => {
     const result = {};
-    for (const [key, label] of Object.entries(paramMapping)) {
-      const value = params.get(key);
-      if (value) result[label] = value;
-    }
     params.forEach((value, key) => {
       if (!paramMapping[key]) {
         const formattedKey = key.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase());
