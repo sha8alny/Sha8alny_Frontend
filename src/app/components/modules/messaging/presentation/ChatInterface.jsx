@@ -33,7 +33,8 @@ const ChatHeader = React.memo(
     onBack,
     otherParticipant,
     isOtherParticipantTyping,
-    isOtherUserBlocked,
+    isOtherParticipantBlocked,
+    isCurrentUserBlocked,
     onBlockUser,
     onUnblockUser,
   }) => (
@@ -82,7 +83,7 @@ const ChatHeader = React.memo(
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {isOtherUserBlocked ? (
+          {isOtherParticipantBlocked ? (
             <DropdownMenuItem
               onClick={onUnblockUser}
               data-testid="unblock-user-button"
@@ -94,6 +95,7 @@ const ChatHeader = React.memo(
             <DropdownMenuItem
               onClick={onBlockUser}
               data-testid="block-user-button"
+              disabled={isCurrentUserBlocked}
             >
               <BlockIcon sx={{ mr: 1, fontSize: 16 }} />
               Block user
@@ -211,6 +213,8 @@ export function ChatPresentation({
   currentUser,
   otherParticipant,
   isOtherParticipantTyping,
+  isOtherParticipantBlocked,
+  isCurrentUserBlocked,
   messages,
   message,
   mediaFiles,
@@ -226,7 +230,6 @@ export function ChatPresentation({
   onUnblockUser,
   onLoadMoreMessages,
 }) {
-  const isOtherUserBlocked = otherParticipant?.isBlocked === true;
   const scrollAreaViewportRef = useRef(null);
   const prevMessagesLengthRef = useRef(messages.length);
   const scrollPositionRef = useRef(null);
@@ -293,7 +296,8 @@ export function ChatPresentation({
         onBack={onBack}
         otherParticipant={otherParticipant}
         isOtherParticipantTyping={isOtherParticipantTyping}
-        isOtherUserBlocked={isOtherUserBlocked}
+        isOtherParticipantBlocked={isOtherParticipantBlocked}
+        isCurrentUserBlocked={isCurrentUserBlocked}
         onBlockUser={onBlockUser}
         onUnblockUser={onUnblockUser}
       />
@@ -310,9 +314,13 @@ export function ChatPresentation({
         />
       </ScrollArea>
 
-      {isOtherUserBlocked ? (
+      {isOtherParticipantBlocked ? (
         <div className="p-4 text-center text-muted-foreground border-t bg-background/95 backdrop-blur-sm">
           You have blocked this user. Unblock to send messages.
+        </div>
+      ) : isCurrentUserBlocked ? (
+        <div className="p-4 text-center text-muted-foreground border-t bg-background/95 backdrop-blur-sm">
+          You have been blocked by this user and cannot send messages.
         </div>
       ) : (
         <ChatInput

@@ -79,7 +79,8 @@ const ConversationActions = React.memo(
 const ConversationItem = React.memo(
   ({ conversation, isSelected, onSelect, onToggleRead, onToggleBlock }) => {
     const otherParticipant = conversation.otherParticipantDetails;
-    const isBlocked = conversation.isOtherParticipantBlocked;
+    const isOtherBlocked = conversation.isOtherParticipantBlocked;
+    const isCurrentUserBlocked = conversation.isCurrentUserBlocked;
     const otherUsername = conversation.otherUsername;
 
     const displayName = otherParticipant?.name || otherUsername;
@@ -102,6 +103,14 @@ const ConversationItem = React.memo(
     const isLastMessageFromOtherUser =
       conversation.lastMessageSender === displayName;
 
+    // Determine block status text
+    let blockStatusText = null;
+    if (isOtherBlocked) {
+      blockStatusText = "(Blocked)";
+    } else if (isCurrentUserBlocked) {
+      blockStatusText = "(Blocked you)";
+    }
+
     return (
       <div
         className={`flex items-start gap-3 p-3 mx-2 my-1 rounded-lg cursor-pointer transition-colors duration-200 ${
@@ -122,9 +131,9 @@ const ConversationItem = React.memo(
           <div className="flex items-center justify-between w-full">
             <div className="font-medium truncate max-w-[60%] text-text">
               {displayName}
-              {isBlocked && (
+              {blockStatusText && (
                 <span className="ml-2 text-xs text-muted-foreground">
-                  (Blocked)
+                  {blockStatusText}
                 </span>
               )}
             </div>

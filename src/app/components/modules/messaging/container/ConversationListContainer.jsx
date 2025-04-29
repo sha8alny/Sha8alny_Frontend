@@ -15,7 +15,12 @@ const processConversation = (conversation, currentUser) => {
     
     // Get metadata for participants
     const otherParticipantDetails = conversation.participants[otherUsername];
+    const currentUserDetails = conversation.participants[currentUser];
+    
+    // Extract blocking statuses - both directions
     const isOtherParticipantBlocked = otherParticipantDetails?.isBlocked === true;
+    const isCurrentUserBlocked = currentUserDetails?.isBlocked === true;
+    
     const otherParticipantMetadata = conversation.participantMetadata?.[otherUsername];
     const currentUserMetadata = conversation.participantMetadata?.[currentUser];
     
@@ -30,6 +35,7 @@ const processConversation = (conversation, currentUser) => {
         otherUsername,
         isOtherParticipantTyping,
         isOtherParticipantBlocked,
+        isCurrentUserBlocked,
         unseenCount,
         read: isRead
     };
