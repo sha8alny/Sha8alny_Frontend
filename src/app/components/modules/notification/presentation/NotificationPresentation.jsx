@@ -152,7 +152,7 @@ function NotificationPresentation({
             </div>
             {!notification.isRead && (
             <Button 
-            className=""
+            className="bg-secondary text-background hover:bg-secondary/80 cursor-pointer" 
             size="sm" 
               onClick={() => onMarkAsRead(notification._id)}
               disabled={isMarkingAsRead}

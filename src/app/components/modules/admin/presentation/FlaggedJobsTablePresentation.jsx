@@ -205,7 +205,7 @@ export function FlaggedJobsTablePresentation({
                         variant="outline"
                         className={getStatusColor(report.reportData.status)}
                       >
-                        {report.reportData.status}
+                        {report.reportData.status.charAt(0).toUpperCase() + report.reportData.status.slice(1)}
                       </Badge>
                     </TableCell>
                     <TableCell>{report.reportData.userId}</TableCell>
