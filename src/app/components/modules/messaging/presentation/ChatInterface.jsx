@@ -27,7 +27,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import CheckIcon from "@mui/icons-material/Check";
 import { isSameDay } from "date-fns";
 
-// Sub-components
+// Chat header component
 const ChatHeader = React.memo(
   ({
     onBack,
@@ -104,13 +104,17 @@ const ChatHeader = React.memo(
   )
 );
 
+// Message list component
 const MessageList = React.memo(
   ({ messages, currentUser, otherParticipant, onLoadMoreMessages }) => (
     <div className="space-y-4 pb-2">
       {messages.map((msg, index) => {
         const showDateSeparator =
           index === 0 ||
-          !isSameDay(msg.timestamp, messages[index - 1].timestamp);
+          !isSameDay(
+            new Date(msg.timestamp), 
+            new Date(messages[index - 1].timestamp)
+          );
 
         return (
           <MessageBubble
@@ -129,6 +133,7 @@ const MessageList = React.memo(
   )
 );
 
+// Chat input component
 const ChatInput = React.memo(
   ({
     message,
@@ -199,6 +204,7 @@ const ChatInput = React.memo(
   )
 );
 
+// Main chat presentation component
 export function ChatPresentation({
   selectedConversation,
   currentUser,
@@ -221,6 +227,9 @@ export function ChatPresentation({
 }) {
   const isOtherUserBlocked = otherParticipant?.isBlocked === true;
   const scrollAreaViewportRef = useRef(null);
+  const prevMessagesLengthRef = useRef(messages.length);
+  const scrollPositionRef = useRef(null);
+  const isLoadingMoreRef = useRef(false);
 
   // Add scroll detection to load more messages when reaching top
   useEffect(() => {
@@ -234,8 +243,15 @@ export function ChatPresentation({
     scrollAreaViewportRef.current = viewport;
 
     const handleScroll = () => {
-      // If user has scrolled near the top (20px threshold), trigger load more
-      if (viewport.scrollTop < 20) {
+      // Store current scroll position
+      scrollPositionRef.current = {
+        scrollTop: viewport.scrollTop,
+        scrollHeight: viewport.scrollHeight
+      };
+      
+      // If user has scrolled near the top (20px threshold) and we're not already loading, trigger load more
+      if (viewport.scrollTop < 20 && !isLoadingMoreRef.current) {
+        isLoadingMoreRef.current = true;
         onLoadMoreMessages && onLoadMoreMessages();
       }
     };
@@ -243,6 +259,32 @@ export function ChatPresentation({
     viewport.addEventListener("scroll", handleScroll);
     return () => viewport.removeEventListener("scroll", handleScroll);
   }, [onLoadMoreMessages]);
+  
+  // Preserve scroll position when new messages are loaded at the top
+  useEffect(() => {
+    if (!scrollAreaViewportRef.current) return;
+    
+    // Check if new messages were loaded (not sent)
+    if (messages.length > prevMessagesLengthRef.current && isLoadingMoreRef.current) {
+      const viewport = scrollAreaViewportRef.current;
+      
+      // Add a small delay to ensure DOM is updated
+      setTimeout(() => {
+        // Get height difference to maintain relative scroll position
+        if (scrollPositionRef.current) {
+          const heightDifference = viewport.scrollHeight - scrollPositionRef.current.scrollHeight;
+          viewport.scrollTop = scrollPositionRef.current.scrollTop + heightDifference;
+        }
+        
+        isLoadingMoreRef.current = false;
+      }, 50);
+    } else {
+      // If not loading more (i.e., new message sent), don't interfere with auto-scroll
+      isLoadingMoreRef.current = false;
+    }
+    
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages.length]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">

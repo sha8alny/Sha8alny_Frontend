@@ -23,15 +23,16 @@ export function ChatContainer({
   const typingTimeoutRef = useRef(null);
   
   // Extract common data
-  const conversationId = selectedConversation.id;
+  const conversationId = selectedConversation?.id;
   
-  // Get other participant from the new structure
+  // Get other participant username from conversation data
   const otherParticipantUsername = useMemo(() => {
     if (!selectedConversation?.participants || !currentUser) return null;
-    const usernames = Object.keys(selectedConversation.participants);
-    return usernames.find(username => username !== currentUser);
+    return Object.keys(selectedConversation.participants)
+      .find(username => username !== currentUser);
   }, [selectedConversation, currentUser]);
   
+  // Get other participant details
   const otherParticipant = useMemo(() => {
     if (!otherParticipantUsername || !selectedConversation?.participants) return null;
     return {
@@ -40,17 +41,15 @@ export function ChatContainer({
     };
   }, [selectedConversation, otherParticipantUsername]);
   
+  // Check if other participant is typing
   const isOtherParticipantTyping = useMemo(() => {
     if (!otherParticipantUsername || !selectedConversation?.participantMetadata) return false;
     return selectedConversation.participantMetadata[otherParticipantUsername]?.typingStatus === true;
   }, [
-    selectedConversation, 
+    selectedConversation?.participantMetadata,
     otherParticipantUsername,
-    // Add the specific property path to the dependency array
     selectedConversation?.participantMetadata?.[otherParticipantUsername]?.typingStatus
   ]);
-  
-  const receiverUsername = otherParticipant?.username;
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -62,12 +61,11 @@ export function ChatContainer({
         scrollAreaRef.current;
       
       if (scrollableElement) {
-        requestAnimationFrame(() => {
-          scrollableElement.scrollTop = scrollableElement.scrollHeight;
-        });
+        scrollableElement.scrollTop = scrollableElement.scrollHeight;
       }
     };
 
+    // Scroll immediately and after a delay to handle rendering
     scrollToBottom();
     const timeouts = [
       setTimeout(scrollToBottom, 100),
@@ -75,17 +73,18 @@ export function ChatContainer({
     ];
 
     return () => timeouts.forEach(clearTimeout);
-  }, [messages.length, mediaFiles]);
+  }, [messages.length, mediaFiles.length]);
 
   // Message handlers
-  const handleSendMessage = useCallback(async () => {
-    if (!(message.trim() || mediaFiles.length > 0) || !receiverUsername) return;
+  const handleSendMessage = useCallback(() => {
+    if (!(message.trim() || mediaFiles.length > 0) || !otherParticipantUsername) return;
     
     try {
-      await onSendMessage(receiverUsername, message, mediaFiles);
+      onSendMessage(otherParticipantUsername, message, mediaFiles);
       setMessage("");
       setMediaFiles([]);
       
+      // Clear typing indicator
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
         typingTimeoutRef.current = null;
@@ -94,7 +93,15 @@ export function ChatContainer({
     } catch (error) {
       console.error("Error sending message:", error);
     }
-  }, [message, mediaFiles, receiverUsername, currentUser, conversationId, onSendMessage, onSetTypingIndicator]);
+  }, [
+    message, 
+    mediaFiles, 
+    otherParticipantUsername, 
+    currentUser, 
+    conversationId, 
+    onSendMessage, 
+    onSetTypingIndicator
+  ]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -106,23 +113,27 @@ export function ChatContainer({
   const handleTyping = useCallback((e) => {
     setMessage(e.target.value);
 
+    // Set typing indicator
     if (!typingTimeoutRef.current) {
       onSetTypingIndicator(currentUser, conversationId, true);
     }
 
+    // Clear previous timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
 
+    // Set new timeout
     typingTimeoutRef.current = setTimeout(() => {
       onSetTypingIndicator(currentUser, conversationId, false);
       typingTimeoutRef.current = null;
     }, 2000);
   }, [currentUser, conversationId, onSetTypingIndicator]);
 
+
   // File handling
   const handleFileSelect = useCallback((e) => {
-    if (e.target.files) {
+    if (e.target.files?.length) {
       setMediaFiles(prev => [...prev, ...Array.from(e.target.files)]);
     }
   }, []);
@@ -131,25 +142,18 @@ export function ChatContainer({
     setMediaFiles(prev => prev.filter((_, i) => i !== index));
   }, []);
 
-  // Handle loading more messages
-  const handleLoadMoreMessages = useCallback(() => {
-    if (selectedConversation && selectedConversation.id) {
-      onLoadMoreMessages(selectedConversation.id, messages.length > 0 ? messages[0].id : null);
-    }
-  }, [selectedConversation, messages, onLoadMoreMessages]);
-
   // Blocking handlers
-  const handleBlockUser = useCallback(async () => {
-    if (receiverUsername) {
-      await onToggleBlock(conversationId, receiverUsername, true);
+  const handleBlockUser = useCallback(() => {
+    if (otherParticipantUsername) {
+      onToggleBlock(conversationId, otherParticipantUsername, true);
     }
-  }, [conversationId, receiverUsername, onToggleBlock]);
+  }, [conversationId, otherParticipantUsername, onToggleBlock]);
 
-  const handleUnblockUser = useCallback(async () => {
-    if (receiverUsername) {
-      await onToggleBlock(conversationId, receiverUsername, false);
+  const handleUnblockUser = useCallback(() => {
+    if (otherParticipantUsername) {
+      onToggleBlock(conversationId, otherParticipantUsername, false);
     }
-  }, [conversationId, receiverUsername, onToggleBlock]);
+  }, [conversationId, otherParticipantUsername, onToggleBlock]);
 
   return (
     <ChatPresentation
@@ -170,7 +174,7 @@ export function ChatContainer({
       onTyping={handleTyping}
       onBlockUser={handleBlockUser}
       onUnblockUser={handleUnblockUser}
-      onLoadMoreMessages={handleLoadMoreMessages}
+      onLoadMoreMessages={onLoadMoreMessages}
     />
   );
 }
