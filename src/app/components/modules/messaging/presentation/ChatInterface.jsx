@@ -44,9 +44,10 @@ const ChatHeader = React.memo(
             variant="ghost"
             size="icon"
             onClick={onBack}
+            className="h-8 w-8 hover:bg-foreground dark:hover:bg-foreground/80 transition-colors"
             data-testid="chat-back-button"
           >
-            <ArrowBackIcon sx={{ fontSize: 20 }} />
+            <ArrowBackIcon sx={{ fontSize: 20 }} className="text-muted-foreground"/>
           </Button>
         )}
         <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
@@ -74,10 +75,10 @@ const ChatHeader = React.memo(
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-8 w-8 hover:bg-foreground dark:hover:bg-foreground/80 transition-colors"
             data-testid="chat-options-button"
           >
-            <MoreVertIcon sx={{ fontSize: 20 }} />
+            <MoreVertIcon sx={{ fontSize: 20 }} className="text-muted-foreground" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

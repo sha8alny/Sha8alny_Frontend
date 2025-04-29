@@ -32,11 +32,11 @@ const ConversationActions = React.memo(({
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 flex-shrink-0 ml-1"
+        className="h-8 w-8 flex-shrink-0 ml-1 hover:bg-muted-foreground/10"
         onClick={onMenuClick}
         data-testid={`conversation-actions-button-${conversation.id}`}
       >
-        <MoreVertical className="h-4 w-4" />
+        <MoreVertical className="h-4 w-4 text-muted-foreground" />
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" className="w-48">
@@ -179,14 +179,14 @@ export function ConversationListPresentation({
   const hasConversations = filteredConversations.length > 0;
 
   return (
-    <div className="flex flex-col h-full md:bg-foreground bg-foreground/70 transition-colors duration-200">
+    <div className="flex flex-col h-full md:bg-foreground bg-foreground transition-colors duration-200">
       <div className="sticky top-0 z-10 p-3 border-b bg-foreground/95 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <Input
             placeholder="Search messages..."
             value={searchQuery}
             onChange={onSearchChange}
-            className="flex-1"
+            className="flex-1 text-text"
             data-testid="conversation-search-input"
           />
           <Button
@@ -195,7 +195,7 @@ export function ConversationListPresentation({
             className="flex-shrink-0"
             data-testid="conversation-search-button"
           >
-            <Search className="h-4 w-4" />
+            <Search className="h-4 w-4 text-text" />
           </Button>
         </div>
       </div>
