@@ -268,6 +268,45 @@ export function useConversations(currentUser) {
       });
   }, [conversations, currentUser, selectedConversation]);
 
+  // Add new function to handle conversation deletion
+  const handleDeleteConversation = useCallback(async (id, otherUsername) => {
+    if (!id || !otherUsername) return;
+    
+    try {
+      // Optimistically update UI by removing the conversation
+      const convToDelete = conversations.find(c => c.id === id);
+      if (!convToDelete) return;
+      
+      // If the selected conversation is being deleted, clear it
+      if (selectedConversation?.id === id) {
+        setSelectedConversation(null);
+      }
+      
+      // Remove from UI immediately
+      setConversations(prev => prev.filter(c => c.id !== id));
+      
+      // Call API to delete the conversation (backend)
+      //await messagingService.deleteConversation(otherUsername);
+      //  delete from Firestore 
+      await messagingService.deleteConversationFirestore(id);
+      
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
+      
+      // Restore conversation on error
+      setConversations(prev => {
+        const exists = prev.some(c => c.id === id);
+        if (!exists) {
+          const originalConv = conversations.find(c => c.id === id);
+          if (originalConv) {
+            return [...prev, originalConv];
+          }
+        }
+        return prev;
+      });
+    }
+  }, [conversations, selectedConversation, setSelectedConversation]);
+
   // Process batched read operations
   useEffect(() => {
     if (Object.keys(pendingReadOperations).length === 0) return;
@@ -372,6 +411,7 @@ export function useConversations(currentUser) {
     handleToggleRead,
     handleMarkAsRead,
     handleToggleBlock,
+    handleDeleteConversation, // Add this to returned object
     setSelectedConversation,
   };
 }

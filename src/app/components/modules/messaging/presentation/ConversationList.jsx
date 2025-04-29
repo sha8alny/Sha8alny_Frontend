@@ -16,13 +16,13 @@ import {
   DropdownMenuTrigger,
 } from "@/app/components/ui/DropDownMenu";
 // Icons
-import { Search, MoreVertical, Check } from "lucide-react";
+import { Search, MoreVertical, Check, Trash2 } from "lucide-react"; // Add Trash2 icon
 // Utils
 import { formatDistanceToNow } from "@/app/utils/messagingUtils";
 
 // Conversation actions component
 const ConversationActions = React.memo(
-  ({ conversation, onToggleRead, onToggleBlock, onMenuClick }) => (
+  ({ conversation, onToggleRead, onToggleBlock, onDeleteConversation, onMenuClick }) => (
     <DropdownMenu className>
       <DropdownMenuTrigger asChild>
         <Button
@@ -74,12 +74,15 @@ const ConversationActions = React.memo(
           className="flex items-center text-destructive"
           onClick={(e) => {
             e.stopPropagation();
-            // Handle delete conversation action
+            if (confirm("Are you sure you want to delete this conversation?")) {
+              onDeleteConversation(conversation.id, conversation.otherUsername);
+            }
           }}
           data-testid={`delete-conversation-button-${conversation.id}`}
-          >
-            <span className="truncate">Delete conversation</span>
-          </DropdownMenuItem>
+        >
+          <Trash2 className="mr-2 h-4 w-4 flex-shrink-0 text-destructive" />
+          <span className="truncate">Delete conversation</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -87,7 +90,7 @@ const ConversationActions = React.memo(
 
 // Conversation item component
 const ConversationItem = React.memo(
-  ({ conversation, isSelected, onSelect, onToggleRead, onToggleBlock }) => {
+  ({ conversation, isSelected, onSelect, onToggleRead, onToggleBlock, onDeleteConversation }) => {
     const otherParticipant = conversation.otherParticipantDetails;
     const isOtherBlocked = conversation.isOtherParticipantBlocked;
     const isCurrentUserBlocked = conversation.isCurrentUserBlocked;
@@ -181,6 +184,7 @@ const ConversationItem = React.memo(
           conversation={conversation}
           onToggleRead={onToggleRead}
           onToggleBlock={onToggleBlock}
+          onDeleteConversation={onDeleteConversation}
           onMenuClick={handleMenuClick}
         />
       </div>
@@ -197,6 +201,7 @@ export function ConversationListPresentation({
   onSelectConversation,
   onToggleRead,
   onToggleBlock,
+  onDeleteConversation, // Add this prop
 }) {
   const hasConversations = filteredConversations.length > 0;
 
@@ -233,6 +238,7 @@ export function ConversationListPresentation({
                 onSelect={onSelectConversation}
                 onToggleRead={onToggleRead}
                 onToggleBlock={onToggleBlock}
+                onDeleteConversation={onDeleteConversation}
               />
             ))
           ) : (

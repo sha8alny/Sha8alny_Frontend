@@ -48,7 +48,8 @@ export function ConversationListContainer({
     currentUser,
     onMarkAsRead,
     onToggleRead,
-    onToggleBlock
+    onToggleBlock,
+    onDeleteConversation // Add this prop
 }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [processedConversations, setProcessedConversations] = useState([]);
@@ -94,6 +95,12 @@ export function ConversationListContainer({
         [onToggleBlock]
     );
 
+    const handleDeleteConversation = useCallback(
+        async (conversationId, otherUsername) => 
+            await onDeleteConversation(conversationId, otherUsername),
+        [onDeleteConversation]
+    );
+
     const handleSearchChange = useCallback(
         (e) => setSearchQuery(e.target.value),
         []
@@ -119,6 +126,7 @@ export function ConversationListContainer({
             onMarkAsRead={handleMarkAsRead}
             onToggleRead={handleToggleRead}
             onToggleBlock={handleToggleBlock}
+            onDeleteConversation={handleDeleteConversation} // Add this line
         />
     );
 }

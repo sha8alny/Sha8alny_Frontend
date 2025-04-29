@@ -60,6 +60,7 @@ export function MessagingPresentation({
   onMarkAsRead,
   onToggleRead,
   onToggleBlock,
+  onDeleteConversation, // Add this line
   onSendMessage,
   onSetTypingIndicator,
   onBack,
@@ -101,6 +102,7 @@ export function MessagingPresentation({
               onMarkAsRead={onMarkAsRead}
               onToggleRead={onToggleRead}
               onToggleBlock={onToggleBlock}
+              onDeleteConversation={onDeleteConversation} // Add this line
             />
           </div>
 

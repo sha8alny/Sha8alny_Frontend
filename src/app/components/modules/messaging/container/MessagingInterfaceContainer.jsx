@@ -30,6 +30,7 @@ export function MessagingContainer({ currentUser }) {
     handleToggleRead,
     handleMarkAsRead,
     handleToggleBlock,
+    handleDeleteConversation, // Add this line
     setSelectedConversation
   } = useConversations(currentUser);
   
@@ -185,6 +186,7 @@ export function MessagingContainer({ currentUser }) {
         onMarkAsRead={handleMarkAsRead}
         onToggleRead={handleToggleRead}
         onToggleBlock={handleToggleBlock}
+        onDeleteConversation={handleDeleteConversation} // Add this line
         onSendMessage={handleSendMessage}
         onSetTypingIndicator={handleSetTypingIndicator}
         onBack={handleBack}

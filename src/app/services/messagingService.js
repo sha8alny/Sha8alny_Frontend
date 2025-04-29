@@ -8,6 +8,7 @@ import {
   onSnapshot,
   orderBy,
   limit,
+  deleteDoc,
 } from "firebase/firestore";
 
 import { fetchWithAuth } from "./userAuthentication";
@@ -32,10 +33,9 @@ export const messagingService = {
         throw new Error(`Conversation with ID ${conversationId} not found`);
       }
 
-      await updateDoc(conversationRef, {
-        isDeleted: true,
-        deletedAt: new Date(),
-      });
+      // Truly delete the conversation from the database
+      await deleteDoc(conversationRef);
+
 
       return { success: true };
     } catch (error) {
@@ -44,9 +44,9 @@ export const messagingService = {
     }
   },
 
-  deleteConversation: async (recieverName) => {
+  deleteConversation: async (receiverName) => {
     try {
-      if (!recieverName) {
+      if (!receiverName) {
         throw new Error("Conversation ID is required");
       }
 
@@ -59,7 +59,7 @@ export const messagingService = {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            recieverName: recieverName, // Using the receiver name as specified in API
+            receiverName: receiverName, // Using the receiver name as specified in API
           }),
         }
       );
