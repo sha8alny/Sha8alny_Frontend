@@ -21,62 +21,59 @@ import { Search, MoreVertical, Check } from "lucide-react";
 import { formatDistanceToNow } from "@/app/utils/messagingUtils";
 
 // Conversation actions component
-const ConversationActions = React.memo(({
-  conversation,
-  onToggleRead,
-  onToggleBlock,
-  onMenuClick,
-}) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 flex-shrink-0 ml-1 hover:bg-muted-foreground/10"
-        onClick={onMenuClick}
-        data-testid={`conversation-actions-button-${conversation.id}`}
-      >
-        <MoreVertical className="h-4 w-4 text-muted-foreground" />
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end" className="w-48">
-      <DropdownMenuItem
-        className="flex items-center"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleRead(conversation.id, !conversation.read);
-        }}
-        data-testid={`toggle-read-button-${conversation.id}`}
-      >
-        <span className="truncate">
-          Mark as {conversation.read ? "unread" : "read"}
-        </span>
-      </DropdownMenuItem>
+const ConversationActions = React.memo(
+  ({ conversation, onToggleRead, onToggleBlock, onMenuClick }) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 flex-shrink-0 ml-1 hover:bg-muted-foreground/10"
+          onClick={onMenuClick}
+          data-testid={`conversation-actions-button-${conversation.id}`}
+        >
+          <MoreVertical className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem
+          className="flex items-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleRead(conversation.id, !conversation.read);
+          }}
+          data-testid={`toggle-read-button-${conversation.id}`}
+        >
+          <span className="truncate">
+            Mark as {conversation.read ? "unread" : "read"}
+          </span>
+        </DropdownMenuItem>
 
-      <DropdownMenuItem
-        className="flex items-center"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleBlock(
-            conversation.id,
-            conversation.otherUsername,
-            !conversation.isOtherParticipantBlocked
-          );
-        }}
-        data-testid={`toggle-block-button-${conversation.id}`}
-      >
-        {conversation.isOtherParticipantBlocked && (
-          <Check className="mr-2 h-4 w-4 flex-shrink-0" />
-        )}
-        <span className="truncate">
-          {conversation.isOtherParticipantBlocked
-            ? "Unblock user"
-            : "Block user"}
-        </span>
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-));
+        <DropdownMenuItem
+          className="flex items-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleBlock(
+              conversation.id,
+              conversation.otherUsername,
+              !conversation.isOtherParticipantBlocked
+            );
+          }}
+          data-testid={`toggle-block-button-${conversation.id}`}
+        >
+          {conversation.isOtherParticipantBlocked && (
+            <Check className="mr-2 h-4 w-4 flex-shrink-0" />
+          )}
+          <span className="truncate">
+            {conversation.isOtherParticipantBlocked
+              ? "Unblock user"
+              : "Block user"}
+          </span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+);
 
 // Conversation item component
 const ConversationItem = React.memo(
@@ -101,6 +98,9 @@ const ConversationItem = React.memo(
       : "";
 
     const handleMenuClick = (e) => e.stopPropagation();
+
+    const isLastMessageFromOtherUser =
+      conversation.lastMessageSender === displayName;
 
     return (
       <div
@@ -138,7 +138,10 @@ const ConversationItem = React.memo(
               {conversation.isOtherParticipantTyping ? (
                 <span className="italic">Typing...</span>
               ) : conversation?.lastMessage ? (
-                <span>{conversation.lastMessage}</span>
+                <span>
+                  {isLastMessageFromOtherUser ? displayName : "Me"}:{" "}
+                  {conversation.lastMessage}
+                </span>
               ) : (
                 <span className="italic">No messages yet</span>
               )}
