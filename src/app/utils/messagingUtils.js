@@ -32,9 +32,7 @@ function parseTimestamp(timestamp) {
 }
 
 /**
- * Formats a timestamp to show relative time (e.g., "just now", "5m ago")
- * @param {*} timestamp - Timestamp in various formats
- * @returns {string} - Formatted relative time string
+ * Formats a timestamp to show relative time
  */
 export function formatDistanceToNow(timestamp) {
   const date = parseTimestamp(timestamp);
@@ -53,8 +51,6 @@ export function formatDistanceToNow(timestamp) {
 
 /**
  * Formats a timestamp to show time in HH:MM format
- * @param {*} timestamp - Timestamp in various formats
- * @returns {string} - Formatted time string
  */
 export function formatTime(timestamp) {
   const date = parseTimestamp(timestamp);
@@ -70,20 +66,19 @@ export function formatTime(timestamp) {
 
 /**
  * Converts a timestamp to a JavaScript Date object
- * @param {*} timestamp - Timestamp in various formats
- * @returns {Date|string} - JavaScript Date object or error message
  */
 export function formatDate(timestamp) {
   const date = parseTimestamp(timestamp);
   return date || "Invalid date";
 }
 
-// Helper function to format date for day separators
+/**
+ * Helper function to format date for day separators
+ */
 export function formatMessageDate(timestamp) {
-  const date =
-    typeof timestamp?.toDate === "function"
-      ? timestamp.toDate()
-      : new Date(timestamp);
+  const date = parseTimestamp(timestamp);
+  if (!date) return "Unknown date";
+  
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
@@ -101,6 +96,9 @@ export function formatMessageDate(timestamp) {
   }
 }
 
+/**
+ * Component to display date separators in message lists
+ */
 export const DateSeparator = memo(({ date }) => (
   <div className="flex items-center justify-center my-4">
     <div className="bg-primary/60 px-3 py-1 rounded-full text-xs text-foreground">
@@ -108,3 +106,51 @@ export const DateSeparator = memo(({ date }) => (
     </div>
   </div>
 ));
+
+/**
+ * Determines the media type from a URL
+ * @param {string} url - The URL to analyze
+ * @returns {Object} Object containing media type information
+ */
+export const getMediaTypeFromUrl = (url) => {
+  if (!url || typeof url !== 'string') return { type: 'unknown', url };
+  
+  if (url.startsWith('blob:')) return { type: 'blob', url };
+  
+  try {
+    const urlObj = new URL(url);
+    const path = urlObj.pathname;
+    const extension = path.split('.').pop()?.toLowerCase();
+    const fileName = path.split('/').pop();
+    
+    // Image types
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(extension)) {
+      return { type: 'image', url, extension };
+    }
+    
+    // Video types
+    if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv'].includes(extension)) {
+      return { type: 'video', url, extension };
+    }
+    
+    // Document types
+    if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'].includes(extension)) {
+      return { type: 'document', url, extension, fileName };
+    }
+    
+    // Special cases for popular services
+    if (url.includes('imgur.com') || url.includes('i.imgur.com')) {
+      return { type: 'image', url, extension: 'jpg' };
+    }
+    
+    if (url.includes('youtube.com/watch') || url.includes('youtu.be/') || 
+        url.includes('vimeo.com')) {
+      return { type: 'video', url, extension: 'mp4' };
+    }
+    
+    return { type: 'link', url, fileName: urlObj.hostname };
+  } catch (error) {
+    console.error('Error parsing URL:', error);
+    return { type: 'unknown', url };
+  }
+};

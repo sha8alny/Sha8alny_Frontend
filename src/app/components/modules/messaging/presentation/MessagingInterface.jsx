@@ -7,13 +7,26 @@ import AddIcon from "@mui/icons-material/Add";
 const NewConversationButton = ({ onClick }) => (
   <Button
     onClick={onClick}
-    className="w-full max-w-lg px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+    className="w-full max-w-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors flex items-center justify-center gap-2"
     aria-label="Start new conversation"
     data-testid="new-conversation-button"
   >
     <AddIcon className="h-5 w-5" aria-hidden="true" />
     <span>New Conversation</span>
   </Button>
+);
+
+// Empty state component when no conversation is selected
+const EmptyState = ({ onOpenConnections }) => (
+  <div className="flex flex-col items-center justify-center h-full p-4 md:opacity-100 opacity-0 transition-opacity duration-300">
+    <div className="text-center mb-6">
+      <h2 className="text-lg font-medium text-text">Select a conversation</h2>
+      <p className="text-muted-foreground">
+        Choose a conversation from the list to start messaging
+      </p>
+    </div>
+    <NewConversationButton onClick={onOpenConnections} />
+  </div>
 );
 
 export function MessagingPresentation({
@@ -33,24 +46,16 @@ export function MessagingPresentation({
 }) {
   const hasSelectedConversation = Boolean(selectedConversation);
 
-  // Compute classes for responsive behavior
+  // Dynamic classes for responsive layout
   const asideClasses = `
-            ${
-              hasSelectedConversation
-                ? "translate-x-[-100%] w-0 md:translate-x-0 md:w-1/3 lg:w-1/4"
-                : "translate-x-0 w-full md:w-1/3 lg:w-1/4"
-            } 
-            flex flex-col min-w-0 md:min-w-fit md:border-r overflow-hidden transition-all duration-300 ease-in-out
-        `;
+    ${hasSelectedConversation ? "translate-x-[-100%] w-0 md:translate-x-0 md:w-1/3 lg:w-1/4" : "translate-x-0 w-full md:w-1/3 lg:w-1/4"} 
+    flex flex-col min-w-0 md:min-w-fit md:border-r overflow-hidden transition-all duration-300 ease-in-out
+  `;
 
   const mainClasses = `
-            ${
-              hasSelectedConversation
-                ? "translate-x-0 opacity-100 w-full"
-                : "translate-x-full opacity-0 w-0 md:translate-x-0 md:opacity-100 md:w-2/3 lg:w-3/4"
-            } 
-            flex flex-col overflow-hidden transition-all duration-300 ease-in-out
-        `;
+    ${hasSelectedConversation ? "translate-x-0 opacity-100 w-full" : "translate-x-full opacity-0 w-0 md:translate-x-0 md:opacity-100 md:w-2/3 lg:w-3/4"} 
+    flex flex-col overflow-hidden transition-all duration-300 ease-in-out
+  `;
 
   return (
     <section
@@ -91,15 +96,7 @@ export function MessagingPresentation({
               onLoadMoreMessages={onLoadMoreMessages}
             />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full p-4 md:opacity-100 opacity-0 transition-opacity duration-300">
-              <div className="text-center mb-6">
-                <h2 className="text-lg font-medium">Select a conversation</h2>
-                <p className="text-muted-foreground">
-                  Choose a conversation from the list to start messaging
-                </p>
-              </div>
-              <NewConversationButton onClick={onOpenConnections} />
-            </div>
+            <EmptyState onOpenConnections={onOpenConnections} />
           )}
         </main>
       </div>
