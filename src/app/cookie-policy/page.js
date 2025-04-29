@@ -20,7 +20,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components/ui/card";
+} from "@/app/components/ui/Card";
 import {
   Table,
   TableBody,
@@ -28,7 +28,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/app/components/ui/table";
+} from "@/app/components/ui/Table";
 
 export default function CookiePolicy() {
   const [activeSection, setActiveSection] = useState("");

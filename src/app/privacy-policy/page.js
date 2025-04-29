@@ -20,7 +20,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components/ui/card";
+} from "@/app/components/ui/Card";
 
 export default function PrivacyPolicy() {
   const [activeSection, setActiveSection] = useState("");
