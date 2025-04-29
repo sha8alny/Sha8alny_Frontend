@@ -100,7 +100,7 @@ export function formatMessageDate(timestamp) {
  * Component to display date separators in message lists
  */
 export const DateSeparator = memo(({ date }) => (
-  <div className="flex items-center justify-center my-4">
+  <div className="sticky top-0 z-10 flex items-center justify-center py-2 bg-transparent"> 
     <div className="bg-primary/60 px-3 py-1 rounded-full text-xs text-foreground">
       {date}
     </div>

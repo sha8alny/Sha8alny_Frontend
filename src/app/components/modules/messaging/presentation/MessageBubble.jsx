@@ -19,8 +19,6 @@ import { green } from "@mui/material/colors";
 
 // Utils
 import {
-  DateSeparator,
-  formatMessageDate,
   formatTime,
   getMediaTypeFromUrl,
 } from "@/app/utils/messagingUtils";
@@ -177,60 +175,54 @@ export const MessageBubble = memo(({
   isCurrentUser,
   participantName,
   participantPicture,
-  showDateSeparator,
 }) => {
   const messageContent = typeof message.messageContent === "string" 
     ? message.messageContent.replace(/^"|"$/g, '')
     : message.messageContent;
     
   return (
-    <>
-      {showDateSeparator && (
-        <DateSeparator date={formatMessageDate(message.timestamp)} />
+    <div
+      className={`flex gap-2 max-w-[80%] ${isCurrentUser ? "ml-auto flex-row-reverse" : ""}`}
+      data-testid={`message-bubble-${message.id}`}
+    >
+      {!isCurrentUser && (
+        <Avatar className="h-8 w-8">
+          <AvatarImage
+            src={participantPicture || "/placeholder.svg"}
+            alt={participantName}
+          />
+          <AvatarFallback>
+            {participantName?.substring(0, 2).toUpperCase() || "??"}
+          </AvatarFallback>
+        </Avatar>
       )}
-      <div
-        className={`flex gap-2 max-w-[80%] ${isCurrentUser ? "ml-auto flex-row-reverse" : ""}`}
-        data-testid={`message-bubble-${message.id}`}
-      >
-        {!isCurrentUser && (
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={participantPicture || "/placeholder.svg"}
-              alt={participantName}
+      <div>
+        <div
+          className={`rounded-xl p-3 w-fit ${
+            isCurrentUser
+              ? "bg-secondary ml-auto"
+              : "bg-primary text-primary-foreground"
+          }`}
+          data-testid={`message-content-${message.id}`}
+        >
+          {messageContent && <div>{messageContent}</div>}
+          {message.mediaUrl && <MediaRenderer mediaUrl={message.mediaUrl} />}
+        </div>
+        <div
+          className={`flex items-center text-xs text-muted-foreground mt-1 ${
+            isCurrentUser ? "justify-end" : ""
+          }`}
+        >
+          <span>{formatTime(message.timestamp)}</span>
+          {isCurrentUser && message.read && (
+            <DoneAllIcon
+              className="ml-1"
+              sx={{ fontSize: 20, color: green[400] }}
+              data-testid={`message-read-icon-${message.id}`}
             />
-            <AvatarFallback>
-              {participantName?.substring(0, 2).toUpperCase() || "??"}
-            </AvatarFallback>
-          </Avatar>
-        )}
-        <div>
-          <div
-            className={`rounded-xl p-3 w-fit ${
-              isCurrentUser
-                ? "bg-secondary ml-auto"
-                : "bg-primary text-primary-foreground"
-            }`}
-            data-testid={`message-content-${message.id}`}
-          >
-            {messageContent && <div>{messageContent}</div>}
-            {message.mediaUrl && <MediaRenderer mediaUrl={message.mediaUrl} />}
-          </div>
-          <div
-            className={`flex items-center text-xs text-muted-foreground mt-1 ${
-              isCurrentUser ? "justify-end" : ""
-            }`}
-          >
-            <span>{formatTime(message.timestamp)}</span>
-            {isCurrentUser && message.read && (
-              <DoneAllIcon
-                className="ml-1"
-                sx={{ fontSize: 20, color: green[400] }}
-                data-testid={`message-read-icon-${message.id}`}
-              />
-            )}
-          </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 });

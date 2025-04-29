@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { DateSeparator, formatMessageDate } from "@/app/utils/messagingUtils"; // Ensure these imports exist
 
 // UI Components
 import {
@@ -25,7 +26,6 @@ import SendIcon from "@mui/icons-material/Send";
 import ImageIcon from "@mui/icons-material/Image";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckIcon from "@mui/icons-material/Check";
-import { isSameDay } from "date-fns";
 
 // Chat header component
 const ChatHeader = React.memo(
@@ -109,31 +109,41 @@ const ChatHeader = React.memo(
 
 // Message list component
 const MessageList = React.memo(
-  ({ messages, currentUser, otherParticipant, onLoadMoreMessages }) => (
-    <div className="space-y-4 pb-2">
-      {messages.map((msg, index) => {
-        const showDateSeparator =
-          index === 0 ||
-          !isSameDay(
-            new Date(msg.timestamp), 
-            new Date(messages[index - 1].timestamp)
-          );
+  ({ messages, currentUser, otherParticipant, onLoadMoreMessages }) => {
+    let lastDateString = null; // Keep track of the last date rendered
 
-        return (
-          <MessageBubble
-            key={msg.id}
-            message={msg}
-            isCurrentUser={msg.senderName === currentUser}
-            participantName={
-              otherParticipant?.name || otherParticipant?.username
-            }
-            participantPicture={otherParticipant?.profilePicture}
-            showDateSeparator={showDateSeparator}
-          />
-        );
-      })}
-    </div>
-  )
+    return (
+      <div className="space-y-4 pb-2">
+        {messages.map((msg, index) => {
+          const currentDate = new Date(msg.timestamp);
+          const currentDateString = formatMessageDate(currentDate);
+          
+          // Determine if the date separator should be shown
+          const showDateSeparator = currentDateString !== lastDateString;
+          if (showDateSeparator) {
+            lastDateString = currentDateString; // Update the last date rendered
+          }
+
+          return (
+            <React.Fragment key={msg.id}>
+              {/* Render DateSeparator here if the date has changed */}
+              {showDateSeparator && (
+                <DateSeparator date={currentDateString} />
+              )}
+              <MessageBubble
+                message={msg}
+                isCurrentUser={msg.senderName === currentUser}
+                participantName={
+                  otherParticipant?.name || otherParticipant?.username
+                }
+                participantPicture={otherParticipant?.profilePicture}
+              />
+            </React.Fragment>
+          );
+        })}
+      </div>
+    );
+  }
 );
 
 // Chat input component
@@ -302,6 +312,7 @@ export function ChatPresentation({
         onUnblockUser={onUnblockUser}
       />
 
+      {/* Ensure ScrollArea allows sticky positioning */}
       <ScrollArea
         className="flex-1 p-3 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted/50 scrollbar-track-transparent"
         ref={scrollAreaRef}
@@ -314,6 +325,7 @@ export function ChatPresentation({
         />
       </ScrollArea>
 
+      {/* Blocked user messages */}
       {isOtherParticipantBlocked ? (
         <div className="p-4 text-center text-muted-foreground border-t bg-background/95 backdrop-blur-sm">
           You have blocked this user. Unblock to send messages.
