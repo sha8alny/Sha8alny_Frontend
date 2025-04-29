@@ -1,85 +1,181 @@
-"use client"
 
-import { useState, useEffect } from "react"
-import { fetchNotifications, markNotificationAsRead } from "@/app/services/notificationService"
-import NotificationPresentation from "../presentation/NotificationPresentation"
+"use client";
 
+import { useState } from "react";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  fetchNotifications,
+  fetchUnreadNotifications,
+  markNotificationAsRead,
+} from "@/app/services/notificationService";
+import NotificationPresentation from "../presentation/NotificationPresentation";
 /**
- * Container component for notifications that manages state and business logic
+ * Container component for notifications that manages state and data fetching.
+ * 
+ * This component:
+ * - Manages active tab state (all or unread notifications)
+ * - Fetches notifications data with infinite scrolling
+ * - Handles marking notifications as read
+ * - Provides navigation links based on notification type
+ * 
+ * @namespace notification
+ * @module notification
+ * @component NotificationContainer
+ * 
+ * @returns {JSX.Element} Rendered NotificationPresentation component with all necessary props
  */
-export default function NotificationContainer() {
-  const [notifications, setNotifications] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("all")
-  const [error, setError] = useState(null)
-  
-  useEffect(() => {
-    const getNotifications = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const result = await fetchNotifications(10, 0)
-        if (result && result.notifications) {
-          setNotifications(result.notifications)
-        }
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error)
-        setError("Failed to load notifications. Please try again later.")
-      } finally {
-        setLoading(false)
-      }
-    }
+function NotificationContainer() {
+  const [activeTab, setActiveTab] = useState("all");
+  const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
+  const queryClient = useQueryClient();
 
-    getNotifications()
-  }, [])
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ["notifications", activeTab],
+    queryFn: async ({ pageParam = 10 }) => {
+      if (activeTab === "all") {
+        return await fetchNotifications(pageParam, 0);
+      } else {
+        return await fetchUnreadNotifications(pageParam, 0);
+      }
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.notifications || lastPage.notifications.length < 10) {
+        return undefined;
+      }
+
+      const currentTotal = allPages.reduce(
+        (total, page) => total + page.notifications.length,
+        0
+      );
+
+      return currentTotal + 10;
+    },
+    staleTime: 60000,
+    refetchOnWindowFocus: true,
+  });
+
+  const markAsReadMutation = useMutation({
+    mutationFn: (notificationId) => markNotificationAsRead(notificationId),
+    onMutate: async (notificationId) => {
+      setIsMarkingAsRead(true);
+
+      await queryClient.cancelQueries({ queryKey: ["notifications"] });
+      await queryClient.cancelQueries({ queryKey: ["sidebarInfo"] });
+
+      const previousData = queryClient.getQueryData([
+        "notifications",
+        activeTab,
+      ]);
+
+      queryClient.setQueryData(["notifications", activeTab], (old) => {
+        if (!old) return old;
+
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            notifications: page.notifications.map((notification) =>
+              notification._id === notificationId
+                ? { ...notification, isRead: true }
+                : notification
+            ),
+          })),
+        };
+      });
+
+      return { previousData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["sidebarInfo", "notifications"] });
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["notifications", activeTab],
+          context.previousData
+        );
+      }
+      console.error("Error marking notification as read:", err);
+    },
+    onSettled: () => {
+      setIsMarkingAsRead(false);
+    },
+  });
+
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+  };
+
+  const handleLoadMore = () => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    fetchNextPage();
+  };
 
   const handleMarkAsRead = async (notificationId) => {
-    try {
-      await markNotificationAsRead(notificationId)
-      // Update local state
-      setNotifications((prev) => 
-        prev.map((note) => (note._id === notificationId ? { ...note, isRead: true } : note))
-      )
-    } catch (error) {
-      console.error("Error marking notification as read:", error)
-    }
-  }
+    markAsReadMutation.mutate(notificationId);
+  };
 
   const getNotificationLink = (notification) => {
     switch (notification.type) {
       case "Like":
       case "Love":
-      case "Funny": 
-      case "Support": 
+      case "Funny":
+      case "Support":
       case "Insightful":
       case "Comment":
-        return `/u/${notification?.toUserId?.username}/post/${notification.data?.postId || ''}`;
-      // case "Follow":
-      //   return `/profile/${notification.data?.userId || ''}`;
+        return `/u/${notification?.toUserId?.username}/post/${
+          notification.data?.postId || ""
+        }`;
       case "Message":
-        return `/messages/?${notification.data?.fromUsername || ''}`;
+        return `/messages/?${notification.data?.fromUsername || ""}`;
       case "ConnectionRequest":
-        return `/network`;
+        return `/network/pending`;
       default:
         return "#";
     }
-  }
-  console.log(notifications)
-  const unreadCount = notifications.filter((note) => !note.isRead).length
-  const filteredNotifications = activeTab === "all" 
-    ? notifications 
-    : notifications.filter((note) => !note.isRead)
+  };
+
+  const allNotifications =
+    data?.pages[data.pages.length - 1]?.notifications || [];
+
+  const displayedNotifications =
+    activeTab === "all"
+      ? allNotifications
+      : allNotifications.filter((note) => !note.isRead);
 
   return (
-    <NotificationPresentation 
-      notifications={notifications}
-      loading={loading}
-      error={error}
+    <NotificationPresentation
+      notifications={displayedNotifications}
+      loading={isLoading}
+      loadingMore={isFetchingNextPage}
+      error={
+        isError
+          ? error?.message ||
+            "Failed to load notifications. Please try again later."
+          : null
+      }
       activeTab={activeTab}
-      unreadCount={unreadCount}
-      onTabChange={setActiveTab}
+      onTabChange={handleTabChange}
       onMarkAsRead={handleMarkAsRead}
       getNotificationLink={getNotificationLink}
+      hasMore={!!hasNextPage}
+      onLoadMore={handleLoadMore}
+      isMarkingAsRead={isMarkingAsRead}
     />
-  )
+  );
 }
+
+export default NotificationContainer;
