@@ -9,10 +9,16 @@ import ModHeaderPresentation, {
 import { fetchUserProfile } from "@/app/services/userProfile";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 import { useEffect, useState } from "react";
-import { connectUser } from "@/app/services/connectionManagement";
+import { connectUser, handleConnectionRequest } from "@/app/services/connectionManagement";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/app/context/ToastContext";
 
 export default function ModHeader({ userInfo }) {
   const { isMyProfile } = useIsMyProfile();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const toast = useToast();
 
   const handleResumeDownload = () => {
     if (!userInfo?.resume) return;
@@ -23,17 +29,50 @@ export default function ModHeader({ userInfo }) {
     link.click();
   };
 
-  const handleConnect = (username) => {
-    connectUser(username);
-    fetchUserProfile(username);
+  const handleConnectMutate = useMutation({
+    mutationFn: (username) => connectUser(username),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["connections"]);
+      queryClient.invalidateQueries(["userProfile", userInfo?.username]);
+    },
+  })
+
+  const handleConnectionRequestMutate = useMutation({
+    mutationFn: (action) => handleConnectionRequest(userInfo?.username, action),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["connections"]);
+      queryClient.invalidateQueries(["userProfile", userInfo?.username]);
+    },
+  });
+
+  const handleClick = (action = "DECLINE") => {
+    switch (userInfo?.connectionStatus) {
+      case "connected":
+        router.push(`/u/${userInfo?.username}`); // TODO: Go to chat
+        break;
+      case "notConnected":
+        handleConnectMutate.mutate(userInfo?.username);
+        break;
+      case "requestReceived":
+        handleConnectionRequestMutate.mutate(action);
+        break;
+      case "pending":
+        toast("You have already sent a connection request");
+        break;
+    }
   };
+
+  const isConnecting = handleConnectMutate.isPending;
+  const isHandlingRequest = handleConnectionRequestMutate.isPending;
 
   return (
     <ModHeaderPresentation
       isMyProfile={isMyProfile}
-      handleConnect={handleConnect}
+      handleClick={handleClick}
       handleResumeDownload={handleResumeDownload}
       userInfo={userInfo}
+      isConnecting={isConnecting}
+      isHandlingRequest={isHandlingRequest}
     />
   );
 }

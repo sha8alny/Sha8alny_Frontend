@@ -2,8 +2,8 @@
 
 // TODO: Implement Multiple Images Case
 import LeftSidebar from "./components/modules/feed/container/LeftSidebar";
-import RightSidebarPresentation from "./components/modules/feed/presentation/RightSidebarPresentation";
 import PostsContainer from "./components/modules/feed/container/PostsContainer";
+import RightSidebar from "./components/modules/feed/container/RightSidebar";
 
 export default function Page() {
   return (
@@ -19,7 +19,7 @@ export default function Page() {
         </div>
         <div className="hidden md:block md:flex-1">
           <div className="sticky top-8 w-full">
-            <RightSidebarPresentation />
+            <RightSidebar />
           </div>
         </div>
       </div>

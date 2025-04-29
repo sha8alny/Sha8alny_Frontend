@@ -57,6 +57,7 @@ import SharePresentation from "../presentation/SharePresentation";
 import { usePathname } from "next/navigation";
 import DeletePostPresentation from "./DeletePostPresentation";
 import ReportPostPresentation from "./ReportPostPresentation";
+import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 
 // TODO: Add image modal to view all images in a carousel
 // TODO: Modify Icons (choose what goes where)
@@ -105,6 +106,7 @@ export default function PostPresentation({
   setReportText,
   reportType,
   setReportType,
+  isSinglePost,
 }) {
   console.log({
     isDocument: isDocument,
@@ -271,7 +273,7 @@ export default function PostPresentation({
 
       <CardContent>
         <div className="whitespace-pre-line">
-          <p className="mb-3">{post?.text}</p>
+          <p className="mb-3">{post?.textElement}</p>
         </div>
         {isDocument && post?.media && post?.media.length > 0 && (
           <div className="relative w-full rounded-lg overflow-hidden border border-primary/10 bg-primary/5">
@@ -323,20 +325,16 @@ export default function PostPresentation({
             {/* Document preview with React state for loading/error */}
             <div className="relative aspect-[4/3] w-full bg-background">
               {!hasError && (
-                <iframe
-                  src={post?.media[0]}
-                  title={`Document: ${fileName}`}
-                  className="absolute inset-0 w-full h-full border-none"
-                  loading="lazy"
-                  sandbox="allow-scripts allow-same-origin allow-forms allow-downloads"
-                  onLoad={() => {
-                    setIsLoading(false);
-                  }}
-                  onError={() => {
-                    setIsLoading(false);
-                    setHasError(true);
-                  }}
-                />
+                <embed
+                src={post?.media[0]}
+                type="application/pdf"
+                className="absolute inset-0 w-full h-full"
+                onLoad={() => setIsLoading(false)}
+                onError={() => {
+                  setIsLoading(false);
+                  setHasError(true);
+                }}
+              />
               )}
 
               {/* Loading indicator */}
@@ -563,14 +561,20 @@ export default function PostPresentation({
         buttonClass="hidden"
         className="min-w-max"
         AlertContent={
-          <DeletePostPresentation
-            post={post}
-            deletePost={onDelete}
+          <GeneralDeletePresentation
+            onConfirmDelete={onDelete}
             isLoading={isDeleting}
             isError={errorDeleting}
             error={errorDeleteMessage}
             onOpenChange={setDeleteModalOpen}
-            reportState={reportState}
+            itemType="Post"
+            loadingText="Deleting post..."
+            errorTitle="Error"
+            errorMessage="Failed to delete post"
+            confirmTitle="Delete"
+            confirmMessage="This action cannot be undone. Are you sure you want to delete this post?"
+            confirmButtonText="Delete"
+            cancelButtonText="Cancel"
           />
         }
       />

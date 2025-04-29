@@ -8,6 +8,7 @@ import ChangeURL from "./ChangeURL";
 import ExperienceContainer from "../container/ExperienceContainer";
 import EducationContainer from "../container/EducationContainer";
 import CertificationsContainer from "../container/CertificationsContainer";
+import PostsContainer from "../container/PostsContainer";
 
 export function ProfileSkeleton() {}
 
@@ -41,6 +42,10 @@ export default function ProfilePresentation({
   setHoverProfile,
   openFullscreen,
   closeFullscreen,
+  fetchPeopleAlsoViewed,
+  fetchPeopleYouMayKnow,
+  navigateTo,
+  changeRelations,
 }) {
   return (
     <div>
@@ -58,6 +63,7 @@ export default function ProfilePresentation({
             openFullscreen={openFullscreen}
             closeFullscreen={closeFullscreen}
           />
+          <PostsContainer username={userProfile.username} />
           <About about={userProfile.about} isMyProfile={isMyProfile} />
           <ExperienceContainer experience={userProfile.experience} />
           <EducationContainer education={userProfile.education} />
@@ -73,8 +79,20 @@ export default function ProfilePresentation({
               <ProfileStrength profileStrength={profileStrength} />
             </>
           )}
-          <SuggestedUsersContainer title="People Also Viewed" />
-          <SuggestedUsersContainer title="People You May Know" />
+          <SuggestedUsersContainer
+            title="People Also Viewed"
+            username={userProfile?.username}
+            fetchFunction={fetchPeopleAlsoViewed}
+            navigateTo={navigateTo}
+            helperFunction={changeRelations}
+          />
+          <SuggestedUsersContainer
+            title="People You May Know"
+            username={userProfile?.username}
+            fetchFunction={fetchPeopleYouMayKnow}
+            navigateTo={navigateTo}
+            helperFunction={changeRelations}
+          />
           <Footer />
         </section>
       </main>

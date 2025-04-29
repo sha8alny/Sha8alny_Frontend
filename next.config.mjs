@@ -28,6 +28,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "testcompany.com",
+      },
+      {
+        protocol: "https",
         hostname: "www.google.com",
       },
       {
