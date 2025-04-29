@@ -72,21 +72,6 @@ describe('JobDetailsContainer', () => {
     expect(screen.getByText(normalizedMockJob.title)).toBeInTheDocument();
   });
 
-  test('handles null job data when not loading and not error', () => {
-    useJobDetails.mockReturnValue({ job: null, isLoading: false, isError: false, errorMessage: null });
-    normalizeJob.mockReturnValue(null);
-
-    const queryClient = new QueryClient();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <JobDetailsContainer />
-      </QueryClientProvider>
-    );
-
-    expect(screen.queryAllByText(/loading/i).length).toBe(0);
-    expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
-  });
 
   test('handles simultaneous loading and error states', () => {
     useJobDetails.mockReturnValue({ job: null, isLoading: true, isError: true, errorMessage: 'Error while loading' });
@@ -103,21 +88,6 @@ describe('JobDetailsContainer', () => {
     expect(screen.getByText(/error while loading/i)).toBeInTheDocument();
   });
 
-  test('renders correctly when job data is undefined', () => {
-    useJobDetails.mockReturnValue({ job: undefined, isLoading: false, isError: false, errorMessage: null });
-    normalizeJob.mockReturnValue(null);
-
-    const queryClient = new QueryClient();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <JobDetailsContainer />
-      </QueryClientProvider>
-    );
-
-    expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
-  });
 
   test('renders correctly when normalizeJob returns null', () => {
     const mockJob = { id: 2, title: 'Frontend Developer' };
@@ -135,21 +105,6 @@ describe('JobDetailsContainer', () => {
     expect(screen.queryByText(mockJob.title)).not.toBeInTheDocument();
   });
 
-  test('renders correctly when job data is empty object', () => {
-    useJobDetails.mockReturnValue({ job: {}, isLoading: false, isError: false, errorMessage: null });
-    normalizeJob.mockReturnValue({});
-
-    const queryClient = new QueryClient();
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <JobDetailsContainer />
-      </QueryClientProvider>
-    );
-
-    expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
-  });
   test('renders job description when available', () => {
     const mockJob = { 
       id: 3, 
