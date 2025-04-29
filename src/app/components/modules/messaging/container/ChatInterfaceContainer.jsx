@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { ChatPresentation } from "../presentation/ChatInterface";
+import { useMessages } from "@/app/hooks/messaging/useMessages";
+import { getOtherParticipantUsername, getParticipantDetails } from "@/app/utils/participantUtils";
 
 export function ChatContainer({
   selectedConversation,
-  messages,
+  messages: initialMessages,
   currentUser,
   onBack,
   onSendMessage,
@@ -13,33 +15,54 @@ export function ChatContainer({
   onSetTypingIndicator,
   onLoadMoreMessages,
 }) {
-  // State
-  const [message, setMessage] = useState("");
-  const [mediaFiles, setMediaFiles] = useState([]);
+  // Use the messages hook for message management
+  const {
+    messages,
+    message,
+    mediaFiles,
+    fileInputRef,
+    handleTyping,
+    handleSendMessage: sendMessage,
+    handleSetTypingIndicator,
+    handleFileSelect,
+    handleRemoveFile,
+    handleLoadMoreMessages
+  } = useMessages(selectedConversation, currentUser);
   
-  // Refs
-  const fileInputRef = useRef(null);
+  // Synchronize with external messages if provided
+  useEffect(() => {
+    // If initialMessages is explicitly provided, use it
+    if (Array.isArray(initialMessages) && initialMessages.length > 0) {
+      // Keep any optimistic messages we added
+      const optimisticMessages = messages.filter(
+        m => !initialMessages.some(im => im.id === m.id)
+      );
+      if (optimisticMessages.length > 0) {
+        // Merge with initial messages, preserving order
+        const merged = [...initialMessages, ...optimisticMessages]
+          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        // Use a function to merge to avoid issues if messages and initialMessages are the same reference
+        // setMessages(prev => prev !== merged ? merged : prev);
+      }
+    }
+  }, [initialMessages]);
+  
+  // References
   const scrollAreaRef = useRef(null);
-  const typingTimeoutRef = useRef(null);
   
-  // Extract common data
-  const conversationId = selectedConversation?.id;
-  
-  // Get other participant username from conversation data
-  const otherParticipantUsername = useMemo(() => {
-    if (!selectedConversation?.participants || !currentUser) return null;
-    return Object.keys(selectedConversation.participants)
-      .find(username => username !== currentUser);
-  }, [selectedConversation, currentUser]);
+  // Extract other participant username from conversation data
+  const otherParticipantUsername = useMemo(() => 
+    getOtherParticipantUsername(selectedConversation, currentUser),
+    [selectedConversation, currentUser]
+  );
   
   // Get other participant details
-  const otherParticipant = useMemo(() => {
-    if (!otherParticipantUsername || !selectedConversation?.participants) return null;
-    return {
-      ...selectedConversation.participants[otherParticipantUsername],
-      username: otherParticipantUsername
-    };
-  }, [selectedConversation, otherParticipantUsername]);
+  const otherParticipant = useMemo(() => 
+    otherParticipantUsername ? 
+      getParticipantDetails(selectedConversation, otherParticipantUsername) : 
+      null,
+    [selectedConversation, otherParticipantUsername]
+  );
   
   // Check if other participant is typing
   const isOtherParticipantTyping = useMemo(() => {
@@ -47,8 +70,7 @@ export function ChatContainer({
     return selectedConversation.participantMetadata[otherParticipantUsername]?.typingStatus === true;
   }, [
     selectedConversation?.participantMetadata,
-    otherParticipantUsername,
-    selectedConversation?.participantMetadata?.[otherParticipantUsername]?.typingStatus
+    otherParticipantUsername
   ]);
 
   // Scroll to bottom when messages change
@@ -80,16 +102,10 @@ export function ChatContainer({
     if (!(message.trim() || mediaFiles.length > 0) || !otherParticipantUsername) return;
     
     try {
-      onSendMessage(otherParticipantUsername, message, mediaFiles);
-      setMessage("");
-      setMediaFiles([]);
+      sendMessage(otherParticipantUsername, message, mediaFiles);
       
       // Clear typing indicator
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-        typingTimeoutRef.current = null;
-      }
-      onSetTypingIndicator(currentUser, conversationId, false);
+      handleSetTypingIndicator(currentUser, selectedConversation.id, false);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -98,9 +114,9 @@ export function ChatContainer({
     mediaFiles, 
     otherParticipantUsername, 
     currentUser, 
-    conversationId, 
-    onSendMessage, 
-    onSetTypingIndicator
+    selectedConversation?.id, 
+    sendMessage, 
+    handleSetTypingIndicator
   ]);
 
   const handleKeyDown = useCallback((e) => {
@@ -110,50 +126,27 @@ export function ChatContainer({
     }
   }, [handleSendMessage]);
 
-  const handleTyping = useCallback((e) => {
-    setMessage(e.target.value);
+  const handleTypingWithIndicator = useCallback((e) => {
+    handleTyping(e);
 
     // Set typing indicator
-    if (!typingTimeoutRef.current) {
-      onSetTypingIndicator(currentUser, conversationId, true);
+    if (selectedConversation?.id) {
+      handleSetTypingIndicator(currentUser, selectedConversation.id, true);
     }
-
-    // Clear previous timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    // Set new timeout
-    typingTimeoutRef.current = setTimeout(() => {
-      onSetTypingIndicator(currentUser, conversationId, false);
-      typingTimeoutRef.current = null;
-    }, 2000);
-  }, [currentUser, conversationId, onSetTypingIndicator]);
-
-
-  // File handling
-  const handleFileSelect = useCallback((e) => {
-    if (e.target.files?.length) {
-      setMediaFiles(prev => [...prev, ...Array.from(e.target.files)]);
-    }
-  }, []);
-
-  const handleRemoveFile = useCallback((index) => {
-    setMediaFiles(prev => prev.filter((_, i) => i !== index));
-  }, []);
+  }, [currentUser, selectedConversation?.id, handleTyping, handleSetTypingIndicator]);
 
   // Blocking handlers
   const handleBlockUser = useCallback(() => {
-    if (otherParticipantUsername) {
-      onToggleBlock(conversationId, otherParticipantUsername, true);
+    if (otherParticipantUsername && selectedConversation?.id) {
+      onToggleBlock(selectedConversation.id, otherParticipantUsername, true);
     }
-  }, [conversationId, otherParticipantUsername, onToggleBlock]);
+  }, [selectedConversation?.id, otherParticipantUsername, onToggleBlock]);
 
   const handleUnblockUser = useCallback(() => {
-    if (otherParticipantUsername) {
-      onToggleBlock(conversationId, otherParticipantUsername, false);
+    if (otherParticipantUsername && selectedConversation?.id) {
+      onToggleBlock(selectedConversation.id, otherParticipantUsername, false);
     }
-  }, [conversationId, otherParticipantUsername, onToggleBlock]);
+  }, [selectedConversation?.id, otherParticipantUsername, onToggleBlock]);
 
   return (
     <ChatPresentation
@@ -171,10 +164,10 @@ export function ChatContainer({
       onKeyDown={handleKeyDown}
       onFileSelect={handleFileSelect}
       onRemoveFile={handleRemoveFile}
-      onTyping={handleTyping}
+      onTyping={handleTypingWithIndicator}
       onBlockUser={handleBlockUser}
       onUnblockUser={handleUnblockUser}
-      onLoadMoreMessages={onLoadMoreMessages}
+      onLoadMoreMessages={handleLoadMoreMessages || onLoadMoreMessages}
     />
   );
 }

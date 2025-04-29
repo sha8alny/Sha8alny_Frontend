@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ConversationListPresentation } from "../presentation/ConversationList";
+import { getOtherParticipantUsername } from "@/app/utils/participantUtils";
 
 // Process a conversation to extract relevant data 
 const processConversation = (conversation, currentUser) => {
     if (!conversation || !currentUser) return null;
     
-    // Extract other participant info
-    const participantUsernames = Object.keys(conversation.participants || {});
-    const otherUsername = participantUsernames.find(username => username !== currentUser);
+    // Get other participant username using utility
+    const otherUsername = getOtherParticipantUsername(conversation, currentUser);
     
     if (!otherUsername) return null;
     
