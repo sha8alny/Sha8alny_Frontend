@@ -162,15 +162,15 @@ const ChatInput = React.memo(
       )}
 
       <div className="p-3 border-t sticky bottom-0 bg-background/95 backdrop-blur-sm z-10 flex-shrink-0">
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-end ">
           <Button
             variant="outline"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
-            className="flex-shrink-0 h-10 w-10"
+            className="flex-shrink-0 h-10 w-10 bg-secondary dark:bg-secondary hover:bg-secondary/80 transition-colors"
             data-testid="file-picker-button"
           >
-            <ImageIcon sx={{ fontSize: 20 }} className="text-primary" />
+            <ImageIcon sx={{ fontSize: 20 }} />
           </Button>
           <input
             type="file"
@@ -192,7 +192,7 @@ const ChatInput = React.memo(
           <Button
             size="icon"
             onClick={onSendMessage}
-            className="flex-shrink-0 h-10 w-10"
+            className="flex-shrink-0 h-10 w-10 bg-secondary hover:bg-secondary/80 transition-colors"
             disabled={!message.trim() && mediaFiles.length === 0}
             data-testid="send-message-button"
           >

@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 const NewConversationButton = ({ onClick }) => (
   <Button
     onClick={onClick}
-    className="w-full max-w-lg px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+    className="w-full max-w-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors flex items-center justify-center gap-2"
     aria-label="Start new conversation"
     data-testid="new-conversation-button"
   >
@@ -20,7 +20,7 @@ const NewConversationButton = ({ onClick }) => (
 const EmptyState = ({ onOpenConnections }) => (
   <div className="flex flex-col items-center justify-center h-full p-4 md:opacity-100 opacity-0 transition-opacity duration-300">
     <div className="text-center mb-6">
-      <h2 className="text-lg font-medium">Select a conversation</h2>
+      <h2 className="text-lg font-medium text-text">Select a conversation</h2>
       <p className="text-muted-foreground">
         Choose a conversation from the list to start messaging
       </p>
