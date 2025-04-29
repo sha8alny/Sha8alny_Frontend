@@ -24,6 +24,7 @@ export function normalizeJob(job) {
       const allowedDomains = [
         // Add your allowed domains here
         'localhost',
+        'sha8alny.online',
         process.env.NEXT_PUBLIC_API_URL,
         // Add more as configured in next.config.js
       ];
