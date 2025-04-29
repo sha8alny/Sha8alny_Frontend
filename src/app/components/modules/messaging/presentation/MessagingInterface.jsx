@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 const NewConversationButton = ({ onClick }) => (
   <Button
     onClick={onClick}
-    className="w-full max-w-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors flex items-center justify-center gap-2"
+    className="mx-auto w-full max-w-lg px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 transition-colors flex items-center justify-center gap-2"
     aria-label="Start new conversation"
     data-testid="new-conversation-button"
   >
@@ -59,10 +59,10 @@ export function MessagingPresentation({
 
   return (
     <section
-      className="w-full max-w-7xl mx-auto border bg-background shadow-sm flex flex-col h-[calc(100vh-6rem)] mt-2"
+      className="w-full max-w-7xl mx-auto border bg-background shadow-2xl flex flex-col h-[calc(100vh-6rem)] mt-2 rounded-2xl"
       aria-label="Messaging interface"
     >
-      <div className="flex w-full h-full flex-row overflow-hidden">
+      <div className="flex w-full h-full flex-row overflow-hidden rounded-2xl">
         {/* Conversation List Panel */}
         <aside className={asideClasses} aria-label="Conversation list">
           <div className="flex-1 overflow-hidden">

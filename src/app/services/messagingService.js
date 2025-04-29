@@ -14,16 +14,6 @@ import { fetchWithAuth } from "./userAuthentication";
 import { db } from "@/firebase/firebase";
 
 export const messagingService = {
-  // --- Connection Management ---
-  getUserConnections: async (page = 1, pageSize = 10) => {
-    const response = await fetchWithAuth(
-      `${process.env.NEXT_PUBLIC_API_URL}/connections/${page}/${pageSize}`
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch user connections");
-    }
-    return response.json();
-  },
 
   createConversation: async (receiverName) => {
     messagingService.sendMessage(receiverName, null, []);
