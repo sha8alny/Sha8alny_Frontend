@@ -26,6 +26,29 @@ export default function SuggestedUsersContainer({
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  // Fallback to default function if helper function is not provided
+  const changeRelation = (relation) => {
+    switch (relation) {
+      case 0:
+        return "3rd+";
+      case 1:
+        return "1st";
+      case 2:
+        return "2nd";
+      case 3:
+        return "3rd";
+      default:
+        return "";
+    }
+  };
+
+  const changeRelations = (users) => {
+    return users.map((user) => ({
+      ...user,
+      relation: changeRelation(user?.connectionDegree),
+    }));
+  };
+
   if (isLoading || isError)
     return <SuggestedUsersSkeleton isLoading={isLoading} title={title} />;
 
@@ -40,7 +63,8 @@ export default function SuggestedUsersContainer({
     );
   }
 
+  const filteredUsers = changeRelations(suggestedUsers);
   return (
-    <SuggestedUsers title={title} users={suggestedUsers} onClick={navigateTo} />
+    <SuggestedUsers title={title} users={filteredUsers} onClick={navigateTo} />
   );
 }

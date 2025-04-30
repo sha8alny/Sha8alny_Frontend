@@ -18,6 +18,8 @@ export default function ModAboutPresentation({
   error,
   handleAbout,
   handleSubmit,
+  isSubmitting,
+  isModified,
 }) {
   return (
     <div className="p-4 text-primary" data-testid="mod-about-presentation">
@@ -54,11 +56,19 @@ export default function ModAboutPresentation({
       )}
       <button
         onClick={() => handleSubmit(about)}
-        disabled={error}
-        className="disabled:bg-red-800 bg-secondary w-full disabled:cursor-default hover:cursor-pointer disabled:hover:opacity-100 hover:bg-secondary hover:opacity-80 duration-250 text-background font-semibold px-4 py-2 rounded-md mt-4"
+        disabled={error || isSubmitting || !isModified}
+        className="disabled:bg-secondary/60 bg-secondary flex justify-center items-center gap-2 w-full disabled:cursor-default hover:cursor-pointer disabled:hover:opacity-100 hover:bg-secondary hover:opacity-80 duration-250 text-background font-semibold px-4 py-2 rounded-md mt-4"
         data-testid="mod-about-save-button"
       >
-        Save
+        {isSubmitting && (
+          <div
+            data-testid="mod-about-spinner"
+            className="size-4 border-2 border-t-transparent border-background/80 rounded-full animate-spin"
+          />
+        )}
+        <span data-testid="mod-about-save-text">
+          {isSubmitting ? "Saving..." : "Save"}
+        </span>
       </button>
     </div>
   );

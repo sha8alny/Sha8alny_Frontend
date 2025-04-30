@@ -18,7 +18,6 @@ export default function ModVisibility({ userInfo }) {
   const [error, setError] = useState(null);
   const [usernameError, setUsernameError] = useState(null);
   const [currentStage, setCurrentStage] = useState(0);
-  const [modifyingVisibility, setModifyingVisibility] = useState(false);
   const [open, setOpen] = useState(false);
 
   const useUpdate = useUpdateProfile();
@@ -81,7 +80,6 @@ export default function ModVisibility({ userInfo }) {
   };
 
   const modifyVisibility = (value) => {
-    setModifyingVisibility(true);
     useUpdate.mutate(
       {
         api: "settings/update-visibility",
@@ -91,12 +89,10 @@ export default function ModVisibility({ userInfo }) {
       {
         onSuccess: () => {
           setVisibility(value);
-          setModifyingVisibility(false);
         },
         onError: (error) => {
           setError(error?.message || "Failed to update visibility.");
           setCurrentStage(3);
-          setModifyingVisibility(false);
           setTimeout(() => {
             setCurrentStage(0);
             setOpen(false);
@@ -111,29 +107,22 @@ export default function ModVisibility({ userInfo }) {
       useRegularButton
       open={open}
       onOpenChange={setOpen}
-      buttonClass="hover:cursor-pointer size-4 mr-2"
+      buttonClass="cursor-pointer size-3 mr-2"
       className="max-w-screen"
       testId="mod-visibility"
       buttonData={<Pencil />}
       AlertContent={
         <ModVisibilityPresentation
           currentStage={currentStage}
-          setCurrentStage={setCurrentStage}
           handleSave={handleSave}
           setOpen={setOpen}
           usernameError={usernameError}
           handleChange={handleChange}
-          modifyingVisibility={modifyingVisibility}
           modifyVisibility={modifyVisibility}
           visibility={visibility}
-          setVisibility={setVisibility}
           error={error}
-          setError={setError}
           username={username}
-          setUserModified={setUserModified}
-          userModified={userModified}
-          setUsername={setUsername}
-          isUpdatingUsername={updateUsernameMutation.isPending}
+          modifyingVisibility={updateUsernameMutation.isPending}
         />
       }
     />

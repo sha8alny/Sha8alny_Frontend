@@ -29,10 +29,12 @@ import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 export default function ModAbout({ about, adding = false }) {
   const [error, setError] = useState(null);
   const [userAbout, setAbout] = useState(about);
+  const [isModified, setIsModified] = useState(false);
   const updateProfileMutation = useUpdateProfile();
 
   const handleAbout = (value) => {
     setAbout(value);
+    setIsModified(true);
     if (value?.length > 1000) {
       setError("About is too long.");
       return;
@@ -63,7 +65,8 @@ export default function ModAbout({ about, adding = false }) {
           about={userAbout}
           handleAbout={handleAbout}
           handleSubmit={handleSubmit}
-          isLoading={updateProfileMutation.isLoading}
+          isSubmitting={updateProfileMutation.isPending}
+          isModified={isModified}
         />
       }
     />

@@ -21,7 +21,7 @@ function TrendingTopicsContainer() {
   const router = useRouter();
 
   const navigateTo = (keyword) => {
-    router.push(`/search/results?keyword=${keyword}&type=post`);
+    router.push(`/search/results?keyword=${encodeURIComponent(keyword)}&type=post`);
   };
 
   if (isLoading)

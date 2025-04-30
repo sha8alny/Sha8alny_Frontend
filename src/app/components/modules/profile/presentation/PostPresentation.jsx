@@ -21,24 +21,38 @@ export default function PostPresentation({
   return (
     <Container
       onClick={() => navigateTo(`${post?.username}/post/${post?.postId}`)}
-      className="p-4 flex flex-col hover:bg-primary/10 cursor-pointer duration-200 shadow-md"
+      className="p-4 flex flex-col hover:bg-primary/15 cursor-pointer duration-200 shadow-md"
       data-testid={`post-container-${post?.postId}`}
     >
       {post?.isShared && (
-        <div className="flex items-center gap-1 mb-2 text-xs pb-2">
-          <Avatar className="size-5">
+        <div
+          className="flex items-center gap-1 mb-2 text-xs pb-2"
+          data-testid={`post-shared-${post?.postId}`}
+        >
+          <Avatar
+            className="size-5"
+            data-testid={`post-shared-avatar-${post?.postId}`}
+          >
             <AvatarImage src={post?.isShared?.profilePicture} alt="Shared by" />
             <AvatarFallback>
               {post?.isShared?.fullName?.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <h5 className="font-semibold">
+          <h5
+            className="font-semibold"
+            data-testid={`post-shared-fullname-${post?.postId}`}
+          >
             {post?.isShared?.fullName}
           </h5>
-          shared this
+          <span data-testid={`post-shared-label-${post?.postId}`}>
+            shared this
+          </span>
         </div>
       )}
-      <section className="flex gap-2 items-center">
+      <section
+        className="flex gap-2 items-center"
+        data-testid={`post-header-${post?.postId}`}
+      >
         <Avatar
           className="size-7 cursor-pointer"
           onClick={(e) => {
@@ -79,7 +93,10 @@ export default function PostPresentation({
           </h6>
         </div>
       </section>
-      <div className="mt-4 flex flex-col items-center">
+      <div
+        className="mt-4 flex flex-col items-center"
+        data-testid={`post-content-${post?.postId}`}
+      >
         <p
           className="text-xs text-primary break-all self-start"
           data-testid={`post-text-${post?.postId}`}
@@ -94,8 +111,12 @@ export default function PostPresentation({
             <Description
               className="text-primary/70"
               sx={{ fontSize: "3rem" }}
+              data-testid={`post-document-icon-${post?.postId}`}
             />
-            <span className="text-xs text-primary/70 mt-2 text-center break-all">
+            <span
+              className="text-xs text-primary/70 mt-2 text-center break-all"
+              data-testid={`post-document-label-${post?.postId}`}
+            >
               Document
             </span>
           </div>
@@ -125,7 +146,10 @@ export default function PostPresentation({
           />
         )}
       </div>
-      <div className="flex flex-col mt-auto">
+      <div
+        className="flex flex-col mt-auto"
+        data-testid={`post-footer-${post?.postId}`}
+      >
         <div
           className="flex flex-wrap gap-2 pt-2"
           data-testid={`post-keywords-${post?.postId}`}
@@ -140,7 +164,10 @@ export default function PostPresentation({
             </span>
           ))}
         </div>
-        <div className="flex justify-between mt-2">
+        <div
+          className="flex justify-between mt-2"
+          data-testid={`post-stats-${post?.postId}`}
+        >
           <span
             className="text-xs flex"
             data-testid={`post-reacts-${post?.postId}`}
@@ -148,8 +175,14 @@ export default function PostPresentation({
             <FavoriteBorder
               className="text-primary"
               sx={{ fontSize: "1rem" }}
+              data-testid={`post-reacts-icon-${post?.postId}`}
             />
-            <span className="text-primary text-xs ml-1">{post?.numReacts}</span>
+            <span
+              className="text-primary text-xs ml-1"
+              data-testid={`post-reacts-count-${post?.postId}`}
+            >
+              {post?.numReacts}
+            </span>
           </span>
           <span
             className="text-xs flex"
@@ -158,8 +191,12 @@ export default function PostPresentation({
             <CommentOutlined
               className="text-primary"
               sx={{ fontSize: "1rem" }}
+              data-testid={`post-comments-icon-${post?.postId}`}
             />
-            <span className="text-primary text-xs ml-1">
+            <span
+              className="text-primary text-xs ml-1"
+              data-testid={`post-comments-count-${post?.postId}`}
+            >
               {post?.numComments}
             </span>
           </span>
@@ -167,8 +204,17 @@ export default function PostPresentation({
             className="text-xs flex"
             data-testid={`post-shares-${post?.postId}`}
           >
-            <Repeat className="text-primary" sx={{ fontSize: "1rem" }} />
-            <span className="text-primary text-xs ml-1">{post?.numShares}</span>
+            <Repeat
+              className="text-primary"
+              sx={{ fontSize: "1rem" }}
+              data-testid={`post-shares-icon-${post?.postId}`}
+            />
+            <span
+              className="text-primary text-xs ml-1"
+              data-testid={`post-shares-count-${post?.postId}`}
+            >
+              {post?.numShares}
+            </span>
           </span>
         </div>
       </div>

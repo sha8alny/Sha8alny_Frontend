@@ -1,6 +1,5 @@
 import { determineAge } from "@/app/services/post";
 import PostPresentation, { PostPresentationSkeleton } from "./PostPresentation";
-import { useRef } from "react";
 
 export default function PostsPresentation({
   posts,
@@ -15,7 +14,7 @@ export default function PostsPresentation({
   return (
     <>
       {/* Mobile Carousel */}
-      <div className="lg:hidden w-full relative mt-4">
+      <div className="md:hidden w-full relative mt-4">
         <div
           ref={carouselRef}
           className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 scrollbar-hide"
@@ -75,7 +74,7 @@ export default function PostsPresentation({
       </div>
 
       {/* Desktop Grid */}
-      <div className="hidden lg:grid lg:grid-cols-5 mt-4 gap-4">
+      <div className="hidden md:grid md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 mt-4 gap-4">
         {isLoading &&
           Array(5)
             .fill(0)
