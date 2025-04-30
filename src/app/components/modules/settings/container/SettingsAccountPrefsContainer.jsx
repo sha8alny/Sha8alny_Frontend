@@ -29,7 +29,7 @@ export default function SettingsAccountPrefsContainer({ hasPassword, isLoadingHa
 
   const renderContent = () => {
     if (activeForm === "darkMode") return <DarkModeForm handleDarkModeForm={() => setActiveForm(null)} />;
-    if (activeForm === "deleteAccount") return <DeleteAccountContainer handleDeleteAccountForm={() => setActiveForm(null)} />;
+    if (activeForm === "deleteAccount") return <DeleteAccountContainer hasPassword={hasPassword} handleDeleteAccountForm={() => setActiveForm(null)} />;
     if (activeForm === "changeUsername") return <ChangeUsernameContainer handleUsernameForm={() => setActiveForm(null)} />;
     return (
       <SettingsAccountPrefsPresentation

@@ -25,8 +25,8 @@ export default function SettingsContainer() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const hasPassword = hasPasswordData?.hasPassword || false;
-
+  const hasPassword = hasPasswordData
+  
   return (
     <SettingsPresentation 
       activeSetting={activeSetting}

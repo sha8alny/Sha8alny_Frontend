@@ -36,7 +36,6 @@ const ChangeEmailForm = ({
   isLoading,
   hasPassword,
 }) => {
-  // If user doesn't have a password, show a different UI
   if (!hasPassword) {
     return (
       <div className="flex flex-col gap-6 w-full max-w-[725px] mx-auto">
