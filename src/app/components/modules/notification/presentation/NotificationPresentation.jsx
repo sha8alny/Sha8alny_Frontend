@@ -122,70 +122,72 @@ function NotificationPresentation({
     return (
       <div className="space-y-2" data-testid="notifications-list">
       {notifications.map((notification, index) => (
-        <div key={notification._id} data-testid={`notification-item-${notification._id}`}>
-        <Card className={notification.isRead ? "dark:bg-card bg-muted/50" : "dark:bg-muted/50 bg-card"}>
-          <CardContent className="p-4">
-          <div className="flex items-start gap-4">
-            <Avatar data-testid="notification-avatar">
-            <AvatarImage
-              src={notification.data?.fromProfilePicture || "/placeholder.svg"}
-              alt={notification.data?.userName || "User"}
-            />
-            <AvatarFallback>
-              {(notification.data?.userName || "?").charAt(0).toUpperCase()}
-            </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-            <Link href={getNotificationLink(notification)} className="text-sm font-medium hover:underline" data-testid="notification-link">
-              {notification.text || notification.title}
-            </Link>
-            <div className="flex items-center gap-2 mt-1">
-              <p className="text-xs text-muted-foreground" data-testid="notification-time">
-              {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-              </p>
-              {notification.type && (
-              <Badge variant="outline" className="text-xs text-text" data-testid="notification-type">
-                {notification.type === "ConnectionRequest" ? "Connection Request" : notification.type}
-              </Badge>
-              )}
-            </div>
-            </div>
-            {!notification.isRead && (
-            <Button 
-            className="bg-secondary text-background hover:bg-secondary/80 cursor-pointer" 
-            size="sm" 
-              onClick={() => onMarkAsRead(notification._id)}
-              disabled={isMarkingAsRead}
-              data-testid="mark-as-read-button"
-            >
-              Mark as read
-            </Button>
-            )}
-          </div>
-          </CardContent>
-        </Card>
-        {index < notifications.length - 1 && <Separator className="my-2" />}
+      <div key={notification._id} data-testid={`notification-item-${notification._id}`}>
+      <Card className={notification.isRead ? "dark:bg-card bg-muted/50" : "dark:bg-muted/50 bg-card"}>
+        <CardContent className="p-4">
+        <div className="flex items-start gap-4">
+        <Avatar data-testid="notification-avatar">
+        <AvatarImage
+          src={notification.data?.fromProfilePicture || "/placeholder.svg"}
+          alt={notification.data?.userName || "User"}
+        />
+        <AvatarFallback>
+          {(notification.data?.userName || "?").charAt(0).toUpperCase()}
+        </AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+        <Link href={getNotificationLink(notification)} className="text-sm font-medium hover:underline" data-testid="notification-link">
+          {notification.text || notification.title}
+        </Link>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="text-xs text-muted-foreground" data-testid="notification-time">
+          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+          </p>
+          {notification.type && (
+          <Badge variant="outline" className="text-xs text-text" data-testid="notification-type">
+          {notification.type === "ConnectionRequest" ? "Connection Request" : 
+           notification.type === "ConnectionAccepted" ? "Connection Accepted" : 
+           notification.type}
+          </Badge>
+          )}
         </div>
+        </div>
+        {!notification.isRead && (
+        <Button 
+        className="bg-secondary text-background hover:bg-secondary/80 cursor-pointer" 
+        size="sm" 
+          onClick={() => onMarkAsRead(notification._id)}
+          disabled={isMarkingAsRead}
+          data-testid="mark-as-read-button"
+        >
+          Mark as read
+        </Button>
+        )}
+        </div>
+        </CardContent>
+      </Card>
+      {index < notifications.length - 1 && <Separator className="my-2" />}
+      </div>
       ))}
       
       {hasMore && (
-        <div className="text-center py-4">
-        <Button 
-          variant="outline" 
-          onClick={onLoadMore} 
-          disabled={loadingMore}
-          className="w-full"
-          data-testid="load-more-button"
-        >
-          {loadingMore ? (
-          <span className="flex items-center" data-testid="loading-more-indicator">
-            <span className="mr-2">Loading...</span>
-          </span>
-          ) : (
-          'Load More'
-          )}
-        </Button>
-        </div>
+      <div className="text-center py-4">
+      <Button 
+        variant="outline" 
+        onClick={onLoadMore} 
+        disabled={loadingMore}
+        className="w-full"
+        data-testid="load-more-button"
+      >
+        {loadingMore ? (
+        <span className="flex items-center" data-testid="loading-more-indicator">
+        <span className="mr-2">Loading...</span>
+        </span>
+        ) : (
+        'Load More'
+        )}
+      </Button>
+      </div>
       )}
       </div>
     )
