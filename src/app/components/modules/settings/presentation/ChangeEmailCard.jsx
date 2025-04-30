@@ -18,14 +18,14 @@ import { useState } from "react";
  * @param {string} props.email - The current email address of the user
  * @returns {JSX.Element} The rendered ChangeEmailCard component
  */
-const ChangeEmailCard = ({ toggleForm, email }) => {
+const ChangeEmailCard = ({ toggleForm, email,hasPassword }) => {
   const [currentFormPage, setCurrentFormPage] = useState(0);
   const handleContinueForm = () => setCurrentFormPage(1);
   
   return (
     <SettingsFormLayout>
       {currentFormPage === 1 ? (
-        <ChangeEmailContainer toggleForm={toggleForm} />
+        <ChangeEmailContainer toggleForm={toggleForm} hasPassword={hasPassword} />
       ) : (
         <>
           <BackButton handler={toggleForm} />
