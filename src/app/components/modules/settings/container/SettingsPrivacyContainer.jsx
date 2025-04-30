@@ -23,17 +23,17 @@ const SettingsPrivacyContainer = () => {
   const renderContent = () => {
     if (activeForm == "Blocked users")
       return <BlockedUsersContainer toggleForm={() => setActiveForm(null)} />;
-    if (activeForm == "Invitations to connect")
-      return <InvitationsContainer toggleForm={() => setActiveForm(null)} />;
+    // if (activeForm == "Invitations to connect")
+    //   return <InvitationsContainer toggleForm={() => setActiveForm(null)} />;
 
     return (
       <SettingsCard
         header="Privacy"
         items={{
-          "Invitations to connect": {
-            label: false ? "Loading..." : "",
-            link: () => setActiveForm("Invitations to connect"),
-          },
+          // "Invitations to connect": {
+          //   label: false ? "Loading..." : "",
+          //   link: () => setActiveForm("Invitations to connect"),
+          // },
           "Blocked users": {
             label: "",
             link: () => setActiveForm("Blocked users"),
