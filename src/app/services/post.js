@@ -88,6 +88,9 @@ export const getPosts = async (pageNum) => {
     headers: { "Content-Type": "application/json" },
   });
   if (!response.ok) throw new Error("Failed to fetch posts");
+  if (response.status === 204) {
+    return [];
+  }
   return await response.json();
 };
 
@@ -388,35 +391,6 @@ export async function deleteComment(postId, commentId) {
   }
 }
 
-export const getTags = async (text) => {
-  try {
-    const response = await fetchWithAuth(
-      `${apiURL}/tags?text=${encodeURIComponent(text)}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        },
-      }
-    );
-    const responseText = await response.text();
-    console.log("Raw response text:", responseText);
-
-    if (!response.ok) {
-      console.error("Error response:", responseText);
-      throw new Error(
-        `Failed to fetch tags: ${response.status} ${responseText}`
-      );
-    }
-    try {
-      return JSON.parse(responseText);
-    } catch {
-      return { message: responseText };
-    }
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
 export const getSavedPosts = async (pageNum = 1) => {
   try {
     const response = await fetchWithAuth(
@@ -500,3 +474,18 @@ export const getComment = async (postId, commentId) => {
   if (!response.ok) throw new Error("Failed to fetch comment");
   return await response.json();
 };
+
+export const getTags = async (text) => {
+  const apiURL = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetchWithAuth(
+    `${apiURL}/tags?text=${encodeURIComponent(text)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) throw new Error("Failed to fetch tags");
+  return await response.json();
+}

@@ -1,8 +1,7 @@
 import { Textarea } from "@/app/components/ui/Textarea";
 import { Done, Error } from "@mui/icons-material";
-import { useState } from "react";
 
-export default function ReportPostPresentation({
+export default function ReportPresentation({
   reportOptions = [
     "Spam",
     "Harassment",
@@ -16,6 +15,7 @@ export default function ReportPostPresentation({
     "Something Else",
   ],
   onReport,
+  type,
   reportState,
   reportType,
   reportText,
@@ -27,9 +27,9 @@ export default function ReportPostPresentation({
       {/* Initial State: Show Report Form */}
       {(reportState === 0) && (
         <>
-          <h2 className="text-xl font-bold mb-2 text-primary">Report Post</h2>
+          <h2 className="text-xl font-bold mb-2 text-primary">Report {type[0].toUpperCase() + type.slice(1)}</h2>
           <p className="text-muted-foreground mb-6 text-center">
-            Help us understand the problem. What's wrong with this post?
+            Help us understand the problem. What's wrong with this {type}?
           </p>
           <div className="flex flex-wrap justify-center gap-3 mb-6 w-full">
             {reportOptions.map((option, index) => (
@@ -63,7 +63,7 @@ export default function ReportPostPresentation({
               <Textarea
                 id="reportDetails"
                 className="w-full h-28 p-3 rounded-md border border-primary bg-background focus:ring-2 focus-visible:ring-primary text-primary dark:focus:ring-primary/70 focus:border-transparent"
-                placeholder="Explain why you are reporting this post..."
+                placeholder={`Explain why you are reporting this ${type}...`}
                 value={reportText}
                 onChange={(e) => setReportText(e.target.value)}
               />

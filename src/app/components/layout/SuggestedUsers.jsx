@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
 import UserSmallCard from "./UserSmallCard";
 import Container from "./Container";
+import UserSmallCardContainer from "./UserSmallCardContainer";
 
 /**
  * @namespace layout
@@ -29,11 +30,10 @@ export default function SuggestedUsers({
         {title}
       </h2>
       {users.map((user, index) => (
-        <UserSmallCard
+        <UserSmallCardContainer
           key={index}
           userInfo={user}
           onClick={onClick}
-          onButtonClick={onButtonClick}
         />
       ))}
     </Container>

@@ -10,6 +10,7 @@ import  SuggestedUsersSkeleton  from "../../layout/SuggestedUsers";
 import NetworkFilterContainer from "./container/NetworkFiltersContainer";
 import { useState }  from "react";
 import React from "react";
+import { fetchPeopleYouMayKnow } from "@/app/services/connectionManagement";
 
 const NetworkLayout = ({ children, activeContent }) => {
   const isActive = (path) => activeContent === path;
@@ -75,7 +76,7 @@ const NetworkLayout = ({ children, activeContent }) => {
             <NetworkFilterContainer activeTab={activeContent} onResults={setFilteredResults}/>
 
             {/* <SuggestedUsersSkeleton /> */}
-            <SuggestedUsersContainer title="People You May Know" />
+            <SuggestedUsersContainer title="People You May Know" fetchFunction={fetchPeopleYouMayKnow} />
             {/* <SuggestedUsersSkeleton /> */}
             </div>
             </div>

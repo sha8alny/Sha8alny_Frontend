@@ -15,7 +15,18 @@ export const connectUser = async (username) => {
   return response.status;
 };
 
-
+export const removeConnection = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to remove connection");
+  }
+  return response.status;
+}
 
 export const followUser = async (username) => {
   const response = await fetchWithAuth(`${apiURL}/follow`, {
@@ -177,16 +188,6 @@ export const manageConnectionRequest = async ({username, status}) => {
   });
   if (!response.ok) {
     throw new Error("Failed to accept connection request");
-  }
-  return true;
-}
-
-export const removeConnection = async ({username}) => {
-  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error("Failed to cancel connection request");
   }
   return true;
 }

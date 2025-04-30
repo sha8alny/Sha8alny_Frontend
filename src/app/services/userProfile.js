@@ -65,6 +65,9 @@ export const fetchUserConnections = async (
     },
   });
   if (!response.ok) throw new Error("Failed to fetch user connections");
+  if (response.status === 204) {
+    return [];
+  }
   return response.json();
 };
 
@@ -81,4 +84,28 @@ export const fetchPeopleAlsoViewed = async (username) => {
   if (!response.ok) throw new Error("Failed to fetch people also viewed");
   const data = await response.json();
   return data.peopleAlsoViewed;
+};
+
+export const sendMessageRequest = async (username) => {
+  const response = await fetchWithAuth(
+    `${apiURL}/messageRequests/sendMessageRequest`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        receiverName: username,
+      }),
+    }
+  );
+  
+  if (!response.ok) {
+    const error = new Error("Failed to send message request");
+    error.status = response.status;
+    error.response = response;
+    throw error;
+  }
+  
+  return response.status;
 };
