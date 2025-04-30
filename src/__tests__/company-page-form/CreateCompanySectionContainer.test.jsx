@@ -2,7 +2,6 @@ import { render, screen , fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CreateCompanySectionContainer from "../../app/components/modules/company-page-form/container/CreateCompanySectionContainer";
 import { createCompany } from "../../app/services/companyManagement";
-import { useRouter } from "next/navigation";
 
 const mockPush = jest.fn();
 
@@ -49,8 +48,10 @@ describe("CreateCompanySectionContainer",()=>{
       expect(screen.getByLabelText(/Tagline/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Organization Size/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Organization Type/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Location/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Location/i)).toBeInTheDocument();   
       expect(screen.getByLabelText(/Website/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Founding Date/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Phone Number/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/shaغalny/i)).toBeInTheDocument();
     });
 
@@ -105,41 +106,44 @@ describe("CreateCompanySectionContainer",()=>{
           expect(screen.findByText(/Company type is required/i)).resolves.toBeInTheDocument();
           expect(screen.findByText(/Location is required/i)).resolves.toBeInTheDocument();
           expect(screen.findByText(/URL is required/i)).resolves.toBeInTheDocument();
+          expect(screen.findByText(/Founding Date is required/i)).resolves.toBeInTheDocument();
           expect(screen.findByText(/You must agree to the terms./i)).resolves.toBeInTheDocument();
         });
     });
 
     // test("submits form when valid", async () => {
     //     createCompany.mockResolvedValueOnce({ success: true });
-    //     render(
-    //         <CreateCompanySectionContainer
-    //             companyName="Tech Corp"
-    //             setcompanyName={setcompanyName}
-    //             companyIndustry="Software"
-    //             setcompanyIndustry={setcompanyIndustry}
-    //             companyTagline="Innovating the Future"
-    //             setcompanyTagline={setcompanyTagline}
-    //             file={null}
-    //             setFile={setFile}
-    //         />
-    //     );
-
+    
+    //     render(<CreateCompanySectionContainer
+    //         companyName=""
+    //         setcompanyName={setcompanyName}
+    //         companyIndustry=""
+    //         setcompanyIndustry={setcompanyIndustry}
+    //         companyTagline=""
+    //         setcompanyTagline={setcompanyTagline}
+    //         file={null}
+    //         setFile={setFile} />);
+    
+    //     fireEvent.change(screen.getByLabelText(/Name/i), { target: { value: "Tech Corp" } });
+    //     fireEvent.change(screen.getByLabelText(/Industry/i), { target: { value: "Software" } });
+    //     fireEvent.change(screen.getByLabelText(/Organization Size/i), { target: { value: "100-500" } });
+    //     fireEvent.change(screen.getByLabelText(/Organization Type/i), { target: { value: "Private" } });
+    //     fireEvent.change(screen.getByLabelText(/Location/i), { target: { value: "San Francisco" } });
+    //     fireEvent.change(screen.getByLabelText(/Website/i), { target: { value: "https://techcorp.com" } });
+    //     fireEvent.change(screen.getByLabelText(/shaغalny/i), { target: { value: "techcorp" } });
+    //     fireEvent.change(screen.getByLabelText(/Founding Date/i), { target: { value: "2020-01-01" } });
+    //     fireEvent.change(screen.getByLabelText(/Phone Number/i), { target: { value: "1234567890" } });
+    
     //     const checkbox = screen.getByRole("checkbox", { name: /I verify that I am an authorized representative/i });
     //     fireEvent.click(checkbox);
     //     expect(checkbox.checked).toBe(true);
-
-    //     const createButton = screen.getByText(/Create Page/i);
-    //     fireEvent.click(createButton);
-
+    
+    //     const submitButton = screen.getByText(/Create Page/i);
+    //     fireEvent.click(submitButton);
+    
     //     await waitFor(() => {
-    //         expect(createCompany).toHaveBeenCalledTimes(1);
-    //         expect(createCompany).toHaveBeenCalledWith(
-    //             expect.objectContaining({
-    //                 name: "Tech Corp",
-    //                 industry: "Software",
-    //             })
-    //         );
-    //         expect(mockPush).toHaveBeenCalled();
+    //       expect(createCompany).toHaveBeenCalledTimes(1);
+    //       expect(mockPush).toHaveBeenCalledWith("/company/techcorp/admin/dashboard");
     //     });
     // });
 
@@ -186,5 +190,5 @@ describe("CreateCompanySectionContainer",()=>{
         fireEvent.click(checkbox);
         expect(checkbox.checked).toBe(true);
     });
-
+    
 });

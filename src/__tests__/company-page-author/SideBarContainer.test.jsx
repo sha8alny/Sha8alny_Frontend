@@ -7,6 +7,17 @@ jest.mock("../../app/services/companyManagement", () => ({
     deleteCompany: jest.fn(),
 }));
 
+jest.mock("next/navigation", () => ({
+    useRouter: () => ({
+      push: jest.fn(),
+      prefetch: jest.fn(),
+      replace: jest.fn(),
+      refresh: jest.fn(),
+    }),
+    usePathname: () => "/company/testcompany/admin/dashboard",
+  }));
+
+
 jest.mock("../../app/components/modules/company-page-author/presentation/SideBar", () => ({ menuItems }) => (
     <nav>
       {menuItems.map((item) => (

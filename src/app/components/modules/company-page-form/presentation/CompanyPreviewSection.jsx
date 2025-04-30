@@ -29,7 +29,7 @@ export default function CompanyPreviewSection({companyName, companyTagline, comp
             <div className="bg-[var(--background)] border border-gray-600 rounded-b-lg">
                 <div className="bg-[var(--foreground)] p-5 m-5 rounded-lg">
                     <div className="w-24 h-24 bg-[var(--background)] flex items-center justify-center rounded">
-                        {preview ? ( <img src={preview} alt="Company Logo" className="w-full h-full object-cover"/>) : ( <ImageOutlinedIcon fontSize="large"/>)}
+                        {preview ? ( <img src={preview } alt="Company Logo" className="w-full h-full object-cover"/>) : ( <ImageOutlinedIcon fontSize="large"/>)}
                     </div>
                     <p className="text-text break-all text-[24px] mt-2">{companyName || "Company name"}</p>
                     <p className="text-text mt-1 break-all">{companyTagline|| "Tagline"}</p>

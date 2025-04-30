@@ -34,6 +34,7 @@ export default function CreateCompanySectionContainer({companyName, setcompanyNa
     const [companyWebsite, setCompanyWebsite] = useState("");
     const [companyDate, setCompanyDate] = useState("");
     const [companyPhone, setCompanyPhone] = useState("");
+    const [companyDescription, setCompanyDescription] = useState("");
     const [isChecked, setIsChecked] = useState(false);
     const [showerror, setShowError] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -121,6 +122,7 @@ export default function CreateCompanySectionContainer({companyName, setcompanyNa
         companyUsername={companyUsername} setCompanyUsername={(value)=>{setCompanyUsername(value);handleInputChange("username", value);}}
         companyDate={companyDate} setCompanyDate ={(value)=>{setCompanyDate(value);handleInputChange("companyDate", value);}}
         companyPhone={companyPhone} setCompanyPhone= {(value)=>{setCompanyPhone(value);handleInputChange("companyPhone", value);}}
+        companyDescription ={companyDescription} setCompanyDescription ={(value)=>{setCompanyDescription(value);handleInputChange("companyDescription", value);}}
         onCreateCompany={handleSubmit} loading={loading} isFormValid={isFormValid} errors={errors} setErrors={setErrors}
         isChecked={isChecked} checkBox={checkBox} error={error}/>
     );

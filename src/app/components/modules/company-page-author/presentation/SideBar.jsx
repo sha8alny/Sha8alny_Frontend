@@ -6,7 +6,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
 import EditIcon from '@mui/icons-material/Edit';
-import { Maximize2 } from "lucide-react";
 import { Card, CardContent } from "@/app/components/ui/Card";
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/app/components/ui/Tooltip';
 import { Button } from '@/app/components/ui/Button';
@@ -51,15 +50,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
             <div className="relative mb-0 max-h-[160px]">
                 <div className="w-full h-[120px] bg-gray-700 rounded-lg flex justify-center items-center overflow-hidden  relative">
                     {/*Cover */}
-                    {company?.cover ? (
-                        <img src={company?.cover} alt="cover" className="w-full h-full" />
-                    ) : (
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
-                            <Maximize2 className="text-white" size={18} />
-                        </div>
-                    </div>
-                    )}
+                    <img src={company?.cover || "/placeholder.svg"} alt="cover" className="w-full h-full" />
                     <div className="absolute right-2 top-2 flex gap-2">
                         <Tooltip>
                         <TooltipTrigger asChild>
@@ -85,15 +76,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                 <input id="upload-cover" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={coverInputRef} onChange={onChangeCover} />
                 <div className="absolute left-4 bottom-[50px] w-[80px] h-[80px] bg-gray-700 rounded-lg flex justify-center items-center overflow-hidden relative">
                     {/*Logo */}
-                    {company?.logo ? (
-                        <img src={company?.logo} alt="logo" className="w-full h-full object-cover rounded-lg" />
-                    ) : (
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
-                            <Maximize2 className="text-white" size={18} />
-                        </div>
-                    </div>
-                    )}
+                    <img src={company?.logo || "/placeholder.svg"} alt="logo" className="w-24 h-24 object-cover rounded-lg"/>
                     <div className="absolute right-0 bottom-0 flex gap-1 p-1">
                         <Tooltip>
                             <TooltipTrigger asChild>

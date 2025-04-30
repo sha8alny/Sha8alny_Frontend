@@ -8,6 +8,7 @@ describe("SelectFieldContainer", ()=>{
     beforeEach(()=>{
         setCompanySizeMock = jest.fn();
         setCompanyTypeMock = jest.fn();
+        setErrorsMock = jest.fn();
     });
     test("renders organization size and type dropdowns", () => {
         render(
@@ -16,6 +17,7 @@ describe("SelectFieldContainer", ()=>{
             setCompanySize={setCompanySizeMock}
             companyType=""
             setCompanyType={setCompanyTypeMock}
+            setErrors={setErrorsMock}
             errors={{}}
           />
         );
@@ -29,14 +31,15 @@ describe("SelectFieldContainer", ()=>{
             setCompanySize={setCompanySizeMock}
             companyType=""
             setCompanyType={setCompanyTypeMock}
+            setErrors={setErrorsMock}
             errors={{}}
           />
         );
     
         const selectSize = screen.getByLabelText(/Organization size/i);
-        fireEvent.change(selectSize, { target: { value: "3-option" } });
+        fireEvent.change(selectSize, { target: { value: "2-10 employees" } });
     
-        expect(setCompanySizeMock).toHaveBeenCalledWith("3-option");
+        expect(setCompanySizeMock).toHaveBeenCalledWith("2-10 employees");
     });
     
     test("allows selecting an organization type", () => {
@@ -46,14 +49,15 @@ describe("SelectFieldContainer", ()=>{
             setCompanySize={setCompanySizeMock}
             companyType=""
             setCompanyType={setCompanyTypeMock}
+            setErrors={setErrorsMock}
             errors={{}}
           />
         );
     
         const selectType = screen.getByLabelText(/Organization type/i);
-        fireEvent.change(selectType, { target: { value: "2-option" } });
+        fireEvent.change(selectType, { target: { value: "Public company" } });
     
-        expect(setCompanyTypeMock).toHaveBeenCalledWith("2-option");
+        expect(setCompanyTypeMock).toHaveBeenCalledWith("Public company");
     });
     
     test("displays error messages when provided", () => {
@@ -63,6 +67,7 @@ describe("SelectFieldContainer", ()=>{
             setCompanySize={setCompanySizeMock}
             companyType=""
             setCompanyType={setCompanyTypeMock}
+            setErrors={setErrorsMock}
             errors={{
               companySize: "Size is required",
               companyType: "Type is required",
