@@ -2,7 +2,7 @@
 import { useParams } from "next/navigation";
 import EditContainer from "@/app/components/modules/company-page-author/container/EditContainer";
 
-function EditCompanyPage(){
+export default function EditCompanyPage(){
     const { username } = useParams();
     return(
         <div className="space-y-6">
@@ -10,5 +10,3 @@ function EditCompanyPage(){
         </div>
     );
 }
-
-export default EditCompanyPage;

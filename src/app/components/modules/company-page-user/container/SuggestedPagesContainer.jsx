@@ -35,7 +35,6 @@ export default function SuggestedPagesContainer({username, title }) {
   const [error, setError] = useState(null);
   const [followStatus, setFollowStatus] = useState({});
   const [followerCount, setFollowerCount] = useState(null);
-  const [company, setCompany] = useState(null);
   const router = useRouter();
 
   const handleFollowClick = async (companyUsername) => {
