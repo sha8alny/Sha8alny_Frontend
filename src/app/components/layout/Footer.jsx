@@ -34,7 +34,7 @@ export default function Footer() {
         </Link>
       </div>
       <p className="text-xs text-primary mt-2">
-        © {new Date().getFullYear} Shaغalny. All rights reserved.
+        © {new Date().getFullYear()} Shaغalny. All rights reserved.
       </p>
     </footer>
   );
