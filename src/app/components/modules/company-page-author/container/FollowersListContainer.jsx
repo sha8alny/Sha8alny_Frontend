@@ -13,7 +13,7 @@ export default function FollowersListContainer({username}){
     useEffect(() => {
         const getCompanyFollowers = async () => {
         try {
-            const data = await getFollowers(1, 10, username);
+            const data = await getFollowers(1, username);
             setFollowers(data);
             console.log("Fetched data:", data);
         } catch (err) {
@@ -24,9 +24,6 @@ export default function FollowersListContainer({username}){
         getCompanyFollowers();
     }, [username]);
 
-    const filteredFollowers = followers.filter(follower =>
-        follower.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     const goToUserPage= (followers)=>{
         if (followers?.username) {
@@ -36,7 +33,7 @@ export default function FollowersListContainer({username}){
 
   return(
     <div>
-        <FollowersList followers={followers} goToUserPage={goToUserPage} filteredFollowers={filteredFollowers} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <FollowersList followers={followers} goToUserPage={goToUserPage} />
     </div>
   );
 };

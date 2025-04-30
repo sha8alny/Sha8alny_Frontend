@@ -51,7 +51,7 @@ export default function CompanyJobs({jobs=[], goToJobPage}){
     return (
         <div>
             <Container className="p-6">
-                <h2 className="text-text text-xl font-bold mb-4">Posted Jobs</h2>
+                <h2 className="text-text text-2xl font-bold mb-4">Posted Jobs</h2>
                 <div className="flex flex-wrap gap-6">
                     {jobs.map((job, index) => (
                         <Card key={job.id || index} className="w-60 rounded-xl bg-foreground">

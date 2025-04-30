@@ -103,7 +103,7 @@ export default function CompanyPeopleContainer({username}) {
     
     console.log("connected people", connectedPeople);
   return (
-      <div className="flex flex-wrap gap-6 bg-foreground rounded-lg">
+      <div>
         <CompanyPeople people={people} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson} connectedPeople={connectedPeople} handleDeleteConnection={handleDeleteConnection} handleAcceptConnection={handleAcceptConnection} handleDeclineConnection={handleDeclineConnection}   />
       </div>
   );
