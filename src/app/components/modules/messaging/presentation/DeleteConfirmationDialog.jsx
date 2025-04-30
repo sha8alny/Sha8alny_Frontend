@@ -25,7 +25,7 @@ export function DeleteConfirmationDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <DeleteOutlineIcon className="h-5 w-5 text-destructive" />
-            Delete Conversation
+            <span className="text-text"> Delete Conversation </span>
           </AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete your conversation with{" "}
@@ -34,7 +34,7 @@ export function DeleteConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="text-muted-foreground" disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
