@@ -24,26 +24,42 @@ import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 // Conversation actions component
 const ConversationActions = React.memo(
-  ({ conversation, onToggleRead, onToggleBlock, onDeleteConversation, onMenuClick, isDeleting }) => {
+  ({
+    conversation,
+    onToggleRead,
+    onToggleBlock,
+    onDeleteConversation,
+    onMenuClick,
+    isDeleting,
+  }) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-    
+
     const handleDeleteClick = (e) => {
       e.stopPropagation();
       setShowDeleteConfirmation(true);
     };
-    
+
     const handleConfirmDelete = () => {
       onDeleteConversation(conversation.id, conversation.otherUsername);
       // Close the dialog with a slight delay after deletion initiated
       setTimeout(() => {
         setShowDeleteConfirmation(false);
-      }, 300);
+      }, 3000);
     };
-    
-    const displayName = conversation.otherParticipantDetails?.name || conversation.otherUsername;
-    
+
+    const displayName =
+      conversation.otherParticipantDetails?.name || conversation.otherUsername;
+
+    // Prevent conversation selection when clicking anywhere inside the component
+    // if the delete confirmation is showing
+    const containerProps = showDeleteConfirmation
+      ? {
+          onClick: (e) => e.stopPropagation(),
+        }
+      : {};
+
     return (
-      <>
+      <div {...containerProps}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -101,22 +117,35 @@ const ConversationActions = React.memo(
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        
+
         <DeleteConfirmationDialog
           isOpen={showDeleteConfirmation}
-          onClose={() => setShowDeleteConfirmation(false)}
+          onClose={(open) => {
+            if (!open) {
+              // Prevent event propagation when closing dialog
+              setTimeout(() => setShowDeleteConfirmation(false), 0);
+            }
+          }}
           onConfirm={handleConfirmDelete}
           participantName={displayName}
           isDeleting={isDeleting}
         />
-      </>
+      </div>
     );
   }
 );
 
 // Conversation item component
 const ConversationItem = React.memo(
-  ({ conversation, isSelected, onSelect, onToggleRead, onToggleBlock, onDeleteConversation, isDeleting }) => {
+  ({
+    conversation,
+    isSelected,
+    onSelect,
+    onToggleRead,
+    onToggleBlock,
+    onDeleteConversation,
+    isDeleting,
+  }) => {
     const otherParticipant = conversation.otherParticipantDetails;
     const isOtherBlocked = conversation.isOtherParticipantBlocked;
     const isCurrentUserBlocked = conversation.isCurrentUserBlocked;
