@@ -27,6 +27,7 @@ import {
   SelectValue,
   SelectContent,
 } from "@/app/components/ui/Select";
+import { useEffect } from "react";
 
 /**
  * @namespace company-author
@@ -78,8 +79,12 @@ const JobsForm = ({
   onRestoreJob,
   isRestoring,
 }) => {
+
+  useEffect(() => {
+    console.log("openDeleteDialogForId:", openDeleteDialogForId);
+  }, [openDeleteDialogForId]);
   return (
-    <div className="flex-grow items-center ">
+    <div className="flex-grow items-center mx-auto w-full ">
       <section className="w-full p-8 bg-foreground rounded-lg shadow-xl grid grid-cols-2">
         <div>
           <h1 className="text-2xl text-semibold text-secondary">Jobs</h1>
@@ -96,38 +101,35 @@ const JobsForm = ({
         </div>
       </section>
       <section className="flex-grow p-10 bg-foreground rounded-lg shadow-xl w-full mt-5 min-h-138 ">
-        {!showDeletedJobs && !isLoading ? (
+        {!isLoading && (
         <div className="flex justify-between">
         <h1 className="text-3xl justify-center text-semibold text-secondary">
           Posted Jobs
         </h1>
-        <div className="order-last">
-          <Button
-            data-testid="PostNewJob"
-            onClick={()=>onShowDeletedJobs(true)}
-            className=" text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
-          >
-            Deleted Jobs
-          </Button>
-          </div>
         </div>
-        ):(
-          <div className="flex justify-between">
-          <h1 className="text-3xl justify-center text-semibold text-secondary">
-            Deleted Jobs
-          </h1>
-          <div className="order-last">
-            <Button
-              data-testid="postedJobs"
-              onClick={()=>onShowDeletedJobs(false)}
-              className=" text-background bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
-            >
-              Posted Jobs
-            </Button>
-            </div>
-          </div>
         )}
-        <hr className="border-secondary  mt-4" />
+        <hr className="border-secondary  mt-4 mb-2" />
+        {/* Tab Navigation */}
+        <div className="flex gap-1 mb-6 w-full justify-center">
+            <button
+                data-testid="current-button"
+                onClick={()=>{onShowDeletedJobs(false);
+                setOpenDeleteDialogForId(null);
+                }}
+                className={`w-full p-2 rounded-lg transition ${showDeletedJobs=== false ? "bg-secondary text-primary" : "bg-transparent text-primary hover:bg-secondary hover:text-white"}`}
+            >
+                Opened Jobs
+            </button>
+            <button
+                data-testid="deleted-button"
+                onClick={()=>{onShowDeletedJobs(true);
+                setOpenDeleteDialogForId(null);
+                }}
+                className={`w-full p-2 rounded-lg transition ${showDeletedJobs ? "bg-secondary text-primary" : "bg-transparent text-primary hover:bg-secondary hover:text-white"}`}
+            >
+                Deleted Jobs
+            </button>
+        </div>
         {isError && (
           <div className="w-full flex flex-col justify-center items-center gap-2 h-full mt-50">
             <p className="text-red-500 text-lg">
@@ -178,7 +180,7 @@ const JobsForm = ({
             >
               <div>
                 <div className="flex flex-col md:flex-row justify-between mb-6">
-                  <h1 className="text-secondary text-2xl text-semibold break-words whitespace-normal w-xs sm:w-sm lg:max-w-lg">
+                  <h1 className="text-secondary sm:text-2xl text-lg text-semibold break-words whitespace-normal overflow-hidden text-clip w-xs sm:w-sm lg:max-w-lg">
                     {job.title}
                   </h1>
                   <Button
@@ -195,11 +197,11 @@ const JobsForm = ({
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
                   <div>
-                  <p className="text-text break-all max-w-[16rem] w-full overflow-hidden text-ellipsis">
+                  <p className="text-text break-words whitespace-normal w-3xs">
                   {job.location}</p>
-                    <p className="text-text break-words whitespace-normal max-w-xs sm:max-w-xs xl:max-w-md w-full">{job.industry}</p>
+                    <p className="text-text break-words whitespace-normal w-3xs sm:max-w-xs xl:max-w-md w-full">{job.industry}</p>
                     <p className="text-secondary">{job.employmentType}</p>
-                    <p className="text-secondary font-bold break-words whitespace-normal">${job.salary}</p>
+                    <p className="text-secondary font-bold break-words whitespace-normal w-3xs">${job.salary}</p>
                   </div>
                   <div className="hidden lg:flex relative  items-center justify-center h-20">
                     <div className="w-[4px] h-17 bg-text"></div>
@@ -431,7 +433,7 @@ const JobsForm = ({
                             id="salary"
                             type="number"
                             className={"text-text"}
-                            defaultValue={job.salary}
+                            defaultValue={Math.round(job.salary)}
                             onChange={(e) =>
                               setUpdatedJob((prev) => ({
                                 ...prev,
@@ -444,7 +446,7 @@ const JobsForm = ({
                             <AlertDialogCancel
                               data-testid="cancel-edit"
                               type="button"
-                              className="flex-1 bg-red-700 rounded-2xl font-semibold cursor-pointer hover:bg-red-700/70 dark:bg-red-400 dark:hover:bg-red-300 hover:text-background text-primary-foreground"
+                              className=" bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text"
                                 onClick={() => setOpenDialogForJobId(null)}
                             >
                               Cancel
@@ -516,7 +518,7 @@ const JobsForm = ({
                             data-testid="confirm-delete"
                             onClick={() => onDeleteJob(job._id)}
                             disabled={isDeleting}
-                            className="bg-red-600 rounded-2xl text-white hover:bg-red-700 text-sm font-semibold p-2"
+                            className="bg-secondary rounded-2xl text-background hover:bg-secondary/80 text-sm font-semibold p-2"
                           >
                             {isDeleting ? "Deleting..." : "Confirm Delete"}
                             
