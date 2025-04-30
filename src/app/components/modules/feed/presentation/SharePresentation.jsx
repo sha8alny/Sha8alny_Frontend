@@ -13,12 +13,24 @@ export default function SharePresentation({
   shareUrl,
 }) {
   return (
-    <div className="text-primary flex flex-col items-center p-4">
-      <h2 className="text-lg font-semibold text-center">Share this</h2>
-      <div className="grid grid-cols-2 md:flex flex-row gap-2 items-center md:gap-4 mt-4 text-primary">
+    <div
+      className="text-primary flex flex-col items-center p-4"
+      data-testid="share-root"
+    >
+      <h2
+        className="text-lg font-semibold text-center"
+        data-testid="share-title"
+      >
+        Share this
+      </h2>
+      <div
+        className="grid grid-cols-2 md:flex flex-row gap-2 items-center md:gap-4 mt-4 text-primary"
+        data-testid="share-btns-row"
+      >
         <button
           onClick={copyToClipboard}
           className="flex justify-center items-center w-full gap-2 px-4 py-2 rounded-md bg-secondary cursor-pointer text-background hover:bg-secondary/70"
+          data-testid="share-copy-btn"
         >
           <CopyAll sx={{ fontSize: 20 }} /> {copied ? "Copied!" : "Copy Link"}
         </button>
@@ -26,8 +38,12 @@ export default function SharePresentation({
           href={`https://twitter.com/intent/tweet?url=${shareUrl}`}
           target="_blank"
           rel="noopener noreferrer"
+          data-testid="share-twitter-link"
         >
-          <button className="flex justify-center items-center w-full gap-2 px-4 py-2 rounded-md bg-secondary cursor-pointer text-background hover:bg-secondary/70">
+          <button
+            className="flex justify-center items-center w-full gap-2 px-4 py-2 rounded-md bg-secondary cursor-pointer text-background hover:bg-secondary/70"
+            data-testid="share-twitter-btn"
+          >
             <X sx={{ fontSize: 20 }} /> Twitter
           </button>
         </a>
@@ -35,8 +51,12 @@ export default function SharePresentation({
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
           target="_blank"
           rel="noopener noreferrer"
+          data-testid="share-linkedin-link"
         >
-          <button className="flex justify-center items-center w-full gap-2 px-4 py-2 rounded-md bg-secondary cursor-pointer text-background hover:bg-secondary/70">
+          <button
+            className="flex justify-center items-center w-full gap-2 px-4 py-2 rounded-md bg-secondary cursor-pointer text-background hover:bg-secondary/70"
+            data-testid="share-linkedin-btn"
+          >
             <LinkedIn sx={{ fontSize: 20 }} /> LinkedIn
           </button>
         </a>
@@ -44,8 +64,12 @@ export default function SharePresentation({
           href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
           target="_blank"
           rel="noopener noreferrer"
+          data-testid="share-facebook-link"
         >
-          <button className="flex justify-center items-center w-full gap-2 px-4 py-2 rounded-md bg-secondary cursor-pointer text-background hover:bg-secondary/70">
+          <button
+            className="flex justify-center items-center w-full gap-2 px-4 py-2 rounded-md bg-secondary cursor-pointer text-background hover:bg-secondary/70"
+            data-testid="share-facebook-btn"
+          >
             <Facebook sx={{ fontSize: 20 }} /> Facebook
           </button>
         </a>
@@ -58,6 +82,7 @@ export default function SharePresentation({
             "_blank"
           )
         }
+        data-testid="share-email-btn"
       >
         <Email sx={{ fontSize: 20 }} />
         Send via Email
