@@ -15,17 +15,12 @@ export const connectUser = async (username) => {
   return response.status;
 };
 
-<<<<<<< HEAD
 export const deleteConnection = async (username) => {
-=======
-export const removeConnection = async (username) => {
->>>>>>> 07f4919a75dc8326a70cd4971c020b1f95efc85f
   const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-<<<<<<< HEAD
     body: JSON.stringify({ targetUsername: username }),
   });
   if (!response.ok) {
@@ -33,6 +28,20 @@ export const removeConnection = async (username) => {
   }
   return response.status;
 };
+
+export const removeConnection = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to remove connection");
+  }
+  return response.status;
+}
+
 
 export const requestConnection = async (username, status) => {
   const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
@@ -50,14 +59,7 @@ export const requestConnection = async (username, status) => {
   return response.status;
 };
 
-=======
-  });
-  if (!response.ok) {
-    throw new Error("Failed to remove connection");
-  }
-  return response.status;
-}
->>>>>>> 07f4919a75dc8326a70cd4971c020b1f95efc85f
+
 
 export const followUser = async (username) => {
   const response = await fetchWithAuth(`${apiURL}/follow`, {
@@ -87,22 +89,7 @@ export const unFollowUser = async (username) => {
   return response.status;
 };
 
-<<<<<<< HEAD
-export const getFollowers = async(page =1, pageSize =10 , username) => {
-  console.log("username in djh ", username);
-  const response = await fetchWithAuth (`${apiURL}/followers/${page}/${pageSize}?username=${encodeURIComponent(username)}`,{
-    method:"GET",
-    headers:{
-      "Content-Type": "application/json",
-    },
-  });
 
-  if (!response.ok) {
-    throw new Error("Failed to get followers");
-  }
-  return response.json();
-};
-=======
 export const handleConnectionRequest = async (username, action) => {
   const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
     method: "PATCH",
@@ -238,4 +225,4 @@ export const manageConnectionRequest = async ({username, status}) => {
   }
   return true;
 }
->>>>>>> 07f4919a75dc8326a70cd4971c020b1f95efc85f
+
