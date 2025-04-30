@@ -19,7 +19,7 @@ import { useState } from "react";
  *
  */
 
-const DeleteAccountContainer = ({ handleDeleteAccountForm }) => {
+const DeleteAccountContainer = ({ handleDeleteAccountForm,hasPassword }) => {
   const {
     data: data,
     isLoading,
@@ -67,6 +67,7 @@ const DeleteAccountContainer = ({ handleDeleteAccountForm }) => {
       handleDeleteAccount={handleDeleteAccount}
       setPassword={setPassword}
       password={password}
+      hasPassword={hasPassword}
     />
   );
 };

@@ -4,6 +4,8 @@ import BackButton from "./BackButton";
 import { Input } from "@/app/components/ui/Input";
 import { Label } from "@/app/components/ui/Label";
 import { Button } from "@/app/components/ui/Button";
+import Link from "next/link";
+
 /**
  * @namespace settings
  * @module settings
@@ -21,6 +23,8 @@ import { Button } from "@/app/components/ui/Button";
  * @param {boolean} props.showTooltip - Boolean to control the visibility of the tooltip.
  * @param {Function} props.setShowTooltip - Function to set the visibility of the tooltip.
  * @param {Object} props.tooltipRef - Ref object for the tooltip element.
+ * @param {Function} props.handleForgetPassword - Function to handle forgot password action.
+ * @param {boolean} props.hasPassword - Whether the user has a password set.
  * @returns {JSX.Element} The ChangePasswordForm component.
  */
 
@@ -34,7 +38,39 @@ const ChangePasswordForm = ({
   setShowTooltip,
   tooltipRef,
   handleForgetPassword,
+  hasPassword,
 }) => {
+  if (!hasPassword) {
+    return (
+      <SettingsFormLayout>
+        <BackButton handler={toggleForm} />
+        <div className="flex flex-col gap-6">
+          <div className="space-y-2">
+            <h1 className="text-text text-lg font-semibold">Set Password</h1>
+            <p className="text-sm">You need to set a password for your account first.</p>
+          </div>
+
+          <div className="p-4 border border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-700 rounded-md">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              For security purposes, you must set a password for your account to protect your information.
+              <Link href="/forget-password" className="ml-1 font-medium text-secondary hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline">
+                Set a password now
+              </Link>
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            onClick={toggleForm}
+            className="w-full bg-secondary text-background cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+          >
+            Go Back
+          </Button>
+        </div>
+      </SettingsFormLayout>
+    );
+  }
+
   return (
     <SettingsFormLayout>
       <BackButton handler={toggleForm} />
@@ -90,7 +126,7 @@ const ChangePasswordForm = ({
               <span className="text-destructive ml-1">*</span>
             </Label>
             <Input
-            data-testid="currentPassword-input"
+              data-testid="currentPassword-input"
               type="password"
               id="currentPassword"
               name="currentPassword"
