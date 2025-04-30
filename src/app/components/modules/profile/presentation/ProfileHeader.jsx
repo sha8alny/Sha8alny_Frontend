@@ -10,7 +10,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/components/ui/DropDownMenu";
-import { FlagOutlined, MessageOutlined, MoreHoriz, PersonAddAlt1 } from "@mui/icons-material";
+import {
+  FlagOutlined,
+  MessageOutlined,
+  MoreHoriz,
+  PersonAddAlt1,
+} from "@mui/icons-material";
+import Dialog from "@/app/components/ui/DialogMod";
+import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 
 /**
  * @namespace profile
@@ -244,6 +251,29 @@ export default function ProfileHeader({
           </div>
         </div>
       </Container>
+
+      <Dialog
+        open={false}
+        onOpenChange={false}
+        buttonClass="hidden"
+        AlertContent={
+          <GeneralDeletePresentation
+            onConfirmDelete={false}
+            isLoading={false}
+            isError={false}
+            error={false}
+            onOpenChange={false}
+            itemType="Connection"
+            loadingText="Removing connection..."
+            errorTitle="Error"
+            errorMessage="Failed to remove connection"
+            confirmTitle="Remove Connection"
+            confirmMessage="This action cannot be undone. Are you sure you want to remove this connection?"
+            confirmButtonText="Remove"
+            cancelButtonText="Cancel"
+          />
+        }
+      />
 
       {/* Enhanced Fullscreen Image Modal */}
       {fullscreenImage && (

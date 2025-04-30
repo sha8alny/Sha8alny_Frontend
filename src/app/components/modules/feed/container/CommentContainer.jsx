@@ -262,7 +262,6 @@ export default function CommentContainer({
         navigateTo(
           `/u/${postUsername}/post/${postId}/comment/${comment?.commentId}`
         );
-        window.location.reload();
         return;
       }
       const oldCommentText = replyText;
@@ -420,7 +419,6 @@ export default function CommentContainer({
       });
       if (isSingleComment) {
         router.push("/");
-        window.location.reload();
       }
     },
     onError: (err, variables, context) => {

@@ -17,6 +17,8 @@ import { useState } from "react";
 import { Reactions } from "@/app/utils/Reactions";
 import { followUser } from "@/app/services/connectionManagement";
 import { report } from "@/app/services/privacy";
+import { useEffect } from "react";
+import { useRef } from "react";
 
 export default function PostContainer({ post, singlePost = false }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
@@ -41,6 +43,11 @@ export default function PostContainer({ post, singlePost = false }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [reportState, setReportState] = useState(0); // 0: initial, 1: loading, 2: success, 3: error
+  const [imagesOpen, setImagesOpen] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [reactAnim, setReactAnim] = useState(false);
+  const prevReaction = useRef(isLiked);
 
   const fileName = post?.media[0]?.split("/").pop() || "Document";
   const fileExtension = post?.media[0]?.split(".").pop()?.toUpperCase();
@@ -367,6 +374,47 @@ export default function PostContainer({ post, singlePost = false }) {
   const documentCheck =
     isDocument(post?.media[0]) || post?.mediaType === "document";
 
+  // Updated carousel functions with proper loading state management
+  const openImageCarousel = (index) => {
+    setCarouselIndex(index);
+    setImagesOpen(true);
+    setImageLoading(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeImageCarousel = () => {
+    setImagesOpen(false);
+    document.body.style.overflow = "";
+  };
+
+  const nextImage = () => {
+    setImageLoading(true);
+    setCarouselIndex((prev) =>
+      prev === post?.media.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    setImageLoading(true);
+    setCarouselIndex((prev) =>
+      prev === 0 ? post?.media.length - 1 : prev - 1
+    );
+  };
+
+  const handleImageLoad = () => {
+    setTimeout(() => {
+      setImageLoading(false);
+    }, 100);
+  };
+  useEffect(() => {
+    if (isLiked && prevReaction.current !== isLiked) {
+      setReactAnim(true);
+      prevReaction.current = isLiked;
+    }
+  }, [isLiked]);
+
+  const handleAnimEnd = () => setReactAnim(false);
+
   return (
     <PostPresentation
       commentSectionOpen={commentSectionOpen}
@@ -421,6 +469,19 @@ export default function PostContainer({ post, singlePost = false }) {
       setReportType={setReportType}
       reportState={reportState}
       isSinglePost={singlePost}
+      imagesOpen={imagesOpen}
+      carouselIndex={carouselIndex}
+      openImageCarousel={openImageCarousel}
+      closeImageCarousel={closeImageCarousel}
+      nextImage={nextImage}
+      prevImage={prevImage}
+      imageLoading={imageLoading}
+      handleImageLoad={handleImageLoad}
+      setCarouselIndex={setCarouselIndex}
+      setImageLoading={setImageLoading}
+      reactAnim={reactAnim}
+      handleAnimEnd={handleAnimEnd}
+
     />
   );
 }

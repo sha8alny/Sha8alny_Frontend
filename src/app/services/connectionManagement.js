@@ -191,13 +191,3 @@ export const manageConnectionRequest = async ({username, status}) => {
   }
   return true;
 }
-
-export const removeConnection = async ({username}) => {
-  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error("Failed to cancel connection request");
-  }
-  return true;
-}

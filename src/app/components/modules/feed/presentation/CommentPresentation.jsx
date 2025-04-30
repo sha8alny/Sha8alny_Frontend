@@ -130,7 +130,7 @@ export default function CommentPresentation({
                 {comment.age}
               </span>
             </div>
-            <p className="text-sm">{comment?.text} {comment?.parentId}</p>
+            <p className="text-sm">{comment?.text}</p>
           </div>
 
           <div className="flex items-center gap-4 pl-1">

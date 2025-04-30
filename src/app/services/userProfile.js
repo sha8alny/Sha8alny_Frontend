@@ -65,6 +65,9 @@ export const fetchUserConnections = async (
     },
   });
   if (!response.ok) throw new Error("Failed to fetch user connections");
+  if (response.status === 204) {
+    return [];
+  }
   return response.json();
 };
 

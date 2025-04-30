@@ -111,11 +111,14 @@ export const ProfileContainer = ({ username }) => {
  */
 function ProfileContent({ username }) {
   const { setIsMyProfile } = useIsMyProfile();
-  const toast = useToast();
   const [copied, setCopied] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [hoverCover, setHoverCover] = useState(false);
   const [hoverProfile, setHoverProfile] = useState(false);
+  const [removeConnectionModalOpen, setRemoveConnectionModalOpen] = useState(false);
+  const [blockConnectionModalOpen, setBlockConnectionModalOpen] = useState(false);
+  const [] = useState(false);
+
   const router = useRouter();
 
   const openFullscreen = (imageUrl) => {

@@ -94,21 +94,42 @@ function PostsContainer({ companyUsername = null , keyword }) {
   if (isLoading) {
     return <PostSkeleton />;
   }
-  if (isError || allPosts.length == 0) {
-    console.error("Error loading posts:", error);
+  if (isError || (allPosts.length == 0)) {
     return (
-      <div className="flex justify-center items-center h-full text-muted">
-        No posts to show.
-      </div>
+      <div className="flex flex-col justify-center items-center py-8 mb-8">
+          <div className="w-full max-w-2xl border-border pt-6 mt-2">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="text-lg text-primary font-semibold mb-1">No posts to show.</div>
+              <p className="text-muted-foreground text-sm">
+                No posts were found matching your search criteria.
+              </p>
+            </div>
+          </div>
+        </div>
     );
   }
 
   return (
-    <PostsPresentation
-      posts={allPosts}
-      isFetchingNextPage={isFetchingNextPage}
-      lastElementRef={lastElementRef}
-    />
+    <>
+      <PostsPresentation
+        posts={allPosts}
+        isFetchingNextPage={isFetchingNextPage}
+        lastElementRef={lastElementRef}
+      />
+      
+      {!hasNextPage && !isFetchingNextPage && !allPosts.length > 0 && (
+        <div className="flex flex-col justify-center items-center py-8 mb-8">
+          <div className="w-full max-w-2xl border-t border-border pt-6 mt-2">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="text-lg text-primary font-semibold mb-1">You're all caught up!</div>
+              <p className="text-muted-foreground text-sm">
+                You've seen all the posts in your feed.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

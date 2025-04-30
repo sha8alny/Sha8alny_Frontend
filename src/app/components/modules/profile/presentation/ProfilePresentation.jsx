@@ -72,7 +72,7 @@ export default function ProfilePresentation({
           />
           <Skills skills={userProfile.skills} isMyProfile={isMyProfile} />
         </section>
-        <section className="flex-1 hidden md:block rounded-3xl space-y-2">
+        <section className="hidden md:block flex-1 rounded-2xl space-y-2">
           {isMyProfile && (
             <>
               <ChangeURL userInfo={userProfile} />

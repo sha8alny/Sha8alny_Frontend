@@ -88,6 +88,9 @@ export const getPosts = async (pageNum) => {
     headers: { "Content-Type": "application/json" },
   });
   if (!response.ok) throw new Error("Failed to fetch posts");
+  if (response.status === 204) {
+    return [];
+  }
   return await response.json();
 };
 

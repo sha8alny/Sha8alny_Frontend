@@ -73,7 +73,9 @@ export default function Connections({ userInfo }) {
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 7) {
+    if (diffDays < 1) {
+      return "Connected today";
+    } else if (diffDays < 7) {
       return `Connected ${diffDays} ${diffDays === 1 ? "day" : "days"} ago`;
     } else if (diffDays < 30) {
       const weeks = Math.floor(diffDays / 7);
@@ -87,10 +89,25 @@ export default function Connections({ userInfo }) {
     }
   };
 
+  const changeRelation = (relation) => {
+    switch (relation) {
+      case 0:
+        return "3rd+";
+      case 1:
+        return "1st";
+      case 2:
+        return "2nd";
+      case 3:
+        return "3rd";
+    }
+  };
+
   const allConnections = [...connections].map((connection) => ({
     ...connection,
     connectedAt: formatConnectedDate(connection?.connectedAt),
+    relation: changeRelation(connection?.connectionDegree),
   }));
+
 
   return (
     <Dialog
