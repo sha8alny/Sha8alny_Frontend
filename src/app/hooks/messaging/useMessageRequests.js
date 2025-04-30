@@ -16,9 +16,9 @@ export function useMessageRequests(currentUser) {
     isError: errorReceived,
     refetch: refetchReceived
   } = useQuery({
-    queryKey: ["messageRequests", "received", currentUser?.username],
+    queryKey: ["messageRequests", "received", currentUser],
     queryFn: messageRequestService.getMessageRequests,
-    enabled: !!currentUser?.username,
+    enabled: !!currentUser,
     // Add a select function to ensure we always get an array even if the backend returns null
     select: (data) => Array.isArray(data) ? data : []
   });
@@ -30,9 +30,9 @@ export function useMessageRequests(currentUser) {
     isError: errorSent,
     refetch: refetchSent
   } = useQuery({
-    queryKey: ["messageRequests", "sent", currentUser?.username],
+    queryKey: ["messageRequests", "sent", currentUser],
     queryFn: messageRequestService.getSentRequests,
-    enabled: !!currentUser?.username && selectedTab === "sent",
+    enabled: !!currentUser && selectedTab === "sent",
     // Add a select function to ensure we always get an array even if the backend returns null
     select: (data) => Array.isArray(data) ? data : []
   });
@@ -41,8 +41,15 @@ export function useMessageRequests(currentUser) {
   const acceptMutation = useMutation({
     mutationFn: (requestId) => messageRequestService.acceptMessageRequest(requestId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["messageRequests", "received"] });
+      // Invalidate with the complete query key including the username
+      queryClient.invalidateQueries({ 
+        queryKey: ["messageRequests", "received", currentUser] 
+      });
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      
+      // Explicitly refetch the queries
+      refetchReceived();
+      
       return data;
     }
   });
@@ -51,7 +58,13 @@ export function useMessageRequests(currentUser) {
   const rejectMutation = useMutation({
     mutationFn: (requestId) => messageRequestService.rejectMessageRequest(requestId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messageRequests", "received"] });
+      // Invalidate with the complete query key including the username
+      queryClient.invalidateQueries({ 
+        queryKey: ["messageRequests", "received", currentUser] 
+      });
+      
+      // Explicitly refetch
+      refetchReceived();
     }
   });
   
@@ -59,7 +72,20 @@ export function useMessageRequests(currentUser) {
   const deleteMutation = useMutation({
     mutationFn: (requestId) => messageRequestService.deleteMessageRequest(requestId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messageRequests"] });
+      // Invalidate both received and sent message requests with complete query keys
+      queryClient.invalidateQueries({ 
+        queryKey: ["messageRequests", "received", currentUser] 
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ["messageRequests", "sent", currentUser] 
+      });
+      
+      // Refetch the appropriate queries based on selected tab
+      if (selectedTab === "received") {
+        refetchReceived();
+      } else if (selectedTab === "sent") {
+        refetchSent();
+      }
     }
   });
   

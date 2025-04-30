@@ -65,7 +65,7 @@ export function MessageRequestsPresentation({
         >
           <ArrowLeft className="h-4 w-4 text-muted-foreground" />
         </Button>
-        <h2 className="text-lg font-medium flex-1 text-center pr-5">Message Requests</h2>
+        <h2 className="text-lg font-medium flex-1 text-center pr-5 text-text">Message Requests</h2>
       </div>
       
       <Tabs value={selectedTab} onValueChange={onTabChange} className="flex-1 flex flex-col items-center w-full">
@@ -116,7 +116,7 @@ export function MessageRequestsPresentation({
               <div className="py-2">
                 {safeSentRequests.map((request) => (
                   <MessageRequestItem
-                    key={request.id}
+                    key={request._id}
                     request={request}
                     type="sent"
                     onDelete={onDeleteRequest}

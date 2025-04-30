@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { debounce } from "@/app/utils/commonUtils";
 import { messagingService } from "@/app/services/messagingService";
 import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/app/context/ToastContext";
 
 /**
  * Custom hook for managing messages within a conversation
  */
 export function useMessages(selectedConversation, currentUser) {
+  const showToast = useToast();
   // State for messages
   const [messages, setMessages] = useState([]);
   const [messageLimit, setMessageLimit] = useState(20);
@@ -76,7 +78,7 @@ export function useMessages(selectedConversation, currentUser) {
       media 
     }, {
       onError: (error) => {
-        console.error("Failed to send message:", error);
+        showToast(`${error.message}`, false);
         // Remove optimistic messages on error
         setMessages(prevMessages => 
           prevMessages.filter(msg => !newMessages.some(newMsg => newMsg.id === msg.id))
