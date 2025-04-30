@@ -45,11 +45,40 @@ const SignInForm = ({
     isSubmitting,
     error,
     handleChange,
-    handleGoogleSignIn
+    handleGoogleSignIn,
+    showForm,
 }) => {
 
 return(
-    <div className="flex items-center justify-center min-h-screen bg-background ">
+    <div className="relative flex items-center justify-center min-h-screen bg-background ">
+            {/* Centered logo that moves left */}
+            <div
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-1000 ease-in-out
+            ${showForm ? "-translate-x-[850px]" : ""}
+            w-250 h-250`}
+        >
+        <img
+          src="/lightmode.svg"
+          alt="App Logo"
+          className="w-full h-full object-contain dark:hidden"
+        />
+        <img
+          src="/darkmode.svg"
+          alt="App Logo"
+          className="w-full h-full object-contain hidden dark:block"
+        />
+
+      </div>
+
+      {/* Form wrapper */}
+      <div
+        className={`transition-all duration-1000 ease-in-out ${
+          showForm
+            ? "opacity-100 translate-x-[300px]"
+            : "opacity-0 translate-x-full"
+        } w-full max-w-md ml-auto z-10`}
+      >
+
         <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary w-96">
             <div className="flex items-center justify-center w-30 h-15  text-background rounded-full mx-auto">
              <h2 className="text-3xl font-bold text-center text-secondary">Sign In</h2>
@@ -128,7 +157,8 @@ return(
                 </a>
             </p>
         </div>
-    </div>
+        </div>
+        </div>
 );
 };
 
