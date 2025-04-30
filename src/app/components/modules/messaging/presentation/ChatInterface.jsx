@@ -162,64 +162,75 @@ const ChatInput = React.memo(
     onKeyDown,
     onFileSelect,
     onRemoveFile,
-  }) => (
-    <>
-      {mediaFiles.length > 0 && (
-        <div className="p-2 border-t bg-background">
-          <div className="flex gap-2 overflow-x-auto p-2 scrollbar-thin">
-            {mediaFiles.map((file, index) => (
-              <MediaPreview
-                key={index}
-                file={file}
-                onRemove={() => onRemoveFile(index)}
-                data-testid={`remove-media-${index}`}
-              />
-            ))}
+  }) => {
+    // Add this handler to clear the file input value when removing a file
+    const handleRemoveFile = (index) => {
+      onRemoveFile(index);
+      // Reset the file input value to ensure the same file can be re-selected
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+
+    return (
+      <>
+        {mediaFiles.length > 0 && (
+          <div className="p-2 border-t bg-background">
+            <div className="flex gap-2 overflow-x-auto p-2 scrollbar-thin">
+              {mediaFiles.map((file, index) => (
+                <MediaPreview
+                  key={index}
+                  file={file}
+                  onRemove={() => handleRemoveFile(index)}
+                  data-testid={`remove-media-${index}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="p-3 border-t sticky bottom-0 bg-background/95 backdrop-blur-sm z-10 flex-shrink-0">
+          <div className="flex gap-2 items-end ">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-shrink-0 h-10 w-10 bg-secondary dark:bg-secondary hover:bg-secondary/80 transition-colors"
+              data-testid="file-picker-button"
+            >
+              <ImageIcon sx={{ fontSize: 20 }} />
+            </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={onFileSelect}
+              multiple
+              accept="image/*,video/*,application/pdf"
+            />
+            <Textarea
+              placeholder="Type a message..."
+              value={message}
+              onChange={onTyping}
+              onKeyDown={onKeyDown}
+              className="flex-1 min-h-[40px] max-h-[120px] resize-none text-text"
+              rows={1}
+              data-testid="message-input"
+            />
+            <Button
+              size="icon"
+              onClick={onSendMessage}
+              className="flex-shrink-0 h-10 w-10 bg-secondary hover:bg-secondary/80 transition-colors"
+              disabled={!message.trim() && mediaFiles.length === 0}
+              data-testid="send-message-button"
+            >
+              <SendIcon sx={{ fontSize: 20 }} />
+            </Button>
           </div>
         </div>
-      )}
-
-      <div className="p-3 border-t sticky bottom-0 bg-background/95 backdrop-blur-sm z-10 flex-shrink-0">
-        <div className="flex gap-2 items-end ">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => fileInputRef.current?.click()}
-            className="flex-shrink-0 h-10 w-10 bg-secondary dark:bg-secondary hover:bg-secondary/80 transition-colors"
-            data-testid="file-picker-button"
-          >
-            <ImageIcon sx={{ fontSize: 20 }} />
-          </Button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={onFileSelect}
-            multiple
-            accept="image/*,video/*,application/pdf"
-          />
-          <Textarea
-            placeholder="Type a message..."
-            value={message}
-            onChange={onTyping}
-            onKeyDown={onKeyDown}
-            className="flex-1 min-h-[40px] max-h-[120px] resize-none text-text"
-            rows={1}
-            data-testid="message-input"
-          />
-          <Button
-            size="icon"
-            onClick={onSendMessage}
-            className="flex-shrink-0 h-10 w-10 bg-secondary hover:bg-secondary/80 transition-colors"
-            disabled={!message.trim() && mediaFiles.length === 0}
-            data-testid="send-message-button"
-          >
-            <SendIcon sx={{ fontSize: 20 }} />
-          </Button>
-        </div>
-      </div>
-    </>
-  )
+      </>
+    );
+  }
 );
 
 // Main chat presentation component
