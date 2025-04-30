@@ -56,7 +56,6 @@ import Support from "@/app/components/ui/Support";
 import Dialog from "@/app/components/ui/DialogMod";
 import SharePresentation from "../presentation/SharePresentation";
 import { usePathname } from "next/navigation";
-import DeletePostPresentation from "./DeletePostPresentation";
 import ReportPresentation from "./ReportPresentation";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 
