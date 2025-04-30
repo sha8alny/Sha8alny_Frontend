@@ -49,7 +49,8 @@ export function ConversationListContainer({
     onMarkAsRead,
     onToggleRead,
     onToggleBlock,
-    onDeleteConversation // Add this prop
+    onDeleteConversation,
+    isDeleting = false,
 }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [processedConversations, setProcessedConversations] = useState([]);
@@ -126,7 +127,8 @@ export function ConversationListContainer({
             onMarkAsRead={handleMarkAsRead}
             onToggleRead={handleToggleRead}
             onToggleBlock={handleToggleBlock}
-            onDeleteConversation={handleDeleteConversation} // Add this line
+            onDeleteConversation={handleDeleteConversation}
+            isDeleting={isDeleting}
         />
     );
 }

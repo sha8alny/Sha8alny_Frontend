@@ -19,6 +19,10 @@ export function useMessages(selectedConversation, currentUser) {
   const typingTimeoutRef = useRef(null);
   const fileInputRef = useRef(null);
   
+  // Add refs to track typing state
+  const isTypingRef = useRef(false);
+  const debouncedUpdatePendingRef = useRef(false);
+  
   // Define the mutation for sending messages
   const sendMessageMutation = useMutation({
     mutationFn: ({ receiver, msg, media }) => 
@@ -61,7 +65,10 @@ export function useMessages(selectedConversation, currentUser) {
     // Clear inputs
     setMessage("");
     setMediaFiles([]);
-
+    
+    // Clear typing status
+    clearTypingStatus(currentUser, selectedConversation?.id);
+    
     // Call the mutation
     sendMessageMutation.mutate({ 
       receiver: receiverName, 
@@ -76,9 +83,49 @@ export function useMessages(selectedConversation, currentUser) {
         );
       }
     });
-  }, [currentUser, sendMessageMutation]);
+  }, [currentUser, sendMessageMutation, selectedConversation?.id]);
 
-  // Handle typing indicator
+  // Clear typing status function for reuse
+  const clearTypingStatus = useCallback((username, conversationId) => {
+    if (!username || !conversationId) return;
+    
+    // Clear any existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    
+    // If there's a pending update, flag that it should be canceled
+    debouncedUpdatePendingRef.current = false;
+    
+    // Only send the update if we previously set typing to true
+    if (isTypingRef.current) {
+      isTypingRef.current = false;
+      messagingService.updateTypingStatus(username, conversationId, false)
+        .catch(err => console.error("Error clearing typing status:", err));
+    }
+  }, []);
+
+  // Safe debounce wrapper that allows for proper cleanup
+  const createDebouncedTypingUpdate = useCallback((username, conversationId, isTyping) => {
+    // Set flag to track this debounced call
+    debouncedUpdatePendingRef.current = true;
+    
+    // Create the debounced function and immediately call it
+    const debouncedFn = debounce(() => {
+      // Only proceed if the update is still pending (not canceled)
+      if (debouncedUpdatePendingRef.current) {
+        messagingService.updateTypingStatus(username, conversationId, isTyping)
+          .catch(err => console.error("Error updating typing status:", err));
+        debouncedUpdatePendingRef.current = false;
+      }
+    }, 500);
+    
+    // Execute the debounced function
+    debouncedFn();
+  }, []);
+
+  // Handle typing indicator with improved debouncing and state tracking
   const handleSetTypingIndicator = useCallback(
     (username, conversationId, isTyping) => {
       if (!username || !conversationId) return;
@@ -89,23 +136,29 @@ export function useMessages(selectedConversation, currentUser) {
         typingTimeoutRef.current = null;
       }
       
-      // Set timeout for automatic reset after 2 seconds
-      if (isTyping) {
-        typingTimeoutRef.current = setTimeout(() => {
-          messagingService.updateTypingStatus(username, conversationId, false)
-            .catch(err => console.error("Error updating typing status:", err));
-        }, 2000);
+      // Only update status if it changed or if we're refreshing a typing indicator
+      // The second condition allows us to refresh the typing timeout without changing state
+      if (isTyping !== isTypingRef.current || (isTyping && isTypingRef.current)) {
+        // Update local state if it's actually changing
+        if (isTyping !== isTypingRef.current) {
+          isTypingRef.current = isTyping;
+          
+          // Create and execute a new debounced update
+          createDebouncedTypingUpdate(username, conversationId, isTyping);
+        }
+        
+        // Set timeout to automatically turn off typing indicator
+        // This happens for both new typing indicators and refreshed ones
+        if (isTyping) {
+          typingTimeoutRef.current = setTimeout(() => {
+            isTypingRef.current = false;
+            messagingService.updateTypingStatus(username, conversationId, false)
+              .catch(err => console.error("Error updating typing status:", err));
+          }, 10000); // Increased to 10 seconds to prevent premature timeout
+        }
       }
-      
-      // Debounced update to reduce API calls
-      const updateTypingDebounced = debounce(() => {
-        messagingService.updateTypingStatus(username, conversationId, isTyping)
-          .catch(err => console.error("Error updating typing status:", err));
-      }, 300);
-      
-      updateTypingDebounced();
     },
-    []
+    [createDebouncedTypingUpdate]
   );
 
   // File handling functions
@@ -127,6 +180,12 @@ export function useMessages(selectedConversation, currentUser) {
   // Subscribe to messages for the selected conversation
   useEffect(() => {
     const conversationId = selectedConversation?.id;
+    
+    // Clear typing indicator when conversation changes
+    if (lastSubscriptionParams.current.conversationId !== conversationId && 
+        lastSubscriptionParams.current.conversationId && currentUser) {
+      clearTypingStatus(currentUser, lastSubscriptionParams.current.conversationId);
+    }
     
     if (!conversationId) {
       setMessages([]);
@@ -164,7 +223,7 @@ export function useMessages(selectedConversation, currentUser) {
       },
       messageLimit
     );
-  }, [selectedConversation?.id, currentUser, messageLimit]);
+  }, [selectedConversation?.id, currentUser, messageLimit, clearTypingStatus]);
 
   // Cleanup subscription when component unmounts
   useEffect(() => {
@@ -178,8 +237,17 @@ export function useMessages(selectedConversation, currentUser) {
         clearTimeout(typingTimeoutRef.current);
         typingTimeoutRef.current = null;
       }
+      
+      // Cancel any pending debounced updates
+      debouncedUpdatePendingRef.current = false;
+      
+      // Make sure to cleanup typing indicator on unmount
+      if (isTypingRef.current && currentUser && selectedConversation?.id) {
+        messagingService.updateTypingStatus(currentUser, selectedConversation.id, false)
+          .catch(err => console.error("Error clearing typing status on unmount:", err));
+      }
     };
-  }, []);
+  }, [currentUser, selectedConversation?.id]);
 
   return {
     messages,

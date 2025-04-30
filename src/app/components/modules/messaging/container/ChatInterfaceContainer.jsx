@@ -29,26 +29,10 @@ export function ChatContainer({
     handleLoadMoreMessages
   } = useMessages(selectedConversation, currentUser);
   
-  // Synchronize with external messages if provided
-  useEffect(() => {
-    // If initialMessages is explicitly provided, use it
-    if (Array.isArray(initialMessages) && initialMessages.length > 0) {
-      // Keep any optimistic messages we added
-      const optimisticMessages = messages.filter(
-        m => !initialMessages.some(im => im.id === m.id)
-      );
-      if (optimisticMessages.length > 0) {
-        // Merge with initial messages, preserving order
-        const merged = [...initialMessages, ...optimisticMessages]
-          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-        // Use a function to merge to avoid issues if messages and initialMessages are the same reference
-        // setMessages(prev => prev !== merged ? merged : prev);
-      }
-    }
-  }, [initialMessages]);
-  
   // References
   const scrollAreaRef = useRef(null);
+  const lastTypedTextRef = useRef("");
+  const typingTimerRef = useRef(null);
   
   // Extract other participant username from conversation data
   const otherParticipantUsername = useMemo(() => 
@@ -116,8 +100,8 @@ export function ChatContainer({
     try {
       sendMessage(otherParticipantUsername, message, mediaFiles);
       
-      // Clear typing indicator
-      handleSetTypingIndicator(currentUser, selectedConversation.id, false);
+      // Reset typing state reference
+      lastTypedTextRef.current = "";
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -125,10 +109,7 @@ export function ChatContainer({
     message, 
     mediaFiles, 
     otherParticipantUsername, 
-    currentUser, 
-    selectedConversation?.id, 
-    sendMessage, 
-    handleSetTypingIndicator
+    sendMessage
   ]);
 
   const handleKeyDown = useCallback((e) => {
@@ -138,12 +119,69 @@ export function ChatContainer({
     }
   }, [handleSendMessage]);
 
+  // Optimized typing handler with better state tracking and extended timeouts
   const handleTypingWithIndicator = useCallback((e) => {
+    // Update message text first
     handleTyping(e);
-
-    // Set typing indicator
-    if (selectedConversation?.id) {
-      handleSetTypingIndicator(currentUser, selectedConversation.id, true);
+    
+    // Only trigger typing indicator updates when necessary
+    const currentText = e.target.value;
+    const conversationId = selectedConversation?.id;
+    
+    if (!conversationId || !currentUser) return;
+    
+    // We need to track when to send a refresh of the typing indicator vs. a new one
+    const isCurrentlyEmpty = currentText.length === 0;
+    const wasPreviouslyEmpty = lastTypedTextRef.current.length === 0;
+    
+    // Determine whether to refresh the typing indicator:
+    // 1. If it's a significant change in the content
+    // 2. If it's a continuation of typing (using a timer check)
+    // 3. If we're starting to type after being idle
+    const isSignificantChange = Math.abs(currentText.length - lastTypedTextRef.current.length) > 2;
+    const isStartingToType = !wasPreviouslyEmpty && isCurrentlyEmpty; // Clearing the text
+    const isResumingType = wasPreviouslyEmpty && !isCurrentlyEmpty; // Starting to type
+    
+    // Update last typed text
+    lastTypedTextRef.current = currentText;
+    
+    // Reset typing timer
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current);
+      typingTimerRef.current = null;
+    }
+    
+    // Only send typing indicator updates in these cases:
+    // 1. When starting to type (empty → non-empty)
+    // 2. When clearing text (non-empty → empty)
+    // 3. When making significant changes
+    // 4. Periodically while typing (every few seconds)
+    if (isSignificantChange || isStartingToType || isResumingType) {
+      // Simple approach: always refresh the typing status when typing
+      // This also extends the timeout period through the callback
+      if (currentText.length > 0) {
+        handleSetTypingIndicator(currentUser, conversationId, true);
+      } else {
+        // Turn off typing indicator when text is cleared
+        handleSetTypingIndicator(currentUser, conversationId, false);
+      }
+    }
+    
+    // Set a timer to periodically refresh the typing status while typing
+    if (currentText.length > 0) {
+      // Set a passive refresh timer that triggers every 5 seconds while typing
+      typingTimerRef.current = setTimeout(() => {
+        typingTimerRef.current = null;
+        
+        // If text is still there, refresh the typing indicator
+        if (lastTypedTextRef.current.length > 0) {
+          // This will extend the timeout in the typing indicator
+          handleSetTypingIndicator(currentUser, conversationId, true);
+        } else {
+          // If text was cleared, ensure typing indicator is off
+          handleSetTypingIndicator(currentUser, conversationId, false);
+        }
+      }, 5000); // Every 5 seconds, refresh the typing status
     }
   }, [currentUser, selectedConversation?.id, handleTyping, handleSetTypingIndicator]);
 
@@ -159,6 +197,16 @@ export function ChatContainer({
       onToggleBlock(selectedConversation.id, otherParticipantUsername, false);
     }
   }, [selectedConversation?.id, otherParticipantUsername, onToggleBlock]);
+
+  // Cleanup typing timer when unmounting or conversation changes
+  useEffect(() => {
+    return () => {
+      if (typingTimerRef.current) {
+        clearTimeout(typingTimerRef.current);
+        typingTimerRef.current = null;
+      }
+    };
+  }, [selectedConversation?.id]);
 
   return (
     <ChatPresentation

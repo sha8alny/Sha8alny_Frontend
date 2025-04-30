@@ -60,7 +60,8 @@ export function MessagingPresentation({
   onMarkAsRead,
   onToggleRead,
   onToggleBlock,
-  onDeleteConversation, // Add this line
+  onDeleteConversation,
+  isDeleting,  // Add this prop
   onSendMessage,
   onSetTypingIndicator,
   onBack,
@@ -71,6 +72,7 @@ export function MessagingPresentation({
   onCloseMessageRequests,
   pendingRequestCount = 0,
   navigateToUser,
+  startConversation,
 }) {
   const hasSelectedConversation = Boolean(selectedConversation);
 
@@ -102,7 +104,8 @@ export function MessagingPresentation({
               onMarkAsRead={onMarkAsRead}
               onToggleRead={onToggleRead}
               onToggleBlock={onToggleBlock}
-              onDeleteConversation={onDeleteConversation} // Add this line
+              onDeleteConversation={onDeleteConversation}
+              isDeleting={isDeleting}  // Pass this prop
             />
           </div>
 
@@ -154,7 +157,7 @@ export function MessagingPresentation({
               currentUser={currentUser}
               onBack={onCloseMessageRequests}
               onSelectConversation={onSelectConversation}
-              navigateToUser={navigateToUser}
+              navigateToUser={startConversation}
             />
           ) : (
             <EmptyState 

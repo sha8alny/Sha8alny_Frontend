@@ -12,7 +12,7 @@ export function MessageRequestsContainer({
   onSelectConversation,
   navigateToUser,
 }) {
-  const { toast } = useToast();
+  const showToast = useToast();
   
   // Use the message requests hook
   const {
@@ -41,12 +41,8 @@ export function MessageRequestsContainer({
       // Accept the request
       const result = await handleAcceptRequest(requestId);
       
-      // Show success message
-      toast({
-        title: "Request Accepted",
-        description: "You can now start messaging this user",
-        variant: "default",
-      });
+      // Show success message using the correct pattern
+      showToast("Request Accepted. You can now start messaging this user", true);
       
       // Navigate to the new conversation if created
       if (result?.id && result?.participants) {
@@ -61,49 +57,30 @@ export function MessageRequestsContainer({
         }
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to accept message request",
-        variant: "destructive",
-      });
+      // Show error message
+      showToast(error.message || "Failed to accept message request", false);
     }
-  }, [handleAcceptRequest, toast, currentUser, onSelectConversation, navigateToUser]);
+  }, [handleAcceptRequest, showToast, currentUser, onSelectConversation, navigateToUser]);
   
   // Handle rejecting a request
   const handleReject = useCallback(async (requestId) => {
     try {
       await handleRejectRequest(requestId);
-      toast({
-        title: "Request Rejected",
-        description: "The message request has been declined",
-        variant: "default",
-      });
+      showToast("The message request has been declined", true);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to reject message request",
-        variant: "destructive",
-      });
+      showToast(error.message || "Failed to reject message request", false);
     }
-  }, [handleRejectRequest, toast]);
+  }, [handleRejectRequest, showToast]);
   
   // Handle deleting a request
   const handleDelete = useCallback(async (requestId) => {
     try {
       await handleDeleteRequest(requestId);
-      toast({
-        title: "Request Removed",
-        description: "The message request has been removed",
-        variant: "default",
-      });
+      showToast("The message request has been removed", true);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete message request",
-        variant: "destructive",
-      });
+      showToast(error.message || "Failed to delete message request", false);
     }
-  }, [handleDeleteRequest, toast]);
+  }, [handleDeleteRequest, showToast]);
   
   // Handle viewing a profile or conversation
   const handleViewProfile = useCallback((participant) => {
@@ -121,7 +98,7 @@ export function MessageRequestsContainer({
       onAcceptRequest={handleAccept}
       onRejectRequest={handleReject}
       onDeleteRequest={handleDelete}
-      onViewProfile={handleViewProfile}
+      onViewProfile={navigateToUser}
       onBack={onBack}
       loadingReceived={loadingReceived}
       loadingSent={loadingSent}

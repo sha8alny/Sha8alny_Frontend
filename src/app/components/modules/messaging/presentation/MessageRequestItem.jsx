@@ -18,13 +18,13 @@ export function MessageRequestItem({
   isProcessing = false,
 }) {
   // Determine participant details based on request type
-  const participant = type === "received" ? request.sender : request.receiver;
+  const participant = type === "received" ? request.senderId : request.receiverId;
   const displayName = participant?.name || participant?.username || "Unknown User";
   const avatarFallback = (displayName.substring(0, 2) || "??").toUpperCase();
   
   // Format the timestamp
-  const timestamp = request?.timestamp
-    ? formatDistanceToNow(request.timestamp)
+  const timestamp = request?.createdAt
+    ? formatDistanceToNow(request.createdAt)
     : "";
   
   // Determine message preview
@@ -42,7 +42,7 @@ export function MessageRequestItem({
   }
   
   return (
-    <div className="flex items-start gap-3 p-3 mx-2 my-1 rounded-lg hover:bg-foreground/30 transition-colors duration-200">
+    <div className="flex items-start gap-3 w-full p-3 mx-2 my-1 rounded-lg hover:bg-foreground/30 transition-colors duration-200">
       <Avatar className="flex-shrink-0" onClick={() => onViewProfile?.(participant)}>
         <AvatarImage
           src={participant?.profilePicture || `/placeholder.svg`}
@@ -81,7 +81,7 @@ export function MessageRequestItem({
               variant="outline" 
               size="sm" 
               className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-600 border-green-200"
-              onClick={() => onAccept(request.id)}
+              onClick={() => onAccept(request._id)}
               disabled={isProcessing}
             >
               <CheckCircle className="mr-1 h-4 w-4" />
@@ -91,7 +91,7 @@ export function MessageRequestItem({
               variant="outline" 
               size="sm" 
               className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-600 border-red-200"
-              onClick={() => onReject(request.id)}
+              onClick={() => onReject(request._id)}
               disabled={isProcessing}
             >
               <XCircle className="mr-1 h-4 w-4" />
@@ -119,7 +119,7 @@ export function MessageRequestItem({
             variant="outline" 
             size="sm" 
             className="mt-2 bg-gray-200/10 hover:bg-gray-200/20"
-            onClick={() => onDelete(request.id)}
+            onClick={() => onDelete(request._id)}
             disabled={isProcessing}
           >
             <Trash2 className="mr-1 h-4 w-4" />

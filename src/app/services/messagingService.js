@@ -15,7 +15,6 @@ import { fetchWithAuth } from "./userAuthentication";
 import { db } from "@/firebase/firebase";
 
 export const messagingService = {
-
   createConversation: async (receiverName) => {
     messagingService.sendMessage(receiverName, null, []);
   },
@@ -35,7 +34,6 @@ export const messagingService = {
 
       // Truly delete the conversation from the database
       await deleteDoc(conversationRef);
-
 
       return { success: true };
     } catch (error) {
@@ -224,6 +222,42 @@ export const messagingService = {
     //   throw new Error("Error marking messages as read: " + error.message);
     // }
     return;
+    try {
+      if (!currentUser || !conversationId) {
+        throw new Error("Current user and conversation ID are required");
+      }
+
+      const messagesRef = collection(
+        db,
+        "conversations",
+        conversationId,
+        "messages"
+      );
+
+      const q = query(messagesRef, where("read", "==", false));
+
+      const querySnapshot = await getDocs(q);
+
+      const batch = writeBatch(db);
+
+      querySnapshot.forEach((doc) => {
+        const messageData = doc.data();
+        if (messageData.senderName !== currentUser) {
+          batch.update(doc.ref, { read: true });
+        }
+      });
+
+      await batch.commit();
+
+      console.log(
+        `Marked ${querySnapshot.size} messages as read for conversation: ${conversationId}`
+      );
+
+      return { success: true, updatedCount: querySnapshot.size };
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+      throw new Error(`Failed to mark messages as read: ${error.message}`);
+    }
   },
 
   // Firestore version of marking messages as read
@@ -288,7 +322,7 @@ export const messagingService = {
         callback(conversations);
       },
       (error) => {
-      console.error("Error subscribing to conversations:", error);
+        console.error("Error subscribing to conversations:", error);
       }
     );
   },
@@ -334,9 +368,11 @@ export const messagingService = {
 
         // Reverse the array to maintain chronological order
         messages.reverse();
-        messagingService.markMessagesAsReadFirestore(conversationId, currentUser).catch((err) =>
-          console.error("Error marking messages as read in Firestore:", err)
-        );
+        messagingService
+          .markMessagesAsReadFirestore(conversationId, currentUser)
+          .catch((err) =>
+            console.error("Error marking messages as read in Firestore:", err)
+          );
         console.log("Messages data:", messages);
         callback(messages);
       },

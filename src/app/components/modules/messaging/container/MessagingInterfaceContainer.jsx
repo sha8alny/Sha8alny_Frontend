@@ -19,7 +19,9 @@ export function MessagingContainer({ currentUser }) {
   
   // ---- REFS ----
   const navigationInitiatedRef = useRef(false);
-  
+  // Create a ref to track active conversation for cleanup
+  const activeConversationRef = useRef(null);
+
   // ---- CUSTOM HOOKS ----
   // Conversations hook
   const {
@@ -30,7 +32,8 @@ export function MessagingContainer({ currentUser }) {
     handleToggleRead,
     handleMarkAsRead,
     handleToggleBlock,
-    handleDeleteConversation, // Add this line
+    handleDeleteConversation,
+    isDeleting,  // Get this from useConversations
     setSelectedConversation
   } = useConversations(currentUser);
   
@@ -63,7 +66,6 @@ export function MessagingContainer({ currentUser }) {
   
   // ---- UI STATE ----
   const [isHandlingUrlChange, setIsHandlingUrlChange] = useState(false);
-  // Add the missing state declaration
   const [showMessageRequests, setShowMessageRequests] = useState(false);
   
   // Count pending requests - ensure receivedRequests is an array
@@ -86,9 +88,32 @@ export function MessagingContainer({ currentUser }) {
 
   const handleBack = useCallback(() => {
     if (!selectedConversation) return;
+    
+    // Store conversation ID for potential cleanup
+    const conversationId = selectedConversation.id;
+    const otherUsername = getOtherParticipantUsername(selectedConversation, currentUser);
+    
+    // First, ensure typing indicator is cleared if active
+    if (conversationId && currentUser) {
+      // This will clear any typing indicators for the current user
+      handleSetTypingIndicator && handleSetTypingIndicator(currentUser, conversationId, false);
+    }
+    
+    // Then set selected conversation to null, which will trigger cleanup in the hooks
     setSelectedConversation(null);
+    
+    // Update the URL to remove username parameter
     navigateToUser(null);
-  }, [selectedConversation, setSelectedConversation, navigateToUser]);
+    
+    // Save the fact we've cleared this conversation (helps with potential race conditions)
+    activeConversationRef.current = null;
+  }, [
+    selectedConversation, 
+    setSelectedConversation, 
+    navigateToUser, 
+    currentUser,
+    handleSetTypingIndicator
+  ]);
 
   // Handle starting a conversation with a connection
   const handleStartConversation = useCallback((connection) => {
@@ -174,6 +199,28 @@ export function MessagingContainer({ currentUser }) {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [selectedConversation, setSelectedConversation]);
 
+  // Add effect to track active conversation
+  useEffect(() => {
+    if (selectedConversation?.id) {
+      activeConversationRef.current = selectedConversation.id;
+    }
+  }, [selectedConversation]);
+
+  // Add enhanced cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Final cleanup on component unmount
+      if (activeConversationRef.current && currentUser) {
+        // Clear any typing indicators on unmount
+        handleSetTypingIndicator && handleSetTypingIndicator(
+          currentUser, 
+          activeConversationRef.current, 
+          false
+        );
+      }
+    };
+  }, [currentUser, handleSetTypingIndicator]);
+
   // ---- RENDER ----
   return (
     <>
@@ -186,7 +233,8 @@ export function MessagingContainer({ currentUser }) {
         onMarkAsRead={handleMarkAsRead}
         onToggleRead={handleToggleRead}
         onToggleBlock={handleToggleBlock}
-        onDeleteConversation={handleDeleteConversation} // Add this line
+        onDeleteConversation={handleDeleteConversation}
+        isDeleting={isDeleting}  // Pass this to the presentation
         onSendMessage={handleSendMessage}
         onSetTypingIndicator={handleSetTypingIndicator}
         onBack={handleBack}
@@ -197,6 +245,7 @@ export function MessagingContainer({ currentUser }) {
         onCloseMessageRequests={handleCloseMessageRequests}
         pendingRequestCount={pendingRequestCount}
         navigateToUser={navigateToUser}
+        startConversation={handleStartConversation}
       />
       
       {showConnectionsModal && (

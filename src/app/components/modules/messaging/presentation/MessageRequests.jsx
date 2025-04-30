@@ -55,7 +55,7 @@ export function MessageRequestsPresentation({
   
   return (
     <div className="flex flex-col h-full">
-      <div className="sticky top-0 z-10 p-3 border-b bg-background/95 backdrop-blur-sm flex items-center">
+      <div className="sticky top-0 z-10 p-3 border-b bg-background/95 backdrop-blur-sm flex">
         <Button
           variant="ghost"
           size="icon"
@@ -68,7 +68,7 @@ export function MessageRequestsPresentation({
         <h2 className="text-lg font-medium flex-1 text-center pr-5">Message Requests</h2>
       </div>
       
-      <Tabs value={selectedTab} onValueChange={onTabChange} className="flex-1 flex flex-col items-center">
+      <Tabs value={selectedTab} onValueChange={onTabChange} className="flex-1 flex flex-col items-center w-full">
         <TabsList className="grid grid-cols-2 mx-3 mt-2 ">
           <TabsTrigger value="received" className="flex gap-2">
             Received
@@ -91,7 +91,7 @@ export function MessageRequestsPresentation({
               <div className="py-2">
                 {safeReceivedRequests.map((request) => (
                   <MessageRequestItem
-                    key={request.id}
+                    key={request._id}
                     request={request}
                     type="received"
                     onAccept={onAcceptRequest}
