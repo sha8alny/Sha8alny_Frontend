@@ -18,7 +18,7 @@ import { db } from "@/firebase/firebase";
 
 export const messagingService = {
   createConversation: async (receiverName) => {
-    messagingService.sendMessage(receiverName, null, []);
+    return await messagingService.sendMessage(receiverName, null, []);
   },
 
   deleteConversationFirestore: async (conversationId) => {
