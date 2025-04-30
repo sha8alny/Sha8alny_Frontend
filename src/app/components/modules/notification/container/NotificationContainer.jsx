@@ -144,6 +144,8 @@ function NotificationContainer() {
         return `/messages/?${notification.data?.fromUsername || ""}`;
       case "ConnectionRequest":
         return `/network/pending`;
+      case "ConnectionAccepted":
+        return `/network/connections`;
       default:
         return "#";
     }

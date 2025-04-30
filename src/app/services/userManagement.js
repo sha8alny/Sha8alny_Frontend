@@ -62,8 +62,6 @@ export const checkEmail = async ({ email, password }) => {
   return data;
 };
 
-
-
 export const updateEmail = async ({ email, password }) => {
   const response = await fetchWithAuth(`${apiURL}/settings/update-email`, {
     method: "PUT",
@@ -232,7 +230,7 @@ export const handleSignup = async ({
 
     if (!signupResponse.ok) throw new Error("Failed to signup");
 
-    const loginResponse = await handleSignIn({email,password, rememberMe});
+    const loginResponse = await handleSignIn({ email, password, rememberMe });
 
     if (!loginResponse) throw new Error("Failed to login");
     return { success: true };
@@ -269,30 +267,33 @@ export const handleSignupCross = async ({
 
 export const completeProfile = async ({ formData, profilePic, coverPic }) => {
   try {
-    if (profilePic ){
-    const profileFormData = new FormData();
-    profileFormData.append("profilePicture", profilePic);
-    console.log("profileFormData", profileFormData);
-    const profileResponse = await fetchWithAuth(
-      `${apiURL}/profile/profile-picture`,
-      {
-        method: "PUT",
-        body: profileFormData,
-      }
-    );
-    if (!profileResponse.ok)
-      throw new Error("Failed to upload profile picture");
-  }
-  if (coverPic) {
-    const coverFormData = new FormData();
-    coverFormData.append("coverPhoto", coverPic);
-    console.log("coverFormData", coverFormData);
-    const coverResponse = await fetchWithAuth(`${apiURL}/profile/cover-photo`, {
-      method: "PUT",
-      body: coverFormData,
-    });
-    if (!coverResponse.ok) throw new Error("Failed to upload cover photo");
-  }
+    if (profilePic) {
+      const profileFormData = new FormData();
+      profileFormData.append("profilePicture", profilePic);
+      console.log("profileFormData", profileFormData);
+      const profileResponse = await fetchWithAuth(
+        `${apiURL}/profile/profile-picture`,
+        {
+          method: "PUT",
+          body: profileFormData,
+        }
+      );
+      if (!profileResponse.ok)
+        throw new Error("Failed to upload profile picture");
+    }
+    if (coverPic) {
+      const coverFormData = new FormData();
+      coverFormData.append("coverPhoto", coverPic);
+      console.log("coverFormData", coverFormData);
+      const coverResponse = await fetchWithAuth(
+        `${apiURL}/profile/cover-photo`,
+        {
+          method: "PUT",
+          body: coverFormData,
+        }
+      );
+      if (!coverResponse.ok) throw new Error("Failed to upload cover photo");
+    }
 
     const data = await fetchWithAuth(`${apiURL}/profile/edit`, {
       method: "PATCH",
@@ -404,7 +405,7 @@ export const handleGoogleSignIn = async (token) => {
     const response = await fetch(`${apiURL}/google-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code:token }),
+      body: JSON.stringify({ code: token }),
     });
 
     if (!response.ok) throw new Error("Login failed");
@@ -421,7 +422,7 @@ export const handleGoogleSignIn = async (token) => {
     console.error(error);
     return { success: false, message: error.message };
   }
-}
+};
 
 export const handleLogout = async () => {
   sessionStorage.removeItem("accessToken");
@@ -430,4 +431,21 @@ export const handleLogout = async () => {
   localStorage.removeItem("isProfileComplete");
 
   window.location.href = "/signin";
+};
+
+export const checkHasPassword = async () => {
+  try {
+    const response = await fetchWithAuth(`${apiURL}/has-password`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) throw new Error("Failed to check password");
+    const data = await response.json();
+    return data.hasPassword;
+  } catch (error) {
+    console.error("Error checking password:", error);
+    return false;
+  }
 };

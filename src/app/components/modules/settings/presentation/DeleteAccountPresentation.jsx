@@ -34,6 +34,7 @@ const DeleteAccountPresentation = ({
   handleDeleteAccount,
   setPassword,
   password,
+  hasPassword,
 }) => {
   if (isLoading) return (
     <div className="flex justify-center items-center h-full">
@@ -47,6 +48,7 @@ const DeleteAccountPresentation = ({
     <SettingsFormLayout>
       {currentFormPage === 1 ? (
         <DeleteAccountPassConfirmation
+        hasPassword={hasPassword}
           handleDeleteAccountForm={handleDeleteAccountForm}
           deleteAccountMutation={deleteAccountMutation}
           handleDeleteAccount={handleDeleteAccount}

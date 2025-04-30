@@ -14,7 +14,7 @@ const Connections = ({
     page,
 }) => {
     return (
-      <div className="w-full flex flex-col justify-center items-center gap-6 bg-foreground p-3 rounded-2xl shadow-2xl w-full  ">
+      <div className="w-full flex flex-col justify-center items-center gap-6 bg-foreground p-3 rounded-2xl shadow-2xl ">
 
           {loading ? (
             <div className="w-full flex flex-col justify-center items-center gap-2 h-full mt-25 mb-25">
@@ -53,12 +53,13 @@ const Connections = ({
                     key={index}
                     username={connection.username}
                     name={connection.name}
-                    title={connection.title}
-                    profilePic={connection.profilePic}
-                    coverPic={connection.coverPic}
+                    title={connection.headline}
+                    profilePic={connection.profilePicture}
+                    coverPic={connection.coverPhoto}
+                    numberOfConnections={connection.numberOfConnections}
                     buttonText="Message"
                     buttonAction={() => {
-                        window.location.href = `/messages/${connection.username}`;
+                        window.location.href = `/messages?username=${connection?.username}`;
                     }}
                     showButton={true}
                     showRemoveButton={true}
