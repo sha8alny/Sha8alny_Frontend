@@ -28,6 +28,7 @@ import { useState, useEffect } from "react";
 function CompanyCardContainer({
   companyId,
   companyUsername,
+  name,
   logo,
   industry,
   description,
@@ -118,6 +119,7 @@ function CompanyCardContainer({
   return (
     <CompanyCardPresentation
       companyUsername={companyUsername}
+      name={name}
       logo={logo}
       industry={industry}
       description={description}
