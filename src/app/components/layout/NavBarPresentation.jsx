@@ -241,7 +241,7 @@ export default function NavbarPresentation({
                 </div>
                 <div>
                   <p className="font-semibold text-primary">{userInfo.name}</p>
-                  <p className="text-xs text-muted">{userInfo.headline}</p>
+                  <p className="text-xs text-muted truncate">{userInfo.headline}</p>
                 </div>
               </div>
 
@@ -450,7 +450,7 @@ export default function NavbarPresentation({
                 {userInfo.name}
                 <ChevronDown className="text-muted" sx={{ fontSize: 16 }} />
               </div>
-              <div className="text-xs text-muted">{userInfo.headline}</div>
+              <div className="text-xs text-muted truncate">{userInfo.headline}</div>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48">

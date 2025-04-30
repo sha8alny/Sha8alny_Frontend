@@ -84,7 +84,7 @@ export default function Home({company,posts, goToAboutPage, goToPostsPage}) {
                 </div>
                 <button
                     onClick={goToAboutPage}
-                    className="w-full text-center border-t pt-3 text-gray-300 hover:text-white transition-colors cursor-pointer" data-testid="about-button">
+                    className="w-full text-center border-t pt-3 text-text hover:text-gray-500 transition-colors cursor-pointer" data-testid="about-button">
                     Show all details →
                 </button>
             </div>
@@ -105,7 +105,7 @@ export default function Home({company,posts, goToAboutPage, goToPostsPage}) {
                         )}
                     </div>
                 </div>
-                <button onClick={goToPostsPage} className="w-full text-center border-t pt-3 text-text hover:text-white transition-colors cursor-pointer" data-testid="posts-button">
+                <button onClick={goToPostsPage} className="w-full text-center border-t pt-3 text-text hover:text-gray-500 transition-colors cursor-pointer" data-testid="posts-button">
                     Show all posts →
                 </button>
             </div>

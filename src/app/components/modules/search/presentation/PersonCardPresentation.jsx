@@ -9,12 +9,12 @@ import { Briefcase, MapPin } from "lucide-react";
 /**
  * @namespace search
  * @module search
- * 
+ *
  * @description
  * The `PersonCardPresentation` component is a presentational component used to display a person's profile card.
  * It includes their avatar, name, headline, location, and a button to connect or message them.
  * The component is interactive, allowing navigation to the person's profile and handling connection actions.
- * 
+ *
  * @param {Object} props - The properties object.
  * @param {string} props.username - The username of the person.
  * @param {string} props.name - The full name of the person.
@@ -77,7 +77,13 @@ function PersonCardPresentation({
           }}
           data-testid={`person-connect-button-${username}`}
         >
-          {isConnected ? "Message" : "Connect"}
+          {isConnected == "accepted"
+            ? "Message"
+            : isConnected == "pending"
+            ? "Pending"
+            : isConnected == "rejected"
+            ? "Connect"
+            : "Connected"}
         </Button>
       </div>
     </div>

@@ -2,6 +2,7 @@
  * @namespace profile
  * @module profile
  */
+"use client";
 import { useIsMyProfile } from "@/app/context/IsMyProfileContext";
 import ModHeaderPresentation, {
   ModifyProfilePresentation,
@@ -9,46 +10,54 @@ import ModHeaderPresentation, {
 import { fetchUserProfile } from "@/app/services/userProfile";
 import useUpdateProfile from "@/app/hooks/useUpdateProfile";
 import { useEffect, useState } from "react";
-import { connectUser, handleConnectionRequest } from "@/app/services/connectionManagement";
+import {
+  connectUser,
+  handleConnectionRequest,
+} from "@/app/services/connectionManagement";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/app/context/ToastContext";
 
 export default function ModHeader({ userInfo }) {
   const { isMyProfile } = useIsMyProfile();
+  const [connectionStatus, setConnectionStatus] = useState(
+    userInfo?.connectionStatus || "notConnected"
+  );
   const queryClient = useQueryClient();
   const router = useRouter();
   const toast = useToast();
 
   const handleResumeDownload = () => {
     if (!userInfo?.resume) return;
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = userInfo.resume;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
     link.click();
   };
 
   const handleConnectMutate = useMutation({
     mutationFn: (username) => connectUser(username),
     onSuccess: () => {
-      queryClient.invalidateQueries(["connections"]);
-      queryClient.invalidateQueries(["userProfile", userInfo?.username]);
+      setConnectionStatus("pending");
     },
-  })
+  });
 
   const handleConnectionRequestMutate = useMutation({
     mutationFn: (action) => handleConnectionRequest(userInfo?.username, action),
     onSuccess: () => {
-      queryClient.invalidateQueries(["connections"]);
-      queryClient.invalidateQueries(["userProfile", userInfo?.username]);
+      if (action === "ACCEPT") {
+        setConnectionStatus("connected");
+      } else if (action === "DECLINE") {
+        setConnectionStatus("notConnected");
+      }
     },
   });
 
   const handleClick = (action = "DECLINE") => {
     switch (userInfo?.connectionStatus) {
       case "connected":
-        router.push(`/u/${userInfo?.username}`); // TODO: Go to chat
+        router.push(`/messages?username=${userInfo.username}`);
         break;
       case "notConnected":
         handleConnectMutate.mutate(userInfo?.username);
@@ -70,7 +79,7 @@ export default function ModHeader({ userInfo }) {
       isMyProfile={isMyProfile}
       handleClick={handleClick}
       handleResumeDownload={handleResumeDownload}
-      userInfo={userInfo}
+      userInfo={{ ...userInfo, connectionStatus: connectionStatus }}
       isConnecting={isConnecting}
       isHandlingRequest={isHandlingRequest}
     />
@@ -81,9 +90,7 @@ export const ModifyProfileContainer = ({ userInfo }) => {
   const [profilePicture, setProfilePicture] = useState(
     userInfo?.profilePicture || ""
   );
-  const [coverPicture, setCoverPicture] = useState(
-    userInfo?.coverPhoto || ""
-  );
+  const [coverPicture, setCoverPicture] = useState(userInfo?.coverPhoto || "");
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [coverPictureFile, setCoverPictureFile] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);

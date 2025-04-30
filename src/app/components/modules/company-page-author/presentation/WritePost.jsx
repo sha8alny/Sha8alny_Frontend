@@ -50,20 +50,11 @@ export default function WritePost({company, text, setText,onImageUpload,videoUpl
     <div className="text-text">
         <div className="bg-[var(--foreground)] border rounded-lg p-4">
             <div className="flex items-center gap-4">
-                {company?.logo ? (
-                        <img 
-                            src={company?.logo} 
-                            alt="company-logo" 
-                            className="rounded-full w-14 h-14 object-cover" 
-                        />
-                    ) : (
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <div className="bg-black/50 p-2 rounded-full backdrop-blur-sm">
-                            <Maximize2 className="text-white" size={18} />
-                        </div>
-                    </div>
-                    )
-                }
+                <img 
+                    src={company?.logo || "/placeholder.svg"} 
+                    alt="company-logo" 
+                    className="rounded-full w-14 h-14 object-cover" 
+                />
                 <textarea className="flex-grow rounded-lg p-2 border border-[var(--background)] " placeholder="Start a post" value={text} onChange={(e)=>setText(e.target.value)}></textarea>
             </div>
             {/*Icons for writing a post*/}

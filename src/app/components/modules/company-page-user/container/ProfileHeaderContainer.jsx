@@ -35,59 +35,73 @@ import ProfileHeader from "../presentation/ProfileHeader";
  */
 
 export default function ProfileHeaderContainer({ username }) {
-    const pathname = usePathname();
-    const isActive = (slug) => pathname.includes(slug);
-    const [error, setError] = useState(null);
-    const [company, setCompany] = useState(null);
-    const [isFollowing, setIsFollowing] = useState(false);
-    const [followerCount, setFollowerCount] = useState(null);
-    const router = useRouter();
+  const pathname = usePathname();
+  const isActive = (slug) => pathname.includes(slug);
+  const [error, setError] = useState(null);
+  const [company, setCompany] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(null);
+  const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
+  const router = useRouter();
 
 
-    const handleFollowClick = async () => {
+  const handleFollowClick = async () => {
+    if (!isFollowing) {
       try {
-        const newIsFollowing = !isFollowing;
-    
-        if (newIsFollowing) {
-          await followCompany(username);
-        } else {
-          await unfollowCompany(username);
-        }
-        setIsFollowing(newIsFollowing);
-        setFollowerCount((prev) => prev + (newIsFollowing ? 1 : -1));
+        await followCompany(username);
+        setIsFollowing(true);
+        setFollowerCount((prev) => prev + 1);
       } catch (err) {
-        setError("Could not update follow status.");
+        setError("Could not follow the company.");
+      }
+    } else {
+      setShowUnfollowDialog(true);
+    }
+  };
+  
+
+  useEffect(() => {
+    const fetchCompany = async () => {
+      try {
+        const data = await getCompany(username);
+        setCompany(data);
+        setIsFollowing(data.isFollowed || false);
+        setFollowerCount(data.numFollowers || 0);
+      } catch (err) {
+        setError(err.message);
       }
     };
-    
-
-    useEffect(() => {
-      const fetchCompany = async () => {
-        try {
-          const data = await getCompany(username);
-          setCompany(data);
-          setIsFollowing(data.isFollowed || false);
-          setFollowerCount(data.numFollowers || 0);
-        } catch (err) {
-          setError(err.message);
-        }
-      };
-    
-      if (username) fetchCompany();
-    }, [username]);
-    
-
-    const visitWebsite = () =>{
-      router.push(`/company/${username}/user/posts`);
+  
+    if (username) fetchCompany();
+  }, [username]);
+  
+  const handleDialogConfirm = async () => {
+    try {
+      await unfollowCompany(username);
+      setIsFollowing(false);
+      setFollowerCount((prev) => prev - 1);
+    } catch (err) {
+      setError("Could not update follow status.");
+    } finally {
+      setShowUnfollowDialog(false);
     }
+  };
 
-    const OpenCompanyAdminPage =() =>{
-      router.push(`/company/${username}/admin/dashboard`);
-    }
-    
+  const handleDialogCancel = () => {
+    setShowUnfollowDialog(false);
+  };
+  
+  const visitWebsite = () =>{
+    router.push(`/company/${username}/user/posts`);
+  }
+
+  const OpenCompanyAdminPage =() =>{
+    router.push(`/company/${username}/admin/dashboard`);
+  }
+  
   return (
     <div>
-      <ProfileHeader username={username} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} />
+      <ProfileHeader username={username} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} showUnfollowDialog={showUnfollowDialog} handleDialogConfirm={handleDialogConfirm} handleDialogCancel={handleDialogCancel}   />
     </div>
   );
 }

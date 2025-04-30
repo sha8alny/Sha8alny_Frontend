@@ -50,34 +50,34 @@ import { useState } from "react";
  * @returns {JSX.Element} The rendered create company form.
  */
 
-export default function CreateCompanySection({companyName, setCompanyName,companyIndustry, setCompanyIndustry,companyTagline, setCompanyTagline, file, setFile, companySize,setCompanySize, companyType,setCompanyType,companyLocation, setCompanyLocation, companyWebsite, setCompanyWebsite, onCreateCompany, companyUsername, setCompanyUsername, companyDate, setCompanyDate, companyPhone, setCompanyPhone, loading, isFormValid, errors, setErrors, isChecked, checkBox, error})
+export default function CreateCompanySection({companyName, setCompanyName,companyIndustry, setCompanyIndustry,companyTagline, setCompanyTagline, file, setFile, companySize,setCompanySize, companyType,setCompanyType,companyLocation, setCompanyLocation, companyWebsite, setCompanyWebsite, onCreateCompany, companyUsername, setCompanyUsername,companyDescription,setCompanyDescription,  companyDate, setCompanyDate, companyPhone, setCompanyPhone, loading, isFormValid, errors, setErrors, isChecked, checkBox, error})
 {
-    const [companyDescription, setCompanyDescription] = useState("");
     return (
         <div>
             <p className="flex items-center mb-1 text-sm text-gray-500"><EmergencyRoundedIcon style={{fontSize:"10px"}} className="mr-1"/>indicates required</p>
-            <form onSubmit={(e) => { e.preventDefault(); onCreateCompany(); }} className="flex flex-col gap-4 bg-[var(--foreground)] p-4 rounded-lg">
+            <form onSubmit={(e) => { e.preventDefault(); onCreateCompany(); }} noValidate className="flex flex-col gap-4 bg-[var(--foreground)] p-4 rounded-lg">
                 <InputFieldContainer 
                 companyName={companyName} setCompanyName={setCompanyName} companyIndustry={companyIndustry} setCompanyIndustry={setCompanyIndustry} companyLocation={companyLocation} setCompanyLocation={setCompanyLocation} companyWebsite={companyWebsite} setCompanyWebsite={setCompanyWebsite} companyUsername={companyUsername} setCompanyUsername={setCompanyUsername} 
-                companyDate={companyDate} setCompanyDate={setCompanyDate} companyPhone={companyPhone} setCompanyPhone={setCompanyPhone} errors={errors} setErrors={setErrors}/> 
+                companyDate={companyDate} setCompanyDate={setCompanyDate} companyPhone={companyPhone} setCompanyPhone={setCompanyPhone} errors={errors} setErrors={setErrors} onCreateCompany={onCreateCompany}/> 
 
                 <SelectFieldContainer companySize={companySize} setCompanySize={setCompanySize} companyType={companyType} setCompanyType={setCompanyType} errors={errors} setErrors={setErrors}/>
 
                 <FileUploadContainer file={file} setFile={setFile}/> 
                 <TagLineContainer companyTagline={companyTagline} setCompanyTagline={setCompanyTagline} companyDescription={companyDescription} setCompanyDescription={setCompanyDescription} isEditing={false}/>
                 <CheckBoxFieldContainer errors={errors} setErrors={setErrors} isChecked={isChecked} onChange={checkBox}/>
-                <a href="#" className="hover:underline font-bold text-[var(--secondary)]">Read the Shaغalny Pages Terms </a>   
-            </form>
-            <div className="flex justify-end">
+                <a href="#" className="hover:underline font-bold text-[var(--secondary)]">Read the Shaغalny Pages Terms </a>
+
+                <div className="flex justify-end">
                 {error && <p role="alert" className="text-red-500" data-testid="create-company-error">{error}</p>}
                 <button 
                 className={`bg-[var(--secondary)] text-[var(--background)] rounded-full cursor-pointer py-2 px-3  mt-2 ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
-                onClick={onCreateCompany} 
+                type="submit"
                 disabled={!isFormValid || loading} 
                 data-testid="create-company-button">
                     {loading ? "Creating..." : "Create Page"}
                 </button>            
-            </div>
+            </div>   
+            </form>
         </div>
     );
 }

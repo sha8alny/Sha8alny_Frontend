@@ -45,14 +45,8 @@ export default function ModCertificatePresentation({
   setSubmitError,
   adding = false,
   handleDeleteCertificate,
-  stageTitles = [
-    "Certificate Info",
-    "Time Period",
-    "Skills",
-    "Review",
-  ],
+  stageTitles = ["Certificate Info", "Time Period", "Skills", "Review"],
 }) {
-
   return (
     <div
       className="p-4 text-primary overflow-y-auto"
@@ -165,8 +159,8 @@ export default function ModCertificatePresentation({
             <div className="flex gap-2">
               {/* Replace FormField with direct input */}
               <div className="flex-1">
-                <Label className="font-semibold mb-2" htmlFor="name">
-                  Certificate Name
+                <Label className="font-semibold flex gap-1 mb-2" htmlFor="name">
+                  Certificate Name <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="name"
@@ -186,10 +180,11 @@ export default function ModCertificatePresentation({
               </div>
               <div className="flex-1 min-w-0">
                 <Label
-                  className="font-semibold mb-2"
+                  className="font-semibold mb-2 flex gap-1"
                   htmlFor="issuingOrganization"
                 >
                   Issuing Organization
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="issuingOrganization"
@@ -209,6 +204,32 @@ export default function ModCertificatePresentation({
                   </p>
                 )}
               </div>
+            </div>
+
+            {/* Certificate URL field */}
+            <div>
+              <Label className="font-semibold mb-2" htmlFor="certificateUrl">
+                Certificate URL
+              </Label>
+              <Input
+                id="certificateUrl"
+                value={watch("certificateUrl")}
+                onChange={(e) => setValue("certificateUrl", e.target.value)}
+                placeholder="https://example.com/my-certificate"
+                type="url"
+                data-testid="mod-certificate-url-input"
+              />
+              {errors.certificateUrl && (
+                <p
+                  className="text-red-500 text-xs mt-2"
+                  data-testid="mod-certificate-url-error"
+                >
+                  {errors.certificateUrl}
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">
+                Add a link where others can verify this certificate (optional)
+              </p>
             </div>
           </div>
         )}
@@ -234,8 +255,9 @@ export default function ModCertificatePresentation({
             <div className="flex justify-between gap-6">
               <div className="flex gap-4">
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="issueMonth">
+                  <Label className="font-semibold mb-2 flex gap-1" htmlFor="issueMonth">
                     Issue Month
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("issueDate.month")}
@@ -271,8 +293,9 @@ export default function ModCertificatePresentation({
                   )}
                 </div>
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="issueYear">
+                  <Label className="font-semibold mb-2 flex gap-1" htmlFor="issueYear">
                     Issue Year
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("issueDate.year")}
@@ -341,12 +364,12 @@ export default function ModCertificatePresentation({
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.expirationDate && (
+                    {errors.expirationDate?.month && (
                       <p
                         className="text-red-500 text-xs mt-2"
                         data-testid="mod-certificate-exp-date-error"
                       >
-                        {errors.expirationDate}
+                        {errors.expirationDate.month}
                       </p>
                     )}
                   </div>
@@ -382,6 +405,14 @@ export default function ModCertificatePresentation({
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.expirationDate?.year && (
+                      <p
+                        className="text-red-500 text-xs mt-2"
+                        data-testid="mod-certificate-exp-year-error"
+                      >
+                        {errors.expirationDate.year}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}

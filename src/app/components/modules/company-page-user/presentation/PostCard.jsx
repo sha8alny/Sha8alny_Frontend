@@ -29,7 +29,7 @@ export default function PostCard({ image, dateTime, postText,postMedia, company,
           <div className="p-4 flex-grow">
               <div className="flex items-center space-x-3 mb-2">
                   <img
-                      src={image}
+                      src={image || "/placeholder.svg"}
                       alt="Event Image"
                       className="object-cover w-16 h-16"
                   />
@@ -45,7 +45,7 @@ export default function PostCard({ image, dateTime, postText,postMedia, company,
                 {Array.isArray(postMedia) && postMedia.length > 0 && postMedia[0] ? (
                 <div className="relative w-full h-64 mt-4 rounded-xl overflow-hidden">
                     <Image
-                    src={postMedia[0]}
+                    src={postMedia[0] || "/placeholder.svg"}
                     alt="Post Media"
                     layout="fill"
                     objectFit="cover"

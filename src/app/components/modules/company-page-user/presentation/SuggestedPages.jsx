@@ -17,7 +17,7 @@ import Container from "@/app/components/layout/Container";
  */
 export default function SuggestedPages({ pages, title, onClick, handleFollowClick, followStatus}){
     return (
-      <Container className="border border-[#111] flex flex-col gap-2 shadow-xs p-4">
+      <Container className="flex flex-col gap-2 shadow-xs p-4">
         <h2 className="text-lg font-semibold mb-4 flex items-center">
           {title}
         </h2>

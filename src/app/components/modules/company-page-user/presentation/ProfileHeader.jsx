@@ -5,6 +5,9 @@ import Link from "next/link";
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Card, CardContent } from "@/app/components/ui/Card";
+import { Button } from '@/app/components/ui/Button';
+import ClearIcon from '@mui/icons-material/Clear';
 
 /**
  * @namespace profile
@@ -28,17 +31,14 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
  * @param {string} [props.company.location] - Company location
  * @returns {JSX.Element} Profile header component with company branding and navigation
  */
-export default function ProfileHeader({ username, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage }) {
+export default function ProfileHeader({ username, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage, handleDialogConfirm, handleDialogCancel, showUnfollowDialog }) {
   return (
-    <Container className="border-[#111] border shadow-lg">
+    <Container className="shadow-lg">
       <div className="h-max rounded-xl">
         <div className="relative w-full flex">
           <div className="absolute top-0 left-0 w-full h-40 bg-gray-700 rounded-t-xl">
             <Image
-              src={
-                company?.cover ??
-                "https://picsum.photos/id/11/600/400"
-              }
+              src={ company?.cover || "/placeholder.svg"}
               fill
               alt="Cover Photo"
               className="rounded-t-xl object-cover"
@@ -46,11 +46,8 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
           </div>
           <div className="relative size-44 z-10 ml-6 bg-gray-500 rounded-lg border-8 border-foreground mt-16">
             <Image
-              src={
-                company?.logo??
-                "https://picsum.photos/id/11/600/400"
-              }
-              alt="User Avatar"
+              src={ company?.logo || "/placeholder.svg"}
+              alt="Logo photo"
               fill
             />
           </div>
@@ -64,9 +61,9 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
             <p className="text-muted">{company?.industry} , {company?.location}</p>
           </div>
           <div className="flex flex-row gap-2 items-center mb-3">
-            <button className={`rounded-full cursor-pointer py-1 px-4 mt-2 transition-all ${isFollowing ? "bg-[var(--foreground)] border border-[var(--secondary)] text-[var(--text)]" : "bg-[var(--secondary)] text-[var(--text)]"}`} onClick={handleFollowClick} data-testid="follow-button">
+            <Button  className={`rounded-full cursor-pointer py-1 px-4 mt-2 transition-all ${isFollowing ? "bg-[var(--foreground)] border border-[var(--secondary)]": "bg-[var(--secondary)]"}`} onClick={handleFollowClick} data-testid="follow-button">
               {isFollowing ? (
-                <div>
+                <div className="text-text">
                   <CheckIcon className="mr-1" fontSize="small" />
                   Following
                 </div>
@@ -76,14 +73,14 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
                   Follow
                 </div>
               )}
-            </button>
-            <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity" data-testid="visit-website-button" onClick={visitWebsite}>
+            </Button>
+            <Button className=" bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity" data-testid="visit-website-button" onClick={visitWebsite}>
               Visit website
-            </button>
+            </Button>
             {company?.isOwner && (
-              <button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity flex-end" onClick={OpenCompanyAdminPage} data-testid="view-as-admin-button">
+              <Button className="bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity flex-end" onClick={OpenCompanyAdminPage} data-testid="view-as-admin-button">
                 <VisibilityIcon className="transition-transform duration-200 group-hover:scale-110" /> View as admin
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -99,6 +96,33 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
           <Link href={`/company/${username}/user/people`} className={`mt-2 px-1 transition-colors duration-200 ${isActive("people") ? "text-[var(--secondary)] font-semibold": "hover:text-opacity-80"}`} data-testid="people-page-link">People</Link>
         </div>
       </div>
+      {showUnfollowDialog &&
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <Card className="w-full bg-foreground max-w-md">
+          <CardContent className="p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-medium">Unfollow page</h3>
+                <Button className="cursor-pointer" size="icon" variant="ghost" onClick={handleDialogCancel}>
+                    <ClearIcon className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="mb-4">
+                <p className="text-text">
+                  You'll no longer receive notifications from this Page, and you won't see its updates in your feed.
+                </p>
+              </div>
+              <div className="flex flex-row justify-end gap-2">
+                  <Button variant="outline" className="rounded-full cursor-pointer" onClick={handleDialogCancel}>
+                      Cancel
+                  </Button>
+                  <Button  className="rounded-full bg-secondary cursor-pointer" onClick={handleDialogConfirm}>
+                      Unfollow
+                  </Button>
+              </div>
+          </CardContent>
+          </Card>
+        </div>
+      }
     </Container>
   );
 }

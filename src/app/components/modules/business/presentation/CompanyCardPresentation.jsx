@@ -39,13 +39,21 @@ function CompanyCardPresentation({ company, onManageClick, onViewPageClick }) {
       <CardHeader className="p-4 pb-0">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
-            <div className="relative h-16 w-16 overflow-hidden rounded-md border">
-              <Image
-                src={company?.logo || "/placeholder.svg"}
-                alt={`${company?.name} logo`}
-                fill
-                className="object-cover"
-              />
+            <div className="relative h-16 w-16 overflow-hidden rounded-md">
+              {company?.logo ? (
+                <Image
+                  src={company.logo}
+                  alt={`${company?.name} logo`}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-secondary text-white rounded-md">
+                  <span className="text-xl font-medium">
+                    {company?.name ? company.name.substring(0, 2).toUpperCase() : 'CO'}
+                  </span>
+                </div>
+              )}
             </div>
             <div>
               <h3 className="font-semibold text-lg">{company?.name}</h3>
@@ -66,7 +74,7 @@ function CompanyCardPresentation({ company, onManageClick, onViewPageClick }) {
             {truncateText(company?.description, 60)}
           </p>
           <p className="text-sm text-muted-foreground">
-            {company?.numFollowers.toLocaleString()} followers
+            {company?.numFollowers?.toLocaleString()} followers
           </p>
         </div>
       </CardContent>

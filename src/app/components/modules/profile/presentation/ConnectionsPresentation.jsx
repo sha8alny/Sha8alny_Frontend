@@ -19,6 +19,7 @@ import {
 import Dialog from "@/app/components/ui/DialogMod";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 import { ConnectionsCardContainer } from "../container/Connections";
+import Link from "next/link";
 
 export default function ConnectionsPresentation({
   connections,
@@ -72,7 +73,26 @@ export default function ConnectionsPresentation({
           </div>
         </ul>
       ) : (
-        <p data-testid="no-connections-message">No connections found</p>
+        <div
+          className="flex flex-col items-center justify-center py-12 text-center text-muted"
+          data-testid="no-connections-message"
+        >
+          <p className="text-lg text-primary font-semibold mb-1">No connections found.</p>
+          <p className="text-sm text-muted">
+            {isMyProfile
+              ? "You haven't connected with anyone yet."
+              : `${
+                  userInfo?.name?.split(" ")[0] || "This user"
+                } hasn't connected with anyone yet.`}
+          </p>
+          {isMyProfile && (
+            <button className="mt-4 bg-secondary rounded-md p-3 px-6 text-background font-semibold hover:bg-secondary/80 duration-200">
+              <Link href="/network">
+                Connect With People
+              </Link>
+            </button>
+          )}
+        </div>
       )}
     </div>
   );
@@ -132,7 +152,7 @@ export const ConnectionsCard = ({
             )}
           </div>
           <p
-            className="text-xs text-muted truncate"
+            className="text-xs text-left text-muted truncate"
             data-testid={`connection-headline-${connection?._id}`}
           >
             {connection?.headline}

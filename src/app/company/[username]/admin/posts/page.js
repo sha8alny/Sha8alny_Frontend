@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import PostPageContainer from "@/app/components/modules/company-page-author/container/PostPageContainer";
 
-function PostPage(){
+export default function PostPage(){
     const { username } = useParams();
     const searchParams = useSearchParams();
     const logo = searchParams.get("logo");
@@ -16,5 +16,3 @@ function PostPage(){
         </div>
     );
 }
-
-export default PostPage;
