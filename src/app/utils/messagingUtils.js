@@ -78,7 +78,7 @@ export function formatDate(timestamp) {
 export function formatMessageDate(timestamp) {
   const date = parseTimestamp(timestamp);
   if (!date) return "Unknown date";
-  
+
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
@@ -100,7 +100,7 @@ export function formatMessageDate(timestamp) {
  * Component to display date separators in message lists
  */
 export const DateSeparator = memo(({ date }) => (
-  <div className="flex items-center justify-center my-4">
+  <div className="sticky top-0 z-10 flex items-center justify-center  bg-background">
     <div className="bg-primary/60 px-3 py-1 rounded-full text-xs text-foreground">
       {date}
     </div>
@@ -113,44 +113,55 @@ export const DateSeparator = memo(({ date }) => (
  * @returns {Object} Object containing media type information
  */
 export const getMediaTypeFromUrl = (url) => {
-  if (!url || typeof url !== 'string') return { type: 'unknown', url };
-  
-  if (url.startsWith('blob:')) return { type: 'blob', url };
-  
+  if (!url || typeof url !== "string") return { type: "unknown", url };
+
+  if (url.startsWith("blob:")) return { type: "blob", url };
+
   try {
     const urlObj = new URL(url);
     const path = urlObj.pathname;
-    const extension = path.split('.').pop()?.toLowerCase();
-    const fileName = path.split('/').pop();
-    
+    const extension = path.split(".").pop()?.toLowerCase();
+    const fileName = path.split("/").pop();
+
     // Image types
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(extension)) {
-      return { type: 'image', url, extension };
+    if (
+      ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp"].includes(extension)
+    ) {
+      return { type: "image", url, extension };
     }
-    
+
     // Video types
-    if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv'].includes(extension)) {
-      return { type: 'video', url, extension };
+    if (
+      ["mp4", "webm", "mov", "avi", "mkv", "flv", "wmv"].includes(extension)
+    ) {
+      return { type: "video", url, extension };
     }
-    
+
     // Document types
-    if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'].includes(extension)) {
-      return { type: 'document', url, extension, fileName };
+    if (
+      ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt"].includes(
+        extension
+      )
+    ) {
+      return { type: "document", url, extension, fileName };
     }
-    
+
     // Special cases for popular services
-    if (url.includes('imgur.com') || url.includes('i.imgur.com')) {
-      return { type: 'image', url, extension: 'jpg' };
+    if (url.includes("imgur.com") || url.includes("i.imgur.com")) {
+      return { type: "image", url, extension: "jpg" };
     }
-    
-    if (url.includes('youtube.com/watch') || url.includes('youtu.be/') || 
-        url.includes('vimeo.com')) {
-      return { type: 'video', url, extension: 'mp4' };
+
+    if (
+      url.includes("youtube.com/watch") ||
+      url.includes("youtu.be/") ||
+      url.includes("vimeo.com")
+    ) {
+      return { type: "video", url, extension: "mp4" };
     }
-    
-    return { type: 'link', url, fileName: urlObj.hostname };
+
+    return { type: "link", url, fileName: urlObj.hostname };
   } catch (error) {
-    console.error('Error parsing URL:', error);
-    return { type: 'unknown', url };
+    console.error("Error parsing URL:", error);
+    return { type: "unknown", url };
   }
 };

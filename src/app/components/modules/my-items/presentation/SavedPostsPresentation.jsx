@@ -234,12 +234,12 @@ function PostCard({ post, onPostClick, formatPostTime }) {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{post.fullName}</h3>
-                    {post.connectionDegree === 1 && (
+                    {post?.connectionDegree > 0 && (
                       <Badge
                         variant="outline"
                         className="text-xs px-1.5 py-0 bg-green-50 text-green-700 border-green-200"
                       >
-                        {post.randomFirstDegreeConnection || "1st connection"}
+                        {formatOrdinal(post.connectionDegree)}
                       </Badge>
                     )}
                   </div>
@@ -322,6 +322,15 @@ function PostCard({ post, onPostClick, formatPostTime }) {
       </div>
     </Card>
   );
+
+function formatOrdinal(number) {
+  const suffixes = ["th", "st", "nd", "rd"];
+  const value = number % 100;
+  return (
+    number +
+    (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0])
+  );
+}
 }
 
 function EmptyState({ searchQuery, selectedPerson, onClearFilters }) {

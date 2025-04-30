@@ -18,7 +18,7 @@ import { useToast } from "@/app/context/ToastContext";
  * @param {Function} props.toggleForm - Function to toggle the visibility of the form
  * @returns {JSX.Element} The rendered ChangeEmailContainer component
  */
-const ChangeEmailContainer = ({ toggleForm }) => {
+const ChangeEmailContainer = ({ toggleForm,hasPassword }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
@@ -126,6 +126,7 @@ const ChangeEmailContainer = ({ toggleForm }) => {
           errors={errors}
           handleSubmit={handleInitialSubmit}
           isLoading={isLoading}
+          hasPassword={hasPassword}
         />
       ) : (
         <VerificationCodeForm

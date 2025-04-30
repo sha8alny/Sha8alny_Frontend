@@ -18,8 +18,9 @@ const Pending = ({
     setOpenDeleteDialog,
     
 }) => {
+  console.log("pendings",data)
     return (
-      <div className="w-full flex flex-col justify-center items-center gap-6 bg-foreground p-3 rounded-2xl shadow-2xl w-full  ">
+      <div className="w-full flex flex-col justify-center items-center gap-6 bg-foreground p-3 rounded-2xl shadow-2xl ">
 
         {/* Tab Navigation */}
         <div className="flex gap-1 mb-6 w-full justify-center">
@@ -89,7 +90,8 @@ const Pending = ({
                     name={account.name}
                     title={account.headline}
                     profilePic={account.profilePicture}
-                    coverPic={account.coverPic}
+                    coverPic={account.coverPhoto}
+                    numberOfConnections={account.numberOfConnections}
                     buttonText="Accept"
                     buttonAction={() => {
                         onManageRequest({ requestName: account.username, status: "accepted" });                    }

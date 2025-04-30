@@ -69,6 +69,7 @@ const ViewApplicationDetailsModal = ({
     onSave,
     open,
 }) => {
+    console.log("application", application);
     return (
         <Dialog
             open={open}
@@ -163,11 +164,19 @@ const ViewApplicationDetailsModal = ({
                     </div>
                     <div>
                     <h3 className="text-sm text-text font-medium mb-2">Skills</h3>
+                    {isLoading ? (
+                    <p className="text-sm text-muted-foreground">Loading...</p>
+                    ) : (
                     <div className="flex flex-wrap gap-2">
-                        {application.skills?.map((skill) => (
+                    {application.skills?.length > 0 ? (
+                        application.skills?.map((skill) => (
                         <Badge key={skill} varient="secondary" >{skill}</Badge>
-                        ))||"N/A"}
+                        ))
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No Skills Mentioned</p>
+                    )}
                     </div>
+                    )}
                     </div>
                     <div>
                     <h3 className="text-sm text-text font-medium mb-2">Education</h3>

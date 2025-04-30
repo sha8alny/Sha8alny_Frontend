@@ -19,7 +19,7 @@ const FollowersAndFollowings = ({
     
 }) => {
     return (
-      <div className="w-full flex flex-col justify-center items-center gap-6 bg-foreground p-3 rounded-2xl shadow-2xl w-full  ">
+      <div className="w-full flex flex-col justify-center items-center gap-6 bg-foreground p-3 rounded-2xl shadow-2xl">
 
         {/* Tab Navigation */}
         <div className="flex gap-1 mb-6 w-full justify-center">
@@ -83,9 +83,10 @@ const FollowersAndFollowings = ({
                     key={index}
                     username={account.username}
                     name={account.name}
-                    title={account.title}
-                    profilePic={account.profilePic}
-                    coverPic={account.coverPic}
+                    title={account.headline}
+                    profilePic={account.profilePicture}
+                    coverPic={account.coverPhoto}
+                    numberOfConnections={account.numberOfConnections}
                     buttonText=""
                     showButton={false}
                     showRemoveButton={tab === "following"}

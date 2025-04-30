@@ -95,6 +95,7 @@ return (
               title={Applicant.headline}
               profilePic={Applicant.profilePicture}
               coverPic={Applicant.coverPhoto}
+              numberOfConnections={Applicant.numberOfConnections}
               buttonText="View Application"
               buttonAction={() => onViewApplication(Applicant._id)}
               showButton={true}

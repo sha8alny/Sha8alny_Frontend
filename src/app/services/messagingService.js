@@ -8,18 +8,20 @@ import {
   onSnapshot,
   orderBy,
   limit,
+  deleteDoc,
+  getDocs,
+  writeBatch,
 } from "firebase/firestore";
 
 import { fetchWithAuth } from "./userAuthentication";
 import { db } from "@/firebase/firebase";
 
 export const messagingService = {
-
   createConversation: async (receiverName) => {
-    messagingService.sendMessage(receiverName, null, []);
+    return await messagingService.sendMessage(receiverName, null, []);
   },
 
-  deleteConversation: async (conversationId) => {
+  deleteConversationFirestore: async (conversationId) => {
     try {
       if (!conversationId) {
         throw new Error("Conversation ID is required");
@@ -32,12 +34,44 @@ export const messagingService = {
         throw new Error(`Conversation with ID ${conversationId} not found`);
       }
 
-      await updateDoc(conversationRef, {
-        isDeleted: true,
-        deletedAt: new Date(),
-      });
+      // Truly delete the conversation from the database
+      await deleteDoc(conversationRef);
 
       return { success: true };
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
+      throw new Error(`Failed to delete conversation: ${error.message}`);
+    }
+  },
+
+  deleteConversation: async (receiverName) => {
+    try {
+      if (!receiverName) {
+        throw new Error("Conversation ID is required");
+      }
+
+      // Call backend API to delete conversation
+      const response = await fetchWithAuth(
+        `${process.env.NEXT_PUBLIC_API_URL}/Conversation/delete`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            receiverName: receiverName, // Using the receiver name as specified in API
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || `HTTP error! Status: ${response.status}`
+        );
+      }
+
+      return await response.json();
     } catch (error) {
       console.error("Error deleting conversation:", error);
       throw new Error(`Failed to delete conversation: ${error.message}`);
@@ -83,6 +117,7 @@ export const messagingService = {
           [`participantMetadata.${username}.lastReadAt`]: new Date(),
           [`participantMetadata.${username}.unreadCount`]: 0,
         });
+        await messagingService.markMessagesAsRead(username, conversationId);
       }
 
       return {
@@ -145,51 +180,53 @@ export const messagingService = {
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.message || `HTTP error! Status: ${response.status}`
+          errorData.error || `HTTP error! Status: ${response.status}`
         );
       }
 
       return await response.json();
     } catch (error) {
-      throw new Error("Error sending message: " + error.message);
+      throw new Error(error.message);
     }
   },
 
-  markMessagesAsRead: async (receiverName) => {
-    console.log("Marking messages as read for:", receiverName);
-    // try {
-    //   if (!receiverName) {
-    //     throw new Error("Receiver name is required");
-    //   }
+  markMessagesAsRead: async (currentUser, conversationId) => {
+    try {
+      if (!currentUser || !conversationId) {
+        throw new Error("Current user and conversation ID are required");
+      }
 
-    //   const response = await fetchWithAuth(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/Conversation/markMessagesAsRead`,
-    //     {
-    //       method: "PATCH",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         receiverName: receiverName, // Using camelCase as expected by the backend
-    //       }),
-    //     }
-    //   );
+      const messagesRef = collection(
+        db,
+        "conversations",
+        conversationId,
+        "messages"
+      );
 
-    //   if (!response.ok) {
-    //     const errorData = await response.json();
-    //     throw new Error(
-    //       errorData.message ||
-    //         errorData.error ||
-    //         `HTTP error! Status: ${response.status}`
-    //     );
-    //   }
+      const q = query(messagesRef, where("read", "==", false));
 
-    //   return await response.json();
-    // } catch (error) {
-    //   console.error("Error marking messages as read:", error);
-    //   throw new Error("Error marking messages as read: " + error.message);
-    // }
-    return;
+      const querySnapshot = await getDocs(q);
+
+      const batch = writeBatch(db);
+
+      querySnapshot.forEach((doc) => {
+        const messageData = doc.data();
+        if (messageData.senderName !== currentUser) {
+          batch.update(doc.ref, { read: true });
+        }
+      });
+
+      await batch.commit();
+
+      console.log(
+        `Marked ${querySnapshot.size} messages as read for conversation: ${conversationId}`
+      );
+
+      return { success: true, updatedCount: querySnapshot.size };
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+      throw new Error(`Failed to mark messages as read: ${error.message}`);
+    }
   },
 
   // Firestore version of marking messages as read
@@ -254,7 +291,7 @@ export const messagingService = {
         callback(conversations);
       },
       (error) => {
-      console.error("Error subscribing to conversations:", error);
+        console.error("Error subscribing to conversations:", error);
       }
     );
   },
@@ -300,9 +337,11 @@ export const messagingService = {
 
         // Reverse the array to maintain chronological order
         messages.reverse();
-        messagingService.markMessagesAsReadFirestore(conversationId, currentUser).catch((err) =>
-          console.error("Error marking messages as read in Firestore:", err)
-        );
+        messagingService
+          .markMessagesAsReadFirestore(conversationId, currentUser)
+          .catch((err) =>
+            console.error("Error marking messages as read in Firestore:", err)
+          );
         console.log("Messages data:", messages);
         callback(messages);
       },
@@ -336,13 +375,41 @@ export const messagingService = {
         const updateData = {
           [`participantMetadata.${username}.typingStatus`]: isTyping,
         };
-        await updateDoc(conversationRef, updateData);
+
+        // During page unload, try to use a more direct approach
+        if (isTyping === false && document.visibilityState === "hidden") {
+          // For page unload, try to update without waiting for response
+          updateDoc(conversationRef, updateData).catch((err) => {
+            // Can't handle error during unload
+          });
+        } else {
+          // Normal flow
+          await updateDoc(conversationRef, updateData);
+        }
       }
 
       return { success: true };
     } catch (error) {
       console.error("Error updating typing status:", error);
       throw new Error(`Failed to update typing status: ${error.message}`);
+    }
+  },
+
+  // Add a synchronous method for use during page unload
+  resetTypingStatusSync: (username, conversationId) => {
+    if (!conversationId || !username) return;
+
+    try {
+      const conversationRef = doc(db, "conversations", conversationId);
+      const updateData = {
+        [`participantMetadata.${username}.typingStatus`]: false,
+      };
+
+      // Use a synchronous approach without awaiting the response
+      // This is a best-effort approach for page unloads
+      updateDoc(conversationRef, updateData);
+    } catch (error) {
+      // Cannot handle errors during unload
     }
   },
 

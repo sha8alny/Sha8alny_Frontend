@@ -34,8 +34,18 @@ import {
   } from "@/app/components/ui/Select";
   
   import TableSkeleton from "./TableSkeleton";
-import { User } from "lucide-react";
-  
+  import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogFooter,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogCancel,
+    AlertDialogAction,
+  } from "../../../ui/AlertDialog";  
+  import RestoreIcon from '@mui/icons-material/Restore';
   /**
    * @namespace admin
    * @module admin
@@ -82,6 +92,8 @@ import { User } from "lucide-react";
     handleDeleteComment,
     handleDeleteReport,
     handleUpdateReport,
+    handleDeleteCompany,
+    handleReactivateContent,
     page,
     setPage,
     isFetching,
@@ -93,6 +105,8 @@ import { User } from "lucide-react";
     setSortOrder,
     isLoading,
     isError,
+    openConfirmationDialog,
+    setOpenConfirmationDialog,
   }) {
     return (
       <>
@@ -100,6 +114,7 @@ import { User } from "lucide-react";
           <div className="flex flex-wrap gap-2">
             {statusOptions.map((status) => (
               <button
+                data-testid={`status-filter-${status}`}
                 key={status}
                 onClick={() => toggleStatusFilter(status)}
                 className={`text-sm px-2 py-0.5 rounded-md border text-secondary cursor-pointer transition-all duration-200 ${
@@ -113,31 +128,44 @@ import { User } from "lucide-react";
             ))}
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger className="w-full md:w-[180px] bg-transparent text-secondary rounded-md border border-text cursor-pointer">
+            <DropdownMenuTrigger className="w-full md:w-[180px] bg-transparent text-secondary rounded-md border border-text cursor-pointer" 
+            data-testid="filter-dropdown"
+            >
               Select Type
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem
+                data-testid="all-filter"
                 onClick={() => handleFilterChange("all")}
                 className={filters.includes("all") ? "bg-secondary text-white" : ""}
               >
                 All
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleFilterChange("users")}
-                className={filters.includes("users") ? "bg-secondary text-white" : ""}
+                data-testid="user-filter"
+                onClick={() => handleFilterChange("User")}
+                className={filters.includes("User") ? "bg-secondary text-white" : ""}
               >
                 Users
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleFilterChange("posts")}
-                className={filters.includes("posts") ? "bg-secondary text-white" : ""}
+                data-testid="company-filter"
+                onClick={() => handleFilterChange("Company")}
+                className={filters.includes("Company") ? "bg-secondary text-white" : ""}
+              >
+                Companies
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                data-testid="post-filter"
+                onClick={() => handleFilterChange("Post")}
+                className={filters.includes("Post") ? "bg-secondary text-white" : ""}
               >
                 Posts
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleFilterChange("comments")}
-                className={filters.includes("comments") ? "bg-secondary text-white" : ""}
+                data-testid="comment-filter"
+                onClick={() => handleFilterChange("Comment")}
+                className={filters.includes("Comment") ? "bg-secondary text-white" : ""}
               >
                 Comments
               </DropdownMenuItem>
@@ -148,8 +176,12 @@ import { User } from "lucide-react";
               <SelectValue placeholder="Sort by time" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="asc">Ascending</SelectItem>
-              <SelectItem value="des">Descending</SelectItem>
+              <SelectItem value="asc"
+              data-testid="sort-asc"
+              >Ascending</SelectItem>
+              <SelectItem value="des"
+              data-testid="sort-des"
+              >Descending</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -158,7 +190,7 @@ import { User } from "lucide-react";
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Reported User</TableHead>
+                <TableHead>Reported User/Company</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Reported By</TableHead>
@@ -172,42 +204,46 @@ import { User } from "lucide-react";
               ) : isError ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-red-500">
-                    Failed to load reports.
+                    No reports yet.
                   </TableCell>
                 </TableRow>
               ) : (
                 reports.data.map((report) => {
-                  let id=""
                   let avatarSrc=""
-                  let type = ""
-                  if (report.profilePicture){
-                     id = report.userId
-                      avatarSrc = report.profilePicture
-                      type = "User"
-                  }else if(report.keywords){
-                      id = report.postId
-                      avatarSrc = "https://th.bing.com/th/id/OIP.epTD4rU3KFbzG4oT4WSbvwHaHa?rs=1&pid=ImgDetMain"
-                      type = "Post"
+                  let type = report.reportData.type;
+                  let name =""
+                  let id = report.itemDetails._id
+                  if (type === "User") {
+                      avatarSrc = report.itemDetails.profilePicture
+                      name = report.itemDetails.name
+                  }else if(type === "Company"){
+                      avatarSrc = report.itemDetails.logo
+                      name = report.itemDetails.name
+                  }else if(type === "Post" && report.itemDetails.type === "Company"){
+                    avatarSrc = "https://cdn-icons-png.flaticon.com/512/1465/1465438.png"
+                    name = report.itemDetails.companyData.name
+                  }else if(type === "Post" && report.itemDetails.type === "User"){
+                    avatarSrc = "https://th.bing.com/th/id/OIP.epTD4rU3KFbzG4oT4WSbvwHaHa?rs=1&pid=ImgDetMain"
+                    name = report.itemDetails.userData.name
                   }else{
-                    id= report.commentId
                     avatarSrc ="https://static.vecteezy.com/system/resources/previews/026/183/918/non_2x/simple-comment-icon-isolated-on-white-background-vector.jpg"
-                    type = "Comment"
+                    name = report.itemDetails.userData.name 
                   }
                   return (
-                  <TableRow key={id}>
+                  <TableRow key={`${report.reportData._id}-${report.itemDetails._id}`}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-10 w-10">
                           <AvatarImage
                             src={avatarSrc}
-                            alt={report.username}
+                            alt={name}
                           />
                           <AvatarFallback>
-                            {report.username}
+                            {name.charAt(0)} 
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <div className="font-medium">{report.username}</div>
+                          <div className="font-medium">{name}</div>
                         </div>
                       </div>
                     </TableCell>
@@ -222,61 +258,131 @@ import { User } from "lucide-react";
                     <TableCell>
                       <Badge
                         variant="outline"
-                        className={getStatusColor(report.status)}
+                        className={getStatusColor(report.reportData.status)}
                       >
-                        {report.status}
+                        {report.reportData.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>{report.accountName}</TableCell>
                     <TableCell>
-                      {new Date(report.createdAt).toLocaleDateString()}
+                    <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={report.reportData.profilePicture}
+                            alt={report.reportData.username}
+                          />
+                          <AvatarFallback>
+                            {report.reportData.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{report.reportData.name}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(report.reportData.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="w-full flex items-center justify-center">
+                          <button className="w-full flex items-center justify-center"
+                            data-testid="dropdown-menu-trigger">
                             <MoreHorizIcon className="w-10" />
                             <span className="sr-only">Open menu</span>
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
+                            data-testid="view-details"
                             onClick={() => handleViewDetails(report)}
                           >
                             <VisibilityIcon className="mr-2" fontSize="small" />
                             View Details
                           </DropdownMenuItem>
+                          {report.reportData.status === "pending" && (
+                          <AlertDialog open={openConfirmationDialog=== report.reportData._id}   onOpenChange={(isOpen) =>
+                              setOpenConfirmationDialog(isOpen ? report.reportData._id : null)
+                            }>
+                            <AlertDialogTrigger asChild>
+                              <div>
                           <DropdownMenuItem
-                            onClick={() => {
-                              handleUpdateReport(report._id, "approved");
-                              if (type === "User") {
-                                handleDeleteUser(report.userId);
-                              } else if (type === "Post") {
-                                handleDeletePost(report.postId);
-                              } else if (type === "Comment") {
-                                handleDeleteComment(report.commentId);
-                              }
-                            }}
+                          data-testid="approve-report"
+                          onSelect={(e) => e.preventDefault()}
                           >
                             <CheckCircleIcon className="mr-2" fontSize="small" />
                             Approve
                           </DropdownMenuItem>
+                          </div>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="text-secondary">Are You Sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This Will Approve The Report And Remove This {type} From The System, but You Can {type === "User" ? "Unban The User" : type === "Company" ? "Reactivate The Company" : type === "Post" ? "Restore The Post" : "Restore The Comment"} Later if needed.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel
+                                data-testid="cancel-approve"
+                               className=" bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text" 
+                               onClick={() => setOpenConfirmationDialog(null)}
+                                >
+                                  Cancel
+                                </AlertDialogCancel>
+                                <button
+                                data-testid="confirm-approve"
+                                onClick={() => {
+                                  handleUpdateReport(report.reportData._id, "resolved");
+                                  if (type === "User") {
+                                    handleDeleteUser(id);
+                                  } else if (type === "Company") {
+                                    handleDeleteCompany(id);
+                                  } else if (type === "Post") {
+                                    handleDeletePost(id);
+                                  } else if (type === "Comment") {
+                                    handleDeleteComment(id);
+                                  }
+                                }}
+                                className="bg-secondary rounded-2xl text-background hover:bg-secondary/80 text-sm font-semibold p-2"
+                                >
+                                  Approve
+                                </button>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          )}
+                          {report.reportData.status === "pending" && (
                           <DropdownMenuItem
+                            data-testid="reject-report"
                             onClick={() =>
-                              handleUpdateReport(report._id, "rejected")
+                              handleUpdateReport(report.reportData._id, "rejected")
                             }
                           >
                             <DeleteIcon className="mr-2" fontSize="small" />
                             Reject
                           </DropdownMenuItem>
+                          )}
+                          {report.reportData.status === "resolved" && report.itemDetails.isDeleted && (
                           <DropdownMenuItem
+                            data-testid="reactivate-content"
+                            onClick={() =>{
+                              handleReactivateContent(type,report.itemDetails._id)
+                
+                            }}
+                          >
+                            <RestoreIcon className="mr-2" fontSize="small" />
+                            {type === "User" ? "Unban User" : type === "Company" ? "Reactivate Company" : type === "Post" ? "Restore Post" : "Restore Comment"}
+                          </DropdownMenuItem>
+                          )}
+
+                          {/* <DropdownMenuItem
                             onClick={() =>
                               handleUpdateReport(report._id, "reviewing")
                             }
                           >
                             <EditCalendarIcon className="mr-2" fontSize="small" />
                             Set Status to Reviewing
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -290,6 +396,7 @@ import { User } from "lucide-react";
   
         <div className="flex justify-between mt-4">
           <button
+            data-testid="previous-page"
             disabled={page === 1}
             onClick={() => setPage((prev) => prev - 1)}
             className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
@@ -297,7 +404,8 @@ import { User } from "lucide-react";
             Previous
           </button>
           <button
-            disabled={!reports.data?.nextPage || isFetching}
+            data-testid="next-page"
+            disabled={!reports?.nextPage || isFetching}
             onClick={() => setPage((prev) => prev + 1)}
             className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
@@ -309,7 +417,7 @@ import { User } from "lucide-react";
           isOpen={isDialogOpen}
           onClose={handleCloseDialog}
           report={selectedReport}
-          type={selectedReport?.profilePicture ? "User" : selectedReport?.keywords ? "Post" : "Comment"}
+          type={selectedReport?.reportData?.type? "User" : selectedReport?.reportData?.type? "Company":selectedReport?.reportData?.type? "Post" : "Comment"}
         />
       </>
     );
