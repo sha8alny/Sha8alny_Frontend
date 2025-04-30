@@ -65,7 +65,7 @@ const BlockedUsersContainer = ({ toggleForm }) => {
   };
 
   const blockedUsers = data?.blockedUsers || [];
-  const totalCount = data?.numBlocks || 0;
+  // const totalCount = data?.numBlocks || 0;
   const isEmpty = !isLoading && !isError && blockedUsers.length === 0;
 
   return (
@@ -85,7 +85,6 @@ const BlockedUsersContainer = ({ toggleForm }) => {
       navigateToProfile={navigateToProfile}
       currentPage={currentPage}
       onPageChange={handlePageChange}
-      totalCount={totalCount}
       pageSize={pageSize}
     />
   );
