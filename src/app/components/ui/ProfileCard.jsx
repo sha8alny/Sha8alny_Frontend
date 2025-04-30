@@ -8,6 +8,7 @@ const ProfileCard = ({
     title,
     profilePic,
     coverPic,
+    numberOfConnections,
     buttonText,
     buttonAction,
     showButton,
@@ -18,7 +19,7 @@ const ProfileCard = ({
     setOpenDeleteDialog,
 }) => {
 return(
-    <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl bg-background shadow-lg rounded-lg overflow-hidden border border-secondary ">
+    <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl bg-background shadow-lg rounded-lg overflow-hidden border ">
     <div className="h-28 sm:h-32 md:h-37 lg:h-27 rounded-t-lg overflow-hidden">
         {/* // cover image */}
         <div className="relative w-full h-32 sm:h-40 md:h-48">
@@ -67,17 +68,21 @@ return(
     </div>
     </div>
 
-    <div className="p-4 text-center flex flex-col items-center border-secondary border-t">
+    <div className="p-4 text-center flex flex-col items-center ">
         <div className="relative -mt-12 sm:-mt-16 w-20 h-20 md:w-32 md:h-32 sm:w-24 sm:h-24 lg:w-36 lg:h-36"> 
             {/* // profile image */}
-            <img 
+            <a
+            href={`/u/${username}`}>
+           <img 
             src={profilePic || "https://www.gravatar.com/avatar/?d=mp&s=200"}
             alt="profile"
-            className="w-full h-full rounded-full border-2 border-secondary object-cover "
+            className="w-full h-full rounded-full border-2 object-cover "
             />
+            </a>
         </div>
         <a href={`/u/${username}`} className="text-lg sm:text-md font-semibold text-text mt-2">{name}</a>
-        <p className="text-xs sm:text-sm font-thin text-text break-words whitespace-normal max-w-xs sm:max-w-sm ">{title}</p>
+        <p className="text-sm sm:text-md font-thin text-text break-words whitespace-normal max-w-xs sm:max-w-sm ">{title}</p>
+        <p className="text-xs sm:text-sm font-bold text-secondary break-words whitespace-normal max-w-xs sm:max-w-sm ">{numberOfConnections} connections</p>
         {showButton && (
         <Button 
         data-testid="action-button"

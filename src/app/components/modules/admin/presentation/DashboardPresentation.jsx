@@ -8,15 +8,15 @@ import {
   CardTitle,
 } from "@/app/components/ui/Card";
 
-import { TrendingKeywordsChart } from "@/app/components/modules/admin/presentation/TrendingKeywordsChart";
-import { IndustryJobsChart } from "@/app/components/modules/admin/presentation/IndustryJobsChart";
-import { PremiumUsersChart } from "@/app/components/modules/admin/presentation/PremiumUsersChart";
-import { TopHiringCompaniesChart } from "@/app/components/modules/admin/presentation/TopHiringCompaniesChart";
-import { UserRegistrationsChart } from "@/app/components/modules/admin/presentation/UserRegistrationsChart";
-import { MostActiveUsersTable } from "@/app/components/modules/admin/presentation/MostActiveUsersTable";
+import TrendingKeywordsChart from "@/app/components/modules/admin/presentation/TrendingKeywordsChart";
+import IndustryJobsChart from "@/app/components/modules/admin/presentation/IndustryJobsChart";
+import PremiumUsersChart from "@/app/components/modules/admin/presentation/PremiumUsersChart";
+import TopHiringCompaniesChart from "@/app/components/modules/admin/presentation/TopHiringCompaniesChart";
+import UserRegistrationsChart from "@/app/components/modules/admin/presentation/UserRegistrationsChart";
+import MostActiveUsersTable from "@/app/components/modules/admin/presentation/MostActiveUsersTable";
 import { Skeleton } from "@/app/components/ui/Skeleton";
 
- function DashboardPresentation({ data, isLoading }) {
+function DashboardPresentation({ data, isLoading }) {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1">
@@ -93,7 +93,9 @@ import { Skeleton } from "@/app/components/ui/Skeleton";
                 {isLoading ? (
                   <Skeleton className="h-64 w-full" />
                 ) : (
-                  <UserRegistrationsChart data={data?.userRegistrationsByWeek} />
+                  <UserRegistrationsChart
+                    data={data?.userRegistrationsByWeek}
+                  />
                 )}
               </CardContent>
             </Card>
@@ -110,7 +112,10 @@ import { Skeleton } from "@/app/components/ui/Skeleton";
                   {isLoading ? (
                     <Skeleton className="h-64 w-full" />
                   ) : (
-                    <PremiumUsersChart premiumUsers={data?.platformStats.premiumUsers} totalUsers={data?.platformStats.totalUsers} />
+                    <PremiumUsersChart
+                      premiumUsers={data?.platformStats.premiumUsers}
+                      totalUsers={data?.platformStats.totalUsers}
+                    />
                   )}
                 </CardContent>
               </Card>

@@ -23,6 +23,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import RestoreIcon from "@mui/icons-material/Restore";
 import { FlaggedJobModal } from "./FlaggedJobModal";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
@@ -58,6 +59,7 @@ import TableSkeleton from "./TableSkeleton";
  * @param {Function} props.handleDeleteReport - Function to handle deleting a report.
  * @param {Function} props.handleDeleteJob - Function to handle deleting a job.
  * @param {Function} props.handleUpdateReport - Function to handle updating the status of a report.
+ * @param {Function} props.handleReactivateJob - Function to handle reactivating a job.
  * @param {number} props.page - The current page number for pagination.
  * @param {Function} props.setPage - Function to set the current page number.
  * @param {boolean} props.isFetching - Indicates whether data is being fetched.
@@ -80,6 +82,7 @@ export function FlaggedJobsTablePresentation({
   handleDeleteReport,
   handleDeleteJob,
   handleUpdateReport,
+  handleReactivateJob,
   page,
   setPage,
   isFetching,
@@ -112,7 +115,7 @@ export function FlaggedJobsTablePresentation({
           ))}
         </div>
         <Select value={sortOrder} onValueChange={setSortOrder}>
-          <SelectTrigger className="w-full md:w-[180px]">
+          <SelectTrigger className="w-full md:w-[180px]" data-testid="flagged-jobs-sort-trigger">
             <SelectValue
               data-testid="flagged-jobs-sort-time-select"
               placeholder="Sort by time"
@@ -175,6 +178,7 @@ export function FlaggedJobsTablePresentation({
                           <AvatarImage
                             src={report.itemDetails.companyData.logo}
                             alt={report.itemDetails.companyData.name}
+                            data-testid={`company-logo-${report.reportData._id}`}
                           />
                           <AvatarFallback>
                             {report.itemDetails.companyData.name.substring(0, 2)}
@@ -187,7 +191,7 @@ export function FlaggedJobsTablePresentation({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="font-medium hover:text-secondary hover:underline flex items-center"
-                              data-testid="job-link"
+                              data-testid={`job-link-${report.reportData.jobId}`}
                             >
                               {report.itemDetails.title}
                             </a>
@@ -208,7 +212,7 @@ export function FlaggedJobsTablePresentation({
                         {report.reportData.status.charAt(0).toUpperCase() + report.reportData.status.slice(1)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{report.reportData.userId}</TableCell>
+                    <TableCell>{report.reportData.name}</TableCell>
                     <TableCell>
                       {new Date(report.reportData.createdAt).toLocaleDateString()}
                     </TableCell>
@@ -216,7 +220,7 @@ export function FlaggedJobsTablePresentation({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            data-testid="dropdown-flagged-jobs"
+                            data-testid={`dropdown-flagged-jobs-${report.reportData._id}`}
                             className="w-full flex items-center justify-center"
                           >
                             <MoreHorizIcon className="w-10" />
@@ -225,20 +229,18 @@ export function FlaggedJobsTablePresentation({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            data-testid="view-details-flagged-jobs"
+                            data-testid={`view-details-flagged-jobs-${report.reportData._id}`}
                             onClick={() => handleViewDetails(report)}
                           >
                             <VisibilityIcon className="mr-2" fontSize="small" />
                             View Details
                           </DropdownMenuItem>
                           
-                      
-                          
                           {report.reportData.status !== "resolved" && 
                            report.reportData.status !== "rejected" && (
                             <>
                               <DropdownMenuItem
-                                data-testid="job-approve"
+                                data-testid={`job-approve-${report.reportData._id}`}
                                 onClick={() => {
                                   handleUpdateReport(report.reportData._id, "resolved");
                                   handleDeleteJob(report.reportData.jobId);
@@ -251,7 +253,7 @@ export function FlaggedJobsTablePresentation({
                                 Approve
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                data-testid="job-reject"
+                                data-testid={`job-reject-${report.reportData._id}`}
                                 onClick={() =>
                                   handleUpdateReport(report.reportData._id, "rejected")
                                 }
@@ -260,6 +262,17 @@ export function FlaggedJobsTablePresentation({
                                 Reject
                               </DropdownMenuItem>
                             </>
+                          )}
+                          
+                          {report.reportData.status === "resolved" && 
+                           report.itemDetails.isDeleted === true && (
+                            <DropdownMenuItem
+                              data-testid={`job-unban-${report.reportData._id}`}
+                              onClick={() => handleReactivateJob(report.reportData.jobId)}
+                            >
+                              <RestoreIcon className="mr-2" fontSize="small" />
+                              Unban Job
+                            </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -280,6 +293,7 @@ export function FlaggedJobsTablePresentation({
             </p>
             {selectedStatus && (
               <button
+                data-testid="clear-status-filter"
                 onClick={() => handleStatusFilter(selectedStatus)}
                 className="mt-4 px-4 py-2 text-sm bg-transparent text-secondary border border-secondary rounded-md hover:bg-secondary hover:bg-opacity-10 transition-all duration-200"
               >

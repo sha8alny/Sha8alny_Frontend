@@ -5,9 +5,13 @@ import { usePathname } from "next/navigation";
 import FlagIcon from "@mui/icons-material/Flag";
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { SidebarPresentation } from "../presentation/SidebarPresentation";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import WorkIcon from '@mui/icons-material/Work';
 import ReportIcon from '@mui/icons-material/Report';
+import InsightsIcon from '@mui/icons-material/Insights';
+import { SidebarPresentation } from "../presentation/SidebarPresentation";
+import  AdminModalContainer  from "./AdminModalContainer";
+
 /**
  * @namespace admin
  * @module admin
@@ -25,12 +29,13 @@ import ReportIcon from '@mui/icons-material/Report';
 export function SidebarContainer() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
   const routes = [
     {
       name: "Analytics",
       path: "/admin/analytics",
-      icon: QueryStatsIcon,
+      icon: InsightsIcon,
     },
     {
       name: "Flagged Jobs",
@@ -42,7 +47,6 @@ export function SidebarContainer() {
       path: "/admin/job-posts",
       icon: WorkIcon,
     },
-
     {
       name: "Manage Inappropriate Content",
       path: "/admin/inappropriate-content",
@@ -50,12 +54,26 @@ export function SidebarContainer() {
     },
   ];
 
+  const adminAction = {
+    name: "Add Administrator",
+    icon: PersonAddIcon,
+    onClick: () => setIsAdminModalOpen(true)
+  };
+
   return (
-    <SidebarPresentation
-      pathname={pathname}
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      routes={routes}
-    />
+    <>
+      <SidebarPresentation
+        pathname={pathname}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        routes={routes}
+        adminAction={adminAction}
+      />
+    
+      <AdminModalContainer 
+        open={isAdminModalOpen}
+        onOpenChange={setIsAdminModalOpen}
+      />
+    </>
   );
 }
