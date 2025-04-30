@@ -22,13 +22,31 @@ const QuickAccessIcons = [
 
 const QuickAccess = ({ navigateTo }) => {
   return (
-    <Container className="p-4 w-full dark:border-[#111] border shadow-md flex flex-col gap-2">
+    <Container
+      className="p-4 w-full dark:border-[#111] border shadow-md flex flex-col gap-2"
+      testId="quick-access-root"
+    >
       {QuickAccessIcons.map((icon, index) => (
-        <div key={index} className="flex gap-2 items-center">
-          <icon.icon sx={{fontSize: "1.3rem"}} className={icon.className}/>
+        <div
+          key={index}
+          className="flex gap-2 items-center"
+          data-testid={`quick-access-item-${icon.title
+            .replace(/\s+/g, "-")
+            .toLowerCase()}`}
+        >
+          <icon.icon
+            sx={{ fontSize: "1.3rem" }}
+            className={icon.className}
+            data-testid={`quick-access-icon-${icon.title
+              .replace(/\s+/g, "-")
+              .toLowerCase()}`}
+          />
           <button
             onClick={() => navigateTo(icon.path)}
             className="hover:underline text-sm font-semibold cursor-pointer"
+            data-testid={`quick-access-btn-${icon.title
+              .replace(/\s+/g, "-")
+              .toLowerCase()}`}
           >
             {icon.title}
           </button>
