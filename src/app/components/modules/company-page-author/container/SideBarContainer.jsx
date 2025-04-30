@@ -8,6 +8,7 @@ import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
+import GroupIcon from '@mui/icons-material/Group';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteCompany, updateCompany } from "@/app/services/companyManagement";
 import { deleteCompanyMedia } from "@/app/services/companyManagement";
@@ -140,7 +141,7 @@ export default function SideBarContainer({company,setCompany, username ,setLogo 
     const menuItems =[
         {name: "Dashboard", href:`/company/${username}/admin/dashboard`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
         {name: "Page Posts", href:`/company/${username}/admin/posts` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Inbox", href:"#", icon: <ArchiveOutlinedIcon style={{fontSize:"20px"}}/> },
+        {name: "Followers", href:`/company/${username}/admin/followers`, icon: <GroupIcon style={{fontSize:"20px"}}/> },
         {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Jobs", href:`/company/${username}/admin/jobs`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}

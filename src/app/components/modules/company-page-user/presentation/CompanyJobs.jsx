@@ -43,7 +43,7 @@ export default function CompanyJobs({jobs=[], goToJobPage}){
     if(!jobs.length){
         return (
             <div className="text-center py-6 text-text">
-              No job listings available at the moment.
+              No jobs available at the moment.
             </div>
           );
     }
@@ -57,7 +57,7 @@ export default function CompanyJobs({jobs=[], goToJobPage}){
                         <Card key={job.id || index} className="w-60 rounded-xl bg-foreground">
                             <CardContent className="flex flex-col pt-12 pl-6 pb-6">
                                 <img
-                                    src={job?.companyData.logo}
+                                    src={job?.companyData.logo || "/placeholder.svg"}
                                     alt="Profile picture"
                                     className="w-30 h-30 rounded-lg -mt-10"
                                 />
