@@ -3,6 +3,7 @@ import JobHeader from "./JobHeader";
 import JobError from "./JobError";
 import JobContent from "./JobContent";
 import JobActions from "./JobActions";
+import JobActionsContainer from "../container/JobActionsContainer";
 
 /**
  * @namespace jobs
@@ -42,11 +43,11 @@ function JobDetailsPresentation({
       <JobHeader job={job || {}} isLoading={isLoading} />
       <JobContent job={job || {}} isLoading={isLoading} />
       {!isLoading && job && (
-        <JobActions 
-          job={job} 
-          onSaveJob={onSaveJob} 
-          isSaving={isSaving} 
-        />
+        <JobActionsContainer
+          job={job}
+          onSaveJob={onSaveJob}
+          isSaving={isSaving}/>
+
       )}
     </div>
   );

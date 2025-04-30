@@ -20,11 +20,11 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
  * @returns {JSX.Element} The rendered JobHeader component.
  */
 function JobHeader({ job, isLoading }) {
+  console.log("JobHeader", job, isLoading);
   const companyName = job?.company?.name || "";
   const companyLocation = job?.company?.location || "";
   const companyLogo = job?.company?.logo;
   const jobTitle = job?.title || "";
-
   return (
     <div className="border-b pb-6 mb-6">
       <div className="flex items-center justify-between">
@@ -33,12 +33,14 @@ function JobHeader({ job, isLoading }) {
         </h1>
         {!isLoading && (
           <div className="w-24 h-24 relative flex items-center justify-center border border-blue-300 mr-4 rounded-md">
-            <SafeImage
-              src={companyLogo}
-              width={96}
-              height={96}
-              alt={`${companyName} logo`}
-              className="w-full h-full object-cover rounded-md" />
+            {companyLogo && (
+              <SafeImage
+                src={companyLogo}
+                width={96}
+                height={96}
+                alt={`${companyName} logo`}
+                className="w-full h-full object-cover rounded-md" />
+            )}
           </div>
         )}
       </div>
