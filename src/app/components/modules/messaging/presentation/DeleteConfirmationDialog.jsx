@@ -34,7 +34,12 @@ export function DeleteConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="text-muted-foreground" disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            className="text-muted-foreground"
+            disabled={isDeleting}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
