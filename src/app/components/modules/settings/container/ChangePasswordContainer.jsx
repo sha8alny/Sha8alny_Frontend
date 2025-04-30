@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
  *
  */
 
-const ChangePasswordContainer = ({ toggleForm }) => {
+const ChangePasswordContainer = ({ toggleForm ,hasPassword}) => {
   const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
@@ -143,6 +143,7 @@ const ChangePasswordContainer = ({ toggleForm }) => {
       setShowTooltip={setShowTooltip}
       tooltipRef={tooltipRef}
       handleForgetPassword={handleForgetPassword}
+      hasPassword={hasPassword}
     />
   );
 };

@@ -15,11 +15,15 @@ import { Suspense } from "react";
  * @param {Object} props - The component props.
  * @param {string} props.activeSetting - The currently active setting.
  * @param {function} props.setActiveSetting - Function to handle setting the active setting.
+ * @param {boolean} props.hasPassword - Whether the user has a password set.
+ * @param {boolean} props.isLoadingHasPassword - Whether the hasPassword data is loading.
  * @returns {JSX.Element} The rendered component.
  */
 export default function SettingsPresentation({
   activeSetting,
   setActiveSetting,
+  hasPassword,
+  isLoadingHasPassword,
 }) {
   return (
     <div className="flex flex-col md:flex-row min-h-screen w-full bg-background">
@@ -36,10 +40,16 @@ export default function SettingsPresentation({
       <main className="flex-1 overflow-y-auto">
         <div className="flex flex-col gap-4 p-8 rounded-lg w-full">
           {activeSetting === "Account Preferences" && (
-            <SettingsAccountPrefsContainer />
+            <SettingsAccountPrefsContainer 
+              hasPassword={hasPassword}
+              isLoadingHasPassword={isLoadingHasPassword}
+            />
           )}
           {activeSetting === "Sign in & Security" && (
-            <SettingsSecurityContainer />
+            <SettingsSecurityContainer 
+              hasPassword={hasPassword}
+              isLoadingHasPassword={isLoadingHasPassword}
+            />
           )}
           {activeSetting === "Notifications" && "Notifications"}
           {activeSetting === "Privacy & Permissions" && (
