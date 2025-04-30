@@ -1,10 +1,20 @@
+
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { fetchJobListings } from "@/app/services/search";
 import JobSectionAllPresentation from "../presentation/JobSectionAllPresentation";
 import { normalizeJob } from "@/app/utils/normalizeJob";
-
+/**
+ * @namespace search
+ * @module search
+ * Container component for the "All Jobs" section on the search page.
+ * Fetches job listings data based on the provided query and handles navigation logic.
+ * 
+ * @param {Object} props Component props
+ * @param {string} props.query Search query string to fetch relevant job listings
+ * @returns {JSX.Element} Rendered JobSectionAllPresentation component with job data and handlers
+ */
 const JobSectionAllContainer = ({ query }) => {
   const {
     data: jobs,

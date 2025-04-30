@@ -27,13 +27,14 @@ import BlockIcon from "@mui/icons-material/Block";
 import CheckIcon from "@mui/icons-material/Check";
 import { isSameDay } from "date-fns";
 
-// Sub-components
+// Chat header component
 const ChatHeader = React.memo(
   ({
     onBack,
     otherParticipant,
     isOtherParticipantTyping,
-    isOtherUserBlocked,
+    isOtherParticipantBlocked,
+    isCurrentUserBlocked,
     onBlockUser,
     onUnblockUser,
   }) => (
@@ -44,9 +45,10 @@ const ChatHeader = React.memo(
             variant="ghost"
             size="icon"
             onClick={onBack}
+            className="h-8 w-8 hover:bg-foreground dark:hover:bg-foreground/80 transition-colors"
             data-testid="chat-back-button"
           >
-            <ArrowBackIcon sx={{ fontSize: 20 }} />
+            <ArrowBackIcon sx={{ fontSize: 20 }} className="text-muted-foreground"/>
           </Button>
         )}
         <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
@@ -74,14 +76,14 @@ const ChatHeader = React.memo(
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-8 w-8 hover:bg-foreground dark:hover:bg-foreground/80 transition-colors"
             data-testid="chat-options-button"
           >
-            <MoreVertIcon sx={{ fontSize: 20 }} />
+            <MoreVertIcon sx={{ fontSize: 20 }} className="text-muted-foreground" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {isOtherUserBlocked ? (
+          {isOtherParticipantBlocked ? (
             <DropdownMenuItem
               onClick={onUnblockUser}
               data-testid="unblock-user-button"
@@ -93,6 +95,7 @@ const ChatHeader = React.memo(
             <DropdownMenuItem
               onClick={onBlockUser}
               data-testid="block-user-button"
+              disabled={isCurrentUserBlocked}
             >
               <BlockIcon sx={{ mr: 1, fontSize: 16 }} />
               Block user
@@ -104,13 +107,17 @@ const ChatHeader = React.memo(
   )
 );
 
+// Message list component
 const MessageList = React.memo(
   ({ messages, currentUser, otherParticipant, onLoadMoreMessages }) => (
     <div className="space-y-4 pb-2">
       {messages.map((msg, index) => {
         const showDateSeparator =
           index === 0 ||
-          !isSameDay(msg.timestamp, messages[index - 1].timestamp);
+          !isSameDay(
+            new Date(msg.timestamp), 
+            new Date(messages[index - 1].timestamp)
+          );
 
         return (
           <MessageBubble
@@ -129,6 +136,7 @@ const MessageList = React.memo(
   )
 );
 
+// Chat input component
 const ChatInput = React.memo(
   ({
     message,
@@ -157,15 +165,15 @@ const ChatInput = React.memo(
       )}
 
       <div className="p-3 border-t sticky bottom-0 bg-background/95 backdrop-blur-sm z-10 flex-shrink-0">
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-end ">
           <Button
             variant="outline"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
-            className="flex-shrink-0 h-10 w-10"
+            className="flex-shrink-0 h-10 w-10 bg-secondary dark:bg-secondary hover:bg-secondary/80 transition-colors"
             data-testid="file-picker-button"
           >
-            <ImageIcon sx={{ fontSize: 20 }} className="text-primary" />
+            <ImageIcon sx={{ fontSize: 20 }} />
           </Button>
           <input
             type="file"
@@ -187,7 +195,7 @@ const ChatInput = React.memo(
           <Button
             size="icon"
             onClick={onSendMessage}
-            className="flex-shrink-0 h-10 w-10"
+            className="flex-shrink-0 h-10 w-10 bg-secondary hover:bg-secondary/80 transition-colors"
             disabled={!message.trim() && mediaFiles.length === 0}
             data-testid="send-message-button"
           >
@@ -199,11 +207,14 @@ const ChatInput = React.memo(
   )
 );
 
+// Main chat presentation component
 export function ChatPresentation({
   selectedConversation,
   currentUser,
   otherParticipant,
   isOtherParticipantTyping,
+  isOtherParticipantBlocked,
+  isCurrentUserBlocked,
   messages,
   message,
   mediaFiles,
@@ -219,8 +230,10 @@ export function ChatPresentation({
   onUnblockUser,
   onLoadMoreMessages,
 }) {
-  const isOtherUserBlocked = otherParticipant?.isBlocked === true;
   const scrollAreaViewportRef = useRef(null);
+  const prevMessagesLengthRef = useRef(messages.length);
+  const scrollPositionRef = useRef(null);
+  const isLoadingMoreRef = useRef(false);
 
   // Add scroll detection to load more messages when reaching top
   useEffect(() => {
@@ -234,8 +247,15 @@ export function ChatPresentation({
     scrollAreaViewportRef.current = viewport;
 
     const handleScroll = () => {
-      // If user has scrolled near the top (20px threshold), trigger load more
-      if (viewport.scrollTop < 20) {
+      // Store current scroll position
+      scrollPositionRef.current = {
+        scrollTop: viewport.scrollTop,
+        scrollHeight: viewport.scrollHeight
+      };
+      
+      // If user has scrolled near the top (20px threshold) and we're not already loading, trigger load more
+      if (viewport.scrollTop < 20 && !isLoadingMoreRef.current) {
+        isLoadingMoreRef.current = true;
         onLoadMoreMessages && onLoadMoreMessages();
       }
     };
@@ -243,6 +263,32 @@ export function ChatPresentation({
     viewport.addEventListener("scroll", handleScroll);
     return () => viewport.removeEventListener("scroll", handleScroll);
   }, [onLoadMoreMessages]);
+  
+  // Preserve scroll position when new messages are loaded at the top
+  useEffect(() => {
+    if (!scrollAreaViewportRef.current) return;
+    
+    // Check if new messages were loaded (not sent)
+    if (messages.length > prevMessagesLengthRef.current && isLoadingMoreRef.current) {
+      const viewport = scrollAreaViewportRef.current;
+      
+      // Add a small delay to ensure DOM is updated
+      setTimeout(() => {
+        // Get height difference to maintain relative scroll position
+        if (scrollPositionRef.current) {
+          const heightDifference = viewport.scrollHeight - scrollPositionRef.current.scrollHeight;
+          viewport.scrollTop = scrollPositionRef.current.scrollTop + heightDifference;
+        }
+        
+        isLoadingMoreRef.current = false;
+      }, 50);
+    } else {
+      // If not loading more (i.e., new message sent), don't interfere with auto-scroll
+      isLoadingMoreRef.current = false;
+    }
+    
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages.length]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -250,7 +296,8 @@ export function ChatPresentation({
         onBack={onBack}
         otherParticipant={otherParticipant}
         isOtherParticipantTyping={isOtherParticipantTyping}
-        isOtherUserBlocked={isOtherUserBlocked}
+        isOtherParticipantBlocked={isOtherParticipantBlocked}
+        isCurrentUserBlocked={isCurrentUserBlocked}
         onBlockUser={onBlockUser}
         onUnblockUser={onUnblockUser}
       />
@@ -267,9 +314,13 @@ export function ChatPresentation({
         />
       </ScrollArea>
 
-      {isOtherUserBlocked ? (
+      {isOtherParticipantBlocked ? (
         <div className="p-4 text-center text-muted-foreground border-t bg-background/95 backdrop-blur-sm">
           You have blocked this user. Unblock to send messages.
+        </div>
+      ) : isCurrentUserBlocked ? (
+        <div className="p-4 text-center text-muted-foreground border-t bg-background/95 backdrop-blur-sm">
+          You have been blocked by this user and cannot send messages.
         </div>
       ) : (
         <ChatInput

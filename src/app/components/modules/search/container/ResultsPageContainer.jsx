@@ -100,18 +100,23 @@ const ResultsPageContainer = () => {
     retry:1,
   });
 
-  const showNext = results?.length === 10;
+  const showNext = type === "company" 
+    ? results?.companies?.length === 10
+    : results?.length === 10;
+    
   const showPrev = currentPage > 1;
 
   const handlePageChange = (direction) => {
     setCurrentPage((prev) => prev + direction);
   };
 
+  const processedResults = type === "company" ? results?.companies : results;
+
   return (
     <ResultsPagePresentation
       type={type}
       keyword={keyword}
-      results={results}
+      results={processedResults}
       isLoading={isLoading}
       isError={isError}
       currentPage={currentPage}

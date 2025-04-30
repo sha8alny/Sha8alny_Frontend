@@ -10,6 +10,7 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import PersonIcon from "@mui/icons-material/Person";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -204,6 +205,13 @@ function PostCard({ post, onPostClick, formatPostTime }) {
                 <source src={post.media[0]} />
                 Your browser does not support the video tag.
               </video>
+            ) : post.media[0].includes(".pdf") ? (
+              <div className="w-full h-full flex items-center justify-center bg-background">
+                <div className="flex flex-col items-center p-2">
+                  <PictureAsPdfIcon className="text-red-500" fontSize="large" />
+                  <span className="text-xs mt-1 text-center">PDF Document</span>
+                </div>
+              </div>
             ) : (
               <img
                 src={post.media[0]}
