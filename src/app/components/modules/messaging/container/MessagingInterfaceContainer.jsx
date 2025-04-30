@@ -206,9 +206,29 @@ export function MessagingContainer({ currentUser }) {
     }
   }, [selectedConversation]);
 
-  // Add enhanced cleanup on unmount
+  // Add a dedicated effect for handling page refresh/close
   useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Only attempt to reset typing status if we have both requirements
+      if (activeConversationRef.current && currentUser) {
+        // Use the direct synchronous method instead of the async handler
+        // This has a better chance of completing during hard refresh
+        try {
+          // Import directly to avoid circular dependencies
+          const { messagingService } = require("@/app/services/messagingService");
+          // Call the synchronous method directly
+          messagingService.resetTypingStatusSync(currentUser, activeConversationRef.current);
+        } catch (e) {
+          // Can't do much during page unload
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      
       // Final cleanup on component unmount
       if (activeConversationRef.current && currentUser) {
         // Clear any typing indicators on unmount

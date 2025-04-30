@@ -9,6 +9,8 @@ import {
   orderBy,
   limit,
   deleteDoc,
+  getDocs,
+  writeBatch,
 } from "firebase/firestore";
 
 import { fetchWithAuth } from "./userAuthentication";
@@ -115,6 +117,7 @@ export const messagingService = {
           [`participantMetadata.${username}.lastReadAt`]: new Date(),
           [`participantMetadata.${username}.unreadCount`]: 0,
         });
+        await messagingService.markMessagesAsRead(username, conversationId);
       }
 
       return {
@@ -177,51 +180,17 @@ export const messagingService = {
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.message || `HTTP error! Status: ${response.status}`
+          errorData.error || `HTTP error! Status: ${response.status}`
         );
       }
 
       return await response.json();
     } catch (error) {
-      throw new Error("Error sending message: " + error.message);
+      throw new Error(error.message);
     }
   },
 
-  markMessagesAsRead: async (receiverName) => {
-    console.log("Marking messages as read for:", receiverName);
-    // try {
-    //   if (!receiverName) {
-    //     throw new Error("Receiver name is required");
-    //   }
-
-    //   const response = await fetchWithAuth(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/Conversation/markMessagesAsRead`,
-    //     {
-    //       method: "PATCH",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         receiverName: receiverName, // Using camelCase as expected by the backend
-    //       }),
-    //     }
-    //   );
-
-    //   if (!response.ok) {
-    //     const errorData = await response.json();
-    //     throw new Error(
-    //       errorData.message ||
-    //         errorData.error ||
-    //         `HTTP error! Status: ${response.status}`
-    //     );
-    //   }
-
-    //   return await response.json();
-    // } catch (error) {
-    //   console.error("Error marking messages as read:", error);
-    //   throw new Error("Error marking messages as read: " + error.message);
-    // }
-    return;
+  markMessagesAsRead: async (currentUser, conversationId) => {
     try {
       if (!currentUser || !conversationId) {
         throw new Error("Current user and conversation ID are required");
@@ -406,13 +375,41 @@ export const messagingService = {
         const updateData = {
           [`participantMetadata.${username}.typingStatus`]: isTyping,
         };
-        await updateDoc(conversationRef, updateData);
+        
+        // During page unload, try to use a more direct approach
+        if (isTyping === false && document.visibilityState === 'hidden') {
+          // For page unload, try to update without waiting for response
+          updateDoc(conversationRef, updateData).catch(err => {
+            // Can't handle error during unload
+          });
+        } else {
+          // Normal flow
+          await updateDoc(conversationRef, updateData);
+        }
       }
 
       return { success: true };
     } catch (error) {
       console.error("Error updating typing status:", error);
       throw new Error(`Failed to update typing status: ${error.message}`);
+    }
+  },
+
+  // Add a synchronous method for use during page unload
+  resetTypingStatusSync: (username, conversationId) => {
+    if (!conversationId || !username) return;
+    
+    try {
+      const conversationRef = doc(db, "conversations", conversationId);
+      const updateData = {
+        [`participantMetadata.${username}.typingStatus`]: false
+      };
+      
+      // Use a synchronous approach without awaiting the response
+      // This is a best-effort approach for page unloads
+      updateDoc(conversationRef, updateData);
+    } catch (error) {
+      // Cannot handle errors during unload
     }
   },
 
