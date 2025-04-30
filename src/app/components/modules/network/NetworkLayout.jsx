@@ -10,11 +10,17 @@ import  SuggestedUsersSkeleton  from "../../layout/SuggestedUsers";
 import NetworkFilterContainer from "./container/NetworkFiltersContainer";
 import { useState }  from "react";
 import React from "react";
+import { fetchPeopleYouMayKnow } from "@/app/services/connectionManagement";
+import { useRouter } from "next/navigation";
 
 const NetworkLayout = ({ children, activeContent }) => {
   const isActive = (path) => activeContent === path;
   const [filteredResults, setFilteredResults] = useState(null);
+  const router = useRouter();
 
+    const navigateTo = (path) => {
+        router.push(path);
+    }
   return (
     <>
       <div className="container mx-auto py-6 px-0">
@@ -75,7 +81,11 @@ const NetworkLayout = ({ children, activeContent }) => {
             <NetworkFilterContainer activeTab={activeContent} onResults={setFilteredResults}/>
 
             {/* <SuggestedUsersSkeleton /> */}
-            <SuggestedUsersContainer title="People You May Know" />
+            <SuggestedUsersContainer 
+            title="People You May Know"
+            fetchFunction={fetchPeopleYouMayKnow}
+            navigateTo={navigateTo}
+             />
             {/* <SuggestedUsersSkeleton /> */}
             </div>
             </div>
