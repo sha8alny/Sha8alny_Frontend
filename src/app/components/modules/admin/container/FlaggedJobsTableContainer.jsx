@@ -22,20 +22,21 @@ export function FlaggedJobsTableContainer() {
   const [selectedReport, setSelectedReport] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
-  const statusOptions = ["Pending", "Resolved", "Rejected"];
+  const statusOptions = ["pending", "resolved", "rejected"];
   const queryClient = useQueryClient();
   const showToast = useToast();
-  
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(null);
+
   const { data: reports, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["jobReports", page, sortOrder, selectedStatus],
+    queryKey: ["jobReports", page, sortOrder, selectedStatuses],
     queryFn: () =>
-      fetchReports({ 
+      fetchReports({
         pageParam: page,
         pageSize: 10,
-        type: ["Job"], 
-        status: selectedStatus ? [selectedStatus.toLowerCase()] : [],
+        type: ["Job"],
+        status: selectedStatuses,
         sortByTime: sortOrder
       }),
     keepPreviousData: true,
@@ -65,7 +66,7 @@ export function FlaggedJobsTableContainer() {
       showToast(`Error deleting job: ${errorMessage}`, "error");
     }
   });
-  
+
   const reactivateJobMutation = useMutation({
     mutationFn: reactivateContent,
     onSuccess: () => {
@@ -77,7 +78,7 @@ export function FlaggedJobsTableContainer() {
       showToast(`Error reactivating job: ${errorMessage}`, "error");
     }
   });
-  
+
   const updateReportMutation = useMutation({
     mutationFn: updateStatusReport,
     onSuccess: () => {
@@ -106,7 +107,7 @@ export function FlaggedJobsTableContainer() {
       reportData: report.reportData,
       itemDetails: report.itemDetails
     };
-    
+
     setSelectedReport(reportWithDetails);
     setIsDialogOpen(true);
   };
@@ -131,10 +132,18 @@ export function FlaggedJobsTableContainer() {
     updateReportMutation.mutate({ reportId, status });
   };
 
-  const handleStatusFilter = (status) => {
-    setSelectedStatus(prev => prev === status ? "" : status);
+  const toggleStatusFilter = (status) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    );
   };
- 
+
+  const handleStatusFilter = (status) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    );
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
@@ -167,11 +176,14 @@ export function FlaggedJobsTableContainer() {
       page={page}
       setPage={setPage}
       statusOptions={statusOptions}
-      handleStatusFilter={handleStatusFilter}
-      selectedStatus={selectedStatus}
+      toggleStatusFilter={toggleStatusFilter}
+      handleStatusFilter={toggleStatusFilter}
+      selectedStatuses={selectedStatuses}
       getStatusColor={getStatusColor}
-      sortOrder={sortOrder} 
+      sortOrder={sortOrder}
       setSortOrder={setSortOrder}
+      openConfirmationDialog={openConfirmationDialog}
+      setOpenConfirmationDialog={setOpenConfirmationDialog}
     />
   );
 }

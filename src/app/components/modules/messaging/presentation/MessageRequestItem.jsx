@@ -18,19 +18,24 @@ export function MessageRequestItem({
   isProcessing = false,
 }) {
   // Determine participant details based on request type
-  const participant = type === "received" ? request.senderId : request.receiverId;
-  const displayName = participant?.name || participant?.username || "Unknown User";
+  const participant =
+    type === "received" ? request.senderId : request.receiverId;
+  const displayName =
+    participant?.name || participant?.username || "Unknown User";
   const avatarFallback = (displayName.substring(0, 2) || "??").toUpperCase();
-  
+
   // Format the timestamp
   const timestamp = request?.createdAt
     ? formatDistanceToNow(request.createdAt)
     : "";
-  
+
   // Determine message preview
-  const messagePreview = request?.message || 
-    (type === "received" ? "Wants to start a conversation with you" : "You requested to start a conversation");
-    
+  const messagePreview =
+    request?.message ||
+    (type === "received"
+      ? "Wants to start a conversation with you"
+      : "You requested to start a conversation");
+
   // Determine status label
   let statusLabel = "";
   if (request.status === "pending") {
@@ -40,10 +45,13 @@ export function MessageRequestItem({
   } else if (request.status === "rejected") {
     statusLabel = "Rejected";
   }
-  
+
   return (
-    <div className="flex items-start gap-3 w-full p-3 mx-2 my-1 rounded-lg hover:bg-foreground/30 transition-colors duration-200">
-      <Avatar className="flex-shrink-0" onClick={() => onViewProfile?.(participant)}>
+    <div className="flex items-start gap-4 w-full p-4 mx-0 my-1 rounded-lg hover:bg-foreground/30 transition-colors duration-200">
+      <Avatar
+        className="h-10 w-10 flex-shrink-0 cursor-pointer"
+        onClick={() => onViewProfile?.(participant)}
+      >
         <AvatarImage
           src={participant?.profilePicture || `/placeholder.svg`}
           alt={displayName}
@@ -52,34 +60,37 @@ export function MessageRequestItem({
       </Avatar>
 
       <div className="flex-1 min-w-0 overflow-hidden">
-        <div className="flex items-center justify-between w-full">
-          <div className="font-medium truncate max-w-[60%] text-text">
-            {displayName}
-            {statusLabel && (
-              <span className={`ml-2 text-xs ${
-                request.status === "accepted" ? "text-green-500" : 
-                request.status === "rejected" ? "text-red-500" : 
-                "text-muted-foreground"
-              }`}>
-                ({statusLabel})
-              </span>
-            )}
-          </div>
+        <div className="flex items-center justify-between w-full mb-1">
+          <h4 className="font-medium truncate text-text">{displayName}</h4>
           <div className="text-xs text-muted-foreground whitespace-nowrap ml-2 flex-shrink-0">
             {timestamp}
           </div>
         </div>
 
-        <div className="text-sm text-muted-foreground truncate pr-2 mt-1">
+        {statusLabel && (
+          <div
+            className={`text-xs mb-1 ${
+              request.status === "accepted"
+                ? "text-green-500"
+                : request.status === "rejected"
+                ? "text-red-500"
+                : "text-muted-foreground"
+            }`}
+          >
+            {statusLabel}
+          </div>
+        )}
+
+        <div className="text-sm text-muted-foreground truncate pr-2">
           {messagePreview}
         </div>
-        
+
         {/* Action buttons */}
         {request.status === "pending" && type === "received" && (
-          <div className="flex gap-2 mt-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+          <div className="flex gap-2 mt-3">
+            <Button
+              variant="outline"
+              size="sm"
               className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-600 border-green-200"
               onClick={() => onAccept(request._id)}
               disabled={isProcessing}
@@ -87,9 +98,9 @@ export function MessageRequestItem({
               <CheckCircle className="mr-1 h-4 w-4" />
               Accept
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-600 border-red-200"
               onClick={() => onReject(request._id)}
               disabled={isProcessing}
@@ -99,26 +110,27 @@ export function MessageRequestItem({
             </Button>
           </div>
         )}
-        
+
         {/* View conversation button for accepted requests */}
         {request.status === "accepted" && (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="mt-2 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20"
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20"
             onClick={() => onViewProfile?.(participant)}
           >
             <MessageCircle className="mr-1 h-4 w-4" />
             View Conversation
           </Button>
         )}
-        
+
         {/* Delete button for rejected or processed requests */}
-        {(request.status === "rejected" || (request.status === "pending" && type === "sent")) && (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="mt-2 bg-gray-200/10 hover:bg-gray-200/20"
+        {(request.status === "rejected" ||
+          (request.status === "pending" && type === "sent")) && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 bg-gray-200/10 hover:bg-gray-200/20"
             onClick={() => onDelete(request._id)}
             disabled={isProcessing}
           >

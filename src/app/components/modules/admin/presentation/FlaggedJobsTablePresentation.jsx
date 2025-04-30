@@ -35,6 +35,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/Select";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/app/components/ui/AlertDialog";
 
 import TableSkeleton from "./TableSkeleton";
 
@@ -64,13 +75,15 @@ import TableSkeleton from "./TableSkeleton";
  * @param {Function} props.setPage - Function to set the current page number.
  * @param {boolean} props.isFetching - Indicates whether data is being fetched.
  * @param {Array} props.statusOptions - The list of available status options for filtering.
- * @param {Function} props.handleStatusFilter - Function to handle the status filter selection.
- * @param {string} props.selectedStatus - The currently selected status for filtering.
+ * @param {Function} props.toggleStatusFilter - Function to toggle the status filter selection.
+ * @param {Array} props.selectedStatuses - The currently selected statuses for filtering.
  * @param {Function} props.getStatusColor - Function to get the color class for a status badge.
  * @param {string} props.sortOrder - The current sort order ("asc" or "des").
  * @param {Function} props.setSortOrder - Function to set the sort order.
  * @param {boolean} props.isLoading - Indicates whether the data is loading.
  * @param {boolean} props.isError - Indicates whether there was an error loading the data.
+ * @param {string} props.openConfirmationDialog - The ID of the report for which the confirmation dialog is open.
+ * @param {Function} props.setOpenConfirmationDialog - Function to set the open confirmation dialog state.
  */
 
 export function FlaggedJobsTablePresentation({
@@ -87,13 +100,15 @@ export function FlaggedJobsTablePresentation({
   setPage,
   isFetching,
   statusOptions,
-  handleStatusFilter,
-  selectedStatus,
+  toggleStatusFilter,
+  selectedStatuses,
   getStatusColor,
   sortOrder,
   setSortOrder,
   isLoading,
   isError,
+  openConfirmationDialog,
+  setOpenConfirmationDialog,
 }) {
   return (
     <>
@@ -103,19 +118,22 @@ export function FlaggedJobsTablePresentation({
             <button
               key={status}
               data-testid={`flagged-jobs-${status.toLowerCase()}`}
-              onClick={() => handleStatusFilter(status)}
+              onClick={() => toggleStatusFilter(status)}
               className={`text-sm px-2 py-0.5 rounded-md border text-secondary cursor-pointer transition-all duration-200 ${
-                selectedStatus === status
+                selectedStatuses.includes(status)
                   ? "bg-secondary text-white border-secondary"
                   : "bg-transparent text-gray-800 border-gray-600 dark:border-gray-700"
               }`}
             >
-              {status}
+              {status.charAt(0).toUpperCase() + status.slice(1)}
             </button>
           ))}
         </div>
         <Select value={sortOrder} onValueChange={setSortOrder}>
-          <SelectTrigger className="w-full md:w-[180px]" data-testid="flagged-jobs-sort-trigger">
+          <SelectTrigger
+            className="w-full md:w-[180px]"
+            data-testid="flagged-jobs-sort-trigger"
+          >
             <SelectValue
               data-testid="flagged-jobs-sort-time-select"
               placeholder="Sort by time"
@@ -151,11 +169,14 @@ export function FlaggedJobsTablePresentation({
           </div>
         ) : isError ? (
           <div className="p-8 text-center border border-dashed border-yellow-600  rounded-md">
-            <ReportProblemOutlinedIcon className="text-yellow-600 mb-2" style={{ fontSize: '3rem' }} />
-            <h3 className="text-yellow-600 text-lg font-medium mb-2">No Reports Issued At The Moment</h3>
-            <p className="text-gray-600">
-               Please try again later.
-            </p>
+            <ReportProblemOutlinedIcon
+              className="text-yellow-600 mb-2"
+              style={{ fontSize: "3rem" }}
+            />
+            <h3 className="text-yellow-600 text-lg font-medium mb-2">
+              No Reports Issued At The Moment
+            </h3>
+            <p className="text-gray-600">Please try again later.</p>
           </div>
         ) : reports.data && reports.data.length > 0 ? (
           <div className="rounded-md border text-text">
@@ -181,12 +202,15 @@ export function FlaggedJobsTablePresentation({
                             data-testid={`company-logo-${report.reportData._id}`}
                           />
                           <AvatarFallback>
-                            {report.itemDetails.companyData.name.substring(0, 2)}
+                            {report.itemDetails.companyData.name.substring(
+                              0,
+                              2
+                            )}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           {report.reportData.status === "pending" ? (
-                            <a 
+                            <a
                               href={`/jobs/${report.reportData.jobId}`}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -196,7 +220,9 @@ export function FlaggedJobsTablePresentation({
                               {report.itemDetails.title}
                             </a>
                           ) : (
-                            <div className="font-medium">{report.itemDetails.title}</div>
+                            <div className="font-medium">
+                              {report.itemDetails.title}
+                            </div>
                           )}
                           <div className="text-sm text-muted-foreground">
                             {report.itemDetails.companyData.name}
@@ -209,12 +235,15 @@ export function FlaggedJobsTablePresentation({
                         variant="outline"
                         className={getStatusColor(report.reportData.status)}
                       >
-                        {report.reportData.status.charAt(0).toUpperCase() + report.reportData.status.slice(1)}
+                        {report.reportData.status.charAt(0).toUpperCase() +
+                          report.reportData.status.slice(1)}
                       </Badge>
                     </TableCell>
                     <TableCell>{report.reportData.name}</TableCell>
                     <TableCell>
-                      {new Date(report.reportData.createdAt).toLocaleDateString()}
+                      {new Date(
+                        report.reportData.createdAt
+                      ).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -235,45 +264,91 @@ export function FlaggedJobsTablePresentation({
                             <VisibilityIcon className="mr-2" fontSize="small" />
                             View Details
                           </DropdownMenuItem>
-                          
-                          {report.reportData.status !== "resolved" && 
-                           report.reportData.status !== "rejected" && (
-                            <>
+
+                          {report.reportData.status !== "resolved" &&
+                            report.reportData.status !== "rejected" && (
+                              <>
+                                <AlertDialog 
+                                  open={openConfirmationDialog === report.reportData._id}   
+                                  onOpenChange={(isOpen) =>
+                                    setOpenConfirmationDialog(isOpen ? report.reportData._id : null)
+                                  }
+                                >
+                                  <AlertDialogTrigger asChild>
+                                    <div>
+                                      <DropdownMenuItem
+                                        data-testid={`job-approve-${report.reportData._id}`}
+                                        onSelect={(e) => e.preventDefault()}
+                                      >
+                                        <CheckCircleIcon
+                                          className="mr-2"
+                                          fontSize="small"
+                                        />
+                                        Approve
+                                      </DropdownMenuItem>
+                                    </div>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-secondary">Are You Sure?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This will approve the report and remove this job from the system. You can reactivate the job later if needed.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel
+                                        data-testid={`cancel-approve-${report.reportData._id}`}
+                                        className="bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text" 
+                                        onClick={() => setOpenConfirmationDialog(null)}
+                                      >
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <button
+                                        data-testid={`confirm-approve-${report.reportData._id}`}
+                                        onClick={() => {
+                                          handleUpdateReport(report.reportData._id, "resolved");
+                                          handleDeleteJob(report.reportData.jobId);
+                                        }}
+                                        className="cursor-pointer bg-secondary rounded-2xl text-background hover:bg-secondary/80 text-sm font-semibold p-2"
+                                      >
+                                        Approve
+                                      </button>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                                <DropdownMenuItem
+                                  data-testid={`job-reject-${report.reportData._id}`}
+                                  onClick={() =>
+                                    handleUpdateReport(
+                                      report.reportData._id,
+                                      "rejected"
+                                    )
+                                  }
+                                >
+                                  <DeleteIcon
+                                    className="mr-2"
+                                    fontSize="small"
+                                  />
+                                  Reject
+                                </DropdownMenuItem>
+                              </>
+                            )}
+
+                          {report.reportData.status === "resolved" &&
+                            report.itemDetails.isDeleted === true && (
                               <DropdownMenuItem
-                                data-testid={`job-approve-${report.reportData._id}`}
-                                onClick={() => {
-                                  handleUpdateReport(report.reportData._id, "resolved");
-                                  handleDeleteJob(report.reportData.jobId);
-                                }}
+                                data-testid={`job-unban-${report.reportData._id}`}
+                                onClick={() =>
+                                  handleReactivateJob(report.reportData.jobId)
+                                }
                               >
-                                <CheckCircleIcon
+                                <RestoreIcon
                                   className="mr-2"
                                   fontSize="small"
                                 />
-                                Approve
+                                Unban Job
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                data-testid={`job-reject-${report.reportData._id}`}
-                                onClick={() =>
-                                  handleUpdateReport(report.reportData._id, "rejected")
-                                }
-                              >
-                                <DeleteIcon className="mr-2" fontSize="small" />
-                                Reject
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                          
-                          {report.reportData.status === "resolved" && 
-                           report.itemDetails.isDeleted === true && (
-                            <DropdownMenuItem
-                              data-testid={`job-unban-${report.reportData._id}`}
-                              onClick={() => handleReactivateJob(report.reportData.jobId)}
-                            >
-                              <RestoreIcon className="mr-2" fontSize="small" />
-                              Unban Job
-                            </DropdownMenuItem>
-                          )}
+                            )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -284,26 +359,35 @@ export function FlaggedJobsTablePresentation({
           </div>
         ) : (
           <div className="p-8 text-center border border-dashed border-gray-300 rounded-md">
-            <InfoOutlinedIcon className="text-secondary mb-2" style={{ fontSize: '3rem' }} />
-            <h3 className="text-gray-700 text-lg font-medium mb-2">No Reports Found</h3>
+            <InfoOutlinedIcon
+              className="text-secondary mb-2"
+              style={{ fontSize: "3rem" }}
+            />
+            <h3 className="text-gray-700 text-lg font-medium mb-2">
+              No Reports Found
+            </h3>
             <p className="text-gray-500">
-              {selectedStatus 
-                ? `There are no reports with status "${selectedStatus}".`
+              {selectedStatuses.length > 0
+                ? `There are no reports with the selected status filters.`
                 : "There are no flagged job reports at this time."}
             </p>
-            {selectedStatus && (
+            {selectedStatuses.length > 0 && (
               <button
                 data-testid="clear-status-filter"
-                onClick={() => handleStatusFilter(selectedStatus)}
+                onClick={() =>
+                  selectedStatuses.forEach((status) =>
+                    toggleStatusFilter(status)
+                  )
+                }
                 className="mt-4 px-4 py-2 text-sm bg-transparent text-secondary border border-secondary rounded-md hover:bg-secondary hover:bg-opacity-10 transition-all duration-200"
               >
-                Clear Filter
+                Clear Filters
               </button>
             )}
           </div>
         )}
 
-        {(reports.data && reports.data.length > 0) && (
+        {reports.data && reports.data.length > 0 && (
           <div className="flex justify-between mt-4">
             <button
               data-testid="flagged-jobs-prev"

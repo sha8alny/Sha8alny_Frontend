@@ -375,11 +375,11 @@ export const messagingService = {
         const updateData = {
           [`participantMetadata.${username}.typingStatus`]: isTyping,
         };
-        
+
         // During page unload, try to use a more direct approach
-        if (isTyping === false && document.visibilityState === 'hidden') {
+        if (isTyping === false && document.visibilityState === "hidden") {
           // For page unload, try to update without waiting for response
-          updateDoc(conversationRef, updateData).catch(err => {
+          updateDoc(conversationRef, updateData).catch((err) => {
             // Can't handle error during unload
           });
         } else {
@@ -398,13 +398,13 @@ export const messagingService = {
   // Add a synchronous method for use during page unload
   resetTypingStatusSync: (username, conversationId) => {
     if (!conversationId || !username) return;
-    
+
     try {
       const conversationRef = doc(db, "conversations", conversationId);
       const updateData = {
-        [`participantMetadata.${username}.typingStatus`]: false
+        [`participantMetadata.${username}.typingStatus`]: false,
       };
-      
+
       // Use a synchronous approach without awaiting the response
       // This is a best-effort approach for page unloads
       updateDoc(conversationRef, updateData);
