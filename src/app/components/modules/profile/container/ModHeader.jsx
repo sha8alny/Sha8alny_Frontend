@@ -45,7 +45,7 @@ export default function ModHeader({ userInfo }) {
 
   const handleConnectionRequestMutate = useMutation({
     mutationFn: (action) => handleConnectionRequest(userInfo?.username, action),
-    onSuccess: () => {
+    onSuccess: (_data, action) => {
       if (action === "ACCEPT") {
         setConnectionStatus("connected");
       } else if (action === "DECLINE") {

@@ -24,7 +24,7 @@ export default function UserSmallCardContainer({ userInfo, onClick }) {
 
   const handleConnectionRequestMutate = useMutation({
     mutationFn: (action) => handleConnectionRequest(userInfo?.username, action),
-    onSuccess: () => {
+    onSuccess: (_data, action) => {
       queryClient.invalidateQueries(["connections"]);
       queryClient.invalidateQueries(["userProfile", userInfo?.username]);
       if (action === "ACCEPT") {
