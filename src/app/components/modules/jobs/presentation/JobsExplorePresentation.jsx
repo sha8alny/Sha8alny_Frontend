@@ -43,6 +43,7 @@ const JobsExplorePresentation = ({
         <button
           onClick={() => fetchNextPage()}
           className="px-4 py-2 bg-secondary text-white rounded-xl hover:bg-opacity-90 transition"
+          data-testid="retry-button"
         >
           Retry
         </button>
@@ -68,6 +69,7 @@ const JobsExplorePresentation = ({
             onClick={() => fetchNextPage()}
             className="px-4 py-2 rounded-md bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"
             disabled={isFetchingNextPage}
+            data-testid="load-more-button"
           >
             {isFetchingNextPage ? "Loading..." : "Load More"}
           </button>

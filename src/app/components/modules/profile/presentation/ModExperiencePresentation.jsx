@@ -157,8 +157,9 @@ export default function ModExperiencePresentation({
           >
             <div className="flex gap-2">
               <div className="flex-[2_1_0]">
-                <Label className="font-semibold mb-2" htmlFor="title">
+                <Label className="font-semibold mb-2 flex gap-1" htmlFor="title">
                   Job Title
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="title"
@@ -178,8 +179,9 @@ export default function ModExperiencePresentation({
               </div>
 
               <div>
-                <Label className="font-semibold mb-2" htmlFor="employmentType">
+                <Label className="font-semibold mb-2 flex gap-1" htmlFor="employmentType">
                   Type
+                  <span className="text-muted">*</span>
                 </Label>
                 <Select
                   value={watch("employmentType")}
@@ -221,8 +223,9 @@ export default function ModExperiencePresentation({
             </div>
             <div className="flex gap-2">
               <div className="flex-[2_1_0]">
-                <Label className="font-semibold mb-2" htmlFor="company">
+                <Label className="font-semibold mb-2 flex gap-1" htmlFor="company">
                   Company
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="company"
@@ -241,8 +244,9 @@ export default function ModExperiencePresentation({
                 )}
               </div>
               <div className="flex-1">
-                <Label className="font-semibold mb-2" htmlFor="location">
+                <Label className="font-semibold mb-2 flex gap-1" htmlFor="location">
                   Location
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="location"
@@ -285,8 +289,9 @@ export default function ModExperiencePresentation({
             <div className="flex gap-8 justify-between">
               <div className="flex gap-4">
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="startMonth">
+                  <Label className="font-semibold mb-2 flex gap-1" htmlFor="startMonth">
                     Start Month
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("startDate.month")}
@@ -322,8 +327,9 @@ export default function ModExperiencePresentation({
                   )}
                 </div>
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="startYear">
+                  <Label className="font-semibold mb-2 flex gap-1" htmlFor="startYear">
                     Start Year
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("startDate.year")}
@@ -361,8 +367,9 @@ export default function ModExperiencePresentation({
               {!isCurrent && (
                 <div className="flex gap-4">
                   <div>
-                    <Label className="font-semibold mb-2" htmlFor="endMonth">
+                    <Label className="font-semibold mb-2 flex gap-1" htmlFor="endMonth">
                       End Month
+                      <span className="text-muted">*</span>
                     </Label>
                     <Select
                       value={watch("endDate.month")}
@@ -399,8 +406,9 @@ export default function ModExperiencePresentation({
                     )}
                   </div>
                   <div>
-                    <Label className="font-semibold mb-2" htmlFor="endYear">
+                    <Label className="font-semibold mb-2 flex gap-1" htmlFor="endYear">
                       End Year
+                      <span className="text-muted">*</span>
                     </Label>
                     <Select
                       value={watch("endDate.year")}
@@ -682,7 +690,7 @@ export default function ModExperiencePresentation({
                 Previous
               </button>
             )}
-            {!adding && currentStage === 4 && (
+            {!adding && (
               <button
                 type="button"
                 disabled={isLoading}

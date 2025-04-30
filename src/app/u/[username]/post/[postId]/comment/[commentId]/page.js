@@ -40,6 +40,7 @@ export default function CommentPage({ params }) {
         comment={comment}
         nestCount={0}
         postUsername={username}
+        isSingleComment={true}
       />
     </div>
   );

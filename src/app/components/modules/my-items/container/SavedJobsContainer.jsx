@@ -22,6 +22,7 @@ function SavedJobsContainer() {
     data,
     error,
     isLoading,
+    isError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -34,6 +35,9 @@ function SavedJobsContainer() {
   const jobsData = data?.pages.flatMap((page) => Array.isArray(page.data) ? page.data.map(normalizeJob) : [normalizeJob(page.data)]);
 
   const router = useRouter();
+  const onRetry = () => {
+    router.refresh();
+  }
   const handleJobClick = (job) => {
     router.push(
       `/jobs/${job.id}?title=${encodeURIComponent(
@@ -46,11 +50,13 @@ function SavedJobsContainer() {
       savedJobs={jobsData}
       error={error}
       isLoading={isLoading}
+      isError={isError}
       fetchNextPage={fetchNextPage}
       hasNextPage={hasNextPage}
       isFetchingNextPage={isFetchingNextPage}
       handleJobClick={handleJobClick}
       handleMoreJobsClick={() => router.push("/jobs")}
+      handleRetry={onRetry}
     />
   );
 }

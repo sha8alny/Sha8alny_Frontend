@@ -4,7 +4,7 @@ import SearchLayout from "@/app/components/modules/search/presentation/SearchLay
 import CompanySectionAllContainer from "@/app/components/modules/search/container/CompanySectionAllContainer";
 import PeopleSectionAllContainer from "@/app/components/modules/search/container/PeopleSectionAllContainer";
 import JobSectionAllContainer from "../container/JobSectionAllContainer";
-import PostSectionAllContainer from "../container/PostSectionAllContainer";
+import PostSectionAllContainer from "./PostSectionAllPresentation";
 import PeopleIcon from '@mui/icons-material/People';
 import BusinessIcon from '@mui/icons-material/Business';
 import WorkIcon from '@mui/icons-material/Work';

@@ -1,7 +1,6 @@
 import { Delete, Error } from "@mui/icons-material";
 
 export default function DeletePostPresentation({
-  post,
   deletePost,
   isLoading,
   isError,
@@ -52,10 +51,7 @@ export default function DeletePostPresentation({
               Cancel
             </button>
             <button
-              onClick={() => {
-                deletePost(post.postId);
-                onOpenChange(false);
-              }}
+              onClick={() => deletePost()}
               className="flex-1 py-2.5 px-4 bg-red-500 hover:bg-red-600 text-primary cursor-pointer font-semibold rounded-md transition-colors"
             >
               Delete

@@ -12,7 +12,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Button } from "@/app/components/ui/Button";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { AlertDialogCancel } from "@/app/components/ui/AlertDialog";
-import { Upload } from "@mui/icons-material";
+import { Cancel, CheckBox, Close, Upload } from "@mui/icons-material";
 import { X, Loader2 } from "lucide-react";
 import Image from "next/image";
 
@@ -22,12 +22,11 @@ import Image from "next/image";
  */
 export default function ModHeaderPresentation({
   isMyProfile,
-  isConnected,
   userInfo,
-  pendingConnection,
-  handleConnect,
+  handleClick,
   handleResumeDownload,
-  handleSubmit,
+  isConnecting,
+  isHandlingRequest,
 }) {
   return (
     <>
@@ -37,13 +36,8 @@ export default function ModHeaderPresentation({
           buttonClass="bg-secondary text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
           className="min-w-[60vh]"
           buttonData={"Edit Profile"}
-          buttonTestId="edit-profile-button"
-          AlertContent={
-            <ModifyProfileContainer
-              userInfo={userInfo}
-              handleSubmit={handleSubmit}
-            />
-          }
+          testId="edit-profile-button"
+          AlertContent={<ModifyProfileContainer userInfo={userInfo} />}
         />
       ) : (
         <div className="flex gap-4" data-testid="other-profile-actions">
@@ -54,34 +48,79 @@ export default function ModHeaderPresentation({
               testId="download-resume-button"
             />
           )}
-          <ButtonProfile
-            text={
-              isConnected
-                ? "Message"
-                : pendingConnection
-                ? "Awaiting Response"
-                : "Connect"
-            }
-            onClick={() => handleConnect(userInfo.username)}
-            testId={
-              isConnected
-                ? "message-button"
-                : pendingConnection
-                ? "awaiting-response-button"
-                : "connect-button"
-            }
-          />
+          {userInfo?.connectionStatus === "requestReceived" && (
+            <div className="flex gap-3">
+              {isHandlingRequest && (
+                <ButtonProfile
+                  text={
+                    <div className="flex items-center gap-1 text-background/70">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Sending Decision...</span>
+                    </div>
+                  }
+                />
+              )}
+              {!isHandlingRequest && (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleClick("ACCEPT")}
+                    className="flex items-center justify-center gap-1.5 bg-green-500 px-4 py-2 rounded-lg cursor-pointer hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 transition-colors duration-200 text-sm text-background font-semibold"
+                  >
+                    <CheckCircleIcon sx={{ fontSize: "1.125rem" }} />
+                    <span>Accept</span>
+                  </button>
+                  <button
+                    onClick={() => handleClick("DECLINE")}
+                    className="flex items-center justify-center gap-1.5 bg-red-500 px-4 py-2 rounded-lg cursor-pointer hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 transition-colors duration-200 text-sm text-background font-semibold"
+                  >
+                    <Cancel sx={{ fontSize: "1.125rem" }} />
+                    <span>Decline</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          {userInfo?.connectionStatus !== "requestReceived" && (
+            <ButtonProfile
+              disabled={
+                userInfo?.connectionStatus === "pending" || isConnecting
+              }
+              text={
+                isConnecting ? (
+                  <div className="flex items-center gap-1 text-background/70">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Sending Request...</span>
+                  </div>
+                ) : userInfo?.connectionStatus === "connected" ? (
+                  "Message"
+                ) : userInfo?.connectionStatus === "pending" ? (
+                  "Awaiting Response"
+                ) : (
+                  "Connect"
+                )
+              }
+              onClick={() => handleClick()}
+              testId={
+                userInfo?.connectionStatus === "connected"
+                  ? "message-button"
+                  : userInfo?.connectionStatus === "pending"
+                  ? "awaiting-response-button"
+                  : "connect-button"
+              }
+            />
+          )}
         </div>
       )}
     </>
   );
 }
 
-const ButtonProfile = ({ text, onClick, testId }) => {
+const ButtonProfile = ({ text, disabled = false, onClick, testId }) => {
   return (
     <button
       onClick={onClick}
-      className="bg-secondary text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
+      disabled={disabled}
+      className="disabled:bg-secondary/60 disabled:cursor-default bg-secondary text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:bg-secondary/90 duration-250"
       data-testid={testId}
     >
       {text}
@@ -511,7 +550,7 @@ export const ModifyProfilePresentation = ({
 
                 {/* Profile Info */}
                 <div className="pt-20 pb-6 px-6">
-                  <h2 className="text-2xl font-bold" data-testid="preview-name">
+                  <h2 className="text-left text-2xl font-bold" data-testid="preview-name">
                     {name || "Your Name"}
                   </h2>
                   <div>
@@ -524,13 +563,13 @@ export const ModifyProfilePresentation = ({
                     </p>
                   </div>
                   <p
-                    className="text-muted-foreground text-sm"
+                    className="text-left text-muted-foreground text-sm"
                     data-testid="preview-location"
                   >
                     {location || "Your Location"}
                   </p>
                   <p
-                    className="text-muted-foreground text-sm"
+                    className="text-left text-muted-foreground text-sm"
                     data-testid="preview-industry"
                   >
                     {industry || "Your Industry"}

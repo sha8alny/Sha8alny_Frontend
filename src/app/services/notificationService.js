@@ -47,6 +47,21 @@ export const fetchNotifications = async (limit = 10, offset = 0) => {
     throw error;
   }
 };
+export const fetchUnreadNotifications = async (limit = 10, offset = 0) => {
+  try {
+    console.log("Fetching notifications");
+    const response = await fetchWithAuth(
+      `${apiURL}/notifications/unread?limit=${limit}&offset=${offset}`
+    );
+
+    const data = await response.json();
+    console.log("response data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    throw error;
+  }
+};
 
 export const markNotificationAsRead = async (notificationId) => {
   try {

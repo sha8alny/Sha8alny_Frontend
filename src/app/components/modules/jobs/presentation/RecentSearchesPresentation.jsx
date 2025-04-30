@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/app/components/ui/Tooltip";
+import { ScrollArea, ScrollBar } from "@/app/components/ui/ScrollArea";
 /**
  * @namespace jobs
  * @module jobs
@@ -65,7 +66,7 @@ const RecentSearches = ({
   };
 
   return (
-    <div className="bg-foreground rounded-3xl p-6">
+    <div className="bg-foreground rounded-2xl pt-4 pb-1 px-4">
       <div className="flex items-center justify-between mb-2">
         <h2 className="font-bold text-text flex items-center">
           <AccessTime className="h-4 w-4 mr-1" />
@@ -76,13 +77,14 @@ const RecentSearches = ({
           size="sm"
           onClick={onClearAll}
           className="text-xs text-gray-500 hover:text-text"
+          data-testid="clear-all-searches"
         >
           Clear all
         </Button>
       </div>
 
-      <div className="mb-4 overflow-x-auto">
-        <div className="flex gap-2">
+      <ScrollArea className="overflow-x-auto" type="always">
+        <div className="flex gap-2 pb-4">
           <TooltipProvider>
             {recentSearches.map((search, index) => (
               <Tooltip key={index}>
@@ -92,6 +94,7 @@ const RecentSearches = ({
                     onClick={() => onSearchClick(search.query)}
                     className="bg-hover border-secondary hover:text-secondary text-sm rounded-full text-text flex items-center gap-1 group"
                     aria-label={`Search for ${search.label}`}
+                    data-testid={`search-item-${index}`}
                   >
                     {search.filters &&
                       Object.keys(search.filters).length > 0 && (
@@ -109,6 +112,7 @@ const RecentSearches = ({
                       }}
                       className="cursor-pointer"
                       aria-label="Remove search"
+                      data-testid={`remove-search-${index}`}
                     >
                       <Clear
                         className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -123,7 +127,8 @@ const RecentSearches = ({
             ))}
           </TooltipProvider>
         </div>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 };
