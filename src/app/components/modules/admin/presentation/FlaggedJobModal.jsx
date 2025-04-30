@@ -19,6 +19,8 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
  * @param {string} props.report.job.location - The location of the job.
  * @param {string} props.report.job.work_location - The work location type (e.g., remote, on-site).
  * @param {string} props.report.job.employment_type - The employment type (e.g., full-time, part-time).
+ * @param {boolean} props.report.job.isDeleted - Whether the job has been deleted.
+ * @param {string} props.report.job.deletedAt - The date when the job was deleted, if applicable.
  * @param {Object} props.report.user - The user who flagged the job.
  * @param {string} props.report.user.username - The username of the user who flagged the job.
  * @param {string} props.report.createdAt - The date when the job was flagged.
@@ -65,7 +67,7 @@ export function FlaggedJobModal({ isOpen, onClose, report }) {
               <strong>Employment Type:</strong> {report.employmentType}
             </p>
             <p className="text-sm ">
-              <strong>Flagged By:</strong> {report.accountName}
+              <strong>Flagged By:</strong> {report.reportData.name}
             </p>
             <p className="text-sm ">
               <strong>Flagged Date:</strong>{" "}
@@ -74,6 +76,17 @@ export function FlaggedJobModal({ isOpen, onClose, report }) {
             <p className="text-sm ">
               <strong>Flag Reason:</strong> {report.reason || report.text}
             </p>
+            {report.itemDetails.isDeleted !== undefined && (
+              <p className="text-sm ">
+                <strong>Deleted:</strong> {report.itemDetails.isDeleted ? "Yes" : "No"}
+              </p>
+            )}
+            {report.itemDetails.isDeleted  && (
+              <p className="text-sm ">
+                <strong>Deleted At:</strong>{" "}
+                {new Date(report.itemDetails.deletedAt).toLocaleDateString()}
+              </p>
+            )}
           </div>
         </div>
 
