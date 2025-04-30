@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 // UI Components
 import {
   Avatar,
@@ -16,68 +16,107 @@ import {
   DropdownMenuTrigger,
 } from "@/app/components/ui/DropDownMenu";
 // Icons
-import { Search, MoreVertical, Check } from "lucide-react";
+import { Search, MoreVertical, Check, Trash2 } from "lucide-react";
 // Utils
 import { formatDistanceToNow } from "@/app/utils/messagingUtils";
+// Components
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 // Conversation actions component
 const ConversationActions = React.memo(
-  ({ conversation, onToggleRead, onToggleBlock, onMenuClick }) => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 flex-shrink-0 ml-1 hover:bg-muted-foreground/10"
-          onClick={onMenuClick}
-          data-testid={`conversation-actions-button-${conversation.id}`}
-        >
-          <MoreVertical className="h-4 w-4 text-muted-foreground" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem
-          className="flex items-center"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleRead(conversation.id, !conversation.read);
-          }}
-          data-testid={`toggle-read-button-${conversation.id}`}
-        >
-          <span className="truncate">
-            Mark as {conversation.read ? "unread" : "read"}
-          </span>
-        </DropdownMenuItem>
+  ({ conversation, onToggleRead, onToggleBlock, onDeleteConversation, onMenuClick, isDeleting }) => {
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    
+    const handleDeleteClick = (e) => {
+      e.stopPropagation();
+      setShowDeleteConfirmation(true);
+    };
+    
+    const handleConfirmDelete = () => {
+      onDeleteConversation(conversation.id, conversation.otherUsername);
+      // Close the dialog with a slight delay after deletion initiated
+      setTimeout(() => {
+        setShowDeleteConfirmation(false);
+      }, 300);
+    };
+    
+    const displayName = conversation.otherParticipantDetails?.name || conversation.otherUsername;
+    
+    return (
+      <>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 flex-shrink-0 ml-1 hover:bg-muted-foreground/10"
+              onClick={onMenuClick}
+              data-testid={`conversation-actions-button-${conversation.id}`}
+            >
+              <MoreVertical className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem
+              className="flex items-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleRead(conversation.id, !conversation.read);
+              }}
+              data-testid={`toggle-read-button-${conversation.id}`}
+            >
+              <span className="truncate">
+                Mark as {conversation.read ? "unread" : "read"}
+              </span>
+            </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="flex items-center"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleBlock(
-              conversation.id,
-              conversation.otherUsername,
-              !conversation.isOtherParticipantBlocked
-            );
-          }}
-          data-testid={`toggle-block-button-${conversation.id}`}
-        >
-          {conversation.isOtherParticipantBlocked && (
-            <Check className="mr-2 h-4 w-4 flex-shrink-0" />
-          )}
-          <span className="truncate">
-            {conversation.isOtherParticipantBlocked
-              ? "Unblock user"
-              : "Block user"}
-          </span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
+            <DropdownMenuItem
+              className="flex items-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleBlock(
+                  conversation.id,
+                  conversation.otherUsername,
+                  !conversation.isOtherParticipantBlocked
+                );
+              }}
+              data-testid={`toggle-block-button-${conversation.id}`}
+            >
+              {conversation.isOtherParticipantBlocked && (
+                <Check className="mr-2 h-4 w-4 flex-shrink-0" />
+              )}
+              <span className="truncate">
+                {conversation.isOtherParticipantBlocked
+                  ? "Unblock user"
+                  : "Block user"}
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex items-center text-destructive"
+              onClick={handleDeleteClick}
+              data-testid={`delete-conversation-button-${conversation.id}`}
+            >
+              <Trash2 className="mr-2 h-4 w-4 flex-shrink-0 text-destructive" />
+              <span className="truncate">Delete conversation</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+        <DeleteConfirmationDialog
+          isOpen={showDeleteConfirmation}
+          onClose={() => setShowDeleteConfirmation(false)}
+          onConfirm={handleConfirmDelete}
+          participantName={displayName}
+          isDeleting={isDeleting}
+        />
+      </>
+    );
+  }
 );
 
 // Conversation item component
 const ConversationItem = React.memo(
-  ({ conversation, isSelected, onSelect, onToggleRead, onToggleBlock }) => {
+  ({ conversation, isSelected, onSelect, onToggleRead, onToggleBlock, onDeleteConversation, isDeleting }) => {
     const otherParticipant = conversation.otherParticipantDetails;
     const isOtherBlocked = conversation.isOtherParticipantBlocked;
     const isCurrentUserBlocked = conversation.isCurrentUserBlocked;
@@ -143,7 +182,7 @@ const ConversationItem = React.memo(
           </div>
 
           <div className="flex items-center justify-between mt-1 w-full">
-            <div className="text-sm text-muted-foreground truncate pr-2 max-w-3xs">
+            <div className="text-sm text-muted-foreground truncate pr-2 w-3xs">
               {conversation.isOtherParticipantTyping ? (
                 <span className="italic">Typing...</span>
               ) : conversation?.lastMessage ? (
@@ -171,7 +210,9 @@ const ConversationItem = React.memo(
           conversation={conversation}
           onToggleRead={onToggleRead}
           onToggleBlock={onToggleBlock}
+          onDeleteConversation={onDeleteConversation}
           onMenuClick={handleMenuClick}
+          isDeleting={isDeleting}
         />
       </div>
     );
@@ -187,6 +228,8 @@ export function ConversationListPresentation({
   onSelectConversation,
   onToggleRead,
   onToggleBlock,
+  onDeleteConversation,
+  isDeleting = false,
 }) {
   const hasConversations = filteredConversations.length > 0;
 
@@ -223,6 +266,8 @@ export function ConversationListPresentation({
                 onSelect={onSelectConversation}
                 onToggleRead={onToggleRead}
                 onToggleBlock={onToggleBlock}
+                onDeleteConversation={onDeleteConversation}
+                isDeleting={isDeleting}
               />
             ))
           ) : (
