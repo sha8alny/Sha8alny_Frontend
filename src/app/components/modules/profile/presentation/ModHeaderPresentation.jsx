@@ -550,7 +550,7 @@ export const ModifyProfilePresentation = ({
 
                 {/* Profile Info */}
                 <div className="pt-20 pb-6 px-6">
-                  <h2 className="text-2xl font-bold" data-testid="preview-name">
+                  <h2 className="text-left text-2xl font-bold" data-testid="preview-name">
                     {name || "Your Name"}
                   </h2>
                   <div>
@@ -563,13 +563,13 @@ export const ModifyProfilePresentation = ({
                     </p>
                   </div>
                   <p
-                    className="text-muted-foreground text-sm"
+                    className="text-left text-muted-foreground text-sm"
                     data-testid="preview-location"
                   >
                     {location || "Your Location"}
                   </p>
                   <p
-                    className="text-muted-foreground text-sm"
+                    className="text-left text-muted-foreground text-sm"
                     data-testid="preview-industry"
                   >
                     {industry || "Your Industry"}

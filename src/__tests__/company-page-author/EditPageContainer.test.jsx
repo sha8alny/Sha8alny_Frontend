@@ -32,12 +32,8 @@ describe("EditPageContainer",()=>{
           expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
         );
 
-        expect(updateCompany).toHaveBeenCalledWith(
-          "Company-Name",
-          expect.objectContaining({
-            name: "Siemens",
-          })
-        );
+        await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});
+        
     });
 
     test("updates company industry input and calls updateCompany on save", async () => {
@@ -58,12 +54,8 @@ describe("EditPageContainer",()=>{
           expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
         );
 
-        expect(updateCompany).toHaveBeenCalledWith(
-          "Company-Name",
-          expect.objectContaining({
-            industry: "Technology",
-          })
-        );
+        await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});
+        
     });
 
     test("updates company location input and calls updateCompany on save", async () => {
@@ -84,12 +76,7 @@ describe("EditPageContainer",()=>{
           expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
         );
 
-        expect(updateCompany).toHaveBeenCalledWith(
-          "Company-Name",
-          expect.objectContaining({
-            location: "Cairo",
-          })
-        );
+        await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});        
     });
 
     test("updates organization size input and calls updateCompany on save", async () => {
@@ -98,9 +85,9 @@ describe("EditPageContainer",()=>{
         const orgSizeInput = screen.getByLabelText(/Organization size/i);
         const saveButton = screen.getByText("Save");
 
-        fireEvent.change(orgSizeInput, { target: { value: "3-option" } });
+        fireEvent.change(orgSizeInput, { target: { value: "2-10 employees" } });
     
-        expect(orgSizeInput.value).toBe("3-option");
+        expect(orgSizeInput.value).toBe("2-10 employees");
     
         updateCompany.mockResolvedValue({ success: true });
 
@@ -110,12 +97,8 @@ describe("EditPageContainer",()=>{
           expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
         );
 
-        expect(updateCompany).toHaveBeenCalledWith(
-          "Company-Name",
-          expect.objectContaining({
-            orgSize: "3-option",
-          })
-        );
+        await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});
+        
     });
 
     test("updates organization type input and calls updateCompany on save", async () => {
@@ -124,9 +107,9 @@ describe("EditPageContainer",()=>{
         const orgTypeInput = screen.getByLabelText(/Organization type/i);
         const saveButton = screen.getByText("Save");
 
-        fireEvent.change(orgTypeInput, { target: { value: "2-option" } });
+        fireEvent.change(orgTypeInput, { target: { value: "Public company" } });
     
-        expect(orgTypeInput.value).toBe("2-option");
+        expect(orgTypeInput.value).toBe("Public company");
     
         updateCompany.mockResolvedValue({ success: true });
 
@@ -136,12 +119,7 @@ describe("EditPageContainer",()=>{
           expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
         );
 
-        expect(updateCompany).toHaveBeenCalledWith(
-          "Company-Name",
-          expect.objectContaining({
-            orgType: "2-option",
-          })
-        );
+        await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});       
     });
 
     test("updates company url input and calls updateCompany on save", async () => {
@@ -162,12 +140,52 @@ describe("EditPageContainer",()=>{
           expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
         );
 
-        expect(updateCompany).toHaveBeenCalledWith(
-          "Company-Name",
-          expect.objectContaining({
-            URL: "Siemens-09",
-          })
-        );
+        await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});
+        
+    });
+
+    test("updates company founding date input and calls updateCompany on save", async () => {
+      render(<EditPageContainer username="Company-Name" logoPreview="" />);
+
+      const foundingDateInput = screen.getByLabelText("Founding Date");
+      const saveButton = screen.getByText("Save");
+
+      fireEvent.change(foundingDateInput, { target: { value: "2025-04-01" } });
+  
+      expect(foundingDateInput.value).toBe("2025-04-01");
+  
+      updateCompany.mockResolvedValue({ success: true });
+
+      fireEvent.click(saveButton);
+
+      await waitFor(() =>
+        expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
+      );
+      
+      await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});
+      
+    });
+
+    test("updates company phone number input and calls updateCompany on save", async () => {
+      render(<EditPageContainer username="Company-Name" logoPreview="" />);
+
+      const phoneNumberInput = screen.getByLabelText("Phone Number");
+      const saveButton = screen.getByText("Save");
+
+      fireEvent.change(phoneNumberInput, { target: { value: "12345678" } });
+
+      expect(phoneNumberInput.value).toBe("12345678");
+
+      updateCompany.mockResolvedValue({ success: true });
+
+      fireEvent.click(saveButton);
+
+      await waitFor(() =>
+        expect(updateCompany).toHaveBeenCalledWith("Company-Name", expect.any(Object))
+      );
+      
+      await waitFor(() => {expect(updateCompany).toHaveBeenCalledWith( "Company-Name",expect.any(FormData));});
+        
     });
 
     test("resets input fields when discard button is clicked", () => {

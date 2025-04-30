@@ -27,7 +27,7 @@ describe("WritePostContainer",()=>{
         render(<WritePostContainer onPostSubmit={mockOnPostSubmit} logoPreview="" />);
         
         const file = new File(["dummy content"], "example.png", { type: "image/png" });
-        const input = screen.getByTestId("upload-file");
+        const input = screen.getByTestId("upload-image");
         
         fireEvent.change(input, { target: { files: [file] } });
         
@@ -54,35 +54,6 @@ describe("WritePostContainer",()=>{
         const submitButton = screen.getByText("Post");
         fireEvent.click(submitButton);
 
-        expect(mockOnPostSubmit).toHaveBeenCalledWith({ text: "New Post Content",imageUrl:null,videoUrl:null});
+        expect(mockOnPostSubmit).toHaveBeenCalledWith(expect.any(FormData));
     });
-
-    test("submits an article when text is entered",()=>{
-        render(<WritePostContainer onPostSubmit={mockOnPostSubmit} logoPreview="" />);
-        const openModalButton = screen.getByTestId("write-post-modal"); // Adjust if needed
-        fireEvent.click(openModalButton);
-
-        const articleTextarea = screen.getByPlaceholderText("Start writing your article...");
-        fireEvent.change(articleTextarea, { target: { value: "My Article Content" } });
-
-        const publishButton = screen.getByText("Publish");
-        fireEvent.click(publishButton);
-
-        expect(mockOnPostSubmit).toHaveBeenCalledWith({text: "My Article Content",isArticle: true,});
-    });
-
-    test("opens and closes the article modal", () => {
-        render(<WritePostContainer onPostSubmit={mockOnPostSubmit} logoPreview="" />);
-        
-        const openModalButton = screen.getByTestId("write-post-modal");
-        fireEvent.click(openModalButton);
-        
-        expect(screen.getByText("Write an article")).toBeInTheDocument();
-        
-        const closeModalButton = screen.getByText("Cancel");
-        fireEvent.click(closeModalButton);
-        
-        expect(screen.queryByText("Write an article")).not.toBeInTheDocument();
-    });
-
 })

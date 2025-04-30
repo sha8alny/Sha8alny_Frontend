@@ -2,7 +2,6 @@
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "@/app/components/ui/Chart"
 
-
 const COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",
@@ -11,8 +10,17 @@ const COLORS = [
   "var(--chart-5)",
   "var(--secondary)",
 ]
+/**
+ * @namespace admin
+ * @module admin
+ */
+/**
+ * TrendingKeywordsChart component, displays a pie chart showing trending keywords
+ * @param {Object} props - Component props
+ * @param {Array} props.data - Array of objects containing keyword data with 'keyword' and 'value' properties
+ */
 
-export function TrendingKeywordsChart({data}) {
+ function TrendingKeywordsChart({data}) {
   return (
     <div className="flex flex-col h-full">
       <ResponsiveContainer width="100%" height={250}>
@@ -77,3 +85,5 @@ export function TrendingKeywordsChart({data}) {
     </div>
   )
 }
+
+export default TrendingKeywordsChart

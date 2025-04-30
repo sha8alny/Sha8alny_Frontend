@@ -1,6 +1,7 @@
 "use client";
 import React, { Suspense } from "react";
 import CompanyAdminContentContainer from "@/app/components/modules/company-page-author/container/CompanyAdminContentContainer";
+
 export default function CompanyAdminLayout({ children }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>

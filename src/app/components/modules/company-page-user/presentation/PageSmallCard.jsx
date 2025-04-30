@@ -24,7 +24,7 @@ export default function PageSmallCard({ companyInfo, onClick, handleFollowClick,
       <div className="flex gap-2 items-center">
         <div className="relative w-12 h-12 bg-gray-800 rounded-full border-2 border-gray-400">
           <Image
-            src={companyInfo.logo}
+            src={companyInfo.logo || "/placeholder.svg"}
             alt="User Avatar"
             fill
             className="rounded-full"

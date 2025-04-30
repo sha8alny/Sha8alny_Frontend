@@ -452,7 +452,7 @@ const ResultsPagePresentation = ({
   if (type === "post") {
     return (
       <>
-        <div className="bg-foreground mt-4 flex flex-row rounded-lg p-4 text-text mx-auto mb-4 w-full max-w-3xl ">
+        <div className="bg-foreground mt-4 flex flex-row rounded-lg p-4 text-text mx-auto mb-4 w-full max-w-2xl ">
           <div className="flex flex-row w-full items-center justify-between ">
             <h1 className="text-lg font-bold text-center flex items-center gap-1">
               <FeedIcon sx={{ fontSize: "1.125rem" }} /> Posts
@@ -502,9 +502,7 @@ const ResultsPagePresentation = ({
                         headline={item.headline}
                         about={item.about}
                         location={item.location}
-                        onConnect={() =>
-                          console.log(`Connect with ${item.name}`)
-                        }
+                        isConnected={item.isConnected}
                       />
                     );
                   }

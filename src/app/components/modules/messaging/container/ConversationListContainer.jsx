@@ -2,35 +2,31 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ConversationListPresentation } from "../presentation/ConversationList";
-import { messagingService } from "@/app/services/messagingService";
+import { getOtherParticipantUsername } from "@/app/utils/participantUtils";
 
-// Helper function extracted outside component
+// Process a conversation to extract relevant data 
 const processConversation = (conversation, currentUser) => {
     if (!conversation || !currentUser) return null;
     
-    // Get other participant username from the keys of participants object
-    const participantUsernames = Object.keys(conversation.participants || {});
-    const otherUsername = participantUsernames.find(
-        (username) => username !== currentUser
-    );
+    // Get other participant username using utility
+    const otherUsername = getOtherParticipantUsername(conversation, currentUser);
     
     if (!otherUsername) return null;
     
-    // Get details of the other participant
+    // Get metadata for participants
     const otherParticipantDetails = conversation.participants[otherUsername];
-    const isOtherParticipantBlocked = otherParticipantDetails?.isBlocked === true;
+    const currentUserDetails = conversation.participants[currentUser];
     
-    // Get metadata for both participants
+    // Extract blocking statuses - both directions
+    const isOtherParticipantBlocked = otherParticipantDetails?.isBlocked === true;
+    const isCurrentUserBlocked = currentUserDetails?.isBlocked === true;
+    
     const otherParticipantMetadata = conversation.participantMetadata?.[otherUsername];
     const currentUserMetadata = conversation.participantMetadata?.[currentUser];
     
-    // Get typing status from metadata
+    // Extract status data
     const isOtherParticipantTyping = otherParticipantMetadata?.typingStatus === true;
-    
-    // Get unread count from current user's metadata
     const unseenCount = currentUserMetadata?.unreadCount || 0;
-    
-    // Check if the conversation is read by current user
     const isRead = currentUserMetadata?.readFlag === true;
     
     return {
@@ -39,6 +35,7 @@ const processConversation = (conversation, currentUser) => {
         otherUsername,
         isOtherParticipantTyping,
         isOtherParticipantBlocked,
+        isCurrentUserBlocked,
         unseenCount,
         read: isRead
     };
@@ -56,20 +53,17 @@ export function ConversationListContainer({
     const [searchQuery, setSearchQuery] = useState("");
     const [processedConversations, setProcessedConversations] = useState([]);
 
-    // Process conversations with useEffect
+    // Process conversations when they change
     useEffect(() => {
-        const processData = () => {
-            if (!Array.isArray(conversations) || !currentUser) {
-                setProcessedConversations([]);
-                return;
-            }
-            
-            const processed = conversations
-                .map(conv => processConversation(conv, currentUser))
-                .filter(Boolean); // Remove null values
-            
-            // Sort by timestamp descending
-            processed.sort((a, b) => {
+        if (!Array.isArray(conversations) || !currentUser) {
+            setProcessedConversations([]);
+            return;
+        }
+        
+        const processed = conversations
+            .map(conv => processConversation(conv, currentUser))
+            .filter(Boolean)
+            .sort((a, b) => {
                 const dateA = typeof a.timestamp?.toDate === 'function' 
                     ? a.timestamp.toDate() 
                     : new Date(a.timestamp || 0);
@@ -79,20 +73,18 @@ export function ConversationListContainer({
                 return dateB - dateA;
             });
 
-            setProcessedConversations(processed);
-        };
-
-        processData();
+        setProcessedConversations(processed);
     }, [conversations, currentUser]);
 
-    // Memoize handlers to prevent unnecessary rerenders
+    // Handlers
     const handleMarkAsRead = useCallback(
         async (conversationId) => await onMarkAsRead(conversationId),
         [onMarkAsRead]
     );
 
     const handleToggleRead = useCallback(
-        async (conversationId, readStatus) => await onToggleRead(conversationId, readStatus),
+        async (conversationId, readStatus) => 
+            await onToggleRead(conversationId, readStatus),
         [onToggleRead]
     );
 
@@ -107,7 +99,7 @@ export function ConversationListContainer({
         []
     );
 
-    // Memoize filtered conversations
+    // Filter conversations based on search
     const filteredConversations = useMemo(() => {
         return processedConversations.filter(conversation => {
             const query = searchQuery.toLowerCase();
@@ -121,7 +113,6 @@ export function ConversationListContainer({
         <ConversationListPresentation
             filteredConversations={filteredConversations}
             selectedConversationId={selectedConversationId}
-            currentUser={currentUser}
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
             onSelectConversation={onSelectConversation}

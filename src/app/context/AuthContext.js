@@ -3,15 +3,18 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { redirectToSignIn, refreshAccessToken } from "../services/userAuthentication";
+import { redirectToSignIn, refreshAccessToken, checkAdminStatus } from "../services/userAuthentication";
 
 // Define public paths that don't require authentication
-const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/verify-email', '/error'];
+const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/verify-email', '/error', '/about', '/privacy-policy', '/cookie-policy', '/terms'];
 
+// Define admin paths that require admin authorization
+const ADMIN_PATHS = ['/admin'];
 
 const AuthContext = createContext({
   authenticated: false,
   loading: true,
+  isAdmin: false,
   getRedirectPath: () => '/',
   clearRedirectPath: () => {},
 });
@@ -22,6 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const checkAuth = useCallback(async () => {
     if (!pathname) return;
@@ -57,9 +61,26 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
+    // Check admin status for admin routes
+    if (ADMIN_PATHS.some(path => pathname.startsWith(path))) {
+      try {
+        const adminStatus = await checkAdminStatus();
+        setIsAdmin(adminStatus);
+        
+        if (!adminStatus) {
+          router.push('/'); // Redirect to home if not admin
+          return;
+        }
+      } catch (error) {
+        console.error("Failed to verify admin status:", error);
+        router.push('/');
+        return;
+      }
+    }
+
     setAuthenticated(true);
     setLoading(false);
-  }, [pathname]);
+  }, [pathname, router]);
 
   useEffect(() => {
     checkAuth();
@@ -76,6 +97,7 @@ export const AuthProvider = ({ children }) => {
   const contextValue = {
     authenticated,
     loading,
+    isAdmin,
     getRedirectPath,
     clearRedirectPath,
   };

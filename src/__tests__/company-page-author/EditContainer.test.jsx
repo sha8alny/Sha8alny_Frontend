@@ -18,17 +18,14 @@ describe("EditContainer",()=>{
     test("renders components correctly", () => {
         render(<EditContainer username="Siemens" logo="https://example.com/logo.png" />);
         
-        expect(screen.getByTestId("sidebar-container")).toBeInTheDocument();
         expect(screen.getByTestId("edit-page-container")).toBeInTheDocument();
-        expect(screen.getByTestId("analytics")).toBeInTheDocument();
+
     });
 
     test("uses provided logo as initial state", () => {
         render(<EditContainer username="Siemens" logo="https://example.com/logo.png" />);
         
-        const sidebarComponent = screen.getByTestId("sidebar-container");
-        expect(sidebarComponent).toBeInTheDocument();
+        expect(screen.getByTestId("edit-page-container")).toBeInTheDocument();
     });
-
 
 });

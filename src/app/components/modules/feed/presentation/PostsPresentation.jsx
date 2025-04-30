@@ -17,8 +17,12 @@ export default function PostsPresentation({
               <div
                 ref={lastElementRef}
                 key={post.postId + post.isShared?.username}
+                data-testid="posts-presentation-last-item"
               >
-                <PostContainer post={post} />
+                <PostContainer
+                  post={post}
+                  data-testid="posts-presentation-post-item"
+                />
               </div>
             );
           } else {
@@ -26,11 +30,14 @@ export default function PostsPresentation({
               <PostContainer
                 key={post.postId + post.isShared?.username}
                 post={post}
+                data-testid="posts-presentation-post-item"
               />
             );
           }
         })}
-      {isFetchingNextPage && <PostSkeleton />}
+      {isFetchingNextPage && (
+        <PostSkeleton data-testid="posts-presentation-loading" />
+      )}
     </>
   );
 }

@@ -15,7 +15,7 @@ export default function CompanyUserAdminLayout({children}){
                     </main>
                 </div>
                 <div className="p-4 w-100 2xl:w-150">
-                    <SuggestedPagesContainer username={username} title="Pages people also viewed"/>
+                    <SuggestedPagesContainer username={username} title="Pages People Also Viewed"/>
                     <Footer/>
                 </div>
             </div>

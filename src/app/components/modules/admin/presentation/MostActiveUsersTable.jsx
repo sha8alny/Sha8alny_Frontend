@@ -1,20 +1,36 @@
-"use client"
+"use client";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Table"
-import { Badge } from "@/app/components/ui/Badge"
-import { MessageSquare } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/components/ui/Table";
+import { Badge } from "@/app/components/ui/Badge";
 
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 
-
-export function MostActiveUsersTable({users}) {
-  console.log("users", users)
+/**
+ * @namespace admin
+ * @module admin
+ */
+/**
+ * MostActiveUsersTable component, displays a table of the most active users and their activity metrics
+ * @param {Object} props - Component props
+ * @param {Array} props.users - Array of user objects with activity data
+ */
+function MostActiveUsersTable({ users }) {
+  console.log("users", users);
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Email</TableHead>
-          <TableHead>Industry</TableHead>
+          <TableHead>Comments</TableHead>
           <TableHead>Posts</TableHead>
           <TableHead>Last Active</TableHead>
         </TableRow>
@@ -24,15 +40,31 @@ export function MostActiveUsersTable({users}) {
           <TableRow key={user.id}>
             <TableCell className="font-medium">{user.name}</TableCell>
             <TableCell>{user.email}</TableCell>
-            <TableCell>{user.industry}</TableCell>
             <TableCell>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline">{user.posts}</Badge>
-                <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+              {" "}
+              <div className="flex items-center gap-2 w-1/2 justify-center">
+                <Badge className="text-text" variant="outline">
+                  {user.comments}
+                </Badge>
+                <ChatBubbleOutlineOutlinedIcon
+                  sx={{ fontSize: "1rem" }}
+                  className="h-3.5 w-3.5 text-muted-foreground"
+                />
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center w-1/2 justify-center gap-2">
+                <Badge className="text-text" variant="outline">
+                  {user.posts}
+                </Badge>
+                <ArticleOutlinedIcon
+                  sx={{ fontSize: "1rem" }}
+                  className="h-3.5 w-3.5 text-muted-foreground"
+                />
               </div>
             </TableCell>
             <TableCell className="text-muted-foreground">
-              {new Date(user.last_active).toLocaleDateString("en-US", {
+              {new Date(user.lastActive).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
               })}
@@ -41,5 +73,7 @@ export function MostActiveUsersTable({users}) {
         ))}
       </TableBody>
     </Table>
-  )
+  );
 }
+
+export default MostActiveUsersTable;

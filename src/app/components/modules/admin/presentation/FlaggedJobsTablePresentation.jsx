@@ -22,8 +22,12 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import RestoreIcon from "@mui/icons-material/Restore";
 import { FlaggedJobModal } from "./FlaggedJobModal";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
+import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   Select,
   SelectContent,
@@ -55,12 +59,13 @@ import TableSkeleton from "./TableSkeleton";
  * @param {Function} props.handleDeleteReport - Function to handle deleting a report.
  * @param {Function} props.handleDeleteJob - Function to handle deleting a job.
  * @param {Function} props.handleUpdateReport - Function to handle updating the status of a report.
+ * @param {Function} props.handleReactivateJob - Function to handle reactivating a job.
  * @param {number} props.page - The current page number for pagination.
  * @param {Function} props.setPage - Function to set the current page number.
  * @param {boolean} props.isFetching - Indicates whether data is being fetched.
  * @param {Array} props.statusOptions - The list of available status options for filtering.
- * @param {Function} props.toggleStatusFilter - Function to toggle the selected status filter.
- * @param {Array} props.selectedStatuses - The list of currently selected statuses for filtering.
+ * @param {Function} props.handleStatusFilter - Function to handle the status filter selection.
+ * @param {string} props.selectedStatus - The currently selected status for filtering.
  * @param {Function} props.getStatusColor - Function to get the color class for a status badge.
  * @param {string} props.sortOrder - The current sort order ("asc" or "des").
  * @param {Function} props.setSortOrder - Function to set the sort order.
@@ -77,12 +82,13 @@ export function FlaggedJobsTablePresentation({
   handleDeleteReport,
   handleDeleteJob,
   handleUpdateReport,
+  handleReactivateJob,
   page,
   setPage,
   isFetching,
   statusOptions,
-  toggleStatusFilter,
-  selectedStatuses,
+  handleStatusFilter,
+  selectedStatus,
   getStatusColor,
   sortOrder,
   setSortOrder,
@@ -97,9 +103,9 @@ export function FlaggedJobsTablePresentation({
             <button
               key={status}
               data-testid={`flagged-jobs-${status.toLowerCase()}`}
-              onClick={() => toggleStatusFilter(status)}
+              onClick={() => handleStatusFilter(status)}
               className={`text-sm px-2 py-0.5 rounded-md border text-secondary cursor-pointer transition-all duration-200 ${
-                selectedStatuses.includes(status)
+                selectedStatus === status
                   ? "bg-secondary text-white border-secondary"
                   : "bg-transparent text-gray-800 border-gray-600 dark:border-gray-700"
               }`}
@@ -109,7 +115,7 @@ export function FlaggedJobsTablePresentation({
           ))}
         </div>
         <Select value={sortOrder} onValueChange={setSortOrder}>
-          <SelectTrigger className="w-full md:w-[180px]">
+          <SelectTrigger className="w-full md:w-[180px]" data-testid="flagged-jobs-sort-trigger">
             <SelectValue
               data-testid="flagged-jobs-sort-time-select"
               placeholder="Sort by time"
@@ -126,44 +132,74 @@ export function FlaggedJobsTablePresentation({
         </Select>
       </div>
       <div className="h-screen">
-        <div className="rounded-md border text-text">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Job Details</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Flagged By</TableHead>
-                <TableHead>Flagged Date</TableHead>
-                <TableHead className="w-[80px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableSkeleton />
-              ) : isError ? (
+        {isLoading ? (
+          <div className="rounded-md border text-text">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-red-500">
-                    Failed to load reports.
-                  </TableCell>
+                  <TableHead>Job Details</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Flagged By</TableHead>
+                  <TableHead>Flagged Date</TableHead>
+                  <TableHead className="w-[80px]">Actions</TableHead>
                 </TableRow>
-              ) : reports.data && reports.data.length > 0 ? (
-                reports.data.map((report) => (
-                  <TableRow key={report.jobId}>
+              </TableHeader>
+              <TableBody>
+                <TableSkeleton />
+              </TableBody>
+            </Table>
+          </div>
+        ) : isError ? (
+          <div className="p-8 text-center border border-dashed border-yellow-600  rounded-md">
+            <ReportProblemOutlinedIcon className="text-yellow-600 mb-2" style={{ fontSize: '3rem' }} />
+            <h3 className="text-yellow-600 text-lg font-medium mb-2">No Reports Issued At The Moment</h3>
+            <p className="text-gray-600">
+               Please try again later.
+            </p>
+          </div>
+        ) : reports.data && reports.data.length > 0 ? (
+          <div className="rounded-md border text-text">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Job Details</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Flagged By</TableHead>
+                  <TableHead>Flagged Date</TableHead>
+                  <TableHead className="w-[80px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {reports.data.map((report) => (
+                  <TableRow key={report.reportData._id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-10 w-10">
                           <AvatarImage
-                            src={report.companyData.logo}
-                            alt={report.companyData.name}
+                            src={report.itemDetails.companyData.logo}
+                            alt={report.itemDetails.companyData.name}
+                            data-testid={`company-logo-${report.reportData._id}`}
                           />
                           <AvatarFallback>
-                            {report.companyData.name.substring(0, 2)}
+                            {report.itemDetails.companyData.name.substring(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <div className="font-medium">{report.title}</div>
+                          {report.reportData.status === "pending" ? (
+                            <a 
+                              href={`/jobs/${report.reportData.jobId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-medium hover:text-secondary hover:underline flex items-center"
+                              data-testid={`job-link-${report.reportData.jobId}`}
+                            >
+                              {report.itemDetails.title}
+                            </a>
+                          ) : (
+                            <div className="font-medium">{report.itemDetails.title}</div>
+                          )}
                           <div className="text-sm text-muted-foreground">
-                            {report.companyData.name}
+                            {report.itemDetails.companyData.name}
                           </div>
                         </div>
                       </div>
@@ -171,20 +207,20 @@ export function FlaggedJobsTablePresentation({
                     <TableCell>
                       <Badge
                         variant="outline"
-                        className={getStatusColor(report.status)}
+                        className={getStatusColor(report.reportData.status)}
                       >
-                        {report.status}
+                        {report.reportData.status.charAt(0).toUpperCase() + report.reportData.status.slice(1)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{report.accountName}</TableCell>
+                    <TableCell>{report.reportData.name}</TableCell>
                     <TableCell>
-                      {new Date(report.createdAt).toLocaleDateString()}
+                      {new Date(report.reportData.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            data-testid="dropdown-flagged-jobs"
+                            data-testid={`dropdown-flagged-jobs-${report.reportData._id}`}
                             className="w-full flex items-center justify-center"
                           >
                             <MoreHorizIcon className="w-10" />
@@ -193,80 +229,100 @@ export function FlaggedJobsTablePresentation({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            data-testid="view-details-flagged-jobs"
+                            data-testid={`view-details-flagged-jobs-${report.reportData._id}`}
                             onClick={() => handleViewDetails(report)}
                           >
                             <VisibilityIcon className="mr-2" fontSize="small" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            data-testid="job-approve"
-                            onClick={() => {
-                              handleUpdateReport(report._id, "approved");
-                              handleDeleteJob(report.jobId);
-                            }}
-                          >
-                            <CheckCircleIcon
-                              className="mr-2"
-                              fontSize="small"
-                            />
-                            Approve
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            data-testid="job-reject"
-                            onClick={() =>
-                              handleUpdateReport(report._id, "rejected")
-                            }
-                          >
-                            <DeleteIcon className="mr-2" fontSize="small" />
-                            Reject
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            data-testid="job-review"
-                            onClick={() =>
-                              handleUpdateReport(report._id, "reviewing")
-                            }
-                          >
-                            <EditCalendarIcon
-                              className="mr-2"
-                              fontSize="small"
-                            />
-                            Set Status to Reviewing
-                          </DropdownMenuItem>
+                          
+                          {report.reportData.status !== "resolved" && 
+                           report.reportData.status !== "rejected" && (
+                            <>
+                              <DropdownMenuItem
+                                data-testid={`job-approve-${report.reportData._id}`}
+                                onClick={() => {
+                                  handleUpdateReport(report.reportData._id, "resolved");
+                                  handleDeleteJob(report.reportData.jobId);
+                                }}
+                              >
+                                <CheckCircleIcon
+                                  className="mr-2"
+                                  fontSize="small"
+                                />
+                                Approve
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                data-testid={`job-reject-${report.reportData._id}`}
+                                onClick={() =>
+                                  handleUpdateReport(report.reportData._id, "rejected")
+                                }
+                              >
+                                <DeleteIcon className="mr-2" fontSize="small" />
+                                Reject
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          
+                          {report.reportData.status === "resolved" && 
+                           report.itemDetails.isDeleted === true && (
+                            <DropdownMenuItem
+                              data-testid={`job-unban-${report.reportData._id}`}
+                              onClick={() => handleReactivateJob(report.reportData.jobId)}
+                            >
+                              <RestoreIcon className="mr-2" fontSize="small" />
+                              Unban Job
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-500">
-                    No reports found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="p-8 text-center border border-dashed border-gray-300 rounded-md">
+            <InfoOutlinedIcon className="text-secondary mb-2" style={{ fontSize: '3rem' }} />
+            <h3 className="text-gray-700 text-lg font-medium mb-2">No Reports Found</h3>
+            <p className="text-gray-500">
+              {selectedStatus 
+                ? `There are no reports with status "${selectedStatus}".`
+                : "There are no flagged job reports at this time."}
+            </p>
+            {selectedStatus && (
+              <button
+                data-testid="clear-status-filter"
+                onClick={() => handleStatusFilter(selectedStatus)}
+                className="mt-4 px-4 py-2 text-sm bg-transparent text-secondary border border-secondary rounded-md hover:bg-secondary hover:bg-opacity-10 transition-all duration-200"
+              >
+                Clear Filter
+              </button>
+            )}
+          </div>
+        )}
 
-        <div className="flex justify-between mt-4">
-          <button
-            data-testid="flagged-jobs-prev"
-            disabled={page === 1}
-            onClick={() => setPage((prev) => prev - 1)}
-            className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-          <button
-            data-testid="flagged-jobs-next"
-            disabled={!reports.nextPage || isFetching}
-            onClick={() => setPage((prev) => prev + 1)}
-            className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-          >
-            {isFetching ? "Loading..." : "Next"}
-          </button>
-        </div>
+        {(reports.data && reports.data.length > 0) && (
+          <div className="flex justify-between mt-4">
+            <button
+              data-testid="flagged-jobs-prev"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => prev - 1)}
+              className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              data-testid="flagged-jobs-next"
+              disabled={!reports.nextPage || isFetching}
+              onClick={() => setPage((prev) => prev + 1)}
+              className="px-4 py-2 bg-transparent text-secondary rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            >
+              {isFetching ? "Loading..." : "Next"}
+            </button>
+          </div>
+        )}
       </div>
 
       <FlaggedJobModal

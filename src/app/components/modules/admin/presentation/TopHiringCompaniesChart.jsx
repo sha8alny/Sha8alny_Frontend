@@ -2,9 +2,16 @@
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "@/app/components/ui/Chart"
 
-
-
-export function TopHiringCompaniesChart({data}) {
+/**
+ * @namespace admin
+ * @module admin
+ */
+/**
+ * TopHiringCompaniesChart component, displays a bar chart showing companies with the most job postings
+ * @param {Object} props - Component props
+ * @param {Array} props.data - Array of objects containing company data with 'company' and 'jobsPosted' properties
+ */
+ function TopHiringCompaniesChart({data}) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data} layout="vertical">
@@ -65,3 +72,5 @@ export function TopHiringCompaniesChart({data}) {
     </ResponsiveContainer>
   )
 }
+
+export default TopHiringCompaniesChart

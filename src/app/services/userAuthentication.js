@@ -76,3 +76,35 @@ export const redirectToSignIn = () => {
   sessionStorage.removeItem("accessToken");
   window.location.href = "/signin";
 };
+
+export const checkAdminStatus = async () => {
+  try {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL;
+    const response = await fetchWithAuth(`${apiURL}/check-admin`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status === 204) {
+      return false;
+    }
+
+    if (!response.ok) {
+      console.error("Failed to check admin status, status:", response.status);
+      return false;
+    }
+
+    try {
+      const data = await response.json();
+      return data.isAdmin === true;
+    } catch (parseError) {
+      console.error("Error parsing admin status response:", parseError);
+      return false;
+    }
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    return false;
+  }
+};

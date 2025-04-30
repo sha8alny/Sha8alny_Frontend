@@ -96,7 +96,6 @@ export default function ModCertificate({ certificate, adding }) {
   const updateProfileMutation = useUpdateProfile();
   const isLoading = updateProfileMutation.isPending || false;
 
-
   // Create errors object to mimic react-hook-form error structure
   const errors = {
     name: nameError,
@@ -125,7 +124,6 @@ export default function ModCertificate({ certificate, adding }) {
       callback(formData);
     },
     setValue: (fieldName, value) => {
-      setModified(true);
       if (fieldName === "name") setName(value);
       else if (fieldName === "issuingOrganization")
         setIssuingOrganization(value);
@@ -193,7 +191,10 @@ export default function ModCertificate({ certificate, adding }) {
           !neverExpires &&
           !expirationDate.month
         ) {
-          setExpirationDateError("Expiration month is required");
+          setExpirationDateError((prev) => ({
+            ...prev,
+            month: "Expiration month is required",
+          }));
           isValid = false;
         }
 
@@ -202,7 +203,10 @@ export default function ModCertificate({ certificate, adding }) {
           !neverExpires &&
           !expirationDate.year
         ) {
-          setExpirationDateError("Expiration year is required");
+          setExpirationDateError((prev) => ({
+            ...prev,
+            year: "Expiration year is required",
+          }));
           isValid = false;
         }
       }
@@ -219,14 +223,20 @@ export default function ModCertificate({ certificate, adding }) {
         const expirationYear = parseInt(expirationDate.year);
 
         if (issueYear > expirationYear) {
-          setExpirationDateError("Expiration date must be after issue date");
+          setExpirationDateError((prev) => ({
+            ...prev,
+            year: "Expiration year must be after issue year",
+          }));
           isValid = false;
         } else if (issueYear === expirationYear) {
           const issueMonthIndex = months.indexOf(issueDate.month);
           const expirationMonthIndex = months.indexOf(expirationDate.month);
 
           if (issueMonthIndex > expirationMonthIndex) {
-            setExpirationDateError("Expiration date must be after issue date");
+            setExpirationDateError((prev) => ({
+              ...prev,
+              month: "Expiration month must be after issue month",
+            }));
             isValid = false;
           }
         }

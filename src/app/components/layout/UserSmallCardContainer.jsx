@@ -1,9 +1,24 @@
-export default function UserSmallCardContainer({ userInfo, navigateTo }) {
+"use client";
+import {
+  connectUser,
+  handleConnectionRequest,
+} from "@/app/services/connectionManagement";
+import UserSmallCard from "./UserSmallCard";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+export default function UserSmallCardContainer({ userInfo, onClick }) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const [connectionStatus, setConnectionStatus] = useState(
+    userInfo?.connectionStatus || "notConnected"
+  );
+
   const handleConnectMutate = useMutation({
     mutationFn: (username) => connectUser(username),
     onSuccess: () => {
-      queryClient.invalidateQueries(["connections"]);
-      queryClient.invalidateQueries(["userProfile", userInfo?.username]);
+      setConnectionStatus("pending");
     },
   });
 
@@ -12,13 +27,18 @@ export default function UserSmallCardContainer({ userInfo, navigateTo }) {
     onSuccess: () => {
       queryClient.invalidateQueries(["connections"]);
       queryClient.invalidateQueries(["userProfile", userInfo?.username]);
+      if (action === "ACCEPT") {
+        setConnectionStatus("connected");
+      } else if (action === "DECLINE") {
+        setConnectionStatus("notConnected");
+      }
     },
   });
 
   const handleClick = (action = "DECLINE") => {
     switch (userInfo?.connectionStatus) {
       case "connected":
-        router.push(`/u/${userInfo?.username}`); // TODO: Go to chat
+        router.push(`/messages?username=${userInfo?.username}`);
         break;
       case "notConnected":
         handleConnectMutate.mutate(userInfo?.username);
@@ -27,11 +47,16 @@ export default function UserSmallCardContainer({ userInfo, navigateTo }) {
         handleConnectionRequestMutate.mutate(action);
         break;
       case "pending":
-        toast("You have already sent a connection request");
         break;
     }
   };
-
-  const isConnecting = handleConnectMutate.isPending;
-  const isHandlingRequest = handleConnectionRequestMutate.isPending;
+  return (
+    <UserSmallCard
+      userInfo={{ ...userInfo, connectionStatus: connectionStatus }}
+      onClick={onClick}
+      isConnecting={handleConnectMutate.isPending}
+      isHandlingRequest={handleConnectionRequestMutate.isPending}
+      onButtonClick={handleClick}
+    />
+  );
 }

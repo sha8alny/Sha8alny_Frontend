@@ -4,13 +4,23 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "@/app/compone
 
 
 
+
 const COLORS = [
  
-  "var(--chart-3)",
+  "#fd9a00",
   "var(--secondary)",
 ]
-
-export function PremiumUsersChart({premiumUsers,totalUsers}) {
+/**
+ * @namespace admin
+ * @module admin
+ */
+/**
+ * PremiumUsersChart component, displays a pie chart showing the distribution of premium vs basic users
+ * @param {Object} props - Component props
+ * @param {number} props.premiumUsers - Number of premium users
+ * @param {number} props.totalUsers - Total number of users
+ */
+ function PremiumUsersChart({premiumUsers,totalUsers}) {
   const data = [
     { name: "Premium", value: premiumUsers },
     { name: "Basic", value: totalUsers - premiumUsers },
@@ -59,3 +69,4 @@ export function PremiumUsersChart({premiumUsers,totalUsers}) {
     </ResponsiveContainer>
   )
 }
+export default PremiumUsersChart

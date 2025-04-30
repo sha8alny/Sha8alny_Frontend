@@ -14,16 +14,6 @@ import { fetchWithAuth } from "./userAuthentication";
 import { db } from "@/firebase/firebase";
 
 export const messagingService = {
-  // --- Connection Management ---
-  getUserConnections: async (page = 1, pageSize = 10) => {
-    const response = await fetchWithAuth(
-      `${process.env.NEXT_PUBLIC_API_URL}/connections/${page}/${pageSize}`
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch user connections");
-    }
-    return response.json();
-  },
 
   createConversation: async (receiverName) => {
     messagingService.sendMessage(receiverName, null, []);
@@ -356,5 +346,42 @@ export const messagingService = {
     }
   },
 
-  toggleUserBlock: async (username, conversationId, isBlocked) => {},
+  toggleUserBlock: async (username, conversationId, isBlocked) => {
+    try {
+      if (!username || !conversationId) {
+        throw new Error("Username and conversation ID are required");
+      }
+
+      const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/Conversation/Block`;
+      const requestBody = {
+        receiverName: username,
+      };
+
+      const response = await fetchWithAuth(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || `HTTP error! Status: ${response.status}`
+        );
+      }
+
+      // Update Firestore to reflect the block status
+      const conversationRef = doc(db, "conversations", conversationId);
+      await updateDoc(conversationRef, {
+        [`participants.${username}.isBlocked`]: isBlocked,
+      });
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error toggling user block status:", error);
+      throw new Error(`Failed to toggle user block status: ${error.message}`);
+    }
+  },
 };

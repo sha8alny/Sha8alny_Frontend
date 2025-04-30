@@ -1,4 +1,3 @@
-"use client";
 import InputFieldContainer from "../../company-page-form/container/InputFieldContainer";
 import TagLineContainer from "../../company-page-form/container/TagLineContainer";
 import SelectFieldContainer from "../../company-page-form/container/SelectFieldContainer";

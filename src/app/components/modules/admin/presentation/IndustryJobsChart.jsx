@@ -2,9 +2,16 @@
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "@/app/components/ui/Chart"
 
-
-
-export function IndustryJobsChart({data}) {
+/**
+ * @namespace admin
+ * @module admin
+ */
+/**
+ * IndustryJobsChart component, displays a bar chart showing jobs by industry
+ * @param {Object} props - Component props
+ * @param {Array} props.data - Array of objects containing industry data with 'industry' and 'jobs' properties
+ */
+ function IndustryJobsChart({data}) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data} layout="vertical">
@@ -78,3 +85,5 @@ export function IndustryJobsChart({data}) {
     </ResponsiveContainer>
   )
 }
+
+export default IndustryJobsChart

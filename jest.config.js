@@ -1,4 +1,4 @@
-import nextJest from 'next/jest'
+const nextJest = require('next/jest')
 
 /** @type {import('jest').Config} */
 const createJestConfig = nextJest({
@@ -19,8 +19,8 @@ const config = {
     "/src/utils/",
     "/src/app/services/",
   ],
-    // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   detectOpenHandles: true,
 }
 
-export default createJestConfig(config)
+module.exports = createJestConfig(config)

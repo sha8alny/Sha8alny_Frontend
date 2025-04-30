@@ -1,6 +1,26 @@
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 import { fetchWithAuth } from "@/app/services/userAuthentication";
 
+export const fetchDashboardData = async () => {
+  try {
+    const response = await fetchWithAuth(`${apiURL}/admin/analytics`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching analytics data: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to fetch dashboard data:", error);
+    throw error;
+  }
+};
+
 export const fetchReports = async ({
   pageParam = 1,
   pageSize = 10,
@@ -15,15 +35,15 @@ export const fetchReports = async ({
   url.searchParams.append("pageSize", pageSize.toString());
 
   if (type.length > 0) {
-    url.searchParams.append("type", type.join(','));
+    url.searchParams.append("type", type.join(","));
   }
 
   if (reason.length > 0) {
-    url.searchParams.append("reason", reason.join(','));
+    url.searchParams.append("reason", reason.join(","));
   }
 
   if (status.length > 0) {
-    url.searchParams.append("status", status.join(','));
+    url.searchParams.append("status", status.join(","));
   }
 
   if (sortByTime) {
@@ -53,13 +73,26 @@ export const deleteReport = async (reportId) => {
       Authorization: `Bearer ${authToken}`,
     },
   });
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
+  return response.status === 204 ? {} : await response.json();
 };
 
 export const deleteJob = async (jobId) => {
   const response = await fetchWithAuth(`${apiURL}/admin/jobs/${jobId}`, {
     method: "DELETE",
   });
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
+  return response.status === 204 ? {} : await response.json();
 };
+
 export const deleteComment = async (commentId) => {
   const response = await fetchWithAuth(
     `${apiURL}/admin/comments/${commentId}`,
@@ -67,35 +100,65 @@ export const deleteComment = async (commentId) => {
       method: "DELETE",
     }
   );
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
+  return response.status === 204 ? {} : await response.json();
 };
+
 export const deletePost = async (postId) => {
   const response = await fetchWithAuth(`${apiURL}/admin/posts/${postId}`, {
     method: "DELETE",
   });
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
+  return response.status === 204 ? {} : await response.json();
 };
+
 export const deleteUser = async (userId) => {
   const response = await fetchWithAuth(`${apiURL}/admin/users/${userId}`, {
     method: "DELETE",
   });
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
+  return response.status === 204 ? {} : await response.json();
 };
 export const deleteCompany = async (companyId) => {
   const response = await fetchWithAuth(`${apiURL}/admin/companies/${companyId}`, {
     method: "DELETE",
   });
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
+  return response.status === 204 ? {} : await response.json();
 };
 
-export const updateStatusReport = async ({reportId, status}) => {
-  const response = await fetchWithAuth(`${apiURL}/admin/reports/${reportId}`, {
-    method: "PATCH",
+export const makeAdmin = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/make-admin`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-
-    body: JSON.stringify({status }),
+    body: JSON.stringify({ username }),
   });
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error(`HTTP error: Status: ${response.status}`);
+    const message = data?.message || data?.error || "Failed to update username";
+    throw new Error(message);
   }
+
+  return data;
 };
 
 export const reactivateContent = async ({ type, id }) => {
@@ -112,4 +175,18 @@ export const reactivateContent = async ({ type, id }) => {
   }
 
   return response.status === 204 ? {} : await response.json();
+};
+
+export const updateStatusReport = async ({reportId, status}) => {
+  const response = await fetchWithAuth(`${apiURL}/admin/reports/${reportId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify({status }),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
 };

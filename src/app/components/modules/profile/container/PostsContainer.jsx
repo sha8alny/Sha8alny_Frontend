@@ -22,7 +22,6 @@ export default function PostsContainer({ username }) {
 
   const navigateTo = (path) => {
     router.push(path);
-    window.location.reload();
   };
 
   const isVideo = (mediaUrl) => {
