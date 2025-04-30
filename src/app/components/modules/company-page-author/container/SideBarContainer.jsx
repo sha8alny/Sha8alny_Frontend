@@ -143,7 +143,7 @@ export default function SideBarContainer({company,setCompany, username ,setLogo 
         {name: "Page Posts", href:`/company/${username}/admin/posts` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Followers", href:`/company/${username}/admin/followers`, icon: <GroupIcon style={{fontSize:"20px"}}/> },
         {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Jobs", href:`/company/${username}/admin/company-author`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Jobs", href:`/company/${username}/admin/jobs`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(

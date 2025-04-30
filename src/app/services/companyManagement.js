@@ -1,5 +1,4 @@
 
-import { use } from "react";
 import { fetchWithAuth } from "./userAuthentication";
 
 const apiURL= process.env.NEXT_PUBLIC_API_URL;
@@ -113,7 +112,45 @@ export const editJob = async ({companyUsername, jobId, jobData}) => {
         throw new Error(error.message);
     }
 }
-  
+
+export const deletedJobs = async ({page, companyUsername}) => {
+    try{
+       const queryParams = new URLSearchParams({
+            pageNum: page,
+        });
+        const deletedJobsResponse = await fetchWithAuth(`${apiURL}/restore/company/${companyUsername}/job?${queryParams}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!deletedJobsResponse.ok) {
+            throw new Error("Failed to fetch deleted jobs");
+        }
+        if (deletedJobsResponse.status === 204) {
+            return [];
+        }
+        console.log("Deleted jobs response:", deletedJobsResponse.json);
+        return deletedJobsResponse.json();
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+};
+
+export const restoreJob = async ({companyUsername, jobId}) => {
+    try{
+        const restoreJobResponse = await fetchWithAuth(`${apiURL}/restore/company/${companyUsername}/job/${jobId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!restoreJobResponse.ok) {
+            throw new Error("Failed to restore job");
+        }
+        return true;
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+};
 
 
 export const JobApplicants = async (jobId, page = 1) => {
@@ -534,3 +571,4 @@ export const fetchCompanyPeople = async (username) => {
         throw new Error(error.message);
     }
 };
+

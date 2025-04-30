@@ -18,16 +18,15 @@ import { Cancel } from "@mui/icons-material";
  */
 export default function ModVisibilityPresentation({
   currentStage,
-  visibility,
-  setVisibility,
-  username,
-  error,
-  usernameError,
-  handleChange,
-  modifyingVisibility,
-  modifyVisibility,
   handleSave,
   setOpen,
+  usernameError,
+  handleChange,
+  modifyVisibility,
+  visibility,
+  error,
+  username,
+  modifyingVisibility,
 }) {
   return (
     <>

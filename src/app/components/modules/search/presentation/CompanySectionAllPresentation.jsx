@@ -33,18 +33,20 @@ const CompanySectionAllPresentation = ({
       </ResultsCard>
     );
   }
+
+  console.log("companies", companies);
   return (
     <ResultsCard
       viewMoreText={"View all company results"}
       isLoading={isLoading}
       onViewMore={onViewMore}
       title="Companies"
-      flag={companies?.length > 0}
+      flag={companies?.companies.length > 0}
       icon={<ApartmentIcon sx={{ fontSize: "1.125rem" }} />}
       data-testid="companies-results-card"
     >
-      {companies?.length > 0 ? (
-        companies
+      {companies?.companies.length > 0 ? (
+        companies.companies
           .slice(0, 3)
           .map((company, index) => (
             <CompanyCardContainer

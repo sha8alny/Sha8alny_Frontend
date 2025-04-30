@@ -8,6 +8,7 @@ import ChangeURL from "./ChangeURL";
 import ExperienceContainer from "../container/ExperienceContainer";
 import EducationContainer from "../container/EducationContainer";
 import CertificationsContainer from "../container/CertificationsContainer";
+import PostsContainer from "../container/PostsContainer";
 
 export function ProfileSkeleton() {}
 
@@ -41,6 +42,35 @@ export default function ProfilePresentation({
   setHoverProfile,
   openFullscreen,
   closeFullscreen,
+  fetchPeopleAlsoViewed,
+  fetchPeopleYouMayKnow,
+  navigateTo,
+  changeRelations,
+  onReport,
+  reportState,
+  reportUserModalOpen,
+  setReportUserModalOpen,
+  reportType,
+  setReportType,
+  reportText,
+  setReportText,
+  blockUserModalOpen,
+  setBlockUserModalOpen,
+  removeConnectionModalOpen,
+  setRemoveConnectionModalOpen,
+  isReporting,
+  isReportingError,
+  onBlock,
+  isBlocking,
+  isBlockingError,
+  onFollow,
+  isHandlingFollow,
+  isHandlingFollowError,
+  onRemoveConnection,
+  isRemovingConnection,
+  isRemovingConnectionError,
+  onSendMessageRequest,
+  isSendingMessageRequest,
 }) {
   return (
     <div>
@@ -57,7 +87,34 @@ export default function ProfilePresentation({
             setHoverProfile={setHoverProfile}
             openFullscreen={openFullscreen}
             closeFullscreen={closeFullscreen}
+            onReport={onReport}
+            reportState={reportState}
+            reportUserModalOpen={reportUserModalOpen}
+            setReportUserModalOpen={setReportUserModalOpen}
+            reportType={reportType}
+            setReportType={setReportType}
+            reportText={reportText}
+            blockUserModalOpen={blockUserModalOpen}
+            setBlockUserModalOpen={setBlockUserModalOpen}
+            removeConnectionModalOpen={removeConnectionModalOpen}
+            setRemoveConnectionModalOpen={setRemoveConnectionModalOpen}
+            setReportText={setReportText}
+            isReporting={isReporting}
+            isReportingError={isReportingError}
+            navigateTo={navigateTo}
+            onBlock={onBlock}
+            isBlocking={isBlocking}
+            isBlockingError={isBlockingError}
+            onFollow={onFollow}
+            isHandlingFollow={isHandlingFollow}
+            isHandlingFollowError={isHandlingFollowError}
+            onRemoveConnection={onRemoveConnection}
+            isRemovingConnection={isRemovingConnection}
+            isRemovingConnectionError={isRemovingConnectionError}
+            onSendMessageRequest={onSendMessageRequest}
+            isSendingMessageRequest={isSendingMessageRequest}
           />
+          <PostsContainer username={userProfile.username} />
           <About about={userProfile.about} isMyProfile={isMyProfile} />
           <ExperienceContainer experience={userProfile.experience} />
           <EducationContainer education={userProfile.education} />
@@ -66,15 +123,27 @@ export default function ProfilePresentation({
           />
           <Skills skills={userProfile.skills} isMyProfile={isMyProfile} />
         </section>
-        <section className="flex-1 hidden md:block rounded-3xl space-y-2">
+        <section className="hidden md:block flex-1 rounded-2xl space-y-2">
           {isMyProfile && (
             <>
               <ChangeURL userInfo={userProfile} />
               <ProfileStrength profileStrength={profileStrength} />
             </>
           )}
-          <SuggestedUsersContainer title="People Also Viewed" />
-          <SuggestedUsersContainer title="People You May Know" />
+          <SuggestedUsersContainer
+            title="People Also Viewed"
+            username={userProfile?.username}
+            fetchFunction={fetchPeopleAlsoViewed}
+            navigateTo={navigateTo}
+            helperFunction={changeRelations}
+          />
+          <SuggestedUsersContainer
+            title="People You May Know"
+            username={userProfile?.username}
+            fetchFunction={fetchPeopleYouMayKnow}
+            navigateTo={navigateTo}
+            helperFunction={changeRelations}
+          />
           <Footer />
         </section>
       </main>

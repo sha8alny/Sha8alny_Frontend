@@ -1,19 +1,20 @@
-let sessionTime = null;
-
 export const getOrCreateSessionTime = () => {
-  if (!sessionTime) {
-    sessionTime = new Date().toISOString();
+  let currentSessionTime = sessionStorage.getItem('sessionTime');
+  
+  if (!currentSessionTime) {
+    currentSessionTime = new Date().toISOString();
+    sessionStorage.setItem('sessionTime', currentSessionTime);
   }
-
-  return sessionTime;
+  
+  return currentSessionTime;
 };
 
 export const getSessionTime = () => {
-  return sessionTime;
+  return sessionStorage.getItem('sessionTime');
 };
 
-export const updateSessionTime = () => {
-  const newSessionTime = Date.now().toString();
+export const resetSessionTime = () => {
+  const newSessionTime = new Date().toISOString();
   sessionStorage.setItem('sessionTime', newSessionTime);
   return newSessionTime;
 };

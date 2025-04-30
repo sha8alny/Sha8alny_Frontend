@@ -29,6 +29,20 @@ export const deleteConnection = async (username) => {
   return response.status;
 };
 
+export const removeConnection = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to remove connection");
+  }
+  return response.status;
+}
+
+
 export const requestConnection = async (username, status) => {
   const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
     method: "PATCH",
@@ -46,6 +60,7 @@ export const requestConnection = async (username, status) => {
 };
 
 
+
 export const followUser = async (username) => {
   const response = await fetchWithAuth(`${apiURL}/follow`, {
     method: "POST",
@@ -60,6 +75,7 @@ export const followUser = async (username) => {
   return response.status;
 };
 
+
 export const unFollowUser = async (username) => {
   const response = await fetchWithAuth(`${apiURL}/follow/${username}`, {
     method: "DELETE",
@@ -73,17 +89,140 @@ export const unFollowUser = async (username) => {
   return response.status;
 };
 
-export const getFollowers = async(page =1, pageSize =10 , username) => {
-  console.log("username in djh ", username);
-  const response = await fetchWithAuth (`${apiURL}/followers/${page}/${pageSize}?username=${encodeURIComponent(username)}`,{
-    method:"GET",
-    headers:{
+
+export const handleConnectionRequest = async (username, action) => {
+  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status: action === "ACCEPT" ? "accepted" : "declined" }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to handle connection");
+  }
+  return response.status;
+};
+
+
+export const fetchPeopleYouMayKnow = async () => {
+  const response = await fetchWithAuth(`${apiURL}/connections/suggestions`, {
+    method: "GET",
+    headers: {
       "Content-Type": "application/json",
     },
   });
-
   if (!response.ok) {
-    throw new Error("Failed to get followers");
+    throw new Error("Failed to fetch people you may know");
   }
   return response.json();
+}
+
+export const getConnections = async (page) => {
+  const pageSize = 9;
+
+  try {
+    const response = await fetchWithAuth(`${apiURL}/connections/${page}/${pageSize}`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch connections: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+
+      if (!Array.isArray(data)) {
+        console.warn("Expected an array from backend, got:", data);
+        return [];
+      }
+
+      return data;
+    } else {
+      console.warn("Response was not JSON");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching connections:", error);
+    return [];
+  }
 };
+
+
+export const getFollowers = async (page) => {
+  const pageSize = 9;
+  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch followers");
+  }
+  if(response.status === 204) {
+    return [];
+  }
+  const data = await response.json();
+  return data;
+}
+
+export const getFollowing = async (page) => {
+  const pageSize = 9;
+  const response = await fetchWithAuth(`${apiURL}/following/users/${page}/${pageSize}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch following");
+  }
+  if(response.status === 204) {
+    return [];
+  }
+  const data = await response.json();
+  return data;
+}
+
+export const getConnectionRequests = async (page) => {
+  const pageSize = 9;
+  const response = await fetchWithAuth(`${apiURL}/connections/pending/received/${page}/${pageSize}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch connection requests");
+  }
+  if(response.status === 204) {
+    return [];
+  }
+  const data = await response.json();
+  return data;
+}
+
+export const getSentConnectionRequests = async (page) => {
+  const pageSize = 9;
+  const response = await fetchWithAuth(`${apiURL}/connections/pending/sent/${page}/${pageSize}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch sent connection requests");
+  }
+  if(response.status === 204) {
+    return [];
+  }
+  const data = await response.json();
+  return data;
+}
+
+export const manageConnectionRequest = async ({username, status}) => {
+  const response = await fetchWithAuth(`${apiURL}/connection/${username}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to accept connection request");
+  }
+  return true;
+}
+

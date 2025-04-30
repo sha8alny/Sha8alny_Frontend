@@ -1,6 +1,6 @@
 import LeftSidebar from "@/app/components/modules/feed/container/LeftSidebar";
 import { PostContent } from "@/app/components/modules/feed/container/PostContainer";
-import RightSidebarPresentation from "@/app/components/modules/feed/presentation/RightSidebarPresentation";
+import RightSidebar from "@/app/components/modules/feed/container/RightSidebar";
 
 export async function generateMetadata({ params }) {
   const { username, postId } = await params;
@@ -34,7 +34,7 @@ export default async function Page({ params }) {
         <PostContent postId={postId} />
       </div>
       <div className="hidden md:block min-w-max">
-        <RightSidebarPresentation />
+        <RightSidebar />
       </div>
     </div>
   );

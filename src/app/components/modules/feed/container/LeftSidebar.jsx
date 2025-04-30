@@ -92,8 +92,8 @@ function LeftSidebar({ addButton = false }) {
             </span>
           );
         return (
-          <span className={`${getColor(sideBar?.planDetails?.messagesCount, 10)} text-sm`}>
-            {sideBar?.planDetails?.messagesCount}/<span className="font-bold">10</span>
+          <span className={`${getColor(sideBar?.planDetails?.messagesCount, 5)} text-sm`}>
+            {sideBar?.planDetails?.messagesCount}/<span className="font-bold">5</span>
           </span>
         );
 

@@ -2,12 +2,14 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import {
   getMessaging,
   onMessage,
   isSupported,
   getToken,
 } from "firebase/messaging";
+import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -27,7 +29,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-
+const db = getFirestore(app);
+const storage = getStorage(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
@@ -52,5 +55,5 @@ export const fetchToken = async () => {
   }
 };
 
-export { app, messaging, auth, provider };
+export { app, messaging, auth, provider, db, storage };
 
