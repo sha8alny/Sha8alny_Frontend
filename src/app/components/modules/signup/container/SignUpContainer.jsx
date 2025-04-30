@@ -9,6 +9,7 @@ import { useToast } from "@/app/context/ToastContext";
 import VerifyEmail from "../presentation/VerifyEmail";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, provider } from "@/firebase/firebase";
+import { use } from "react";
 
 /**
  * @namespace signup
@@ -47,6 +48,7 @@ const SignUpContainer = () => {
     }
     );
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showForm, setShowForm] = useState(false);
     
     const signupMutation = useMutation({
         mutationFn: handleSignup,
@@ -238,6 +240,14 @@ const SignUpContainer = () => {
     }
     };
 
+    useEffect(() => {
+        // Trigger animation after mount
+        const timer = setTimeout(() => {
+          setShowForm(true);
+        }, 1500); // Delay logo movement by 1 second
+        return () => clearTimeout(timer);
+      }, []);        
+
     return(
         <div className="flex flex-col h-screen bg-background overflow-x-hidden overflow-y-scroll">
               {!isEmailSent? (
@@ -250,6 +260,7 @@ const SignUpContainer = () => {
                 isSubmitting={signupMutation.isPending}
                 onRecaptchaChange={handleRecaptchaChange}
                 onGoogleSignUp={handleGoogleSignUp}
+                showForm={showForm}
                 />
               ): (
                 <VerifyEmail 

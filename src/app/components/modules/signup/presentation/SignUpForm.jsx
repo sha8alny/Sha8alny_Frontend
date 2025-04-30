@@ -40,11 +40,37 @@ const SignUpForm = ({
     handleChange,
     isSubmitting,
     onRecaptchaChange,
-    onGoogleSignUp
+    onGoogleSignUp,
+    showForm,
 }) => {
 
     return(
-        <div className="flex items-center jusifty-center min-h-screen bg-background flex-col">
+        <div className="relative flex items-center jusifty-center min-h-screen bg-background flex-col">
+        {/* Centered logo that moves left */}
+        <div
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-1000 ease-in-out
+            ${showForm ? "-translate-x-[850px]" : ""}
+            w-250 h-250`}
+        >
+        <img
+            src="/lightmode.svg"
+            alt="App Logo"
+            className="w-full h-full object-contain dark:hidden shadow"
+        />
+        <img
+            src="/darkmode.svg"
+            alt="App Logo"
+            className="w-full h-full object-contain hidden dark:block"
+        />
+        </div>
+        {/* Form wrapper */}
+        <div
+        className={`transition-all duration-1000 ease-in-out ${
+          showForm
+            ? "opacity-100 translate-x-[-240px] translate-y-[-50px]"
+            : "opacity-0 translate-x-full"
+        } w-full max-w-md ml-auto z-10`}
+        >
             <h2 className="text-3xl font-bold text-center text-secondary mt-30">Achieve The Best Professional Experience</h2>
             <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary w-115 mt-9 mb-10">
             <div className="flex items-center justify-center w-30 h-15  text-background rounded-full mx-auto">
@@ -116,7 +142,7 @@ const SignUpForm = ({
                 {error.confirmPassword && <p className="text-red-500 mt-1">{error.confirmPassword}</p>}
                 </div>
                 <div className="flex justify-between items-center">
-                <div className="w-1/3">
+                {/* <div className="w-1/3">
                 <input
                     data-testid="isAdmin-input"
                     id="isAdmin"
@@ -126,7 +152,7 @@ const SignUpForm = ({
                     onChange={handleChange}
                     className=" w-3 h-3 accent-secondary"/>
                 <label htmlFor="isAdmin" className="ml-2 text-secondary font-semibold text-sm">Admin</label>
-                </div>
+                </div> */}
                 <div className="w-1/3">
                 <input
                     data-testid="remember-me-input"
@@ -188,6 +214,7 @@ const SignUpForm = ({
             </p>  
             </div> 
            </div>
+        </div>
     );
 };
 

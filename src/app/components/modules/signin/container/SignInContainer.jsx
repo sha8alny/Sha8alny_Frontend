@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import SignInForm from "../presentation/SignInForm";
@@ -37,6 +37,7 @@ const SignInContainer = () => {
   const toast = useToast();
   const Auth = useAuth();
   const isCompleteProfile = localStorage.getItem("isProfileComplete");
+  const [showForm, setShowForm] = useState(false);
 
   const loginMutation = useMutation({
     mutationFn: handleSignIn,
@@ -136,6 +137,15 @@ const validateForm = () => {
     toast("Error signing in with Google. Please try again.", false);
 }
 };
+useEffect(() => {
+  // Trigger animation after mount
+  const timer = setTimeout(() => {
+    setShowForm(true);
+  }, 1500); // Delay logo movement by 1 second
+  return () => clearTimeout(timer);
+}, []);
+
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background ">
@@ -149,6 +159,7 @@ const validateForm = () => {
         error={error}
         handleChange={handleChange}
         handleGoogleSignIn={handleGoogleLogIn}
+        showForm={showForm}
       />
     </div>
   );
