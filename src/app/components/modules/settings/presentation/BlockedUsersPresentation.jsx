@@ -185,7 +185,6 @@ const BlockedUsersPresentation = ({
   navigateToProfile,
   currentPage,
   onPageChange,
-  totalCount,
   pageSize,
 }) => {
   return (
@@ -205,9 +204,9 @@ const BlockedUsersPresentation = ({
               Manage blocked users
             </h1>
           </div>
-          <div className="text-sm text-gray-500 text-center sm:text-right mt-2 sm:mt-0">
+          {/* <div className="text-sm text-gray-500 text-center sm:text-right mt-2 sm:mt-0">
             {totalCount} {totalCount === 1 ? "user" : "users"} blocked
-          </div>
+          </div> */}
         </div>
       </div>
 
