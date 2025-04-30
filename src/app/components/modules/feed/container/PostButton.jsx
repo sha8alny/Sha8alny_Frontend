@@ -1,3 +1,4 @@
+"use client";
 import DialogMod from "@/app/components/ui/DialogMod";
 import { fetchUserConnections } from "@/app/services/userProfile";
 import { createPost } from "@/app/services/post";
@@ -341,21 +342,24 @@ export default function PostButton({ userInfo }) {
     setTags((prevTags) => prevTags.filter((t) => t !== tagToRemove));
   }, []);
 
-  const handleAddTaggedUser = useCallback(() => {
-    if (
-      taggedUser &&
-      !taggedUsers.some((user) => user._id === taggedUser._id)
-    ) {
-      if (taggedUsers.length >= 5) {
-        setError("You can tag a maximum of 5 users.");
-        return;
+  const handleAddTaggedUser = useCallback(
+    (user) => {
+      if (
+        user &&
+        !taggedUsers.some((taggedUser) => taggedUser._id === user._id)
+      ) {
+        if (taggedUsers.length >= 5) {
+          setError("You can tag a maximum of 5 users.");
+          return;
+        }
+        setTaggedUsers((prev) => [...prev, user]);
+        setTaggedUser("");
+        setSearchResults([]);
+        setTaggedUserPopoverOpen(false);
       }
-      setTaggedUsers((prev) => [...prev, taggedUser]);
-      setTaggedUser("");
-      setSearchResults([]);
-      setTaggedUserPopoverOpen(false);
-    }
-  }, [taggedUser, taggedUsers]);
+    },
+    [taggedUsers]
+  );
 
   const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
     setTaggedUsers((prevUsers) =>
