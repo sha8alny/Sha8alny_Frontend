@@ -135,6 +135,7 @@ function NotificationContainer() {
       case "Funny":
       case "Support":
       case "Insightful":
+      case "Celebrate":
       case "Comment":
         return `/u/${notification?.toUserId?.username}/post/${
           notification.data?.postId || ""
