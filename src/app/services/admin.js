@@ -1,10 +1,6 @@
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 import { fetchWithAuth } from "@/app/services/userAuthentication";
 
-
-
-
-
 export const fetchDashboardData = async () => {
   try {
     const response = await fetchWithAuth(`${apiURL}/admin/analytics`, {
@@ -25,9 +21,6 @@ export const fetchDashboardData = async () => {
   }
 };
 
-
-
-
 export const fetchReports = async ({
   pageParam = 1,
   pageSize = 10,
@@ -42,15 +35,15 @@ export const fetchReports = async ({
   url.searchParams.append("pageSize", pageSize.toString());
 
   if (type.length > 0) {
-    url.searchParams.append("type", type.join(','));
+    url.searchParams.append("type", type.join(","));
   }
 
   if (reason.length > 0) {
-    url.searchParams.append("reason", reason.join(','));
+    url.searchParams.append("reason", reason.join(","));
   }
 
   if (status.length > 0) {
-    url.searchParams.append("status", status.join(','));
+    url.searchParams.append("status", status.join(","));
   }
 
   if (sortByTime) {
@@ -80,11 +73,11 @@ export const deleteReport = async (reportId) => {
       Authorization: `Bearer ${authToken}`,
     },
   });
-  
+
   if (!response.ok && response.status !== 204) {
     throw new Error(`HTTP error: Status: ${response.status}`);
   }
-  
+
   return response.status === 204 ? {} : await response.json();
 };
 
@@ -92,11 +85,11 @@ export const deleteJob = async (jobId) => {
   const response = await fetchWithAuth(`${apiURL}/admin/jobs/${jobId}`, {
     method: "DELETE",
   });
-  
+
   if (!response.ok && response.status !== 204) {
     throw new Error(`HTTP error: Status: ${response.status}`);
   }
-  
+
   return response.status === 204 ? {} : await response.json();
 };
 
@@ -107,11 +100,11 @@ export const deleteComment = async (commentId) => {
       method: "DELETE",
     }
   );
-  
+
   if (!response.ok && response.status !== 204) {
     throw new Error(`HTTP error: Status: ${response.status}`);
   }
-  
+
   return response.status === 204 ? {} : await response.json();
 };
 
@@ -119,11 +112,11 @@ export const deletePost = async (postId) => {
   const response = await fetchWithAuth(`${apiURL}/admin/posts/${postId}`, {
     method: "DELETE",
   });
-  
+
   if (!response.ok && response.status !== 204) {
     throw new Error(`HTTP error: Status: ${response.status}`);
   }
-  
+
   return response.status === 204 ? {} : await response.json();
 };
 
@@ -131,11 +124,11 @@ export const deleteUser = async (userId) => {
   const response = await fetchWithAuth(`${apiURL}/admin/users/${userId}`, {
     method: "DELETE",
   });
-  
+
   if (!response.ok && response.status !== 204) {
     throw new Error(`HTTP error: Status: ${response.status}`);
   }
-  
+
   return response.status === 204 ? {} : await response.json();
 };
 
@@ -147,10 +140,44 @@ export const updateStatusReport = async ({ reportId, status }) => {
     },
     body: JSON.stringify({ status }),
   });
-  
+
   if (!response.ok && response.status !== 204) {
     throw new Error(`HTTP error: Status: ${response.status}`);
   }
-  
+
+  return response.status === 204 ? {} : await response.json();
+};
+
+export const makeAdmin = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/make-admin`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username }),
+  });
+  const data = await response.json();
+
+  if (!response.ok) {
+    const message = data?.message || data?.error || "Failed to update username";
+    throw new Error(message);
+  }
+
+  return data;
+};
+
+export const reactivateContent = async ({ type, id }) => {
+  const response = await fetchWithAuth(`${apiURL}/admin/unban/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ type, targetId: id }),
+  });
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
   return response.status === 204 ? {} : await response.json();
 };

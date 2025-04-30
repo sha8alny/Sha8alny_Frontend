@@ -658,7 +658,7 @@ export default function CookiePolicy() {
                 </Link>
               </div>
               <p className="text-sm text-muted">
-                © {new Date().getFullYear()} Your Company. All rights reserved.
+                © {new Date().getFullYear()} Sha8alny. All rights reserved.
               </p>
             </div>
           </div>

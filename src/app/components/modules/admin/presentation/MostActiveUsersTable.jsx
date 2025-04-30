@@ -10,9 +10,19 @@ import {
 } from "@/app/components/ui/Table";
 import { Badge } from "@/app/components/ui/Badge";
 
-import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
-import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-export function MostActiveUsersTable({ users }) {
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+
+/**
+ * @namespace admin
+ * @module admin
+ */
+/**
+ * MostActiveUsersTable component, displays a table of the most active users and their activity metrics
+ * @param {Object} props - Component props
+ * @param {Array} props.users - Array of user objects with activity data
+ */
+function MostActiveUsersTable({ users }) {
   console.log("users", users);
   return (
     <Table>
@@ -36,7 +46,10 @@ export function MostActiveUsersTable({ users }) {
                 <Badge className="text-text" variant="outline">
                   {user.comments}
                 </Badge>
-                <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: "1rem" }} className="h-3.5 w-3.5 text-muted-foreground" />
+                <ChatBubbleOutlineOutlinedIcon
+                  sx={{ fontSize: "1rem" }}
+                  className="h-3.5 w-3.5 text-muted-foreground"
+                />
               </div>
             </TableCell>
             <TableCell>
@@ -44,7 +57,10 @@ export function MostActiveUsersTable({ users }) {
                 <Badge className="text-text" variant="outline">
                   {user.posts}
                 </Badge>
-                <ArticleOutlinedIcon sx={{ fontSize: "1rem" }} className="h-3.5 w-3.5 text-muted-foreground" />
+                <ArticleOutlinedIcon
+                  sx={{ fontSize: "1rem" }}
+                  className="h-3.5 w-3.5 text-muted-foreground"
+                />
               </div>
             </TableCell>
             <TableCell className="text-muted-foreground">
@@ -59,3 +75,5 @@ export function MostActiveUsersTable({ users }) {
     </Table>
   );
 }
+
+export default MostActiveUsersTable;

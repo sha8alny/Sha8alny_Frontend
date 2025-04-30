@@ -41,11 +41,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <Image
-                src={
-                  isDarkMode
-                    ? "/darkmode.svg"
-                    : "/lightmode.svg"
-                }
+                src={isDarkMode ? "/darkmode.svg" : "/lightmode.svg"}
                 alt="Logo"
                 width={600}
                 height={400}
@@ -211,7 +207,9 @@ export default function AboutPage() {
                     <p className="text-secondary">Team Leader</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    developed things here
+                    Designed and implemented the admin dashboard, user settings,
+                    advanced search functionality, secure payment integration,
+                    and real-time notification system.
                   </p>
                 </div>
                 <div className="flex flex-col items-center space-y-4 text-center">

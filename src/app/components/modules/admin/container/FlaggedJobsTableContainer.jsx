@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { FlaggedJobsTablePresentation } from "../presentation/FlaggedJobsTablePresentation";
-import { fetchReports, deleteReport, deleteJob, updateStatusReport } from "@/app/services/admin";
+import { fetchReports, deleteReport, deleteJob, updateStatusReport, reactivateContent } from "@/app/services/admin";
 import { useToast } from "@/app/context/ToastContext";
 
 /**
@@ -49,7 +49,8 @@ export function FlaggedJobsTableContainer() {
       queryClient.invalidateQueries(["jobReports"]);
     },
     onError: (error) => {
-      showToast(`Error disapproving report: ${error.message}`, "error");
+      const errorMessage = error.response?.data?.message || error.message;
+      showToast(`Error disapproving report: ${errorMessage}`, "error");
     }
   });
 
@@ -60,7 +61,20 @@ export function FlaggedJobsTableContainer() {
       queryClient.invalidateQueries(["jobReports"]);
     },
     onError: (error) => {
-      showToast(`Error deleting job: ${error.message}`, "error");
+      const errorMessage = error.response?.data?.message || error.message;
+      showToast(`Error deleting job: ${errorMessage}`, "error");
+    }
+  });
+  
+  const reactivateJobMutation = useMutation({
+    mutationFn: reactivateContent,
+    onSuccess: () => {
+      showToast("Job reactivated successfully");
+      queryClient.invalidateQueries(["jobReports"]);
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data?.message || error.message;
+      showToast(`Error reactivating job: ${errorMessage}`, "error");
     }
   });
   
@@ -71,7 +85,8 @@ export function FlaggedJobsTableContainer() {
       queryClient.invalidateQueries(["jobReports"]);
     },
     onError: (error) => {
-      showToast(`Error updating report: ${error.message}`, "error");
+      const errorMessage = error.response?.data?.message || error.message;
+      showToast(`Error updating report: ${errorMessage}`, "error");
     }
   });
 
@@ -108,6 +123,10 @@ export function FlaggedJobsTableContainer() {
     deleteJobMutation.mutate(jobId);
   };
 
+  const handleReactivateJob = (jobId) => {
+    reactivateJobMutation.mutate({ type: "Job", id: jobId });
+  };
+
   const handleUpdateReport = (reportId, status) => {
     updateReportMutation.mutate({ reportId, status });
   };
@@ -131,8 +150,6 @@ export function FlaggedJobsTableContainer() {
     }
   };
 
-
-
   return (
     <FlaggedJobsTablePresentation
       reports={reports || { data: [] }}
@@ -143,6 +160,7 @@ export function FlaggedJobsTableContainer() {
       handleDeleteReport={handleDeleteReport}
       handleDeleteJob={handleDeleteJob}
       handleUpdateReport={handleUpdateReport}
+      handleReactivateJob={handleReactivateJob}
       isLoading={isLoading}
       isError={isError}
       isFetching={isFetching}
