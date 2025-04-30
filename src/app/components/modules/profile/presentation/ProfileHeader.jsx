@@ -11,13 +11,16 @@ import {
   DropdownMenuTrigger,
 } from "@/app/components/ui/DropDownMenu";
 import {
+  BlockOutlined,
   FlagOutlined,
   MessageOutlined,
   MoreHoriz,
   PersonAddAlt1,
+  PersonRemoveAlt1,
 } from "@mui/icons-material";
 import Dialog from "@/app/components/ui/DialogMod";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
+import ReportPresentation from "../../feed/presentation/ReportPresentation";
 
 /**
  * @namespace profile
@@ -46,6 +49,30 @@ export default function ProfileHeader({
   setHoverProfile,
   openFullscreen,
   closeFullscreen,
+  onReport,
+  reportState,
+  reportUserModalOpen,
+  setReportUserModalOpen,
+  reportType,
+  setReportType,
+  reportText,
+  setReportText,
+  blockUserModalOpen,
+  setBlockUserModalOpen,
+  removeConnectionModalOpen,
+  setRemoveConnectionModalOpen,
+  navigateTo,
+  onBlock,
+  isBlocking,
+  isBlockingError,
+  onFollow,
+  isHandlingFollow,
+  isHandlingFollowError,
+  onRemoveConnection,
+  isRemovingConnection,
+  isRemovingConnectionError,
+  onSendMessageRequest,
+  isSendingMessageRequest,
 }) {
   return (
     <>
@@ -175,19 +202,70 @@ export default function ProfileHeader({
                   >
                     <DropdownMenuItem
                       className="hover:bg-primary/20 cursor-pointer"
+                      data-testid={`connection-follow-option-${userProfile?.username}`}
+                      onClick={onFollow}
+                    >
+                      {isHandlingFollow && (
+                        <div
+                          className="size-4 border-2 border-t-transparent border-primary/80 rounded-full animate-spin mr-2"
+                          data-testid={`connection-follow-spinner-${userProfile?.username}`}
+                        />
+                      )}
+                      {isHandlingFollowError && (
+                        <span
+                          className="text-red-500 mr-2"
+                          data-testid={`connection-follow-error-${userProfile?.username}`}
+                        >
+                          Error
+                        </span>
+                      )}
+                      {!isHandlingFollow && !isHandlingFollowError && (
+                        <>
+                          {userProfile?.isFollowing ? (
+                            <PersonRemoveAlt1
+                              className="mr-2"
+                              data-testid={`connection-unfollow-icon-${userProfile?.username}`}
+                              sx={{ fontSize: "1rem" }}
+                            />
+                          ) : (
+                            <PersonAddAlt1
+                              className="mr-2"
+                              data-testid={`connection-follow-icon-${userProfile?.username}`}
+                              sx={{ fontSize: "1rem" }}
+                            />
+                          )}
+                          <span
+                            data-testid={`connection-follow-text-${userProfile?.username}`}
+                          >
+                            {userProfile?.isFollowing ? "Unfollow" : "Follow"}
+                          </span>
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer"
                       data-testid={`connection-message-option-${userProfile?.username}`}
-                      onClick={() => {}}
+                      disabled={isSendingMessageRequest}
+                      onClick={() =>
+                        userProfile?.connectionStatus === "connected"
+                          ? navigateTo(`/messages/${userProfile?.username}`)
+                          : onSendMessageRequest()
+                      }
                     >
                       <MessageOutlined
                         className="mr-2"
                         sx={{ fontSize: "1rem" }}
                       />
-                      <span>Message</span>
+                      {isSendingMessageRequest ? (
+                        <span>Sending...</span>
+                      ) : (
+                        <span>Message</span>
+                      )}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="hover:bg-primary/20 cursor-pointer"
-                      data-testid={`connection-remove-option-${userProfile?.username}`}
-                      onClick={() => setRemoveConnectionModalOpen(true)}
+                      data-testid={`connection-report-option-${userProfile?.username}`}
+                      onClick={() => setReportUserModalOpen(true)}
                     >
                       <FlagOutlined
                         className="mr-2"
@@ -195,10 +273,23 @@ export default function ProfileHeader({
                       />
                       <span>Report</span>
                     </DropdownMenuItem>
+                    {userProfile?.connectionStatus === "connected" && (
+                      <DropdownMenuItem
+                        className="hover:bg-primary/20 cursor-pointer"
+                        data-testid={`connection-remove-option-${userProfile?.username}`}
+                        onClick={() => setRemoveConnectionModalOpen(true)}
+                      >
+                        <PersonRemoveAlt1
+                          className="mr-2"
+                          sx={{ fontSize: "1rem" }}
+                        />
+                        <span>Remove Connection</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem
-                      className="hover:bg-primary/20 cursor-pointer text-red-400 hover:text-red-400"
+                      className="hover:bg-primary/20 cursor-pointer font-black text-red-400 hover:text-red-400"
                       data-testid={`connection-block-option-${userProfile?.username}`}
-                      onClick={() => setBlockModalOpen(true)}
+                      onClick={() => setBlockUserModalOpen(true)}
                     >
                       <PersonAddAlt1
                         className="mr-2"
@@ -253,16 +344,16 @@ export default function ProfileHeader({
       </Container>
 
       <Dialog
-        open={false}
-        onOpenChange={false}
+        open={removeConnectionModalOpen}
+        onOpenChange={setRemoveConnectionModalOpen}
         buttonClass="hidden"
         AlertContent={
           <GeneralDeletePresentation
-            onConfirmDelete={false}
-            isLoading={false}
-            isError={false}
+            onConfirmDelete={onRemoveConnection}
+            isLoading={isRemovingConnection}
+            isError={isRemovingConnectionError}
             error={false}
-            onOpenChange={false}
+            onOpenChange={setRemoveConnectionModalOpen}
             itemType="Connection"
             loadingText="Removing connection..."
             errorTitle="Error"
@@ -271,6 +362,48 @@ export default function ProfileHeader({
             confirmMessage="This action cannot be undone. Are you sure you want to remove this connection?"
             confirmButtonText="Remove"
             cancelButtonText="Cancel"
+          />
+        }
+      />
+
+      {/* Report User Modal */}
+      <Dialog
+        open={reportUserModalOpen}
+        onOpenChange={setReportUserModalOpen}
+        buttonClass="hidden"
+        AlertContent={
+          <ReportPresentation
+            type="user"
+            reportState={reportState}
+            reportText={reportText}
+            setReportText={setReportText}
+            reportType={reportType}
+            setReportType={setReportType}
+            onReport={onReport}
+          />
+        }
+      />
+      {/* Block User Modal */}
+      <Dialog
+        open={blockUserModalOpen}
+        onOpenChange={setBlockUserModalOpen}
+        buttonClass="hidden"
+        AlertContent={
+          <GeneralDeletePresentation
+            onConfirmDelete={onBlock}
+            isLoading={isBlocking}
+            isError={isBlockingError}
+            error="Failed to block user"
+            onOpenChange={setBlockUserModalOpen}
+            itemType="User"
+            loadingText="Blocking user..."
+            errorTitle="Error"
+            errorMessage="Failed to block user"
+            confirmTitle={`Block ${userProfile?.name}`}
+            confirmMessage="Are you sure you want to block this user?"
+            confirmButtonText="Block"
+            cancelButtonText="Cancel"
+            Icon={BlockOutlined}
           />
         }
       />

@@ -28,6 +28,9 @@ import Insightful from "@/app/components/ui/Insightful";
 import Like from "@/app/components/ui/Like";
 import Love from "@/app/components/ui/Love";
 import Funny from "@/app/components/ui/Funny";
+import Dialog from "@/app/components/ui/DialogMod";
+import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
+import ReportPresentation from "./ReportPresentation";
 
 export default function CommentPresentation({
   comment,
@@ -59,7 +62,19 @@ export default function CommentPresentation({
   postUsername,
   isFollowing,
   onKeyPress,
-  isCommenting
+  isCommenting,
+  reportText,
+  setReportText,
+  reportType,
+  setReportType,
+  reportState,
+  reportCommentModalOpen,
+  setReportCommentModalOpen,
+  deleteCommentModalOpen,
+  setDeleteCommentModalOpen,
+  onReportComment,
+  reactAnim,
+  handleAnimEnd,
 }) {
   return (
     <div className="w-full flex flex-col mb-4 text-primary">
@@ -146,22 +161,33 @@ export default function CommentPresentation({
                       onClick={() => onLike("Like")}
                       className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
                     >
-                      {isLiked === "Like" && <Like size="1.3rem" />}
-                      {isLiked === "Insightful" && <Insightful size="1.3rem" />}
-                      {isLiked === "Support" && <Support size="1.3rem" />}
-                      {isLiked === "Funny" && <Funny size="1.3rem" />}
-                      {isLiked === "Love" && <Love size="1.3rem" />}
-                      {isLiked === "Celebrate" && <Celebrate size="1.3rem" />}
-                      {!isLiked && (
-                        <ThumbUpOutlined
-                          sx={{ fontSize: "1rem" }}
-                          className="rotate-y-180"
-                        />
-                      )}
                       <span
-                        className={`text-muted ${
-                          isLiked ? "text-secondary" : ""
+                        className={`inline-flex items-center ${
+                          reactAnim ? "animate-react-pop" : ""
                         }`}
+                        onAnimationEnd={handleAnimEnd}
+                      >
+                        {isLiked === "Like" && <Like size="1.5rem" />}
+                        {isLiked === "Insightful" && (
+                          <Insightful size="1.3rem" />
+                        )}
+                        {isLiked === "Support" && <Support size="1.5rem" />}
+                        {isLiked === "Funny" && <Funny size="1.5rem" />}
+                        {isLiked === "Love" && <Love size="1.5rem" />}
+                        {isLiked === "Celebrate" && <Celebrate size="1.5rem" />}
+                        {!isLiked && (
+                          <ThumbUpOutlined
+                            sx={{ fontSize: "1.3rem" }}
+                            className="rotate-y-180"
+                          />
+                        )}
+                      </span>
+                      <span
+                        className={
+                          isLiked
+                            ? "text-secondary/70 font-semibold"
+                            : "text-muted"
+                        }
                       >
                         {comment?.numReacts}
                       </span>
@@ -206,7 +232,7 @@ export default function CommentPresentation({
                     : "text-muted hover:underline cursor-pointer"
                 }`}
                 disabled={isDeleting}
-                onClick={onDelete}
+                onClick={() => setDeleteCommentModalOpen(true)}
               >
                 {isDeleting ? (
                   <span className="flex items-center">
@@ -216,6 +242,19 @@ export default function CommentPresentation({
                 ) : (
                   "Delete"
                 )}
+              </button>
+            )}
+            {comment?.connectionDegree !== 0 && (
+              <button
+                className={`text-xs ${
+                  reportCommentModalOpen
+                    ? "text-muted cursor-default"
+                    : "text-muted hover:underline cursor-pointer"
+                }`}
+                disabled={reportCommentModalOpen}
+                onClick={() => setReportCommentModalOpen(true)}
+              >
+                Report
               </button>
             )}
 
@@ -258,7 +297,11 @@ export default function CommentPresentation({
                 disabled={!replyText.trim() || isCommenting}
                 className="cursor-pointer bg-secondary/80 dark:text-primary hover:bg-secondary/60 transition-colors duration-200"
               >
-                {isCommenting ? <div className="size-4 animate-spin border-2 border-t-transparent rounded-full border-primary"/> : <Send sx={{ fontSize: "1rem" }} />}
+                {isCommenting ? (
+                  <div className="size-4 animate-spin border-2 border-t-transparent rounded-full border-primary" />
+                ) : (
+                  <Send sx={{ fontSize: "1rem" }} />
+                )}
               </Button>
             </div>
           )}
@@ -279,7 +322,11 @@ export default function CommentPresentation({
                 <CommentContainer
                   key={reply.commentId}
                   postId={postId}
-                  comment={{ ...reply, isReply: true, parentId: comment.commentId }}
+                  comment={{
+                    ...reply,
+                    isReply: true,
+                    parentId: comment.commentId,
+                  }}
                   nestCount={nestCount + 1}
                   postUsername={postUsername}
                 />
@@ -305,6 +352,44 @@ export default function CommentPresentation({
           )}
         </div>
       )}
+      {/* Delete Modal */}
+      <Dialog
+        open={deleteCommentModalOpen}
+        onOpenChange={setDeleteCommentModalOpen}
+        buttonClass="hidden"
+        AlertContent={
+          <GeneralDeletePresentation
+            onConfirmDelete={onDelete}
+            isLoading={isDeleting}
+            onOpenChange={setDeleteCommentModalOpen}
+            itemType="Comment"
+            errorTitle="Error"
+            errorMessage="Failed to delete comment."
+            confirmTitle="Delete"
+            confirmMessage="This action cannot be undone. Are you sure you want to delete this comment?"
+            confirmButtonText="Delete"
+            cancelButtonText="Cancel"
+          />
+        }
+      />
+
+      {/* Report Modal */}
+      <Dialog
+        open={reportCommentModalOpen}
+        onOpenChange={setReportCommentModalOpen}
+        buttonClass="hidden"
+        AlertContent={
+          <ReportPresentation
+            type="comment"
+            reportText={reportText}
+            setReportText={setReportText}
+            reportType={reportType}
+            setReportType={setReportType}
+            reportState={reportState}
+            onReport={onReportComment}
+          />
+        }
+      />
     </div>
   );
 }

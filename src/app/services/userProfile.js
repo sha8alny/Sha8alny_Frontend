@@ -85,3 +85,27 @@ export const fetchPeopleAlsoViewed = async (username) => {
   const data = await response.json();
   return data.peopleAlsoViewed;
 };
+
+export const sendMessageRequest = async (username) => {
+  const response = await fetchWithAuth(
+    `${apiURL}/messageRequests/sendMessageRequest`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        receiverName: username,
+      }),
+    }
+  );
+  
+  if (!response.ok) {
+    const error = new Error("Failed to send message request");
+    error.status = response.status;
+    error.response = response;
+    throw error;
+  }
+  
+  return response.status;
+};

@@ -14,12 +14,13 @@ import ConnectionsPresentation, {
 import { useState } from "react";
 import { blockUser } from "@/app/services/privacy";
 import { removeConnection } from "@/app/services/connectionManagement";
+import { useToast } from "@/app/context/ToastContext";
 
 export default function Connections({ userInfo }) {
   const observerTarget = useRef(null);
   const router = useRouter();
   const { isMyProfile } = useIsMyProfile();
-
+  
   const {
     data,
     fetchNextPage,
@@ -70,13 +71,17 @@ export default function Connections({ userInfo }) {
     const date = new Date(dateString);
     const now = new Date();
 
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 1) {
+    const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffTime = startOfNow - startOfDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+    if (diffDays === 0) {
       return "Connected today";
+    } else if (diffDays === 1) {
+      return "Connected yesterday";
     } else if (diffDays < 7) {
-      return `Connected ${diffDays} ${diffDays === 1 ? "day" : "days"} ago`;
+      return `Connected ${diffDays} days ago`;
     } else if (diffDays < 30) {
       const weeks = Math.floor(diffDays / 7);
       return `Connected ${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
@@ -144,6 +149,7 @@ export const ConnectionsCardContainer = ({
   const [removeConnectionModalOpen, setRemoveConnectionModalOpen] =
     useState(false);
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const handleBlock = () => {
     handleBlockMutation.mutate(connection?.username);
@@ -158,6 +164,7 @@ export const ConnectionsCardContainer = ({
     onSuccess: () => {
       queryClient.invalidateQueries(["connections"]);
       queryClient.invalidateQueries(["userProfile"]);
+      toast("User blocked successfully", true);
       setBlockModalOpen(false);
     },
   });
@@ -168,6 +175,7 @@ export const ConnectionsCardContainer = ({
       queryClient.invalidateQueries(["connections"]);
       queryClient.invalidateQueries(["userProfile"]);
       setRemoveConnectionModalOpen(false);
+      toast("Connection removed successfully", true);
     },
   });
 

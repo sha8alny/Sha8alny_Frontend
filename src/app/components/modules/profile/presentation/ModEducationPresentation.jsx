@@ -158,8 +158,12 @@ export default function ModEducationPresentation({
           <div className="space-y-4" data-testid="mod-education-stage1-content">
             <div className="flex gap-2">
               <div className="flex-[2_1_0]">
-                <Label className="font-semibold mb-2" htmlFor="school">
+                <Label
+                  className="font-semibold mb-2 flex gap-1"
+                  htmlFor="school"
+                >
                   School
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="school"
@@ -178,8 +182,12 @@ export default function ModEducationPresentation({
                 )}
               </div>
               <div className="flex-1">
-                <Label className="font-semibold mb-2" htmlFor="degree">
+                <Label
+                  className="font-semibold mb-2 flex gap-1"
+                  htmlFor="degree"
+                >
                   Degree
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="degree"
@@ -200,8 +208,12 @@ export default function ModEducationPresentation({
             </div>
             <div className="flex gap-2">
               <div className="flex-[3_1_0]">
-                <Label className="font-semibold mb-2" htmlFor="fieldOfStudy">
+                <Label
+                  className="font-semibold mb-2 flex gap-1"
+                  htmlFor="fieldOfStudy"
+                >
                   Field of Study
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="fieldOfStudy"
@@ -220,8 +232,12 @@ export default function ModEducationPresentation({
                 )}
               </div>
               <div className="flex-1">
-                <Label className="font-semibold mb-2" htmlFor="grade">
+                <Label
+                  className="font-semibold mb-2 flex gap-1"
+                  htmlFor="grade"
+                >
                   Grade
+                  <span className="text-muted">*</span>
                 </Label>
                 <Input
                   id="grade"
@@ -249,8 +265,12 @@ export default function ModEducationPresentation({
             <div className="flex gap-8 justify-between">
               <div className="flex gap-4">
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="startMonth">
+                  <Label
+                    className="font-semibold mb-2 flex gap-1"
+                    htmlFor="startMonth"
+                  >
                     Start Month
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("startMonth")}
@@ -284,8 +304,12 @@ export default function ModEducationPresentation({
                   )}
                 </div>
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="startYear">
+                  <Label
+                    className="font-semibold mb-2 flex gap-1"
+                    htmlFor="startYear"
+                  >
                     Start Year
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("startYear")}
@@ -321,8 +345,12 @@ export default function ModEducationPresentation({
               </div>
               <div className="flex gap-4">
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="endMonth">
+                  <Label
+                    className="font-semibold mb-2 flex gap-1"
+                    htmlFor="endMonth"
+                  >
                     End Month
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("endMonth")}
@@ -356,8 +384,12 @@ export default function ModEducationPresentation({
                   )}
                 </div>
                 <div>
-                  <Label className="font-semibold mb-2" htmlFor="endYear">
+                  <Label
+                    className="font-semibold mb-2 flex gap-1"
+                    htmlFor="endYear"
+                  >
                     End Year
+                    <span className="text-muted">*</span>
                   </Label>
                   <Select
                     value={watch("endYear")}
@@ -660,7 +692,7 @@ export default function ModEducationPresentation({
               </button>
             )}
 
-            {!adding && currentStage === 4 && (
+            {!adding && (
               <button
                 type="button"
                 disabled={isLoading}

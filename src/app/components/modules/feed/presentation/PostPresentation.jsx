@@ -60,10 +60,6 @@ import DeletePostPresentation from "./DeletePostPresentation";
 import ReportPresentation from "./ReportPresentation";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 
-// TODO: Add image modal to view all images in a carousel
-// TODO: Modify Icons (choose what goes where)
-// TODO: Add toast for like, comment, repost, and save actions
-
 export default function PostPresentation({
   commentSectionOpen,
   setCommentSectionOpen,
@@ -409,7 +405,7 @@ export default function PostPresentation({
                       className="object-cover rounded-md transition-transform duration-300 group-hover:scale-105"
                     />
                     {index === 3 && post?.media.length > 4 && (
-                      <div className="absolute inset-0 bg-background/40 flex items-center justify-center rounded-md">
+                      <div className="absolute inset-0 bg-background/40 flex items-center justify-center group-hover:scale-105 transition-all duration-300 rounded-md">
                         <span className="text-primary text-2xl font-bold">
                           +{post?.media.length - 4}
                         </span>
@@ -584,6 +580,7 @@ export default function PostPresentation({
           className="min-w-max"
           AlertContent={
             <ReportPresentation
+              type="post"
               reportOptions={reportOptions}
               reportState={reportState}
               reportText={reportText}

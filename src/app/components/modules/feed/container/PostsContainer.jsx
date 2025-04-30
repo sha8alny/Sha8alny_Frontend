@@ -117,9 +117,9 @@ function PostsContainer({ companyUsername = null , keyword }) {
         lastElementRef={lastElementRef}
       />
       
-      {!hasNextPage && !isFetchingNextPage && !allPosts.length > 0 && (
-        <div className="flex flex-col justify-center items-center py-8 mb-8">
-          <div className="w-full max-w-2xl border-t border-border pt-6 mt-2">
+      {!hasNextPage && !isFetchingNextPage && allPosts.length > 0 && (
+        <div className="flex flex-col justify-center items-center py-4 mb-8">
+          <div className="w-full max-w-2xl border-t-2 border-primary/20 pt-6 mt-2">
             <div className="flex flex-col items-center justify-center text-center">
               <div className="text-lg text-primary font-semibold mb-1">You're all caught up!</div>
               <p className="text-muted-foreground text-sm">

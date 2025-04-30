@@ -20,11 +20,11 @@ export default function AboutPage() {
         <section className="w-full py-12 md:py-24 lg:py-32 bg-foreground">
           <div className="container mx-auto px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="space-y-4">
-                <h1 className="text-3xl font-black tracking-tighter sm:text-4xl md:text-5xl text-text">
+              <div className="order-last md:order-1 space-y-4">
+                <h1 className="text-center md:text-left text-3xl font-black tracking-tighter sm:text-4xl md:text-5xl text-text">
                   About Shaغalny
                 </h1>
-                <p className="text-muted-foreground md:text-xl">
+                <p className="text-center md:text-left text-muted-foreground md:text-xl">
                   Connecting professionals across the Middle East and beyond.
                   Shaغalny is where careers are built, opportunities are
                   discovered, and professional networks thrive.
@@ -49,7 +49,7 @@ export default function AboutPage() {
                 alt="Logo"
                 width={600}
                 height={400}
-                className="mx-auto aspect-video overflow-hidden rounded-xl object-cover"
+                className="order-1 md:order-2 mx-auto aspect-video overflow-hidden rounded-xl object-cover"
               />
             </div>
           </div>
@@ -70,7 +70,7 @@ export default function AboutPage() {
               </div>
               <div className="grid gap-8 md:grid-cols-3">
                 <Card className="bg-foreground border-none">
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className="items-center flex flex-col md:block p-6 space-y-4">
                     <Building className="h-12 w-12 text-secondary" />
                     <h3 className="text-xl font-bold text-text">Our Mission</h3>
                     <p className="text-muted-foreground">
@@ -81,7 +81,7 @@ export default function AboutPage() {
                   </CardContent>
                 </Card>
                 <Card className="bg-foreground border-none">
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className="items-center flex flex-col md:block p-6 space-y-4">
                     <Globe className="h-12 w-12 text-secondary" />
                     <h3 className="text-xl font-bold text-text">Our Vision</h3>
                     <p className="text-muted-foreground">
@@ -92,7 +92,7 @@ export default function AboutPage() {
                   </CardContent>
                 </Card>
                 <Card className="bg-foreground border-none">
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className="items-center flex flex-col md:block p-6 space-y-4">
                     <Users className="h-12 w-12 text-secondary" />
                     <h3 className="text-xl font-bold text-text">Our Values</h3>
                     <p className="text-muted-foreground">
@@ -146,7 +146,7 @@ export default function AboutPage() {
             <div className="mx-auto grid max-w-5xl gap-8">
               <div className="space-y-4 text-center">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-text">
-                  Leadership Team
+                  Frontend Team
                 </h2>
                 <p className="text-muted-foreground md:text-xl">
                   Meet the passionate individuals driving Shaغalny's mission
@@ -277,20 +277,12 @@ export default function AboutPage() {
               <div className="flex flex-col gap-4 sm:flex-row justify-center">
                 <Button
                   size="lg"
-                  className="bg-secondary text-white hover:bg-secondary/90"
+                  className="bg-secondary py-6 text-background font-bold text-lg hover:bg-secondary/90"
                   asChild
                 >
-                  <Link href="/register">
+                  <Link href="/signup">
                     Create Your Profile <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-secondary text-secondary hover:bg-hover"
-                  asChild
-                >
-                  <Link href="/employers">For Employers</Link>
                 </Button>
               </div>
             </div>

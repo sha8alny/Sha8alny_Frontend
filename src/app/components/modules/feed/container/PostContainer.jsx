@@ -19,6 +19,8 @@ import { followUser } from "@/app/services/connectionManagement";
 import { report } from "@/app/services/privacy";
 import { useEffect } from "react";
 import { useRef } from "react";
+import { messagingService } from "@/app/services/messagingService";
+import { useToast } from "@/app/context/ToastContext";
 
 export default function PostContainer({ post, singlePost = false }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
@@ -47,6 +49,7 @@ export default function PostContainer({ post, singlePost = false }) {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(true);
   const [reactAnim, setReactAnim] = useState(false);
+  const toast = useToast();
   const prevReaction = useRef(isLiked);
 
   const fileName = post?.media[0]?.split("/").pop() || "Document";
@@ -80,6 +83,19 @@ export default function PostContainer({ post, singlePost = false }) {
         : reactToContent(postId, null, reaction);
     },
   });
+
+  const handleSendMessageMutation = useMutation({
+    mutationFn: (params) => {
+      const { receiverName , shareUrl } = params;
+      return messagingService.sendMessage()
+    },
+    onSuccess: () => {
+      toast("Message sent successfully.");
+    },
+    onError: () => {
+      toast("Error sending message.", false);
+    }
+  })
 
   const handleRepostMutation = useMutation({
     mutationFn: (postId) => repostPost(postId),
@@ -414,6 +430,8 @@ export default function PostContainer({ post, singlePost = false }) {
   }, [isLiked]);
 
   const handleAnimEnd = () => setReactAnim(false);
+
+  const sendPostAsMessage = () => {}
 
   return (
     <PostPresentation

@@ -152,7 +152,7 @@ export const ConnectionsCard = ({
             )}
           </div>
           <p
-            className="text-xs text-muted truncate"
+            className="text-xs text-left text-muted truncate"
             data-testid={`connection-headline-${connection?._id}`}
           >
             {connection?.headline}

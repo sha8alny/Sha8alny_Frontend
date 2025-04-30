@@ -16,6 +16,9 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { followUser } from "@/app/services/connectionManagement";
 import { Reactions } from "@/app/utils/Reactions";
+import { report } from "@/app/services/privacy";
+import { useEffect } from "react";
+import { useRef } from "react";
 
 function updateAncestorCommentCounts(
   queryClient,
@@ -142,6 +145,14 @@ export default function CommentContainer({
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteCommentModalOpen, setDeleteModalOpen] = useState(false);
+  const [reportCommentModalOpen, setReportCommentModalOpen] = useState(false);
+  const [reportState, setReportState] = useState(0);
+  const [reportText, setReportText] = useState("");
+  const [reportType, setReportType] = useState(null);
+  const [reactAnim, setReactAnim] = useState(false);
+  const prevReaction = useRef(isLiked);
+
   const [reactionCount, setReactionCount] = useState(
     (comment?.numLikes || 0) +
       (comment?.numCelebrates || 0) +
@@ -154,6 +165,13 @@ export default function CommentContainer({
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+      if (isLiked && prevReaction.current !== isLiked) {
+        setReactAnim(true);
+        prevReaction.current = isLiked;
+      }
+    }, [isLiked]);
 
   const {
     data,
@@ -248,6 +266,31 @@ export default function CommentContainer({
         : reactToContent(postId, commentId, reaction);
     },
   });
+
+  const handleReportMutation = useMutation({
+    mutationFn: (params) => {
+      const { commentId, reportObj } = params;
+      return report(null, commentId, null, null, comment?.isCompany, reportObj);
+    },
+    onMutate: () => {
+      setReportState(1);
+    },
+    onSuccess: () => {
+      setReportState(2);
+    },
+    onError: (error) => {
+      console.error("Error reporting post:", error);
+      setReportState(3);
+    },
+    onSettled: () => {
+      setTimeout(() => {
+        setReportCommentModalOpen(false);
+        setReportText("");
+        setReportType(null);
+        setReportState(0);
+      }, 2000);
+    },
+  })
 
   const handleCommentMutation = useMutation({
     mutationFn: (params) =>
@@ -479,6 +522,25 @@ export default function CommentContainer({
     });
   };
 
+  const handleReport = () => {
+    if (!comment?.commentId) {
+      setReportState(3);
+      setTimeout(() => {
+        setReportModalOpen(false);
+        setReportText("");
+        setReportType(null);
+        setReportState(0);
+      }, 2000);
+      return;
+    }
+
+    const reportObj = {
+      reason: reportType,
+      text: reportType === "Something Else" ? reportText : null,
+    };
+    handleReportMutation.mutate({ commentId: comment.commentId, reportObj });
+  };
+
   const handleFollow = (username) => {
     handleFollowMutation.mutate(username);
   };
@@ -524,6 +586,8 @@ export default function CommentContainer({
     }
   };
 
+  const handleAnimEnd = () => setReactAnim(false);
+
   const commentAge = determineAge(comment?.time || new Date());
   const hasRepliesSection = showReplies;
   const hasReplies = comment?.numComments > 0;
@@ -566,6 +630,18 @@ export default function CommentContainer({
       isFollowing={isFollowing}
       onKeyPress={handleKeyPress}
       isCommenting={handleCommentMutation.isPending}
+      reportText={reportText}
+      setReportText={setReportText}
+      reportType={reportType}
+      setReportType={setReportType}
+      reportState={reportState}
+      reportCommentModalOpen={reportCommentModalOpen}
+      setReportCommentModalOpen={setReportCommentModalOpen}
+      deleteCommentModalOpen={deleteCommentModalOpen}
+      setDeleteCommentModalOpen={setDeleteModalOpen}
+      onReportComment={handleReport}
+      reactAnim={reactAnim}
+      handleAnimEnd={handleAnimEnd}
     />
   );
 }
