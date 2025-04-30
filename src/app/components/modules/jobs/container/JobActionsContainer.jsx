@@ -30,7 +30,6 @@ export default function JobActionsContainer({ job, onSaveJob, isSaving }) {
   const handleReportMutation = useMutation({
     mutationFn: (params) => {
       const { jobId, reportObj } = params;
-      console.log("Reporting job with ID:", jobId, "and reason:", reportObj);
       return report(null, null, null, jobId, null, reportObj);
     },
   });
@@ -40,7 +39,6 @@ export default function JobActionsContainer({ job, onSaveJob, isSaving }) {
   const handleCloseModal = () => setModalOpen(false);
 
   const handleOpenReportModal = () => {
-    console.log("Opening report modal");
     // Reset form fields first
     setReportText("");
     setReportType("");
@@ -50,7 +48,6 @@ export default function JobActionsContainer({ job, onSaveJob, isSaving }) {
   };
 
   const handleCloseReportModal = (open) => {
-    console.log("Dialog onOpenChange called with:", open);
     setReportModalOpen(open);
 
     if (!open && reportState !== 1) {

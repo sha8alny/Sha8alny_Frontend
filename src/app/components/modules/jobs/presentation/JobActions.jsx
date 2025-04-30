@@ -115,7 +115,6 @@ export default function JobActions({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log("Report button clicked");
           handleOpenReportModal();
         }}
         aria-label="Report this job"
