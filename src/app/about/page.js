@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Building, Globe, Users } from "lucide-react";
@@ -5,8 +6,14 @@ import { ArrowRight, Building, Globe, Users } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
 import { Card, CardContent } from "@/app/components/ui/Card";
 import { Separator } from "@/app/components/ui/Separator";
+import { useTheme } from "next-themes";
 
 export default function AboutPage() {
+  const { theme } = useTheme();
+  const isDarkMode =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
@@ -24,7 +31,7 @@ export default function AboutPage() {
                 </p>
                 <div className="flex flex-col gap-2 sm:flex-row">
                   <Button
-                    className="bg-secondary text-white font-bold hover:bg-secondary/90"
+                    className="bg-secondary text-background font-bold hover:bg-secondary/90"
                     asChild
                   >
                     <Link href="/signup">
@@ -34,8 +41,12 @@ export default function AboutPage() {
                 </div>
               </div>
               <Image
-                src="/placeholder.svg?height=400&width=600"
-                alt="Team collaboration"
+                src={
+                  isDarkMode
+                    ? "/darkmode.svg"
+                    : "/lightmode.svg"
+                }
+                alt="Logo"
                 width={600}
                 height={400}
                 className="mx-auto aspect-video overflow-hidden rounded-xl object-cover"
@@ -142,12 +153,12 @@ export default function AboutPage() {
                   forward.
                 </p>
               </div>
-              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
                 <div className="flex flex-col items-center space-y-4 text-center">
                   <div className="bg-foreground p-1 rounded-full">
                     <Image
-                      src="/placeholder.svg?height=200&width=200"
-                      alt="Ahmed Hassan"
+                      src="/nada.jpg"
+                      alt="Nada Abdullah"
                       width={200}
                       height={200}
                       className="rounded-full object-cover"
@@ -155,20 +166,19 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-text">
-                      Ahmed Hassan
+                      Nada Abdullah
                     </h3>
-                    <p className="text-secondary">Co-Founder & CEO</p>
+                    <p className="text-secondary">Developer</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Former tech executive with 15+ years of experience in
-                    building digital platforms across the MENA region.
+                    developed things here
                   </p>
                 </div>
                 <div className="flex flex-col items-center space-y-4 text-center">
                   <div className="bg-foreground p-1 rounded-full">
                     <Image
-                      src="/placeholder.svg?height=200&width=200"
-                      alt="Layla Mahmoud"
+                      src="/ease.jpg"
+                      alt="Ezz ElDin Selim"
                       width={200}
                       height={200}
                       className="rounded-full object-cover"
@@ -176,39 +186,19 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-text">
-                      Layla Mahmoud
+                      Ezz ElDin Selim
                     </h3>
-                    <p className="text-secondary">Co-Founder & CTO</p>
+                    <p className="text-secondary">Developer</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Tech innovator with a background in AI and machine learning,
-                    focused on creating intuitive user experiences.
+                    developed things here
                   </p>
                 </div>
                 <div className="flex flex-col items-center space-y-4 text-center">
                   <div className="bg-foreground p-1 rounded-full">
                     <Image
-                      src="/placeholder.svg?height=200&width=200"
-                      alt="Omar Farid"
-                      width={200}
-                      height={200}
-                      className="rounded-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-text">Omar Farid</h3>
-                    <p className="text-secondary">Chief Growth Officer</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Marketing strategist with expertise in scaling digital
-                    platforms across emerging markets.
-                  </p>
-                </div>
-                <div className="flex flex-col items-center space-y-4 text-center">
-                  <div className="bg-foreground p-1 rounded-full">
-                    <Image
-                      src="/placeholder.svg?height=200&width=200"
-                      alt="Sara El-Sayed"
+                      src="/hussein.jpg"
+                      alt="Hussein Essam"
                       width={200}
                       height={200}
                       className="rounded-full object-cover"
@@ -216,13 +206,52 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-text">
-                      Sara El-Sayed
+                      Hussein Essam
                     </h3>
-                    <p className="text-secondary">Chief Product Officer</p>
+                    <p className="text-secondary">Team Leader</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Product leader with a passion for building user-centric
-                    solutions that drive engagement and growth.
+                    developed things here
+                  </p>
+                </div>
+                <div className="flex flex-col items-center space-y-4 text-center">
+                  <div className="bg-foreground p-1 rounded-full">
+                    <Image
+                      src="/zhfman.jpg"
+                      alt="Ziad Hesham"
+                      width={200}
+                      height={200}
+                      className="rounded-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-text">Ziad Hesham</h3>
+                    <p className="text-secondary">Developer</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Designed and implemented the user profile with all its
+                    features and functionalities. Also designed and implemented
+                    the news feed.
+                  </p>
+                </div>
+                <div className="flex flex-col items-center space-y-4 text-center">
+                  <div className="bg-foreground p-1 rounded-full">
+                    <Image
+                      src="/salsabil.jpg"
+                      alt="Salsabil Mostafa"
+                      width={200}
+                      height={200}
+                      className="rounded-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-text">
+                      Salsabil Mostafa
+                    </h3>
+                    <p className="text-secondary">Developer</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    developed things here
                   </p>
                 </div>
               </div>
