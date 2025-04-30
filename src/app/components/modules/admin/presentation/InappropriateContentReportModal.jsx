@@ -24,11 +24,28 @@
  * @param {string} props.report.text - The reason for flagging the job.
  */
 
-export function InappropriateContentReportModal({ isOpen, onClose, report, type }) {
+export function InappropriateContentReportModal({ isOpen, onClose, report, kind }) {
   if (!isOpen || !report) return null;
-  let contentType = "Comment";
-  if (report.profilePicture) contentType = "User";
-  else if (report.keywords) contentType = "Post";
+    let avatarSrc = "";
+    let name = "";
+    let type = report.reportData.type;
+    if (type === "User") {
+        avatarSrc = report.itemDetails.profilePicture || "https://www.gravatar.com/avatar/?d=mp&s=200"
+        name = report.itemDetails.name
+    }else if(type === "Company"){
+        avatarSrc = report.itemDetails.logo
+        name = report.itemDetails.name
+    }else if(type === "Post" && report.itemDetails.type === "Company"){
+      avatarSrc = "https://cdn-icons-png.flaticon.com/512/1465/1465438.png"
+      name = report.itemDetails.companyData.name
+    }else if(type === "Post" && report.itemDetails.type === "User"){
+      avatarSrc = "https://th.bing.com/th/id/OIP.epTD4rU3KFbzG4oT4WSbvwHaHa?rs=1&pid=ImgDetMain"
+      name = report.itemDetails.userData.name
+    }else{
+      avatarSrc ="https://static.vecteezy.com/system/resources/previews/026/183/918/non_2x/simple-comment-icon-isolated-on-white-background-vector.jpg"
+      name = report.itemDetails.userData.name
+    }
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 text-text">
@@ -37,18 +54,25 @@ export function InappropriateContentReportModal({ isOpen, onClose, report, type 
           <h2 className="text-xl font-bold">Inapproptiate Content Details</h2>
         </div>
 
-        {contentType === "User" && (
+        {type === "User" && (
         <div className="mt-4">
         <div className="flex items-center space-x-3">
         <img
-            src={report.profilePicture}
-            alt={report.name}
+            src={avatarSrc}
+            alt={name}
             className="h-14 w-14 rounded-full"
+            onError={(e) => {
+                e.currentTarget.src = '/placeholder.svg';
+                e.currentTarget.onerror = null;
+              }}
         />
         <div>
-            <h3 className="font-bold text-lg">{report.name}</h3>
-            <p className="text-sm text-gray-500">
-            {report.headline}
+            <h3 className="font-bold text-lg">{name}</h3>
+            <p className="text-sm text-text">
+             <strong>Username:</strong> {report.itemDetails.username}
+            </p>
+            < p className="text-xs text-text">
+              {report.itemDetails.headline}
             </p>
         </div>
         </div>
@@ -56,135 +80,249 @@ export function InappropriateContentReportModal({ isOpen, onClose, report, type 
         <div className="bg-red-100 p-4 rounded-md mt-4 text-black">
         <h3 className="font-semibold text-red-700">Report Information</h3>
         <p>
-            <strong>Email:</strong> {report.email}
+            <strong>Email:</strong> {report.itemDetails.email}
         </p>
         <p>
-            <strong>Account Visibility:</strong> {report.visibility}
+            <strong>About:</strong> {report.itemDetails.about|| "None"}
         </p>
         <p>
-            <strong>About:</strong> {report.about}
+            <strong>Location:</strong> {report.itemDetails.location}
         </p>
         <p>
-            <strong>Location:</strong> {report.location}
+            <strong>Number of Connections:</strong> {report.itemDetails.numberOfConnections}
         </p>
         <p>
-            <strong>Experience:</strong> {report.experienceIds?.length ? report.experienceIds.join(", ") : "None"}
+            <strong>Number of posts: </strong> {report.itemDetails.numberOfPosts}
         </p>
         <p>
-            <strong>Education:</strong> {report.educationIds?.length ? report.educationIds.join(", ") : "None"}
+            <strong>Number of Comments:</strong> {report.itemDetails.numberOfComments}
         </p>
         <p>
-            <strong>Certificates:</strong> {report.certificateIds?.length ? report.certificateIds.join(", ") : "None"}
+            <strong>Subscription PLan:</strong> {report.itemDetails.subscriptionPlan}
         </p>
         <p>
-            <strong>Industry:</strong> {report.industry}
+            <strong>Deletion Status:</strong> {report.itemDetails.isDeleted ? "Deleted" : "Not Deleted"}
         </p>
+        {report.itemDetails.isDeleted && (
+            <p>
+            <strong>Deletion Date:</strong> {new Date(report.itemDetails.deletedAt).toLocaleDateString()}
+            </p>
+        )}
         <p>
-            <strong>Subscription PLan:</strong> {report.subscription}
-        </p>
-        <p>
-            <strong>Saved Jobs:</strong> {report.savedJobs?.length ? report.savedJobs.join(", ") : "None"}
-        </p>
-        <p>
-            <strong>Saved Posts:</strong> {report.savedPosts?.length ? report.savedPosts.join(", ") : "None"}
-        </p>
-        <p>
-            <strong>User Type:</strong> {report.type}
-        </p>
-        <p>
-            <strong>Resume:</strong> {""}
-            <a
-            href={report.resume}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-black hover:underline"
-            >
-            {report.resume}
-            </a>
-        </p>
-        <p>
-            <strong>Flagged By:</strong> {report.accountName}
+            <strong>Flagged By:</strong> {report.reportData.username}
         </p>
         <p>
             <strong>Flagged Date:</strong>{" "}
-            {new Date(report.createdAt).toLocaleDateString()}
+            {new Date(report.reportData.createdAt).toLocaleDateString()}
         </p>
         <p>
-            <strong>Flag Reason:</strong> {report.text}
+            <strong>Flag Reason:</strong> {report.reportData.reason}
         </p>
         </div>
         </div>
         )}
-        {contentType === "Post" && (
+        {type === "Company" && (
         <div className="mt-4">
         <div className="flex items-center space-x-3">
-            {report.media ? (
-            <img
-                src={report.media}
-                alt={report.accountName}
-                className="h-14 w-14 rounded-full"
-            />
-            ):(
-                <img 
-                src= "https://th.bing.com/th/id/OIP.epTD4rU3KFbzG4oT4WSbvwHaHa?rs=1&pid=ImgDetMain"
-                alt={report.accountName}
-                className="h-14 w-14 rounded-full"
-                />
-            )}
+        <img
+          src= {avatarSrc}
+          alt={name}
+            className="h-14 w-14 rounded-full"
+        />
         <div>
-            <h3 className="font-bold text-lg">{report.username}</h3>
+            <h3 className="font-bold text-lg">{name}</h3>
+            <p className="text-sm text-text">
+            <strong>Username:</strong> {report.itemDetails.username}
+            </p>
+            <div>
+            <img
+            src={report.itemDetails.creator.profilePicture || "https://www.gravatar.com/avatar/?d=mp&s=200"}
+            alt={report.itemDetails.creator.name}
+            className="h-10 w-10 rounded-full"
+            />
+            <p className="text-sm text-text">
+            <strong>Creator Name:</strong> {report.itemDetails.creator.name}
+            </p>
+            <p className="text-sm text-text">
+            <strong>Creator Username:</strong> {report.itemDetails.creator.username}
+            </p>
+            <p className="text-sm text-text">
+            <strong>Creator Email:</strong> {report.itemDetails.creator.email}
+            </p>
+            </div>
         </div>
         </div>
         <div className="bg-red-100 p-4 rounded-md mt-4 text-black">
         <h3 className="font-semibold text-red-700">Report Information</h3>
         <p>
-            <strong>Post Tags:</strong> {report.tags?.length ? report.tags.join(", ") : "None"}
+            <strong>Location:</strong> {report.itemDetails.location}
         </p>
         <p>
-            <strong>Post Likes:</strong> {report.likes?.length ? report.likes.join(", ") : "None"}
+            <strong>Organization Size:</strong> {report.itemDetails.orgSize}
         </p>
         <p>
-            <strong>Post keywords:</strong> {report.keywords?.length ? report.keywords.join(", ") : "None"}
+            <strong>Number of Followers:</strong> {report.itemDetails.numberOfEmployees}
         </p>
         <p>
-        <strong>Flagged By:</strong> {report.accountName}
+            <strong>Number of Posts:</strong> {report.itemDetails.numberOfPosts}
+        </p>
+        <p>
+            <strong>Number of Jobs:</strong> {report.itemDetails.numberOfJobs}
+        </p>
+        <p>
+            <strong>Admins:</strong> 
+            {report.itemDetails.admins.map((admin, index) => (
+                <li key={index} className="text-sm text-text">
+                <img
+                    src={admin.profilePicture || "https://www.gravatar.com/avatar/?d=mp&s=200"}
+                    alt={admin.name}
+                    className="h-10 w-10 rounded-full"
+                />
+                <strong> Name:</strong> {admin.name}
+                <strong> Username:</strong> {admin.username}
+                <strong> Email:</strong> {admin.email}
+                </li>
+            ))}
+        </p>
+        <p>
+        <strong>Deletion Status:</strong> {report.itemDetails.isDeleted ? "Deleted" : "Not Deleted"}
+        </p>
+        {report.itemDetails.isDeleted && (
+            <p>
+            <strong>Deletion Date:</strong> {new Date(report.itemDetails.deletedAt).toLocaleDateString()}
+            </p>
+        )}
+        <p>
+            <strong>Flagged By:</strong> {report.reportData.username}
         </p>
         <p>
             <strong>Flagged Date:</strong>{" "}
-            {new Date(report.createdAt).toLocaleDateString()}
+            {new Date(report.reportData.createdAt).toLocaleDateString()}
         </p>
         <p>
-            <strong>Flag Reason:</strong> {report.text}
+            <strong>Flag Reason:</strong> {report.reportData.reason}
         </p>
         </div>
         </div>
         )}
-        {contentType === "Comment" && (
+        {type === "Post" && (
+        <div className="mt-4">
+        <div className="flex items-center space-x-3">
+            <img
+                src={avatarSrc}
+                alt={name}
+                className="h-14 w-14 rounded-full"
+            />
+        <div className="flex items-center space-x-3">
+            <img
+            src={report.itemDetails.companyData?.logo || (report.itemDetails.userData?.profilePicture || "https://www.gravatar.com/avatar/?d=mp&s=200")}
+            alt={report.itemDetails.companyData?.name || report.itemDetails.userData?.name}
+            className="h-10 w-10 rounded-full"
+            />
+            <div>
+            <h3 className="font-bold text-lg">{report.itemDetails.companyData?.name || report.itemDetails.userData?.name}</h3>
+            <h3 className=" text-sm"><strong> Username: </strong>{report.itemDetails.companyData?.username || report.itemDetails.userData?.username}</h3>
+            </div>
+        </div>
+        </div>
+        <div className="bg-red-100 p-4 rounded-md mt-4 text-black">
+        <h3 className="font-semibold text-red-700">Report Information</h3>
+        <p>
+            <strong>Post Text:</strong> {report.itemDetails.text}
+        </p>
+        <p>
+            <strong>Post Tags:</strong> {report.itemDetails.tags?.length ? report.itemDetails.tags.join(", ") : "None"}
+        </p>
+        <p>
+            <strong>Post keywords:</strong> {report.itemDetails.keywords?.length ? report.itemDetails.keywords.join(", ") : "None"}
+        </p>
+        <p>
+            <strong>Post Media:</strong>
+            {report.itemDetails.media?.length ? (
+                <li className="flex flex-wrap gap-4 mt-2">
+                {report.itemDetails.media.map((media, index) => (
+                    <a href={media} target="_blank" rel="noopener noreferrer" key={index}>
+                    <img
+                        src={media}
+                        alt={`Post Media ${index}`}
+                        className="h-14 w-14 rounded-full object-cover"
+                    />
+                    </a>
+                ))}
+                </li>
+            ) : (
+                "None"
+            )}
+        </p>
+        <p>
+            <strong>Deletion Status:</strong> {report.itemDetails.isDeleted ? "Deleted" : "Not Deleted"}
+        </p>
+        {report.itemDetails.isDeleted && (
+            <p>
+            <strong>Deletion Date:</strong> {new Date(report.itemDetails.deletedAt).toLocaleDateString()}
+            </p>
+        )}
+        <p>
+            <strong>Creation Date:</strong> {new Date(report.itemDetails.createdAt).toLocaleDateString()}
+        </p>
+        <p>
+        <strong>Flagged By:</strong> {report.reportData.username}
+        </p>
+        <p>
+            <strong>Flagged Date:</strong>{" "}
+            {new Date(report.reportData.createdAt).toLocaleDateString()}
+        </p>
+        <p>
+            <strong>Flag Reason:</strong> {report.reportData.reason}
+        </p>
+        </div>
+        </div>
+        )}
+        {type === "Comment" && (
         <div className="mt-4">
             <div className="flex items-center space-x-3">
                 <img
-                src="https://static.vecteezy.com/system/resources/previews/026/183/918/non_2x/simple-comment-icon-isolated-on-white-background-vector.jpg"
-                alt={report.username}
+                src={avatarSrc}
+                alt={name}
                 className="h-14 w-14 rounded-full"
                 />
-                <div>
-                    <h3 className="font-bold text-lg">{report.username}</h3>
+                <div className="flex items-center space-x-3">
+                    <img
+                    src={report.itemDetails.userData.profilePicture}
+                    alt={report.itemDetails.userData.name}  
+                    className="h-10 w-10 rounded-full"
+                    />
+                    <div>
+                    <h3 className="font-bold text-lg">{report.itemDetails.userData?.name}</h3>
+                    <h3 className=" text-sm"><strong> Username: </strong>{report.itemDetails.userData?.username}</h3>
+                    </div>
                  </div>
             </div>
             <div className="bg-red-100 p-4 rounded-md mt-4 text-black">
                 <h3 className="font-semibold text-red-700">Report Information</h3>
                 <p>
-                    <strong>Comment Likes:</strong> {report.likes?.length ? report.likes.join(", ") : "None"}
+                    <strong>Comment Text:</strong> {report.itemDetails.text}
                 </p>
                 <p>
-                    <strong>Flagged By:</strong> {report.accountName}
+                    <strong>Deletion Status:</strong> {report.itemDetails.isDeleted ? "Deleted" : "Not Deleted"}
+                </p>
+                {report.itemDetails.isDeleted && (
+                    <p>
+                    <strong>Deletion Date:</strong> {new Date(report.itemDetails.deletedAt).toLocaleDateString()}
+                    </p>
+                )}
+                <p>
+                    <strong>Comment Date:</strong> {new Date(report.itemDetails.createdAt).toLocaleDateString()}
+                </p>
+                <p>
+                    <strong>Flagged By:</strong> {report.reportData.username}
                 </p>
                 <p>
                     <strong>Flagged Date:</strong>{" "}
-                    {new Date(report.createdAt).toLocaleDateString()}
+                    {new Date(report.reportData.createdAt).toLocaleDateString()}
                 </p>
                 <p>
-                    <strong>Flag Reason:</strong> {report.text}
+                    <strong>Flag Reason:</strong> {report.reportData.reason}
                 </p>   
             </div>
         </div>
@@ -192,6 +330,7 @@ export function InappropriateContentReportModal({ isOpen, onClose, report, type 
 
         <div className="flex justify-end mt-4">
           <button
+           data-testid="close-button"
             onClick={onClose}
             className="bg-transparent text-secondary px-4 py-2 rounded-md border cursor-pointer"
           >

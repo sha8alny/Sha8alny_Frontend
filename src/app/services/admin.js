@@ -78,11 +78,38 @@ export const deleteUser = async (userId) => {
     method: "DELETE",
   });
 };
+export const deleteCompany = async (companyId) => {
+  const response = await fetchWithAuth(`${apiURL}/admin/companies/${companyId}`, {
+    method: "DELETE",
+  });
+};
 
-export const updateStatusReport = async (reportId, status) => {
+export const updateStatusReport = async ({reportId, status}) => {
   const response = await fetchWithAuth(`${apiURL}/admin/reports/${reportId}`, {
     method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-    body: JSON.stringify({ reportId, status }),
+    body: JSON.stringify({status }),
   });
+  if (!response.ok) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+};
+
+export const reactivateContent = async ({ type, id }) => {
+  const response = await fetchWithAuth(`${apiURL}/admin/unban/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ type, targetId: id }),
+  });
+
+  if (!response.ok && response.status !== 204) {
+    throw new Error(`HTTP error: Status: ${response.status}`);
+  }
+
+  return response.status === 204 ? {} : await response.json();
 };
