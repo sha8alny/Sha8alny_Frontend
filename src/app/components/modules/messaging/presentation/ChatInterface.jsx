@@ -114,7 +114,7 @@ const ChatHeader = React.memo(
 
 // Message list component
 const MessageList = React.memo(
-  ({ messages, currentUser, otherParticipant, onLoadMoreMessages }) => {
+  ({ messages, currentUser, otherParticipant }) => {
     let lastDateString = null; // Keep track of the last date rendered
 
     return (
@@ -224,7 +224,6 @@ const ChatInput = React.memo(
 
 // Main chat presentation component
 export function ChatPresentation({
-  selectedConversation,
   currentUser,
   otherParticipant,
   isOtherParticipantTyping,
@@ -326,7 +325,6 @@ export function ChatPresentation({
           messages={messages}
           currentUser={currentUser}
           otherParticipant={otherParticipant}
-          onLoadMoreMessages={onLoadMoreMessages}
         />
       </ScrollArea>
 

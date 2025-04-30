@@ -30,19 +30,16 @@ export function MessagingContainer({ currentUser }) {
     selectConversation,
     handleSelectConversation,
     handleToggleRead,
-    handleMarkAsRead,
     handleToggleBlock,
     handleDeleteConversation,
     isDeleting,  // Get this from useConversations
     setSelectedConversation
   } = useConversations(currentUser);
   
-  // Messages hook
+  // Messages hook - Need load more and typing indicator handler
   const {
-    messages,
-    handleSendMessage,
-    handleSetTypingIndicator,
-    handleLoadMoreMessages
+    handleLoadMoreMessages,
+    handleSetTypingIndicator // Re-added as it's used in handleBack and cleanup effect
   } = useMessages(selectedConversation, currentUser);
   
   // Connections hook
@@ -96,7 +93,7 @@ export function MessagingContainer({ currentUser }) {
     // First, ensure typing indicator is cleared if active
     if (conversationId && currentUser) {
       // This will clear any typing indicators for the current user
-      handleSetTypingIndicator && handleSetTypingIndicator(currentUser, conversationId, false);
+      handleSetTypingIndicator && handleSetTypingIndicator(currentUser, conversationId, false); // Ensure this handler exists
     }
     
     // Then set selected conversation to null, which will trigger cleanup in the hooks
@@ -122,7 +119,6 @@ export function MessagingContainer({ currentUser }) {
 
   // Updated select conversation handler that also updates URL
   const handleConversationSelect = useCallback((conversationId) => {
-    console.log('Conversation selected:', conversationId);
     const conversation = userConversations.find(c => c.id === conversationId);
     if (conversation) {
       // Close message requests if open
@@ -133,7 +129,6 @@ export function MessagingContainer({ currentUser }) {
       
       // Then update URL with the other participant's username
       const otherUsername = getOtherParticipantUsername(conversation, currentUser);
-      console.log('Other username found:', otherUsername);
       if (otherUsername) {
         navigateToUser(otherUsername);
       }
@@ -239,7 +234,7 @@ export function MessagingContainer({ currentUser }) {
         );
       }
     };
-  }, [currentUser, handleSetTypingIndicator]);
+  }, [currentUser, handleSetTypingIndicator]); // Add dependency back
 
   // ---- RENDER ----
   return (
@@ -248,18 +243,14 @@ export function MessagingContainer({ currentUser }) {
         userConversations={userConversations}
         selectedConversation={selectedConversation}
         currentUser={currentUser}
-        messages={messages}
         onSelectConversation={handleConversationSelect}
-        onMarkAsRead={handleMarkAsRead}
         onToggleRead={handleToggleRead}
         onToggleBlock={handleToggleBlock}
         onDeleteConversation={handleDeleteConversation}
         isDeleting={isDeleting}  // Pass this to the presentation
-        onSendMessage={handleSendMessage}
-        onSetTypingIndicator={handleSetTypingIndicator}
         onBack={handleBack}
         onOpenConnections={handleOpenConnections}
-        onLoadMoreMessages={handleLoadMoreMessages}
+        onLoadMoreMessages={handleLoadMoreMessages} // Keep this one for ChatContainer
         showMessageRequests={showMessageRequests}
         onViewMessageRequests={handleViewMessageRequests}
         onCloseMessageRequests={handleCloseMessageRequests}

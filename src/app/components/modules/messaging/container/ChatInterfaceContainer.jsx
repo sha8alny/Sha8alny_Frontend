@@ -7,12 +7,9 @@ import { getOtherParticipantUsername, getParticipantDetails } from "@/app/utils/
 
 export function ChatContainer({
   selectedConversation,
-  messages: initialMessages,
   currentUser,
   onBack,
-  onSendMessage,
   onToggleBlock,
-  onSetTypingIndicator,
   onLoadMoreMessages,
 }) {
   // Use the messages hook for message management
@@ -102,6 +99,12 @@ export function ChatContainer({
       
       // Reset typing state reference
       lastTypedTextRef.current = "";
+      
+      // Explicitly turn off typing indicator after sending a message
+      if (selectedConversation?.id) {
+        handleSetTypingIndicator(currentUser, selectedConversation.id, false);
+      }
+      
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -109,7 +112,10 @@ export function ChatContainer({
     message, 
     mediaFiles, 
     otherParticipantUsername, 
-    sendMessage
+    sendMessage,
+    selectedConversation?.id,
+    currentUser,
+    handleSetTypingIndicator
   ]);
 
   const handleKeyDown = useCallback((e) => {
@@ -210,7 +216,6 @@ export function ChatContainer({
 
   return (
     <ChatPresentation
-      selectedConversation={selectedConversation}
       currentUser={currentUser}
       otherParticipant={otherParticipant}
       isOtherParticipantTyping={isOtherParticipantTyping}

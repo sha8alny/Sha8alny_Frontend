@@ -176,6 +176,7 @@ export const MessageBubble = memo(({
   participantName,
   participantPicture,
 }) => {
+  // Ensure messageContent is treated as a string and remove potential leading/trailing quotes
   const messageContent = typeof message.messageContent === "string" 
     ? message.messageContent.replace(/^"|"$/g, '')
     : message.messageContent;

@@ -52,21 +52,17 @@ const EmptyState = ({ onOpenConnections, onViewRequests, requestCount = 0 }) => 
 );
 
 export function MessagingPresentation({
-  messages,
   userConversations,
   selectedConversation,
   currentUser,
   onSelectConversation,
-  onMarkAsRead,
   onToggleRead,
   onToggleBlock,
   onDeleteConversation,
   isDeleting,  // Add this prop
-  onSendMessage,
-  onSetTypingIndicator,
   onBack,
   onOpenConnections,
-  onLoadMoreMessages,
+  onLoadMoreMessages, // Keep this one for ChatContainer
   showMessageRequests = false,
   onViewMessageRequests,
   onCloseMessageRequests,
@@ -101,7 +97,6 @@ export function MessagingPresentation({
               onSelectConversation={onSelectConversation}
               selectedConversationId={selectedConversation?.id}
               currentUser={currentUser}
-              onMarkAsRead={onMarkAsRead}
               onToggleRead={onToggleRead}
               onToggleBlock={onToggleBlock}
               onDeleteConversation={onDeleteConversation}
@@ -144,13 +139,10 @@ export function MessagingPresentation({
           {hasSelectedConversation ? (
             <ChatContainer
               selectedConversation={selectedConversation}
-              messages={messages}
               currentUser={currentUser}
               onBack={onBack}
-              onSendMessage={onSendMessage}
               onToggleBlock={onToggleBlock}
-              onSetTypingIndicator={onSetTypingIndicator}
-              onLoadMoreMessages={onLoadMoreMessages}
+              onLoadMoreMessages={onLoadMoreMessages} // Keep this one
             />
           ) : showMessageRequests ? (
             <MessageRequestsContainer

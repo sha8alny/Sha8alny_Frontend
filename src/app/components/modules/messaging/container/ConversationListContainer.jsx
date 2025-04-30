@@ -46,7 +46,6 @@ export function ConversationListContainer({
     onSelectConversation,
     selectedConversationId,
     currentUser,
-    onMarkAsRead,
     onToggleRead,
     onToggleBlock,
     onDeleteConversation,
@@ -79,11 +78,6 @@ export function ConversationListContainer({
     }, [conversations, currentUser]);
 
     // Handlers
-    const handleMarkAsRead = useCallback(
-        async (conversationId) => await onMarkAsRead(conversationId),
-        [onMarkAsRead]
-    );
-
     const handleToggleRead = useCallback(
         async (conversationId, readStatus) => 
             await onToggleRead(conversationId, readStatus),
@@ -124,7 +118,6 @@ export function ConversationListContainer({
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
             onSelectConversation={onSelectConversation}
-            onMarkAsRead={handleMarkAsRead}
             onToggleRead={handleToggleRead}
             onToggleBlock={handleToggleBlock}
             onDeleteConversation={handleDeleteConversation}
