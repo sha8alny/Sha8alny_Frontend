@@ -32,6 +32,7 @@ import { Button } from "@/app/components/ui/Button";
 
 function CompanyCardPresentation({
   companyUsername,
+  name,
   logo = "/placeholder.svg?height=48&width=48",
   industry,
   description,
@@ -72,7 +73,7 @@ function CompanyCardPresentation({
               onClick={onNavigateToCompany}
               data-testid={`company-username-${companyUsername}`}
             >
-              {companyUsername}
+              {name}
             </h3>
             <Badge
               variant="outline"

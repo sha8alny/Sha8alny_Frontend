@@ -14,7 +14,7 @@ import SettingsSecurityTab from "../presentation/SettingsSecurityTab";
  *
  */
 
-const SettingsSecurityContainer = () => {
+const SettingsSecurityContainer = ({hasPassword}) => {
   const [activeForm, setActiveForm] = useState(null);
 
   const { data: data, isLoading } = useQuery({
@@ -28,6 +28,7 @@ const SettingsSecurityContainer = () => {
       loading={isLoading}
       activeForm={activeForm}
       setActiveForm={setActiveForm}
+      hasPassword={hasPassword}
     />
   );
 };

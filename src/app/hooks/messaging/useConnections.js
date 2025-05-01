@@ -47,37 +47,45 @@ export function useConnections(currentUser, conversations) {
   }, [refetch]);
 
   // Create or select an existing conversation with a connection
-  const handleStartConversation = useCallback(async (connection, selectConversation, navigateToUser) => {
-    if (!connection?.username || !currentUser) return null;
-    
-    try {
-      setShowConnectionsModal(false);
-      
-      // Check if conversation already exists
-      const existing = conversations.find((c) => 
-        c.participants && Object.keys(c.participants).includes(connection.username)
-      );
+  const handleStartConversation = useCallback(
+    async (connection, selectConversation, navigateToUser) => {
+      if (!connection?.username || !currentUser) return null;
 
-      if (existing) {
-        selectConversation(existing);
-        navigateToUser(connection.username);
-        return existing;
-      } else {
-        // Create a new conversation
-        const newConvData = await messagingService.createConversation(connection.username, currentUser); 
-        if (newConvData?.id) {
-          selectConversation(newConvData);
+      try {
+        setShowConnectionsModal(false);
+
+        // Check if conversation already exists
+        const existing = conversations.find(
+          (c) =>
+            c.participants &&
+            Object.keys(c.participants).includes(connection.username)
+        );
+
+        if (existing) {
+          selectConversation(existing);
           navigateToUser(connection.username);
-          return newConvData;
+          return existing;
+        } else {
+          // Create a new conversation
+          const newConvData = await messagingService.createConversation(
+            connection.username,
+            currentUser
+          );
+          if (newConvData?.id) {
+            selectConversation(newConvData);
+            navigateToUser(connection.username);
+            return newConvData;
+          }
         }
+
+        return null;
+      } catch (error) {
+        console.error("Error in conversation handling:", error);
+        return null;
       }
-      
-      return null;
-    } catch (error) {
-      console.error("Error in conversation handling:", error);
-      return null;
-    }
-  }, [currentUser, conversations]);
+    },
+    [currentUser, conversations]
+  );
 
   return {
     showConnectionsModal,

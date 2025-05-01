@@ -13,9 +13,12 @@ import ChangeUsernameContainer from "./ChangeUsernameContainer";
 /**
  * SettingsAccountPrefsContainer component manages the state and logic for the account preferences settings.
  *
+ * @param {Object} props - The component props.
+ * @param {boolean} props.hasPassword - Whether the user has a password set.
+ * @param {boolean} props.isLoadingHasPassword - Whether the hasPassword data is loading.
  * @returns {JSX.Element} The rendered component.
  */
-export default function SettingsAccountPrefsContainer() {
+export default function SettingsAccountPrefsContainer({ hasPassword, isLoadingHasPassword }) {
   const [activeForm, setActiveForm] = useState(null);
   const router = useRouter();
   const { theme } = useTheme();
@@ -26,13 +29,15 @@ export default function SettingsAccountPrefsContainer() {
 
   const renderContent = () => {
     if (activeForm === "darkMode") return <DarkModeForm handleDarkModeForm={() => setActiveForm(null)} />;
-    if (activeForm === "deleteAccount") return <DeleteAccountContainer handleDeleteAccountForm={() => setActiveForm(null)} />;
+    if (activeForm === "deleteAccount") return <DeleteAccountContainer hasPassword={hasPassword} handleDeleteAccountForm={() => setActiveForm(null)} />;
     if (activeForm === "changeUsername") return <ChangeUsernameContainer handleUsernameForm={() => setActiveForm(null)} />;
     return (
       <SettingsAccountPrefsPresentation
         theme={theme}
         handleNavigation={handleNavigation}
         setActiveForm={setActiveForm}
+        hasPassword={hasPassword}
+        isLoadingHasPassword={isLoadingHasPassword}
       />
     );
   };

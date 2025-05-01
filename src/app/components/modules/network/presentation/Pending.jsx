@@ -13,6 +13,7 @@ const Pending = ({
     page,
     hasMore,
     onManageRequest,
+    onCancelRequest,
     manageRequest,
     openDeleteDialog,
     setOpenDeleteDialog,
@@ -97,9 +98,12 @@ const Pending = ({
                         onManageRequest({ requestName: account.username, status: "accepted" });                    }
                     }
                     showButton={tab === "received"}
-                    showRemoveButton={tab === "received"}
+                    showRemoveButton={true}
                     onRemove={() => {
-                        onManageRequest({ requestName: account.username, status: "rejected" });
+                       if (tab === "sent") {
+                        onCancelRequest({ requestName: account.username });
+                        } else {
+                        onManageRequest({ requestName: account.username, status: "rejected" });}
                     }}
                     removeLoading={manageRequest}
                     openDeleteDialog={openDeleteDialog===account.username}

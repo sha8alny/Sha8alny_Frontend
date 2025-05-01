@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { debounce } from "@/app/utils/commonUtils";
 import { messagingService } from "@/app/services/messagingService";
+import { useMutation, useQueryClient } from "@tanstack/react-query"; // Add this import
 
 /**
  * Custom hook for managing conversations
@@ -18,6 +19,110 @@ export function useConversations(currentUser) {
   
   // Track pending read operations for batch processing
   const [pendingReadOperations, setPendingReadOperations] = useState({});
+  
+  // Define mutations for conversation operations
+  const toggleReadMutation = useMutation({
+    mutationFn: ({ id, currentUser }) => 
+      messagingService.toggleConversationReadStatusFirestore(id, currentUser),
+    onError: (error, variables) => {
+      console.error("Error toggling conversation read status:", error);
+      
+      // Revert to original state on error
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id === variables.id && c.participantMetadata) {
+            // Get the original read status (opposite of what we tried to set)
+            const originalReadStatus = !c.participantMetadata[variables.currentUser]?.readFlag;
+            return {
+              ...c,
+              participantMetadata: {
+                ...c.participantMetadata,
+                [variables.currentUser]: {
+                  ...c.participantMetadata[variables.currentUser],
+                  readFlag: originalReadStatus
+                }
+              }
+            };
+          }
+          return c;
+        })
+      );
+    },
+    onSettled: (_, __, variables) => {
+      setTimeout(() => readStatusOperations.current.delete(variables.id), 500);
+    }
+  });
+  
+  const toggleBlockMutation = useMutation({
+    mutationFn: ({ username, id, isBlocked }) => 
+      messagingService.toggleUserBlock(username, id, isBlocked),
+    onError: (error, variables) => {
+      console.error("Error toggling user block status:", error);
+      
+      // Revert on error
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.id === variables.id && c.participants && c.participants[variables.username]) {
+            return {
+              ...c,
+              participants: {
+                ...c.participants,
+                [variables.username]: {
+                  ...c.participants[variables.username],
+                  isBlocked: !variables.isBlocked
+                }
+              }
+            };
+          }
+          return c;
+        })
+      );
+      
+      // Update selected conversation too if needed
+      if (selectedConversation?.id === variables.id) {
+        setSelectedConversation(prev => {
+          if (!prev || !prev.participants) return prev;
+          
+          return {
+            ...prev,
+            participants: {
+              ...prev.participants,
+              [variables.username]: {
+                ...prev.participants[variables.username],
+                isBlocked: !variables.isBlocked
+              }
+            }
+          };
+        });
+      }
+    }
+  });
+  
+  const deleteConversationMutation = useMutation({
+    mutationFn: async ({ id, otherUsername }) => {
+      await messagingService.deleteConversation(otherUsername);
+      return { id, otherUsername };
+    },
+    onError: (error, variables) => {
+      console.error("Error deleting conversation:", error);
+      
+      // Restore conversation on error
+      setConversations(prev => {
+        const exists = prev.some(c => c.id === variables.id);
+        if (!exists) {
+          const originalConv = conversations.find(c => c.id === variables.id);
+          if (originalConv) {
+            return [...prev, originalConv];
+          }
+        }
+        return prev;
+      });
+    },
+    onSuccess: () => {
+      // Could invalidate queries here if needed
+      // queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    }
+  });
   
   // Selects a conversation and handles navigation and read status
   const selectConversation = useCallback((conversation) => {
@@ -115,71 +220,10 @@ export function useConversations(currentUser) {
       })
     );
     
-    // Make API call
-    messagingService.toggleConversationReadStatusFirestore(id, currentUser)
-      .then(() => {
-        setTimeout(() => readStatusOperations.current.delete(id), 500);
-      })
-      .catch(err => {
-        console.error("Error toggling conversation read status:", err);
-        
-        // Revert to original state on error
-        setConversations((prev) =>
-          prev.map((c) => {
-            if (c.id === id && c.participantMetadata) {
-              return {
-                ...c,
-                participantMetadata: {
-                  ...c.participantMetadata,
-                  [currentUser]: {
-                    ...c.participantMetadata[currentUser],
-                    readFlag: currentReadStatus
-                  }
-                }
-              };
-            }
-            return c;
-          })
-        );
-        
-        readStatusOperations.current.delete(id);
-      });
-  }, [conversations, currentUser]);
-
-  // Mark a conversation as read
-  const handleMarkAsRead = useCallback((id) => {
-    const conv = conversations.find((c) => c.id === id);
-    if (!conv || !currentUser) return;
+    // Execute mutation
+    toggleReadMutation.mutate({ id, currentUser });
     
-    const otherUsername = Object.keys(conv.participants || {})
-      .find(username => username !== currentUser);
-    
-    if (!otherUsername) return;
-
-    // Optimistically update UI
-    setConversations((prev) =>
-      prev.map((c) => {
-        if (c.id === id && c.participantMetadata) {
-          return {
-            ...c,
-            participantMetadata: {
-              ...c.participantMetadata,
-              [currentUser]: {
-                ...c.participantMetadata[currentUser],
-                readFlag: true,
-                unreadCount: 0,
-                lastReadAt: new Date().toISOString()
-              }
-            }
-          };
-        }
-        return c;
-      })
-    );
-
-    messagingService.markMessagesAsRead(otherUsername)
-      .catch(err => console.error("Error marking messages as read:", err));
-  }, [conversations, currentUser]);
+  }, [conversations, currentUser, toggleReadMutation]);
 
   // Toggle block status for a user
   const handleToggleBlock = useCallback((id, usernameToToggle, isBlocked) => {
@@ -225,87 +269,28 @@ export function useConversations(currentUser) {
       });
     }
     
-    messagingService.toggleUserBlock(usernameToToggle, id, isBlocked)
-      .catch(err => {
-        console.error("Error toggling user block status:", err);
-        
-        // Revert on error
-        setConversations((prev) =>
-          prev.map((c) => {
-            if (c.id === id && c.participants && c.participants[usernameToToggle]) {
-              return {
-                ...c,
-                participants: {
-                  ...c.participants,
-                  [usernameToToggle]: {
-                    ...c.participants[usernameToToggle],
-                    isBlocked: !isBlocked
-                  }
-                }
-              };
-            }
-            return c;
-          })
-        );
-        
-        // Update selected conversation too if needed
-        if (selectedConversation?.id === id) {
-          setSelectedConversation(prev => {
-            if (!prev || !prev.participants) return prev;
-            
-            return {
-              ...prev,
-              participants: {
-                ...prev.participants,
-                [usernameToToggle]: {
-                  ...prev.participants[usernameToToggle],
-                  isBlocked: !isBlocked
-                }
-              }
-            };
-          });
-        }
-      });
-  }, [conversations, currentUser, selectedConversation]);
+    // Execute mutation
+    toggleBlockMutation.mutate({ username: usernameToToggle, id, isBlocked });
+    
+  }, [conversations, currentUser, selectedConversation, toggleBlockMutation]);
 
-  // Process batched read operations
-  useEffect(() => {
-    if (Object.keys(pendingReadOperations).length === 0) return;
+  // Handle conversation deletion
+  const handleDeleteConversation = useCallback(async (id, otherUsername) => {
+    if (!id || !otherUsername) return;
     
-    const usernames = Object.keys(pendingReadOperations);
+    // If the selected conversation is being deleted, clear it
+    if (selectedConversation?.id === id) {
+      setSelectedConversation(null);
+    }
     
-    const processReadOperations = async () => {
-      try {
-        // Process in batches
-        for (let i = 0; i < usernames.length; i += 5) {
-          const batch = usernames.slice(i, i + 5);
-          await Promise.all(
-            batch.map(username => 
-              messagingService.markMessagesAsRead(username)
-                .catch(err => console.error(`Error marking messages as read for ${username}:`, err))
-            )
-          );
-          
-          if (i + 5 < usernames.length) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-        }
-      } finally {
-        setPendingReadOperations({});
-        // Clear tracking
-        setTimeout(() => {
-          usernames.forEach(username => {
-            const convId = conversations.find(c => 
-              c.participants && Object.keys(c.participants).includes(username)
-            )?.id;
-            if (convId) readStatusOperations.current.delete(convId);
-          });
-        }, 500);
-      }
-    };
+    // Remove from UI immediately (optimistic update)
+    setConversations(prev => prev.filter(c => c.id !== id));
     
-    processReadOperations();
-  }, [pendingReadOperations, conversations]);
+    // Execute mutation
+    deleteConversationMutation.mutate({ id, otherUsername });
+    
+  }, [conversations, selectedConversation, deleteConversationMutation]);
+
 
   // Subscribe to conversations
   useEffect(() => {
@@ -326,7 +311,7 @@ export function useConversations(currentUser) {
           if (Array.isArray(updatedConversations)) {
             setConversations(updatedConversations);
             
-            // Update selected conversation if needed
+            // Update selected conversation if needed - BUT ONLY FOR DATA UPDATES, NOT SELECTION
             if (selectedConversationIdRef.current) {
               const currentlySelectedId = selectedConversationIdRef.current;
               const updatedSelectedConversation = updatedConversations.find(
@@ -334,9 +319,15 @@ export function useConversations(currentUser) {
               );
               
               if (updatedSelectedConversation) {
+                // Only update specific fields, not change selection entirely
                 setSelectedConversation(prev => {
+                  if (!prev) return prev; // Don't select if nothing was selected
+                  
+                  // Only update if there are actual changes to metadata or participants
                   if (JSON.stringify(prev?.participantMetadata) !== 
-                      JSON.stringify(updatedSelectedConversation.participantMetadata)) {
+                      JSON.stringify(updatedSelectedConversation.participantMetadata) ||
+                      JSON.stringify(prev?.participants) !== 
+                      JSON.stringify(updatedSelectedConversation.participants)) {
                     return updatedSelectedConversation;
                   }
                   return prev;
@@ -364,14 +355,19 @@ export function useConversations(currentUser) {
     };
   }, [currentUser]);
 
+  // Return state and handlers
   return {
     conversations,
     selectedConversation,
     selectConversation,
     handleSelectConversation,
     handleToggleRead,
-    handleMarkAsRead,
     handleToggleBlock,
+    handleDeleteConversation,
     setSelectedConversation,
+    // Add mutation states for components to use
+    isTogglingRead: toggleReadMutation.isPending,
+    isTogglingBlock: toggleBlockMutation.isPending,
+    isDeleting: deleteConversationMutation.isPending,
   };
 }
