@@ -254,13 +254,13 @@ export function ChatPresentation({
   onBlockUser,
   onUnblockUser,
   onLoadMoreMessages,
+  isLoadingMore,
+  setIsLoadingMore,
 }) {
   const scrollAreaViewportRef = useRef(null);
-  const prevMessagesLengthRef = useRef(messages.length);
   const scrollPositionRef = useRef(null);
-  const isLoadingMoreRef = useRef(false);
 
-  // Add scroll detection to load more messages when reaching top
+  // Improved scroll detection to load more messages
   useEffect(() => {
     if (!scrollAreaRef.current) return;
 
@@ -278,42 +278,42 @@ export function ChatPresentation({
         scrollHeight: viewport.scrollHeight
       };
       
-      // If user has scrolled near the top (20px threshold) and we're not already loading, trigger load more
-      if (viewport.scrollTop < 20 && !isLoadingMoreRef.current) {
-        isLoadingMoreRef.current = true;
+      // If user has scrolled near the top (30px threshold) and we're not already loading, trigger load more
+      if (viewport.scrollTop < 30 && !isLoadingMore && messages.length >= 20) {
         onLoadMoreMessages && onLoadMoreMessages();
       }
     };
 
     viewport.addEventListener("scroll", handleScroll);
     return () => viewport.removeEventListener("scroll", handleScroll);
-  }, [onLoadMoreMessages]);
+  }, [onLoadMoreMessages, messages.length, isLoadingMore]);
   
-  // Preserve scroll position when new messages are loaded at the top
+  // Improved preservation of scroll position when loading history
   useEffect(() => {
-    if (!scrollAreaViewportRef.current) return;
+    if (!scrollAreaViewportRef.current || !isLoadingMore) return;
     
-    // Check if new messages were loaded (not sent)
-    if (messages.length > prevMessagesLengthRef.current && isLoadingMoreRef.current) {
-      const viewport = scrollAreaViewportRef.current;
-      
-      // Add a small delay to ensure DOM is updated
-      setTimeout(() => {
-        // Get height difference to maintain relative scroll position
-        if (scrollPositionRef.current) {
-          const heightDifference = viewport.scrollHeight - scrollPositionRef.current.scrollHeight;
-          viewport.scrollTop = scrollPositionRef.current.scrollTop + heightDifference;
-        }
+    const viewport = scrollAreaViewportRef.current;
+    
+    // Set a flag to check if messages have been updated after isLoadingMore became true
+    const checkForUpdates = setInterval(() => {
+      // If DOM has been updated with new content
+      if (viewport.scrollHeight > (scrollPositionRef.current?.scrollHeight || 0)) {
+        clearInterval(checkForUpdates);
         
-        isLoadingMoreRef.current = false;
-      }, 50);
-    } else {
-      // If not loading more (i.e., new message sent), don't interfere with auto-scroll
-      isLoadingMoreRef.current = false;
-    }
+        // Calculate height difference and maintain relative position
+        const heightDifference = viewport.scrollHeight - scrollPositionRef.current.scrollHeight;
+        viewport.scrollTop = scrollPositionRef.current.scrollTop + heightDifference;
+        
+        // Reset loading flag after position is maintained
+        setTimeout(() => {
+          setIsLoadingMore && setIsLoadingMore(false);
+        }, 100);
+      }
+    }, 50);
     
-    prevMessagesLengthRef.current = messages.length;
-  }, [messages.length]);
+    // Clear interval if component unmounts or dependencies change
+    return () => clearInterval(checkForUpdates);
+  }, [messages, isLoadingMore, setIsLoadingMore]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
