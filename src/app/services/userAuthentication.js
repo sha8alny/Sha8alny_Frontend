@@ -22,7 +22,7 @@ export const fetchWithAuth = async (url, options = {}) => {
    
     let sessionTime;
     if (pageNum === "1" || !getSessionTime()) {
-      sessionTime = resetSessionTime();
+      sessionTime = await resetSessionTime();
     } else {
       sessionTime = getSessionTime();
     }
