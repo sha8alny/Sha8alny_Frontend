@@ -9,7 +9,9 @@ import { ScrollArea } from "@/app/components/ui/ScrollArea";
 import { Button } from "@/app/components/ui/Button";
 import { Badge } from "@/app/components/ui/Badge";
 import { MessageRequestItem } from "./MessageRequestItem";
-import { ArrowLeft, InboxIcon, Send } from "lucide-react";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import InboxIcon from '@mui/icons-material/Inbox';
+import SendIcon from '@mui/icons-material/Send';
 
 export function MessageRequestsPresentation({
   receivedRequests = [],
@@ -48,9 +50,9 @@ export function MessageRequestsPresentation({
   const renderEmpty = (type) => (
     <div className="flex flex-col items-center justify-center h-40 p-4">
       {type === "received" ? (
-        <InboxIcon className="h-12 w-12 text-muted-foreground/50" />
+        <InboxIcon className="h-12 w-12 text-muted-foreground/50" sx={{ height: '3rem', width: '3rem' }}/>
       ) : (
-        <Send className="h-12 w-12 text-muted-foreground/50" />
+        <SendIcon className="text-muted-foreground/50" sx={{ height: '3rem', width: '3rem' }} />
       )}
       <p className="mt-4 text-muted-foreground">
         {type === "received"
@@ -70,7 +72,7 @@ export function MessageRequestsPresentation({
           className="mr-2 h-8 w-8 hover:bg-foreground dark:hover:bg-foreground/80 transition-colors"
           data-testid="message-requests-back-button"
         >
-          <ArrowLeft className="h-4 w-4 text-muted-foreground" />
+          <ArrowBackIcon className="h-4 w-4 text-muted-foreground" />
         </Button>
         <h2 className="text-lg font-medium flex-1 text-center pr-5 text-text">
           Message Requests

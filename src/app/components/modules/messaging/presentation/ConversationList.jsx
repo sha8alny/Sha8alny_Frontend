@@ -15,8 +15,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/components/ui/DropDownMenu";
-// Icons
-import { Search, MoreVertical, Check, Trash2 } from "lucide-react";
+// MUI Icons
+import SearchIcon from '@mui/icons-material/Search';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 // Utils
 import { formatDistanceToNow } from "@/app/utils/messagingUtils";
 // Components
@@ -69,7 +72,7 @@ const ConversationActions = React.memo(
               onClick={onMenuClick}
               data-testid={`conversation-actions-button-${conversation.id}`}
             >
-              <MoreVertical className="h-4 w-4 text-muted-foreground" />
+              <MoreVertIcon className="h-4 w-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
@@ -99,7 +102,7 @@ const ConversationActions = React.memo(
               data-testid={`toggle-block-button-${conversation.id}`}
             >
               {conversation.isOtherParticipantBlocked && (
-                <Check className="mr-2 h-4 w-4 flex-shrink-0" />
+                <CheckIcon className="mr-2 h-4 w-4 flex-shrink-0" />
               )}
               <span className="truncate">
                 {conversation.isOtherParticipantBlocked
@@ -112,7 +115,7 @@ const ConversationActions = React.memo(
               onClick={handleDeleteClick}
               data-testid={`delete-conversation-button-${conversation.id}`}
             >
-              <Trash2 className="mr-2 h-4 w-4 flex-shrink-0 text-destructive" />
+              <DeleteOutlineIcon className="mr-2 h-4 w-4 flex-shrink-0 text-destructive" />
               <span className="truncate">Delete conversation</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -263,8 +266,8 @@ export function ConversationListPresentation({
   const hasConversations = filteredConversations.length > 0;
 
   return (
-    <div className="flex flex-col h-full md:bg-foreground bg-foreground transition-colors duration-200">
-      <div className="sticky top-0 z-10 p-3 border-b bg-foreground/95 backdrop-blur-sm">
+    <div className="flex flex-col h-full md:bg-foreground bg-foreground transition-colors duration-200 ">
+      <div className="sticky top-0 z-10 p-3 border-b bg-foreground/95 backdrop-blur-sm rounded-tl-2xl">
         <div className="flex items-center gap-2">
           <Input
             placeholder="Search messages..."
@@ -279,7 +282,7 @@ export function ConversationListPresentation({
             className="flex-shrink-0"
             data-testid="conversation-search-button"
           >
-            <Search className="h-4 w-4 text-text" />
+            <SearchIcon className="h-4 w-4 text-text" />
           </Button>
         </div>
       </div>

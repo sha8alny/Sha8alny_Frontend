@@ -6,7 +6,10 @@ import {
 } from "@/app/components/ui/Avatar";
 import { Button } from "@/app/components/ui/Button";
 import { formatDistanceToNow } from "@/app/utils/messagingUtils";
-import { CheckCircle, XCircle, Trash2, MessageCircle } from "lucide-react";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 export function MessageRequestItem({
   request,
@@ -95,7 +98,7 @@ export function MessageRequestItem({
               onClick={() => onAccept(request._id)}
               disabled={isProcessing}
             >
-              <CheckCircle className="mr-1 h-4 w-4" />
+              <CheckCircleOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
               Accept
             </Button>
             <Button
@@ -105,7 +108,7 @@ export function MessageRequestItem({
               onClick={() => onReject(request._id)}
               disabled={isProcessing}
             >
-              <XCircle className="mr-1 h-4 w-4" />
+              <CancelOutlinedIcon className="mr-1" sx={{ fontSize: 16 }} />
               Decline
             </Button>
           </div>
@@ -119,7 +122,7 @@ export function MessageRequestItem({
             className="mt-3 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20"
             onClick={() => onViewProfile?.(participant)}
           >
-            <MessageCircle className="mr-1 h-4 w-4" />
+            <ChatBubbleOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
             View Conversation
           </Button>
         )}
@@ -134,7 +137,7 @@ export function MessageRequestItem({
             onClick={() => onDelete(request._id)}
             disabled={isProcessing}
           >
-            <Trash2 className="mr-1 h-4 w-4" />
+            <DeleteOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
             Remove
           </Button>
         )}

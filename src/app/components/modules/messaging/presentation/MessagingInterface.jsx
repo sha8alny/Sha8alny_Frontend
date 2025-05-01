@@ -3,7 +3,7 @@ import { ChatContainer } from "../container/ChatInterfaceContainer";
 import { ConversationListContainer } from "../container/ConversationListContainer";
 import { MessageRequestsContainer } from "../container/MessageRequestsContainer";
 import AddIcon from "@mui/icons-material/Add";
-import { Mail } from "lucide-react";
+import MailOutlineIcon from "@mui/icons-material/MailOutline"; // Changed import
 
 // Extracted New Conversation button component
 const NewConversationButton = ({ onClick }) => (
@@ -25,7 +25,7 @@ const MessageRequestsButton = ({ onClick, requestCount }) => (
     className="text-secondary-foreground w-full px-4 py-2 rounded-md bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-colors flex items-center justify-center gap-2"
     variant="outline"
   >
-    <Mail className="h-5 w-5" aria-hidden="true" />
+    <MailOutlineIcon className="h-5 w-5" aria-hidden="true" /> {/* Changed icon */}
     <span>Message Requests</span>
     {requestCount > 0 && (
       <span className="ml-2 bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full">
@@ -45,7 +45,7 @@ const EmptyState = ({ onOpenConnections, onViewRequests, requestCount = 0 }) => 
     </div>
     <div className="flex flex-col gap-3 w-full max-w-lg">
       <NewConversationButton onClick={onOpenConnections} />
-      
+
       <MessageRequestsButton onClick={onViewRequests} requestCount={requestCount} />
     </div>
   </div>
@@ -74,12 +74,12 @@ export function MessagingPresentation({
 
   // Dynamic classes for responsive layout
   const asideClasses = `
-    ${hasSelectedConversation || showMessageRequests ? "translate-x-[-100%] w-0 md:translate-x-0 md:w-1/3 lg:w-1/4" : "translate-x-0 w-full md:w-1/3 lg:w-1/4"} 
+    ${hasSelectedConversation || showMessageRequests ? "translate-x-[-100%] w-0 md:translate-x-0 md:w-1/3 lg:w-1/4" : "translate-x-0 w-full md:w-1/3 lg:w-1/4"}
     flex flex-col min-w-0 md:min-w-fit md:border-r overflow-hidden transition-all duration-300 ease-in-out
   `;
 
   const mainClasses = `
-    ${hasSelectedConversation || showMessageRequests ? "translate-x-0 opacity-100 w-full" : "translate-x-full opacity-0 w-0 md:translate-x-0 md:opacity-100 md:w-2/3 lg:w-3/4"} 
+    ${hasSelectedConversation || showMessageRequests ? "translate-x-0 opacity-100 w-full" : "translate-x-full opacity-0 w-0 md:translate-x-0 md:opacity-100 md:w-2/3 lg:w-3/4"}
     flex flex-col overflow-hidden transition-all duration-300 ease-in-out
   `;
 
@@ -104,7 +104,7 @@ export function MessagingPresentation({
             />
           </div>
 
-          <footer className="p-3.5 border-t bg-foreground/70 md:bg-foreground transition-colors duration-200 z-10 flex-shrink-0">
+          <footer className="p-3.5 border-t bg-foreground/70 md:bg-foreground transition-colors duration-200 z-10 flex-shrink-0 rounded-bl-2xl">
             <div className="flex items-center gap-3 md:gap-2">
               <Button
                 onClick={onOpenConnections}
@@ -115,7 +115,7 @@ export function MessagingPresentation({
                 <AddIcon className="h-5 w-5" aria-hidden="true" />
                 <span className="sm:inline">New Conversation</span>
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="icon"
@@ -123,7 +123,7 @@ export function MessagingPresentation({
                 className="flex-shrink-0 relative h-10 w-10 text-secondary-foreground border border-primary/20 hover:bg-primary/20 transition-colors "
                 aria-label="View message requests"
               >
-                <Mail className="h-5 w-5" />
+                <MailOutlineIcon className="h-5 w-5" /> {/* Changed icon */}
                 {pendingRequestCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
                     {pendingRequestCount}
@@ -152,8 +152,8 @@ export function MessagingPresentation({
               navigateToUser={startConversation}
             />
           ) : (
-            <EmptyState 
-              onOpenConnections={onOpenConnections} 
+            <EmptyState
+              onOpenConnections={onOpenConnections}
               onViewRequests={onViewMessageRequests}
               requestCount={pendingRequestCount}
             />
