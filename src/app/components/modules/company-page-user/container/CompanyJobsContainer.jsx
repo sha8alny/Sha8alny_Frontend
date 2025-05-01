@@ -43,19 +43,13 @@ export default function CompanyJobsContainer ({username}){
         enabled: !!username, 
     });
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Failed to load jobs.</div>;
-
-    
     const goToJobPage = (job) => {
         router.push(`/jobs/${job._id}?title=${job.title}&company=${job.companyData?.name}`);
     };
-      
-    
 
     return(
         <div>
-            <CompanyJobs jobs={data?.data || []} goToJobPage={goToJobPage}/>
+            <CompanyJobs jobs={data?.data || []} goToJobPage={goToJobPage} isLoading={isLoading} isError={isError}/>
         </div>
     );
 }

@@ -33,6 +33,7 @@ export default function HomeContainer({ username }) {
     const [company, setCompany] = useState(null);
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     const goToAboutPage = () => {
@@ -49,7 +50,9 @@ export default function HomeContainer({ username }) {
             setCompany(data);
         } catch (err) {
             setError(err.message);
-        } 
+        } finally{
+            setLoading(false);
+        }
         };
 
         if (username) fetchCompany();
@@ -62,6 +65,8 @@ export default function HomeContainer({ username }) {
                 setPosts(myPosts);
             } catch (err) {
                 setError(err.message);
+            } finally {
+                setLoading(false);
             }
         };
         if (username) fetchPosts();
@@ -69,7 +74,7 @@ export default function HomeContainer({ username }) {
 
     return (
         <div>
-            <Home company={company} posts={posts} goToAboutPage={goToAboutPage} goToPostsPage={goToPostsPage}/>
+            <Home company={company} posts={posts} goToAboutPage={goToAboutPage} goToPostsPage={goToPostsPage} loading={loading}/>
         </div>
     );
 }

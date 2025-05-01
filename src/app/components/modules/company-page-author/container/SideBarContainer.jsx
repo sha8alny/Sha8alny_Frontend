@@ -5,7 +5,7 @@ import SideBar from "../presentation/SideBar";
 import SideBarModal from "../presentation/SideBarModal";
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
+import BlockIcon from '@mui/icons-material/Block';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import GroupIcon from '@mui/icons-material/Group';
@@ -144,6 +144,7 @@ export default function SideBarContainer({company,setCompany, username ,setLogo 
         {name: "Followers", href:`/company/${username}/admin/followers`, icon: <GroupIcon style={{fontSize:"20px"}}/> },
         {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
         {name: "Jobs", href:`/company/${username}/admin/jobs`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
+        {name: "Blocked Followers", href:`/company/${username}/admin/blocked`, icon: <BlockIcon style={{fontSize:"20px"}}/> },
         {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
     ]
     return(
