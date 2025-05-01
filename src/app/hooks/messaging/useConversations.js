@@ -53,13 +53,6 @@ export function useConversations(currentUser) {
     }
   });
   
-  const markAsReadMutation = useMutation({
-    mutationFn: (username) => messagingService.markMessagesAsRead(username),
-    onError: (error) => {
-      console.error("Error marking messages as read:", error);
-    }
-  });
-  
   const toggleBlockMutation = useMutation({
     mutationFn: ({ username, id, isBlocked }) => 
       messagingService.toggleUserBlock(username, id, isBlocked),
@@ -232,42 +225,6 @@ export function useConversations(currentUser) {
     
   }, [conversations, currentUser, toggleReadMutation]);
 
-  // Mark a conversation as read
-  const handleMarkAsRead = useCallback((id) => {
-    const conv = conversations.find((c) => c.id === id);
-    if (!conv || !currentUser) return;
-    
-    const otherUsername = Object.keys(conv.participants || {})
-      .find(username => username !== currentUser);
-    
-    if (!otherUsername) return;
-
-    // Optimistically update UI
-    setConversations((prev) =>
-      prev.map((c) => {
-        if (c.id === id && c.participantMetadata) {
-          return {
-            ...c,
-            participantMetadata: {
-              ...c.participantMetadata,
-              [currentUser]: {
-                ...c.participantMetadata[currentUser],
-                readFlag: true,
-                unreadCount: 0,
-                lastReadAt: new Date().toISOString()
-              }
-            }
-          };
-        }
-        return c;
-      })
-    );
-
-    // Execute mutation
-    markAsReadMutation.mutate(otherUsername);
-    
-  }, [conversations, currentUser, markAsReadMutation]);
-
   // Toggle block status for a user
   const handleToggleBlock = useCallback((id, usernameToToggle, isBlocked) => {
     if (!currentUser || !usernameToToggle) return;
@@ -334,44 +291,6 @@ export function useConversations(currentUser) {
     
   }, [conversations, selectedConversation, deleteConversationMutation]);
 
-  // Process batched read operations
-  useEffect(() => {
-    if (Object.keys(pendingReadOperations).length === 0) return;
-    
-    const usernames = Object.keys(pendingReadOperations);
-    
-    const processReadOperations = async () => {
-      try {
-        // Process in batches
-        for (let i = 0; i < usernames.length; i += 5) {
-          const batch = usernames.slice(i, i + 5);
-          await Promise.all(
-            batch.map(username => 
-              markAsReadMutation.mutateAsync(username)
-                .catch(err => console.error(`Error marking messages as read for ${username}:`, err))
-            )
-          );
-          
-          if (i + 5 < usernames.length) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-        }
-      } finally {
-        setPendingReadOperations({});
-        // Clear tracking
-        setTimeout(() => {
-          usernames.forEach(username => {
-            const convId = conversations.find(c => 
-              c.participants && Object.keys(c.participants).includes(username)
-            )?.id;
-            if (convId) readStatusOperations.current.delete(convId);
-          });
-        }, 500);
-      }
-    };
-    
-    processReadOperations();
-  }, [pendingReadOperations, conversations, markAsReadMutation]);
 
   // Subscribe to conversations
   useEffect(() => {
@@ -443,12 +362,10 @@ export function useConversations(currentUser) {
     selectConversation,
     handleSelectConversation,
     handleToggleRead,
-    handleMarkAsRead,
     handleToggleBlock,
     handleDeleteConversation,
     setSelectedConversation,
     // Add mutation states for components to use
-    isMarkingRead: markAsReadMutation.isPending,
     isTogglingRead: toggleReadMutation.isPending,
     isTogglingBlock: toggleBlockMutation.isPending,
     isDeleting: deleteConversationMutation.isPending,
