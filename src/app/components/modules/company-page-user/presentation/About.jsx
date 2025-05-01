@@ -28,7 +28,18 @@ import Container from "@/app/components/layout/Container";
  * @returns {JSX.Element} A rendered container showing the company's details.
  */
 
-export default function About({company,goToCompanyPage}){
+export default function About({company,goToCompanyPage, loading, error}){
+    if (loading) {
+        return (
+          <div className="flex flex-col gap-2 justify-center items-center py-10">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary" /> 
+            <p className="text-text">Loading</p>
+          </div>
+        );
+    }
+    
+    if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
+
     return(
         <Container className="border-[#111] border shadow-lg">
             <div className="h-max rounded-xl p-6 space-y-2">
