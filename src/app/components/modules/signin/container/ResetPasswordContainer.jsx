@@ -21,6 +21,7 @@ const ResetPasswordContainer = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState(null);
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
+    const [showForm, setShowForm] = useState(false);
 
 
     useEffect(() => {
@@ -115,6 +116,7 @@ const ResetPasswordContainer = () => {
             isFormValid={isFormValid}
             confirmPassword={confirmPassword}
             confirmPasswordError={confirmPasswordError}
+            showForm={showForm}
         />
     );
 }

@@ -48,9 +48,10 @@ const SignUpForm = ({
         <div className="relative flex items-center jusifty-center min-h-screen bg-background flex-col">
         {/* Centered logo that moves left */}
         <div
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-1000 ease-in-out
-            ${showForm ? "-translate-x-[850px]" : ""}
-            w-250 h-250`}
+        className={`absolute transition-transform duration-1000 ease-in-out
+            top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+            ${showForm ? "lg:-translate-x-[55vw] md:-translate-x-[63vw] sm:-translate-x-[60vw] translate-x-[-52vw] sm:translate-y-[-25vw] translate-y-[-127vw]" : ""} 
+            xl:w-250 xl:h-250 md:w-120 md:h-120 w-100 h-100`}
         >
         <img
             src="/lightmode.svg"
@@ -67,13 +68,13 @@ const SignUpForm = ({
         <div
         className={`transition-all duration-1000 ease-in-out ${
           showForm
-            ? "opacity-100 translate-x-[-240px] translate-y-[-50px]"
+            ? "opacity-100 lg:translate-x-[-15vw] md:translate-x-[-4vw] sm:translate-x-[-15vw] translate-x-[4vw] sm:translate-y-[-5vw] translate-y-[10vh]"
             : "opacity-0 translate-x-full"
         } w-full max-w-md ml-auto z-10`}
-        >
-            <h2 className="text-3xl font-bold text-center text-secondary mt-30">Achieve The Best Professional Experience</h2>
-            <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary w-115 mt-9 mb-10">
-            <div className="flex items-center justify-center w-30 h-15  text-background rounded-full mx-auto">
+      >
+            <h2 className="text-3xl font-bold text-center text-secondary mt-30 sm:mr-0 mr-9">Achieve The Best Professional Experience</h2>
+            <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary sm:w-115 w-95 mt-9 mb-10">
+            <div className="flex items-center justify-center w-30 h-15 text-background rounded-full mx-auto">
              <h2 className="text-3xl font-bold text-center text-secondary">Sign Up</h2>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -201,13 +202,13 @@ const SignUpForm = ({
             <p className="text-center text-sm text-text mt-4">
                 Already A Member?{" "}
                 <a href="/signin" className="text-secondary hover:underline">
-                 sign in 
+                 Sign In 
                 </a>
             </p>
         </div>  
         <div className="mb-30">
         <p className="text-center text-sm text-text mb-10">
-        Looking to create a page for a business?{""}
+        Looking to create a page for a business?{" "}
                 <a href="#" className="text-secondary hover:underline">
                  Get Help 
                 </a>
