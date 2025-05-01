@@ -21,7 +21,8 @@ const VerifyEmail =({
 }) => {
     return(
         <div className="relative flex items-center justify-center min-h-screen bg-background ">
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-[850px] -translate-y-1/2 w-250 h-250">
+        <div className="absolute top-1/2 left-1/2 transform lg:-translate-x-[55vw] md:-translate-x-[60vw] sm:-translate-x-[60vw] translate-x-[-49vw] xl:translate-y-[-31vw] md:translate-y-[-30vw] sm:translate-y-[-32vw] translate-y-[-120vw] 
+            xl:w-250 xl:h-250 md:w-120 md:h-120 w-100 h-100">
         <img
             src="/lightmode.svg"
             alt="App Logo"
@@ -35,7 +36,7 @@ const VerifyEmail =({
         </div>
 
         {/* Form wrapper */}
-        <div className="w-full max-w-md ml-auto -translate-x-1/2 opacity-100 z-10">
+        <div className="w-full max-w-md ml-auto xl:translate-x-[-13vw] md:translate-x-[2vw] sm:translate-x-[-10vw] translate-x-[3.5vw] xl:translate-y-[2vw] md:translate-y-[2vw] sm:translate-y-[13vw] translate-y-[10vh] opacity-100 z-10">
    
         <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary w-96">
             <div className="flex items-center justify-center w-70 h-15  text-background rounded-full mx-auto">
