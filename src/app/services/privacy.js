@@ -2,10 +2,11 @@ import { fetchWithAuth } from "./userAuthentication";
 const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
 
-export const fetchBlockedUsers = async (query = "", currentPage, pageSize = 10) => {
+export const fetchBlockedUsers = async (query = "", currentPage, pageSize = 10, companyUsername) => {
   const params = new URLSearchParams();
   params.append('pageNum', currentPage);
   params.append('pageSize', pageSize);
+  params.append('companyUsername', companyUsername)
   
   if (query) {
     params.append('text', query);
@@ -33,8 +34,16 @@ export const fetchBlockedUsers = async (query = "", currentPage, pageSize = 10) 
   return data;
 };
 
-export const unblockUser = async (username) => {
-  const response = await fetchWithAuth(`${apiURL}/blocks/${username}`, {
+export const unblockUser = async (username, isCompany=false, companyUsername) => {
+  let url = `${apiURL}/blocks/${username}`;
+  if (isCompany) {
+    url += `?isCompany=${isCompany}`;
+  }
+  if(companyUsername){
+    url+=`?companyUsername=${companyUsername}`
+  }
+  console.log("username in unblockuser", username);
+  const response = await fetchWithAuth(url, {
     method: "DELETE",
   });
   const data = await response.json();
@@ -90,12 +99,17 @@ export const report = async (
 };
 
 
-export const blockUser = async (username, isCompany = false) => {
+export const blockUser = async (username, isCompany = false, companyUsername) => {
+  console.log("username", username);
+  console.log("isCompany", isCompany);
+  console.log("companyUsername", companyUsername);
   let url = `${apiURL}/blocks/${username}`;
   if (isCompany) {
     url += `?isCompany=${isCompany}`;
   }
-
+  if(companyUsername){
+    url+=`?companyUsername=${companyUsername}`
+  }
   const response = await fetchWithAuth(url, {
     method: "POST",
     headers: {

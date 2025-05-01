@@ -20,7 +20,7 @@ import { Card,CardContent } from "@/app/components/ui/Card";
  * @returns {JSX.Element} The rendered component with job listings.
  */
 
-export default function CompanyJobs({jobs=[], goToJobPage}){
+export default function CompanyJobs({jobs=[], goToJobPage, isLoading, isError}){
     const getRelativeTimeString = (date) => {
         try {
           if (!date) return "Recently";
@@ -39,6 +39,19 @@ export default function CompanyJobs({jobs=[], goToJobPage}){
           return "Recently";
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col gap-2 justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary" /> 
+                <p className="text-text">Loading</p>
+            </div>
+        );
+    }
+
+    if(isError){
+        <div>Failed to load jobs.</div>
+    }
 
     if(!jobs.length){
         return (
