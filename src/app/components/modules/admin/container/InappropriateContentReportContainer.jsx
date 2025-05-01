@@ -28,7 +28,7 @@ export function InappropriateContentReportsContainer() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [filters, setFilters] = useState(["User", "Comment", "Post", "Company"]);
   const allFilter = ["User", "Comment", "Post", "Company"];
-  const statusOptions = ["pending", "resolved", "rejected"];
+  const statusOptions = ["Pending", "Resolved", "Rejected"];
   const queryClient = useQueryClient();
   const showToast = useToast();
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(null);
