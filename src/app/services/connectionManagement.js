@@ -152,10 +152,9 @@ export const getConnections = async (page) => {
 };
 
 
-export const getFollowers = async (page, username) => {
-  console.log("username", username)
+export const getFollowers = async (page) => {
   const pageSize = 9;
-  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}?username=${username}`, {
+  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}`, {
     method: "GET",
   });
   if (!response.ok) {
