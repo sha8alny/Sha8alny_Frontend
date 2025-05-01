@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/app/components/ui/AlertDialog";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { Loader2 } from "lucide-react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export function DeleteConfirmationDialog({
   isOpen,
@@ -35,7 +35,7 @@ export function DeleteConfirmationDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            className="text-muted-foreground"
+            className="text-muted-foreground border-2 border-muted-foreground hover:bg-muted/50"
             disabled={isDeleting}
           >
             Cancel
@@ -43,11 +43,11 @@ export function DeleteConfirmationDialog({
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-background/80 hover:bg-destructive/90"
           >
             {isDeleting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <CircularProgress size={16} className="mr-2 animate-spin" />
                 Deleting...
               </>
             ) : (

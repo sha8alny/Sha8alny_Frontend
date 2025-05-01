@@ -30,6 +30,8 @@ export function ChatContainer({
   const scrollAreaRef = useRef(null);
   const lastTypedTextRef = useRef("");
   const typingTimerRef = useRef(null);
+  const previousMessagesLengthRef = useRef(0);
+  const isLoadingMoreRef = useRef(false);
   
   // Extract other participant username from conversation data
   const otherParticipantUsername = useMemo(() => 
@@ -66,9 +68,9 @@ export function ChatContainer({
     otherParticipantUsername
   ]);
 
-  // Scroll to bottom when messages change
+  // Improved scroll management
   useEffect(() => {
-    const scrollToBottom = () => {
+    const scrollToBottom = (smooth = false) => {
       if (!scrollAreaRef.current) return;
       
       const scrollableElement = 
@@ -76,19 +78,37 @@ export function ChatContainer({
         scrollAreaRef.current;
       
       if (scrollableElement) {
-        scrollableElement.scrollTop = scrollableElement.scrollHeight;
+        if (smooth) {
+          scrollableElement.scrollTo({
+            top: scrollableElement.scrollHeight,
+            behavior: 'smooth'
+          });
+        } else {
+          scrollableElement.scrollTop = scrollableElement.scrollHeight;
+        }
       }
     };
 
-    // Scroll immediately and after a delay to handle rendering
-    scrollToBottom();
-    const timeouts = [
-      setTimeout(scrollToBottom, 100),
-      setTimeout(scrollToBottom, 500)
-    ];
+    // Determine if this is a new message or loaded history
+    const isNewMessage = messages.length > previousMessagesLengthRef.current && !isLoadingMoreRef.current;
+    previousMessagesLengthRef.current = messages.length;
+    
+    // Only auto-scroll for new messages or when chat is first loaded
+    if (isNewMessage || messages.length <= 20) {
+      // Scroll immediately for better UX
+      scrollToBottom();
+      
+      // Add a delayed smooth scroll for when images/media might finish loading
+      const timeout = setTimeout(() => scrollToBottom(true), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [messages, mediaFiles]);
 
-    return () => timeouts.forEach(clearTimeout);
-  }, [messages.length, mediaFiles.length]);
+  // Update loading state when calling load more messages
+  const handleLoadMore = useCallback(() => {
+    isLoadingMoreRef.current = true;
+    handleLoadMoreMessages();
+  }, [handleLoadMoreMessages]);
 
   // Message handlers
   const handleSendMessage = useCallback(() => {
@@ -234,7 +254,9 @@ export function ChatContainer({
       onTyping={handleTypingWithIndicator}
       onBlockUser={handleBlockUser}
       onUnblockUser={handleUnblockUser}
-      onLoadMoreMessages={handleLoadMoreMessages || onLoadMoreMessages}
+      onLoadMoreMessages={handleLoadMore}
+      isLoadingMore={isLoadingMoreRef.current}
+      setIsLoadingMore={(value) => { isLoadingMoreRef.current = value; }}
     />
   );
 }
