@@ -5,6 +5,19 @@ import { signInWithPopup } from "firebase/auth";
 import { handleGoogleSignIn } from "../../../../services/userManagement";
 import { auth, provider } from "@/firebase/firebase";
 
+/**
+ * @module LandingPageContainer
+ * @namespace LandingPageContainer
+ */
+
+/**
+ * Container component for the landing page.
+ *
+ * @function
+ * @memberof LandingPageContainer
+ * @returns {JSX.Element} The rendered LandingPage presentation component with interaction handlers.
+ */
+
 export default function LandingPageContainer(){
     const router = useRouter();
 

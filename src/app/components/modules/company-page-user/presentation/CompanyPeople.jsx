@@ -43,7 +43,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
  * @property {Array<CompanyPeople.Person>} [people=[]] - A list of people to display.
  */
 
-export default function CompanyPeople({ people=[], loading=false, goToPeoplePage, handleConnectPerson, connectedPeople, handleDeleteConnection,handleAcceptConnection, handleDeclineConnection}) {
+export default function CompanyPeople({ people=[], loading=false, goToPeoplePage, handleConnectPerson}) {
   const getRelationText = (relation) => {
       if (relation === 1) return "1st";
       if (relation === 2) return "2nd";
@@ -85,55 +85,13 @@ export default function CompanyPeople({ people=[], loading=false, goToPeoplePage
                             <p className="text-muted-foreground  mt-3">{getRelationText(person?.relation)}</p>
                         </div>
                         <p className="text-muted-foreground text-sm mb-2">{person?.headline}</p>
-                          {/* BUTTON LOGIC BASED ON STATUS */}
-                        {person.connectionStatus === "connected" && (
-                          <Button
-                            variant="default"
-                            className="w-full rounded-xl cursor-pointer bg-gray-300"
-                            onClick={() => handleDeleteConnection(person)}
-                          >
-                            Disconnect
-                          </Button>
-                        )}
-
-                        {person.connectionStatus === "pending" && (
-                          <Button
-                            variant="default"
-                            disabled
-                            className="w-full rounded-xl cursor-default bg-muted"
-                          >
-                            Pending...
-                          </Button>
-                        )}
-
-                        {person.connectionStatus === "request_received" && (
-                          <div className="flex flex-col gap-2 w-full">
-                            <Button
-                              variant="default"
-                              className="rounded-xl bg-primary hover:bg-green-600"
-                              onClick={() => handleAcceptConnection(person)}
-                            >
-                              Accept
-                            </Button>
-                            <Button
-                              variant="outline"
-                              className="rounded-xl hover:bg-red-100"
-                              onClick={() => handleDeclineConnection(person)}
-                            >
-                              Decline
-                            </Button>
-                          </div>
-                        )}
-
-                        {(!person.connectionStatus || person.connectionStatus === "not_connected") && (
-                          <Button
-                            variant="default"
-                            className="w-full rounded-xl cursor-pointer bg-secondary hover:bg-primary"
-                            onClick={() => handleConnectPerson(person)}
-                          >
+                        <div className="w-full">
+                          <Button variant="default" className="w-full rounded-xl cursor-pointer bg-secondary hover:bg-primary" 
+                          onClick={() => handleConnectPerson(person)}>
                             <PersonAddIcon sx={{ fontSize: "20px" }} /> Connect
                           </Button>
-                        )}
+
+                        </div>
                       </CardContent>
                   </Card>
               ))}

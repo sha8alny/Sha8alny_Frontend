@@ -135,7 +135,7 @@ export default function InputFieldContainer({companyName, setCompanyName, compan
 
       <div>
         <InputField label="shaغalny.com/company/"  name="company-url" type="text" placeholder="Add your unique shaغalny address" required selectedname={companyUsername} onChange={handleUsernameChange} />
-        <Link href="/company/help" className="mt-4 hover:underline font-bold text-[var(--secondary)]">Learn more about the Page Public URL </Link>  
+        <Link href="/help" className="mt-4 hover:underline font-bold text-[var(--secondary)]">Learn more about the Page Public URL </Link>  
         {!isEditing && errors.companyURL && <p className="text-red-500 text-sm mt-1">{errors.companyURL}</p> }
       </div>
 
