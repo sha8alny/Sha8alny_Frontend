@@ -48,6 +48,7 @@ const Connections = ({
             <>
           <div className="bg-foreground p-1 rounded-2xl  w-full grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3">
           { connections.map((connection, index) => (
+              ((connection.isConnected=== "accepted") && (
                 <ProfileCard
                     data-testid="connection-card"
                     key={index}
@@ -63,15 +64,16 @@ const Connections = ({
                     }}
                     showButton={true}
                     showRemoveButton={true}
-                    onRemove={() => {
-                        onRemoveConnection({username:connection.username});
-                    }}
+                    onRemove={() => 
+                        onRemoveConnection(connection.username)
+                    }
                     removeLoading={removeConnectionLoading}
                     openDeleteDialog={openDeleteDialog===connection.username}
                     setOpenDeleteDialog={(isOpen)=>{
                         setOpenDeleteDialog(isOpen ? connection.username : null);
                     }}
                 />
+              ))
             ))}
             </div>
           <div className="flex justify-between gap-4 mt-4 w-full">
