@@ -2,6 +2,8 @@
 "use client";
 import { Button } from "./Button";
 import {  AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel  } from "./AlertDialog";
+import { useEffect,useState } from "react";
+import { getConnectionMutuals } from "@/app/services/connectionManagement";
 const ProfileCard = ({
     username,
     name,
@@ -18,7 +20,18 @@ const ProfileCard = ({
     openDeleteDialog,
     setOpenDeleteDialog,
     getConnectionDegree,
+    type
 }) => {
+    const [mutualConnections, setMutualConnections] = useState({ count: 0, connections: [] });  
+    useEffect(() => {
+        if(type === "applicant") return;
+        const fetchMutualConnections = async () => {
+          const mutuals = await getConnectionMutuals(username);
+          setMutualConnections(mutuals);
+        };
+        fetchMutualConnections();
+      }, [getConnectionMutuals, username]);
+    
 return(
     <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl bg-background shadow-lg rounded-lg overflow-hidden border ">
     <div className="h-28 sm:h-32 md:h-37 lg:h-27 rounded-t-lg overflow-hidden">
@@ -85,6 +98,9 @@ return(
         <a href={`/u/${username}`} className="text-lg sm:text-md font-semibold text-text mt-2">{name} 
         {getConnectionDegree && <span className="text-sm font-bold text-muted-foreground"> •{getConnectionDegree}</span>}</a>
         <p className="text-sm sm:text-md font-thin text-text break-words whitespace-normal max-w-xs sm:max-w-sm ">{title}</p>
+        {type === ""&& (
+        <p className="text-xs sm:text-sm font-semibold text-secondary break-words whitespace-normal max-w-xs sm:max-w-sm ">{mutualConnections.count > 10 ? '10+' : mutualConnections.count} mutual connections</p>
+        )}
         <p className="text-xs sm:text-sm font-bold text-secondary break-words whitespace-normal max-w-xs sm:max-w-sm ">{numberOfConnections} connections</p>
         {showButton && (
         <Button 
