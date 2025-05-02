@@ -205,7 +205,9 @@ export const getUserCompanies = async (page) => {
         "Content-Type": "application/json",
       },
     });
-
+    if(response.status === 204) {
+        throw new Error("No companies found for the given query.");
+      }
     if (!response.ok) {
       const errorData = await response.json();
       if (errorData.error === "Companies not found") {
