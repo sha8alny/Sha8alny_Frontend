@@ -6,8 +6,10 @@ export const fetchBlockedUsers = async (query = "", currentPage, pageSize = 10, 
   const params = new URLSearchParams();
   params.append('pageNum', currentPage);
   params.append('pageSize', pageSize);
-  params.append('companyUsername', companyUsername)
-  
+  if (companyUsername) {
+
+      params.append('companyUsername', companyUsername)
+  }
   if (query) {
     params.append('text', query);
   }
