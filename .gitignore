@@ -44,6 +44,7 @@ package-lock.json
 
 # misc
 .vscode
+docs
 test
 certificates
 swenv.js
