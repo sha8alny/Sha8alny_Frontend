@@ -332,6 +332,7 @@ export const handleSignIn = async ({ email, password, rememberMe }) => {
     const { accessToken, refreshToken, isAdmin, isComplete } =
       await loginResponse.json();
     if (accessToken) {
+      const now = Date.now();
       // Store access token with 1-day expiry
       sessionStorage.setItem("accessToken", JSON.stringify({
         value: accessToken,
