@@ -4,8 +4,9 @@ import {getFollowers,getFollowing,unFollowUser} from "../../../../services/conne
 import FollowersAndFollowings from "../presentation/FollowersAndFollowings";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
+import { useFilters } from "@/app/context/NetworkFilterContext";
 
-const FollowersAndFollowingsContainer =({filteredResults})=>{
+const FollowersAndFollowingsContainer =()=>{
     const [removeFollowLoading, setRemoveFollowLoading] = useState(false);
     const queryClient = useQueryClient();
     const toast = useToast();
@@ -15,17 +16,42 @@ const FollowersAndFollowingsContainer =({filteredResults})=>{
     const [hasMoreFollowers, setHasMoreFollowers] = useState(true);
     const [hasMoreFollowing, setHasMoreFollowing] = useState(true);
     const [tab, setTab] = useState("followers");
+    const {filters} = useFilters();
 
 
-    const { data: followers=[], isLoading: isFollowersLoading, isErrorFollowers } = useQuery({queryKey:["followers",pageFollowers], queryFn:({queryKey})=>getFollowers(queryKey[1]),});
-    const { data: following=[], isLoading: isFollowingLoading, isErrorFollowings } = useQuery({queryKey:["following",pageFollowing], queryFn:({queryKey})=>getFollowing(queryKey[1]), });
+    const { data: followers=[], isLoading: isFollowersLoading, isErrorFollowers } = useQuery(
+        {queryKey:["followers",filters,pageFollowers],
+         queryFn:({queryKey})=>getFollowers(
+            filters.name,
+            filters.industry,
+            filters.location,
+            filters.connectionDegree,
+            queryKey[2],
+        ),}
+            );
+    const { data: following=[], isLoading: isFollowingLoading, isErrorFollowings } = useQuery(
+        {queryKey:["following",filters,pageFollowing],
+         queryFn:({queryKey})=>getFollowing(
+            filters.name,
+            filters.industry,
+            filters.location,
+            filters.connectionDegree,
+            queryKey[2],
+         ),
+           });
     
 
     useEffect(() => {
         const checkHasMoreFollowers = async () => {
             if (followers && followers.length === 9) {
                 try {
-                    const nextPageData = await getFollowers(pageFollowers + 1);
+                    const nextPageData = await getFollowers(
+                        filters.name,
+                        filters.industry,
+                        filters.location,
+                        filters.connectionDegree,
+                        pageFollowers + 1
+                    );
                     setHasMoreFollowers(nextPageData.length > 0);
                 } catch (error) {
                     setHasMoreFollowers(false);
@@ -37,7 +63,13 @@ const FollowersAndFollowingsContainer =({filteredResults})=>{
         const checkHasMoreFollowing = async () => {
             if (following && following.length === 9) {
                 try {
-                    const nextPageData = await getFollowing(pageFollowing + 1);
+                    const nextPageData = await getFollowing(
+                        filters.name,
+                        filters.industry,
+                        filters.location,
+                        filters.connectionDegree,
+                        pageFollowing + 1
+                    );
                     setHasMoreFollowing(nextPageData.length > 0);
                 } catch (error) {
                     setHasMoreFollowing(false);
@@ -98,6 +130,19 @@ const FollowersAndFollowingsContainer =({filteredResults})=>{
     const hasMore = tab === "followers" ? hasMoreFollowers : hasMoreFollowing;
     const data = tab === "followers" ? followers : following;
     
+    const getConnectionDegree = (connectionDegree) => {
+        switch (connectionDegree) {
+          case 1:
+            return "1st";
+          case 2:
+            return "2nd";
+          case 3:
+            return "3rd+";
+          default:
+            return "";
+        }
+      };
+
     return(
         <FollowersAndFollowings
             tab={tab}
@@ -113,6 +158,7 @@ const FollowersAndFollowingsContainer =({filteredResults})=>{
             removeFollowLoading={removeFollowLoading}
             openDeleteDialog={openDeleteDialog}
             setOpenDeleteDialog={setOpenDeleteDialog}
+            getConnectionDegree={getConnectionDegree}
          />
     )
 }

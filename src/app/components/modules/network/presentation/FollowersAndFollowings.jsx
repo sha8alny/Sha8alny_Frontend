@@ -16,6 +16,7 @@ const FollowersAndFollowings = ({
     removeFollowLoading,
     openDeleteDialog,
     setOpenDeleteDialog,
+    getConnectionDegree
     
 }) => {
     return (
@@ -98,6 +99,7 @@ const FollowersAndFollowings = ({
                     setOpenDeleteDialog={(isOpen)=>{
                         setOpenDeleteDialog(isOpen ? account.username : null);
                     }}
+                    getConnectionDegree={getConnectionDegree(account.connectionDegree)}
                 />
             ))}
             </div>
