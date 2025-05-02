@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { signInWithPopup } from "firebase/auth";
 import { handleGoogleSignIn } from "../../../../services/userManagement";
 import { auth, provider } from "@/firebase/firebase";
+import { useToast } from "@/app/context/ToastContext";
 
 export default function LandingPageContainer(){
     const router = useRouter();
+    const toast = useToast();
 
     const goToSignIn =()=>{
         router.push(`/signin`);
