@@ -248,7 +248,7 @@ export default function ProfileHeader({
                       disabled={isSendingMessageRequest}
                       onClick={() =>
                         userProfile?.connectionStatus === "connected"
-                          ? navigateTo(`/messages/${userProfile?.username}`)
+                          ? navigateTo(`/messages?username=${userProfile?.username}`)
                           : onSendMessageRequest()
                       }
                     >

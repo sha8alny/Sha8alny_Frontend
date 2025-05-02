@@ -58,6 +58,7 @@ import SharePresentation from "../presentation/SharePresentation";
 import { usePathname } from "next/navigation";
 import ReportPresentation from "./ReportPresentation";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
+import Link from "next/link";
 
 export default function PostPresentation({
   commentSectionOpen,
@@ -134,7 +135,7 @@ export default function PostPresentation({
               </Avatar>
               <span>
                 <span
-                  className="hover:underline cursor-pointer"
+                  className="hover:underline cursor-pointer truncate"
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
                 >
                   {post?.isShared?.fullName}
@@ -168,7 +169,7 @@ export default function PostPresentation({
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <div
-                className="font-semibold flex items-center gap-2 cursor-pointer hover:underline"
+                className="font-semibold flex items-center truncate gap-2 cursor-pointer hover:underline"
                 onClick={() =>
                   post?.isCompany
                     ? navigateTo(
@@ -195,7 +196,10 @@ export default function PostPresentation({
                 post?.connectionDegree !== -1 && (
                   <button
                     disabled={isFollowing}
-                    onClick={() => onFollow(post?.username)}
+                    onClick={() => {
+                      console.log("Following");
+                      onFollow(post?.username);
+                    }}
                     className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
                       isFollowing
                         ? "bg-secondary/80 text-background dark:text-primary cursor-default"
@@ -454,6 +458,28 @@ export default function PostPresentation({
               ))}
             </span>
           )}
+          {post?.tags &&
+            post?.tags.length > 0 &&
+            post?.tags.map((user, index) => (
+              <Badge
+                key={user?._id}
+                className="flex items-center gap-1 px-2 py-1 bg-secondary/10 rounded-2xl text-primary font-semibold"
+                data-testid={`tagged-user-${user?._id}`}
+              >
+                <Avatar className="h-5 w-5 mr-1">
+                  <AvatarImage src={user?.profilePicture} alt={user?.name} />
+                  <AvatarFallback>
+                    {user?.name?.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Link
+                  href={`/u/${user?.username}`}
+                  className="hover:underline cursor-pointer"
+                >
+                  {user?.name}
+                </Link>
+              </Badge>
+            ))}
         </CardContent>
 
         <CardFooter className="flex justify-between border-t">

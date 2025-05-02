@@ -62,6 +62,7 @@ export const requestConnection = async (username, status) => {
 
 
 export const followUser = async (username) => {
+  console.log("Following user:", username);
   const response = await fetchWithAuth(`${apiURL}/follow`, {
     method: "POST",
     headers: {

@@ -1,7 +1,6 @@
-"use client";
 import DialogMod from "@/app/components/ui/DialogMod";
 import { fetchUserConnections } from "@/app/services/userProfile";
-import { createPost } from "@/app/services/post";
+import { createPost, getTags } from "@/app/services/post";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import PostButtonPresentation from "../presentation/PostButtonPresentation";
@@ -26,6 +25,9 @@ export default function PostButton({ userInfo }) {
   const [isLoading, setIsLoading] = useState(false);
   const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
   const [taggedUserPopoverOpen, setTaggedUserPopoverOpen] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState(null);
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [schedulePopoverOpen, setSchedulePopoverOpen] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
   const documentInputRef = useRef(null);
@@ -33,58 +35,53 @@ export default function PostButton({ userInfo }) {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  const { data: usersFound } = useQuery({
-    queryKey: ["tagusers", taggedUser],
-    queryFn: () => fetchUserConnections(taggedUser),
-    enabled: !!taggedUser,
-  });
-
-  useEffect(() => {
-    if (usersFound) {
-      setSearchResults(usersFound);
-    }
-  }, [usersFound]);
-
   const handlePostMutation = useMutation({
     mutationFn: (formData) => createPost(formData),
     onSuccess: (response) => {
-      const newPostData = {
-        postId: response.postId,
-        text: text,
-        keywords: tags,
-        media: response.media,
-        username: userInfo.username,
-        profilePicture: userInfo.profilePicture,
-        fullName: userInfo.name,
-        headline: userInfo.headline,
-        time: new Date().toISOString(),
-        numLikes: 0,
-        numCelebrates: 0,
-        numLoves: 0,
-        numSupports: 0,
-        numFunnies: 0,
-        numInsightfuls: 0,
-        numComments: 0,
-        numShares: 0,
-        isSaved: false,
-        connectionDegree: 0,
-        isCompany: false,
-        reaction: null,
-      };
-
-      queryClient.setQueryData(["posts"], (oldData) => {
-        if (!oldData) return { pages: [[newPostData]], pageParams: [null] };
-
-        return {
-          ...oldData,
-          pages: [
-            Array.isArray(oldData.pages[0])
-              ? [newPostData, ...oldData.pages[0]]
-              : oldData.pages[0],
-            ...oldData.pages.slice(1),
-          ],
+      if (!scheduledDate && !scheduledTime) {
+        const newPostData = {
+          postId: response.postId,
+          text: text,
+          keywords: tags,
+          media: response.media,
+          username: userInfo.username,
+          profilePicture: userInfo.profilePicture,
+          fullName: userInfo.name,
+          headline: userInfo.headline,
+          time: new Date().toISOString(),
+          tags: taggedUsers.map((user) => ({
+            username: user.username,
+            fullName: user.fullName,
+            profilePicture: user.profilePicture,
+          })),
+          numLikes: 0,
+          numCelebrates: 0,
+          numLoves: 0,
+          numSupports: 0,
+          numFunnies: 0,
+          numInsightfuls: 0,
+          numComments: 0,
+          numShares: 0,
+          isSaved: false,
+          connectionDegree: 0,
+          isCompany: false,
+          reaction: null,
         };
-      });
+
+        queryClient.setQueryData(["posts"], (oldData) => {
+          if (!oldData) return { pages: [[newPostData]], pageParams: [null] };
+
+          return {
+            ...oldData,
+            pages: [
+              Array.isArray(oldData.pages[0])
+                ? [newPostData, ...oldData.pages[0]]
+                : oldData.pages[0],
+              ...oldData.pages.slice(1),
+            ],
+          };
+        });
+      }
       setText("");
       setImages([]);
       setVideos(null);
@@ -94,12 +91,11 @@ export default function PostButton({ userInfo }) {
       setTaggedUser("");
       setDocument(null);
       setTagInput("");
+      setScheduledDate(null);
+      setScheduledTime("");
       toast("Post created successfully!");
-
-      setTimeout(() => {
-        setIsLoading(false);
-        setOpen(false);
-      }, 2000);
+      setIsLoading(false);
+      setOpen(false);
     },
     onError: (error) => {
       console.error("Error mutation:", error);
@@ -113,6 +109,8 @@ export default function PostButton({ userInfo }) {
       setTags([]);
       setTaggedUser("");
       setTagInput("");
+      setScheduledDate(null);
+      setScheduledTime("");
       toast("Error creating post. Please try again.", false);
       setIsLoading(false);
       setTimeout(() => {
@@ -155,12 +153,33 @@ export default function PostButton({ userInfo }) {
     if (document) {
       formData.append("media", document);
     }
+    if (scheduledDate && scheduledTime) {
+      const scheduledDateTime = new Date(scheduledDate);
+      const [hours, minutes] = scheduledTime.split(":");
+      scheduledDateTime.setHours(
+        parseInt(hours, 10),
+        parseInt(minutes, 10),
+        0,
+        0
+      );
+      formData.append("scheduledTime", scheduledDateTime.toISOString());
+    }
     handlePostMutation.mutate(formData);
-  }, [text, tags, taggedUsers, images, videos, document, handlePostMutation]);
+  }, [
+    text,
+    tags,
+    taggedUsers,
+    images,
+    videos,
+    document,
+    scheduledDate,
+    scheduledTime,
+    handlePostMutation,
+  ]);
 
   const handleAddMedia = useCallback(
     (media) => {
-      const MAX_SIZE = 10 * 1024 * 1024;
+      const MAX_SIZE = 50 * 1024 * 1024;
       const MAX_IMAGE_COUNT = 20;
       const MAX_VIDEO_COUNT = 1;
 
@@ -256,7 +275,7 @@ export default function PostButton({ userInfo }) {
       }
 
       if (file && supportedDocumentTypes.includes(file.type)) {
-        const MAX_SIZE = 10 * 1024 * 1024;
+        const MAX_SIZE = 50 * 1024 * 1024;
         if (file.size > MAX_SIZE) {
           setError("File too large. Please keep files under 10MB.");
           return;
@@ -310,8 +329,12 @@ export default function PostButton({ userInfo }) {
         e.preventDefault();
         const trimmedTag = tagInput.trim().replace(/,/g, "");
         if (trimmedTag && !tags.includes(trimmedTag)) {
-          if (tags.length >= 5) {
-            setError("You can add a maximum of 5 tags.");
+          if (trimmedTag.length > 20) {
+            setError("Tag is too long. Please keep it under 20 characters.");
+            return;
+          }
+          if (tags.length >= 10) {
+            setError("You can add a maximum of 10 tags.");
             return;
           }
           setTags((prev) => [...prev, trimmedTag]);
@@ -327,8 +350,12 @@ export default function PostButton({ userInfo }) {
   const handleAddTagClick = useCallback(() => {
     const trimmedTag = tagInput.trim();
     if (trimmedTag && !tags.includes(trimmedTag)) {
-      if (tags.length >= 5) {
-        setError("You can add a maximum of 5 tags.");
+      if (trimmedTag.length > 20) {
+        setError("Tag is too long. Please keep it under 20 characters.");
+        return;
+      }
+      if (tags.length >= 10) {
+        setError("You can add a maximum of 10 tags.");
         return;
       }
       setTags((prev) => [...prev, trimmedTag]);
@@ -342,29 +369,60 @@ export default function PostButton({ userInfo }) {
     setTags((prevTags) => prevTags.filter((t) => t !== tagToRemove));
   }, []);
 
-  const handleAddTaggedUser = useCallback(
-    (user) => {
-      if (
-        user &&
-        !taggedUsers.some((taggedUser) => taggedUser._id === user._id)
-      ) {
-        if (taggedUsers.length >= 5) {
-          setError("You can tag a maximum of 5 users.");
-          return;
-        }
-        setTaggedUsers((prev) => [...prev, user]);
-        setTaggedUser("");
-        setSearchResults([]);
-        setTaggedUserPopoverOpen(false);
+  const handleAddTaggedUser = useCallback(() => {
+    if (
+      taggedUser &&
+      !taggedUsers.some((user) => user._id === taggedUser._id)
+    ) {
+      if (taggedUsers.length >= 5) {
+        setError("You can tag a maximum of 5 users.");
+        return;
       }
-    },
-    [taggedUsers]
-  );
+      setTaggedUsers((prev) => [...prev, taggedUser]);
+      setTaggedUser("");
+      setSearchResults([]);
+      setTaggedUserPopoverOpen(false);
+    }
+  }, [taggedUser, taggedUsers]);
 
   const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
     setTaggedUsers((prevUsers) =>
       prevUsers.filter((user) => user._id !== userIdToRemove)
     );
+  }, []);
+
+  const handleTagUserClick = useCallback(
+    (user) => {
+      if (taggedUsers.some((u) => u._id === user._id)) {
+        return; // User already tagged
+      }
+
+      if (taggedUsers.length >= 5) {
+        setError("You can tag a maximum of 5 users.");
+        return;
+      }
+
+      setTaggedUsers((prev) => [...prev, user]);
+      setTaggedUser("");
+      setSearchResults([]);
+      setTaggedUserPopoverOpen(false);
+    },
+    [taggedUsers]
+  );
+
+  const handleUserSearch = useCallback(async (query) => {
+    if (!query || query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const results = await getTags(query);
+      setSearchResults(results || []);
+    } catch (error) {
+      console.error("Error searching for users:", error);
+      setSearchResults([]);
+    }
   }, []);
 
   const imagePreviews = useMemo(() => {
@@ -489,6 +547,14 @@ export default function PostButton({ userInfo }) {
           imagePreviews={imagePreviews}
           videoPreview={videoPreview}
           documentPreview={documentPreview}
+          scheduledDate={scheduledDate}
+          setScheduledDate={setScheduledDate}
+          scheduledTime={scheduledTime}
+          setScheduledTime={setScheduledTime}
+          schedulePopoverOpen={schedulePopoverOpen}
+          setSchedulePopoverOpen={setSchedulePopoverOpen}
+          handleUserSearch={handleUserSearch}
+          handleTagUserClick={handleTagUserClick}
         />
       }
     />

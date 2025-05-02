@@ -1,6 +1,10 @@
 "use client";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { addComment, determineAge, getCommentReplies } from "@/app/services/post";
+import {
+  addComment,
+  determineAge,
+  getCommentReplies,
+} from "@/app/services/post";
 import { useMutation } from "@tanstack/react-query";
 import CommentSectionPresentation from "../presentation/CommentSectionPresentation";
 import { useState, useEffect } from "react";
@@ -47,9 +51,13 @@ export default function CommentSectionContainer({ username, postId }) {
       const perPage = 5;
       return data.length === perPage ? lastPage.pageParam + 1 : undefined;
     },
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     retry: 0,
-    refetchOnWindowFocus: false,
+    refetchInterval: false,
+    gcTime: 0,
   });
 
   const comments =
@@ -94,7 +102,8 @@ export default function CommentSectionContainer({ username, postId }) {
         const commentObj = {
           commentId: newComment.commentId,
           text: oldComment.trim(),
-          username: queryClient.getQueryData(["sidebarInfo"])?.username || "user",
+          username:
+            queryClient.getQueryData(["sidebarInfo"])?.username || "user",
           profilePicture:
             queryClient.getQueryData(["sidebarInfo"])?.profilePicture || "",
           fullName: queryClient.getQueryData(["sidebarInfo"])?.name || "User",

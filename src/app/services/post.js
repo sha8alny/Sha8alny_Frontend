@@ -487,5 +487,8 @@ export const getTags = async (text) => {
     }
   );
   if (!response.ok) throw new Error("Failed to fetch tags");
+  if (response.status === 204) {
+    return [];
+  }
   return await response.json();
 }

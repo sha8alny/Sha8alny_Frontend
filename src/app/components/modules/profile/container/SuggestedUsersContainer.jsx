@@ -43,6 +43,7 @@ export default function SuggestedUsersContainer({
   };
 
   const changeRelations = (users) => {
+    if (!users || users?.length === 0) return [];
     return users.map((user) => ({
       ...user,
       relation: changeRelation(user?.connectionDegree),

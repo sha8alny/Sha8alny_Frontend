@@ -135,7 +135,7 @@ export const ModifyProfileContainer = ({ userInfo }) => {
     }
   }, [isLoading, isError, isSuccess, profileUpdate.error]);
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const MAX_SIZE = 50 * 1024 * 1024;
 
   const VALID_IMAGE_TYPES = [
     "image/jpeg",
@@ -159,8 +159,8 @@ export const ModifyProfileContainer = ({ userInfo }) => {
       case "profile":
         setProfilePictureError(null);
 
-        if (file.size > MAX_FILE_SIZE) {
-          setProfilePictureError("File size exceeds 5MB limit");
+        if (file.size > MAX_SIZE) {
+          setProfilePictureError("File size exceeds 50MB limit");
           return;
         }
 
@@ -188,8 +188,8 @@ export const ModifyProfileContainer = ({ userInfo }) => {
       case "cover":
         setCoverPictureError(null);
 
-        if (file.size > MAX_FILE_SIZE) {
-          setCoverPictureError("File size exceeds 5MB limit");
+        if (file.size > MAX_SIZE) {
+          setCoverPictureError("File size exceeds 50MB limit");
           return;
         }
 
@@ -217,8 +217,8 @@ export const ModifyProfileContainer = ({ userInfo }) => {
       case "resume":
         setResumeError(null);
 
-        if (file.size > MAX_FILE_SIZE) {
-          setResumeError("File size exceeds 5MB limit");
+        if (file.size > MAX_SIZE) {
+          setResumeError("File size exceeds 50MB limit");
           return;
         }
 

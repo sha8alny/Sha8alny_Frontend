@@ -55,7 +55,6 @@ export default function CommentPresentation({
   showReplies,
   onShowReplies,
   onHideReplies,
-  hasReplies,
   onDelete,
   isDeleting,
   nestCount,
@@ -323,7 +322,7 @@ export default function CommentPresentation({
               </button>
             )}
 
-            {!showReplies && hasReplies && (
+            {!showReplies && comment.hasReplies && (
               <button
                 className="text-xs text-muted hover:underline duration-200 cursor-pointer transition-colors"
                 onClick={onShowReplies}
@@ -334,7 +333,7 @@ export default function CommentPresentation({
               </button>
             )}
 
-            {showReplies && hasReplies && (
+            {showReplies && comment.hasReplies && (
               <button
                 className="text-xs text-muted hover:underline duration-200 cursor-pointer transition-colors"
                 onClick={onHideReplies}
