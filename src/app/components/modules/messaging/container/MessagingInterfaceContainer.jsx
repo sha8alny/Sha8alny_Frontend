@@ -189,6 +189,10 @@ export function MessagingContainer({ currentUser }) {
       // Close message requests if open
       setShowMessageRequests(false);
       selectConversation(matchingConversation);
+    } else if (usernameParam) {
+      // Start a new conversation if usernameParam exists but no matching conversation is found
+      const connection = { username: usernameParam };
+      handleStartConversation(connection);
     }
 
     setIsHandlingUrlChange(false);
@@ -197,6 +201,7 @@ export function MessagingContainer({ currentUser }) {
     userConversations,
     selectedConversation,
     selectConversation,
+    handleStartConversation,
   ]);
 
   // Update URL when selected conversation changes
