@@ -4,18 +4,26 @@ import {getConnections, removeConnection} from "../../../../services/connectionM
 import Connections from "../presentation/Connections";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
+import { useFilters } from "@/app/context/NetworkFilterContext";
 
-const ConnectionsContainer =({filteredResults})=>{
+const ConnectionsContainer =()=>{
     const [deleteConnectionLoading, setDeleteConnectionLoading] = useState(false);
     const queryClient = useQueryClient();
     const toast = useToast();
     const [openDeleteDialog, setOpenDeleteDialog] = useState(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const {filters} = useFilters();
 
     const { data: connections = [], isLoading, isError } = useQuery({
-        queryKey: ["connections", page],
-        queryFn: ({ queryKey }) => getConnections(queryKey[1]),
+        queryKey: ["connections",filters, page],
+        queryFn: ({queryKey}) => getConnections(
+          filters.name,
+          filters.industry,
+          filters.location,
+          filters.connectionDegree,
+          queryKey[2],
+        ),
         keepPreviousData: true,
       });
       
@@ -24,7 +32,13 @@ const ConnectionsContainer =({filteredResults})=>{
         const checkHasMore = async () => {
           if (connections && connections.length === 9) {
             try {
-              const nextPageData = await getConnections(page + 1);
+              const nextPageData = await getConnections(
+                filters.name,
+                filters.industry,
+                filters.location,
+                filters.connectionDegree,
+                page + 1
+              );
               setHasMore(nextPageData.length > 0);
             } catch (error) {
               setHasMore(false);
@@ -39,12 +53,11 @@ const ConnectionsContainer =({filteredResults})=>{
 
 
     const removeMutation = useMutation({
-        mutationFn: removeConnection,
-    });
-
-    const handleRemoveConnection = ({username}) => {
+      mutationFn :(username)=> removeConnection(username),
+    })
+    const handleRemoveConnection = (username) => {
         setDeleteConnectionLoading(true);
-        removeMutation.mutate({username}, {
+        removeMutation.mutate(username, {
             onSuccess: () => {
                 toast("Connection removed successfully");
                 queryClient.invalidateQueries(["connections",page]);
@@ -71,15 +84,15 @@ const ConnectionsContainer =({filteredResults})=>{
 
     return(
         <Connections
-            loading={filteredResults?.isLoading || isLoading}
-            connections={filteredResults?.results || connections}
+            loading={isLoading}
+            connections={connections}
             onRemoveConnection={handleRemoveConnection}
             removeConnectionLoading={deleteConnectionLoading}
             openDeleteDialog={openDeleteDialog}
             setOpenDeleteDialog={setOpenDeleteDialog}
-            nextPage={filteredResults?.nextPage || nextPage}
-            prevPage={filteredResults?.prevPage || prevPage}
-            hasMore={filteredResults?.hasMore || hasMore}   
+            nextPage={ nextPage}
+            prevPage={ prevPage}
+            hasMore={hasMore}   
             page={page}
          />
     )

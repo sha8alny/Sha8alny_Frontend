@@ -53,9 +53,10 @@ return(
     <div className="relative flex items-center justify-center min-h-screen bg-background ">
             {/* Centered logo that moves left */}
             <div
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-1000 ease-in-out
-            ${showForm ? "-translate-x-[850px]" : ""}
-            w-250 h-250`}
+        className={`absolute transition-transform duration-1000 ease-in-out
+            top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+            ${showForm ? "lg:-translate-x-[55vw] md:-translate-x-[67vw] sm:-translate-x-[60vw] translate-x-[-52vw] sm:translate-y-[-32vw] translate-y-[-120vw]" : ""} 
+            xl:w-250 xl:h-250 md:w-150 md:h-150 w-100 h-100`}
         >
         <img
           src="/lightmode.svg"
@@ -74,7 +75,7 @@ return(
       <div
         className={`transition-all duration-1000 ease-in-out ${
           showForm
-            ? "opacity-100 translate-x-[300px]"
+            ? "opacity-100 sm:translate-x-[20vw] translate-x-0 sm:translate-y-0 translate-y-[10vh]"
             : "opacity-0 translate-x-full"
         } w-full max-w-md ml-auto z-10`}
       >
@@ -125,7 +126,7 @@ return(
                     className=" w-3 h-3 accent-secondary"/>
                 <label htmlFor="rememberMe" className="ml-2 text-text text-sm">Remember Me</label>
                 <a href="/forget-password" className="ml-20 text-left text-secondary hover:underline text-sm">
-                 Forget password?
+                 Forgot password ?
                 </a>
                 </div>
                 <button
@@ -142,7 +143,7 @@ return(
                 </div>
                 <button
                     data-testid="google-signin-button"
-                    type="submit"
+                    type="button"
                     className="w-full bg-secondary hover:opacity-70 text-background font-semibold p-3 rounded-lg transition duration-300"
                     onClick={handleGoogleSignIn}>
                   <img src="/google-color-svgrepo-com.svg" alt="Google Logo" className="w-6 h-6 inline-block mr-2.5" />

@@ -6,7 +6,7 @@ export default function FollowersCompanyPage(){
     const { username } = useParams();
     return(
         <div className="space-y-6">
-            <FollowersListContainer username={username}/>
+            <FollowersListContainer companyUsername={username}/>
         </div>
     );
 }

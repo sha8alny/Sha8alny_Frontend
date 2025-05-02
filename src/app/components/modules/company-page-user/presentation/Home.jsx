@@ -53,7 +53,7 @@ import PostCard from "./PostCard";
  */
 
 
-export default function Home({company,posts, goToAboutPage, goToPostsPage}) {
+export default function Home({company,posts, goToAboutPage, goToPostsPage, loading}) {
 
     const totalLikes = 
         (posts.numLikes || 0) +
@@ -74,6 +74,16 @@ export default function Home({company,posts, goToAboutPage, goToPostsPage}) {
         comments :post.numComments,
         shares: post.numShares,
     })) || [];
+
+    if (loading) {
+        return (
+          <div className="flex flex-col gap-2 justify-center items-center py-10">
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary" /> 
+              <p className="text-text">Loading</p>
+          </div>
+        );
+    }
+
     return(
         <>
         <Container className="border-[#111] border shadow-lg">

@@ -46,6 +46,7 @@ import {
     AlertDialogAction,
   } from "../../../ui/AlertDialog";  
   import RestoreIcon from '@mui/icons-material/Restore';
+  import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
   /**
    * @namespace admin
    * @module admin
@@ -114,7 +115,7 @@ import {
           <div className="flex flex-wrap gap-2">
             {statusOptions.map((status) => (
               <button
-                data-testid={`status-filter-${status}`}
+                data-testid={`status-filter-${status.toLowerCase()}`}
                 key={status}
                 onClick={() => toggleStatusFilter(status)}
                 className={`text-sm px-2 py-0.5 rounded-md border text-secondary cursor-pointer transition-all duration-200 ${
@@ -137,35 +138,35 @@ import {
               <DropdownMenuItem
                 data-testid="all-filter"
                 onClick={() => handleFilterChange("all")}
-                className={filters.includes("all") ? "bg-secondary text-white" : ""}
+                className={filters.includes("all") ? "bg-secondary text-white rounded-none" : ""}
               >
                 All
               </DropdownMenuItem>
               <DropdownMenuItem
                 data-testid="user-filter"
                 onClick={() => handleFilterChange("User")}
-                className={filters.includes("User") ? "bg-secondary text-white" : ""}
+                className={filters.includes("User") ? "bg-secondary text-white rounded-none" : ""}
               >
                 Users
               </DropdownMenuItem>
               <DropdownMenuItem
                 data-testid="company-filter"
                 onClick={() => handleFilterChange("Company")}
-                className={filters.includes("Company") ? "bg-secondary text-white" : ""}
+                className={filters.includes("Company") ? "bg-secondary text-white rounded-none" : ""}
               >
                 Companies
               </DropdownMenuItem>
               <DropdownMenuItem
                 data-testid="post-filter"
                 onClick={() => handleFilterChange("Post")}
-                className={filters.includes("Post") ? "bg-secondary text-white" : ""}
+                className={filters.includes("Post") ? "bg-secondary text-white rounded-none" : ""}
               >
                 Posts
               </DropdownMenuItem>
               <DropdownMenuItem
                 data-testid="comment-filter"
                 onClick={() => handleFilterChange("Comment")}
-                className={filters.includes("Comment") ? "bg-secondary text-white" : ""}
+                className={filters.includes("Comment") ? "bg-secondary text-white rounded-none" : ""}
               >
                 Comments
               </DropdownMenuItem>
@@ -185,9 +186,10 @@ import {
             </SelectContent>
           </Select>
         </div>
-  
+        <div className="h-screen">
         <div className="rounded-md border text-text">
           <Table>
+          {(reports.data && reports.data.length > 0)&&(  
             <TableHeader>
               <TableRow>
                 <TableHead>Reported User/Company</TableHead>
@@ -198,15 +200,18 @@ import {
                 <TableHead className="w-[80px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
+          )}
             <TableBody>
               {isLoading ? (
                 <TableSkeleton />
               ) : isError ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-red-500">
-                    No reports yet.
-                  </TableCell>
-                </TableRow>
+                <div className="p-8 text-center border border-dashed border-yellow-600  rounded-md">
+                <ReportProblemOutlinedIcon className="text-yellow-600 mb-2" style={{ fontSize: '3rem' }} />
+                <h3 className="text-yellow-600 text-lg font-medium mb-2">No Reports Issued At The Moment</h3>
+                <p className="text-gray-600">
+                   Please try again later.
+                </p>
+              </div>
               ) : (
                 reports.data.map((report) => {
                   let avatarSrc=""
@@ -243,7 +248,28 @@ import {
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <div className="font-medium">{name}</div>
+                          {(report.reportData.status === "pending" && !report.itemDetails.isDeleted)?(
+                            <a
+                              href={
+                                 type === "User"
+                                ? `/u/${report.itemDetails.username}`
+                                : type === "Company"
+                                ? `/company/${report.itemDetails?.username}/user`
+                                : type === "Post"
+                                ? report.itemDetails?.userData?.username
+                                  ? `/u/${report.itemDetails.userData.username}/post/${report.itemDetails._id}`
+                                  : `/company/${report.itemDetails?.companyData?.username}/admin/posts`
+                                : `/u/${report.itemDetails?.userData?.username}`
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-medium hover:text-secondary hover:underline flex items-center"
+                              data-testid={`view-${type.toLowerCase()}-profile`}
+                            >
+                          {name}</a>
+                          ):(
+                            <div className="font-mediumr">{name}</div>
+                          )}
                         </div>
                       </div>
                     </TableCell>
@@ -260,8 +286,8 @@ import {
                         variant="outline"
                         className={getStatusColor(report.reportData.status)}
                       >
-                        {report.reportData.status}
-                      </Badge>
+                        {report.reportData.status.charAt(0).toUpperCase() + report.reportData.status.slice(1)}
+                        </Badge>
                     </TableCell>
                     <TableCell>
                     <div className="flex items-center space-x-3">
@@ -299,7 +325,7 @@ import {
                             <VisibilityIcon className="mr-2" fontSize="small" />
                             View Details
                           </DropdownMenuItem>
-                          {report.reportData.status === "pending" && (
+                          {(report.reportData.status === "pending" && !report.itemDetails.isDeleted)&& (
                           <AlertDialog open={openConfirmationDialog=== report.reportData._id}   onOpenChange={(isOpen) =>
                               setOpenConfirmationDialog(isOpen ? report.reportData._id : null)
                             }>
@@ -351,7 +377,7 @@ import {
                             </AlertDialogContent>
                           </AlertDialog>
                           )}
-                          {report.reportData.status === "pending" && (
+                          {(report.reportData.status === "pending" && !report.itemDetails.isDeleted) && (
                           <DropdownMenuItem
                             data-testid="reject-report"
                             onClick={() =>
@@ -362,7 +388,7 @@ import {
                             Reject
                           </DropdownMenuItem>
                           )}
-                          {report.reportData.status === "resolved" && report.itemDetails.isDeleted && (
+                          {(report.reportData.status === "resolved" || report.reportData.status === "pending") && report.itemDetails.isDeleted && (
                           <DropdownMenuItem
                             data-testid="reactivate-content"
                             onClick={() =>{
@@ -393,7 +419,7 @@ import {
             </TableBody>
           </Table>
         </div>
-  
+        {(reports.data && reports.data.length > 0) && (
         <div className="flex justify-between mt-4">
           <button
             data-testid="previous-page"
@@ -411,6 +437,8 @@ import {
           >
             {isFetching ? "Loading..." : "Next"}
           </button>
+        </div>
+        )}
         </div>
   
         <InappropriateContentReportModal

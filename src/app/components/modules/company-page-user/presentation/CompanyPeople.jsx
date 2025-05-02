@@ -43,13 +43,22 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
  * @property {Array<CompanyPeople.Person>} [people=[]] - A list of people to display.
  */
 
-export default function CompanyPeople({ people=[], goToPeoplePage, handleConnectPerson, connectedPeople, handleDeleteConnection,handleAcceptConnection, handleDeclineConnection}) {
+export default function CompanyPeople({ people=[], loading=false, goToPeoplePage, handleConnectPerson, connectedPeople, handleDeleteConnection,handleAcceptConnection, handleDeclineConnection}) {
   const getRelationText = (relation) => {
       if (relation === 1) return "1st";
       if (relation === 2) return "2nd";
       if (relation === 3) return "3rd";
       return `${relation}`; 
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-2 justify-center items-center py-10">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary" /> 
+          <p className="text-text">Loading</p>
+      </div>
+    );
+  }
 
   if(!people.length){
     return (

@@ -27,7 +27,6 @@ import {
   SelectValue,
   SelectContent,
 } from "@/app/components/ui/Select";
-import { useEffect } from "react";
 
 /**
  * @namespace company-author
@@ -79,10 +78,6 @@ const JobsForm = ({
   onRestoreJob,
   isRestoring,
 }) => {
-
-  useEffect(() => {
-    console.log("openDeleteDialogForId:", openDeleteDialogForId);
-  }, [openDeleteDialogForId]);
   return (
     <div className="flex-grow items-center mx-auto w-full ">
       <section className="w-full p-8 bg-foreground rounded-lg shadow-xl grid grid-cols-2">
@@ -183,6 +178,7 @@ const JobsForm = ({
                   <h1 className="text-secondary sm:text-2xl text-lg text-semibold break-words whitespace-normal overflow-hidden text-clip w-xs sm:w-sm lg:max-w-lg">
                     {job.title}
                   </h1>
+                  {!showDeletedJobs && (
                   <Button
                     data-testid="ShowApplicants"
                     type="button"
@@ -194,7 +190,9 @@ const JobsForm = ({
                   >
                     Show Applicants
                   </Button>
+                  )}
                 </div>
+                
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
                   <div>
                   <p className="text-text break-words whitespace-normal w-3xs">
@@ -224,7 +222,7 @@ const JobsForm = ({
                       {" "}
                       views:
                       <p className="text-text text-semibold text-sm text-center font-bold">
-                        {job.numViews}{" "}
+                        {job.views|| job.numImpressions}{" "}
                       </p>
                     </span>
                   </div>
@@ -446,7 +444,7 @@ const JobsForm = ({
                             <AlertDialogCancel
                               data-testid="cancel-edit"
                               type="button"
-                              className=" bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text"
+                              className="flex-1 bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text"
                                 onClick={() => setOpenDialogForJobId(null)}
                             >
                               Cancel
@@ -478,9 +476,10 @@ const JobsForm = ({
                           {showDeletedJobs ? (
                             <RestoreFromTrashIcon className="text-secondary" />
                           ) : (
-                          <DeleteIcon className="text-secondary" />
+                          <DeleteIcon className="text-red-500" />
                           )}
-                          <span className="absolute top-8 text-sm text-secondary bg-none p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <span className={`absolute top-8 text-sm p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                            ${showDeletedJobs ? "text-secondary" : "text-red-500"}`}>
                             {showDeletedJobs
                               ? "Restore Job"
                               : "Delete Job"}

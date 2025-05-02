@@ -1,9 +1,10 @@
 "use client"
 import { useState,useEffect } from "react";
-import {getConnectionRequests, getSentConnectionRequests, manageConnectionRequest} from "../../../../services/connectionManagement"
+import {getConnectionRequests, getSentConnectionRequests, manageConnectionRequest, cancelConnectionRequest} from "../../../../services/connectionManagement"
 import Pending from "../presentation/Pending";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
+import { useFilters } from "@/app/context/NetworkFilterContext";
 
 const PendingContainer =({filteredResults})=>{
     const [manageRequest, setmanageRequest] = useState(false);
@@ -15,16 +16,41 @@ const PendingContainer =({filteredResults})=>{
     const [hasMoreReceived, sethasMoreReceived] = useState(true);
     const [hasMoreSent, sethasMoreSent] = useState(true);
     const [tab, setTab] = useState("received");
+    const {filters} = useFilters();
 
 
-    const { data: received=[], isLoading: isReceivedLoading, isErrorReceived } = useQuery({queryKey:["received",pageReceived], queryFn:({queryKey})=>getConnectionRequests(queryKey[1]), });
-    const { data: sent = [], isLoading: isSentLoading, isErrorSend } = useQuery({queryKey:["sent",pageSent], queryFn:({queryKey})=>getSentConnectionRequests(queryKey[1]),});
+    const { data: received=[], isLoading: isReceivedLoading, isErrorReceived } = useQuery(
+        {queryKey:["received",filters,pageReceived], 
+        queryFn:({queryKey})=>getConnectionRequests(
+            filters.name,
+            filters.industry,
+            filters.location,
+            filters.connectionDegree,
+            queryKey[2],
+            ),
+        });
+    const { data: sent = [], isLoading: isSentLoading, isErrorSend } = useQuery(
+        {queryKey:["sent",filters,pageSent], 
+        queryFn:({queryKey})=>getSentConnectionRequests(
+            filters.name,
+            filters.industry,
+            filters.location,
+            filters.connectionDegree,
+            queryKey[2],
+            ),
+           });
 
     useEffect(() => {
         const checkhasMoreReceived = async () => {
             if (received && received.length === 9) {
                 try {
-                    const nextPageData = await getConnectionRequests(pageReceived + 1);
+                    const nextPageData = await getConnectionRequests(
+                        filters.name,
+                        filters.industry,
+                        filters.location,
+                        filters.connectionDegree,
+                        pageReceived + 1
+                    );
                     sethasMoreReceived(nextPageData.length > 0);
                 } catch (error) {
                     sethasMoreReceived(false);
@@ -36,7 +62,13 @@ const PendingContainer =({filteredResults})=>{
         const checkhasMoreSent = async () => {
             if (sent && sent.length === 9) {
                 try {
-                    const nextPageData = await getFollowing(pageSent + 1);
+                    const nextPageData = await getFollowing(
+                        filters.name,
+                        filters.industry,
+                        filters.location,
+                        filters.connectionDegree,
+                        pageSent + 1
+                    );
                     sethasMoreSent(nextPageData.sent.length > 0);
                 } catch (error) {
                     sethasMoreSent(false);
@@ -71,7 +103,20 @@ const PendingContainer =({filteredResults})=>{
             },
         });
     };
-    
+    const cancelMutation = useMutation({
+        mutationFn: cancelConnectionRequest,
+    });
+    const handleCancelRequest = ({requestName}) => {
+        cancelMutation.mutate({username:requestName}, {
+            onSuccess: () => {
+                toast("Connection request canceled successfully");
+                queryClient.invalidateQueries(["sent", page]);
+            },
+            onError: (error) => {
+                toast("Error canceling request", false);
+            },
+        });
+    };
 
     const nextpageReceived = () => {
         if (hasMoreReceived) {
@@ -101,6 +146,20 @@ const PendingContainer =({filteredResults})=>{
     const page = tab === "received" ? pageReceived : pageSent;
     const hasMore = tab === "received" ? hasMoreReceived : hasMoreSent;
     const data = tab === "received" ? received : sent;
+
+    const getConnectionDegree = (connectionDegree) => {
+        switch (connectionDegree) {
+          case 1:
+            return "1st";
+          case 2:
+            return "2nd";
+          case 3:
+            return "3rd+";
+          default:
+            return "";
+        }
+      };
+
     
     return(
         <Pending
@@ -114,9 +173,11 @@ const PendingContainer =({filteredResults})=>{
             page={page}
             hasMore={hasMore}
             onManageRequest={manageRequests}
+            onCancelRequest={handleCancelRequest}
             manageRequest={manageRequest}
             openDeleteDialog={openDeleteDialog}
             setOpenDeleteDialog={setOpenDeleteDialog}
+            getConnectionDegree={getConnectionDegree}
          />
     )
 }
