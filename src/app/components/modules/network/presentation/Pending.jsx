@@ -17,6 +17,7 @@ const Pending = ({
     manageRequest,
     openDeleteDialog,
     setOpenDeleteDialog,
+    getConnectionDegree
     
 }) => {
   console.log("pendings",data)
@@ -110,6 +111,7 @@ const Pending = ({
                     setOpenDeleteDialog={(isOpen)=>{
                         setOpenDeleteDialog(isOpen ? account.username : null);
                     }}
+                    getConnectionDegree={getConnectionDegree(account.connectionDegree)}
                 />
             ))}
             </div>

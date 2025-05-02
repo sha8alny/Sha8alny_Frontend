@@ -4,19 +4,16 @@ import { Input } from "@/app/components/ui/Input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/Select";
 import React from "react";
 
-const UserFilters = ({
+const NetworkFilters = ({
+    filters,
     tempName,
     setTempName,
     tempIndustry,
     setTempIndustry,
     tempLocation,
     setTempLocation,
-    connectionDegree,
-    setNameFilter,
-    setIndustryFilter,
-    setLocationFilter,
-    setConnectionDegree,
     shouldShowConnectionDegree,
+    updateFilter,
   }) => (
     <div className="bg-foreground p-4 rounded-lg shadow border h-fit w-full top-20">
       <div className="flex items-center gap-2 mb-4">
@@ -36,10 +33,10 @@ const UserFilters = ({
             onChange={(e) => setTempName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                setNameFilter(tempName);
+                updateFilter('name', tempName);
               }
             }}
-            onBlur={() => setNameFilter(tempName)}
+            onBlur={() => updateFilter('name', tempName)}
             className="h-9 w-full text-primary"
             data-testid="user-name-filter-input"
           />
@@ -56,10 +53,10 @@ const UserFilters = ({
             onChange={(e) => setTempIndustry(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                setIndustryFilter(tempIndustry);
+                updateFilter('industry', tempIndustry);
               }
             }}
-            onBlur={() => setIndustryFilter(tempIndustry)}
+            onBlur={() => updateFilter('industry', tempIndustry)}
             className="h-9 w-full text-primary"
             data-testid="user-industry-filter-input"
           />
@@ -76,10 +73,10 @@ const UserFilters = ({
             onChange={(e) => setTempLocation(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                setLocationFilter(tempLocation);
+                updateFilter('location', tempLocation);
               }
             }}
-            onBlur={() => setLocationFilter(tempLocation)}
+            onBlur={() => updateFilter('location', tempLocation)}
             className="h-9 w-full text-primary"
             data-testid="user-location-filter-input"
           />
@@ -90,14 +87,16 @@ const UserFilters = ({
             Connection
           </label>
           <Select
-            value={connectionDegree}
-            onValueChange={setConnectionDegree}
+            value={filters.connectionDegree}
+            onValueChange={(value => updateFilter('connectionDegree', value))}
             data-testid="user-connection-select"
           >
-            <SelectTrigger className="h-9 w-full" data-testid="user-connection-trigger">
+            <SelectTrigger className="h-9 w-full text-text" data-testid="user-connection-trigger">
               <SelectValue placeholder="Connection degree" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value={0} data-testid="user-connection-all">All</SelectItem>
+              <SelectItem value={1} data-testid="user-connection-1st">1st Degree</SelectItem>
               <SelectItem value={2} data-testid="user-connection-2nd">2nd Degree</SelectItem>
               <SelectItem value={3} data-testid="user-connection-3rd">3rd Degree</SelectItem>
             </SelectContent>
@@ -109,4 +108,4 @@ const UserFilters = ({
     </div>
   );
 
-export default UserFilters;
+export default NetworkFilters;
