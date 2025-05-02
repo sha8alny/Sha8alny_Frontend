@@ -153,9 +153,10 @@ export const getConnections = async (page) => {
 };
 
 
-export const getFollowers = async (page) => {
+export const getFollowers = async (page, username) => {
+  console.log("username", username)
   const pageSize = 9;
-  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}`, {
+  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}?username=${username}`, {
     method: "GET",
   });
   if (!response.ok) {
@@ -227,3 +228,15 @@ export const manageConnectionRequest = async ({username, status}) => {
   return true;
 }
 
+export const cancelConnectionRequest = async ({username}) => {
+  const response = await fetchWithAuth(`${apiURL}/connection/${username}/cancel`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to cancel connection request");
+  }
+  return true;
+}

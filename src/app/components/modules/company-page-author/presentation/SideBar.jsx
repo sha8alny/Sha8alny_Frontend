@@ -104,9 +104,9 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
 
             {/* Logo Edit Modal */}
             {isEditingLogo && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                    <Card className="w-full max-w-md">
-                    <CardContent className="p-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 rounded-lg">
+                    <Card className="w-full max-w-md bg-foreground">
+                    <CardContent className="p-4 ">
                         <div className="mb-4 flex items-center justify-between">
                         <h3 className="text-lg font-medium">Edit Logo</h3>
                         <Button className="cursor-pointer" size="icon" variant="ghost" onClick={() => setIsEditingLogo(false)}>
@@ -127,11 +127,11 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
 
                         <div className="flex flex-col gap-4">
                             <input ref={logoInputRef} type="file" accept="image/png, image/jpg, image/jpeg" onChange={onChangeLogo} className="hidden" id="logo-upload"/>
-                            <Button variant="outline" onClick={() => logoInputRef.current?.click()} className="w-full">
+                            <Button variant="default" onClick={() => logoInputRef.current?.click()} className="w-full bg-secondary cursor-pointer">
                                 <Upload className="mr-2 h-4 w-4" />
                                 Upload Logo
                             </Button>
-                            <Button variant="outline" onClick={() => setIsEditingLogo(false)} disabled={isLoading}>
+                            <Button variant="outline" className="cursor-pointer" onClick={() => setIsEditingLogo(false)} disabled={isLoading}>
                                 Cancel
                             </Button>
                         </div>
@@ -143,9 +143,9 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
 
             {/* Cover Edit Modal */}
             {isEditingCover && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <Card className="w-full max-w-md">
-                <CardContent className="p-6">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 rounded-lg">
+                <Card className="w-full max-w-md bg-foreground">
+                <CardContent className="p-4">
                     <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-lg font-medium">Edit Cover Image</h3>
                     <Button className="cursor-pointer" size="icon" variant="ghost" onClick={() => setIsEditingCover(false)}>
@@ -166,11 +166,11 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
 
                     <div className="flex flex-col gap-4">
                         <input ref={coverInputRef} type="file" accept="image/png, image/jpg, image/jpeg" onChange={onChangeCover}  className="hidden" id="cover-upload"/>
-                        <Button variant="outline" onClick={() => coverInputRef.current?.click()} className="w-full">
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Cover Image
-                        </Button>
-                        <Button variant="outline" onClick={() => setIsEditingCover(false)} disabled={isLoading}>
+                        <Button variant="default" onClick={() => coverInputRef.current?.click()} className="w-full bg-secondary cursor-pointer">
+                            <Upload className="mr-2 h-4 w-4" />
+                                Upload Cover Image
+                            </Button>
+                        <Button variant="outline" className="cursor-pointer" onClick={() => setIsEditingCover(false)} disabled={isLoading}>
                             Cancel
                         </Button>
                     </div>

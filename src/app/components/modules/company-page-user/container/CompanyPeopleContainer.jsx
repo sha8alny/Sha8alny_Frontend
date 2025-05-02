@@ -94,6 +94,8 @@ export default function CompanyPeopleContainer({username}) {
         }
     };
 
+      
+
     const goToPeoplePage = (person) => {
         if (person?.username) {
           router.push(`/u/${person.username}`);
@@ -103,8 +105,8 @@ export default function CompanyPeopleContainer({username}) {
     
     console.log("connected people", connectedPeople);
   return (
-      <div className="flex flex-wrap gap-6 bg-foreground rounded-lg">
-        <CompanyPeople people={people} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson} connectedPeople={connectedPeople} handleDeleteConnection={handleDeleteConnection} handleAcceptConnection={handleAcceptConnection} handleDeclineConnection={handleDeclineConnection}   />
+      <div>
+        <CompanyPeople people={people} loading={loading} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson} connectedPeople={connectedPeople} handleDeleteConnection={handleDeleteConnection} handleAcceptConnection={handleAcceptConnection} handleDeclineConnection={handleDeclineConnection}   />
       </div>
   );
 }

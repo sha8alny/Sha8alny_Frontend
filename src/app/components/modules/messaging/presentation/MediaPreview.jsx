@@ -1,6 +1,10 @@
 "use client";
 
-import { X, FileText, ImageIcon, Film, FileIcon } from "lucide-react";
+import CloseIcon from '@mui/icons-material/Close';
+import DescriptionIcon from '@mui/icons-material/Description';
+import ImageIcon from '@mui/icons-material/Image';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { Button } from "@/app/components/ui/Button";
 import { useState, useEffect } from "react";
 
@@ -9,11 +13,11 @@ const getFileIcon = (fileType) => {
   if (fileType.startsWith("image/")) {
     return <ImageIcon className="h-4 w-4" />;
   } else if (fileType.startsWith("video/")) {
-    return <Film className="h-4 w-4" />;
+    return <VideocamIcon className="h-4 w-4" />;
   } else if (fileType.startsWith("application/pdf")) {
-    return <FileText className="h-4 w-4 text-destructive" />;
+    return <DescriptionIcon className="h-4 w-4 text-destructive" />;
   } else {
-    return <FileIcon className="h-4 w-4" />;
+    return <InsertDriveFileIcon className="h-4 w-4" />;
   }
 };
 
@@ -68,7 +72,7 @@ export function MediaPreview({ file, onRemove }) {
         onClick={onRemove}
         data-testid="remove-media-button"
       >
-        <X className="h-3 w-3" />
+        <CloseIcon className="h-3 w-3" />
       </Button>
     </div>
   );

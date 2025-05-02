@@ -1,6 +1,6 @@
 "use client"
 import { useState,useEffect } from "react";
-import {getConnectionRequests, getSentConnectionRequests, manageConnectionRequest} from "../../../../services/connectionManagement"
+import {getConnectionRequests, getSentConnectionRequests, manageConnectionRequest, cancelConnectionRequest} from "../../../../services/connectionManagement"
 import Pending from "../presentation/Pending";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
@@ -71,7 +71,20 @@ const PendingContainer =({filteredResults})=>{
             },
         });
     };
-    
+    const cancelMutation = useMutation({
+        mutationFn: cancelConnectionRequest,
+    });
+    const handleCancelRequest = ({requestName}) => {
+        cancelMutation.mutate({username:requestName}, {
+            onSuccess: () => {
+                toast("Connection request canceled successfully");
+                queryClient.invalidateQueries(["sent", page]);
+            },
+            onError: (error) => {
+                toast("Error canceling request", false);
+            },
+        });
+    };
 
     const nextpageReceived = () => {
         if (hasMoreReceived) {
@@ -114,6 +127,7 @@ const PendingContainer =({filteredResults})=>{
             page={page}
             hasMore={hasMore}
             onManageRequest={manageRequests}
+            onCancelRequest={handleCancelRequest}
             manageRequest={manageRequest}
             openDeleteDialog={openDeleteDialog}
             setOpenDeleteDialog={setOpenDeleteDialog}

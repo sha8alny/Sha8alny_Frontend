@@ -81,6 +81,10 @@ const ViewApplicationDetailsContainer = ({jobId, applicantId, onClose}) => {
             else{
                 toast("Failed to update application",false);
             }
+            setTimeout(() => {
+            closeModal();
+            }
+            , 2000);
         } catch (error) {
             console.error("❌ Error updating application:", error);
             toast("Failed to update application",false);

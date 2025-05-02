@@ -39,12 +39,11 @@ const ConnectionsContainer =({filteredResults})=>{
 
 
     const removeMutation = useMutation({
-        mutationFn: removeConnection,
-    });
-
-    const handleRemoveConnection = ({username}) => {
+      mutationFn :(username)=> removeConnection(username),
+    })
+    const handleRemoveConnection = (username) => {
         setDeleteConnectionLoading(true);
-        removeMutation.mutate({username}, {
+        removeMutation.mutate(username, {
             onSuccess: () => {
                 toast("Connection removed successfully");
                 queryClient.invalidateQueries(["connections",page]);

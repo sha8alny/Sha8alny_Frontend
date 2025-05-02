@@ -308,7 +308,7 @@ export const messagingService = {
       conversationId,
       "messages"
     );
-
+    messageLimit = null; // Set to null to disable limit for now
     // Build the query with or without limit
     let queryConstraints = [orderBy("timestamp", "desc")]; // Changed to desc to get newest first
     if (messageLimit && typeof messageLimit === "number" && messageLimit > 0) {

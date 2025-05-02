@@ -50,14 +50,13 @@ export default function AboutContainer({ username }) {
         if (username) fetchCompany();
     }, [username]);
 
-    if (loading) return <p className="p-4">Loading company info...</p>;
-    if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
+
     const goToCompanyPage = () => { 
         router.push(`/company/${username}/user/home`);
     }
     return (
         <div>
-            <About company={company} goToCompanyPage={goToCompanyPage} />
+            <About company={company} goToCompanyPage={goToCompanyPage} loading={loading} error={error} />
         </div>
     );
 }

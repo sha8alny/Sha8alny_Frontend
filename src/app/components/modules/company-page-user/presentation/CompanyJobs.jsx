@@ -20,7 +20,7 @@ import { Card,CardContent } from "@/app/components/ui/Card";
  * @returns {JSX.Element} The rendered component with job listings.
  */
 
-export default function CompanyJobs({jobs=[], goToJobPage}){
+export default function CompanyJobs({jobs=[], goToJobPage, isLoading, isError}){
     const getRelativeTimeString = (date) => {
         try {
           if (!date) return "Recently";
@@ -40,6 +40,19 @@ export default function CompanyJobs({jobs=[], goToJobPage}){
         }
     };
 
+    if (isLoading) {
+        return (
+            <div className="flex flex-col gap-2 justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-secondary" /> 
+                <p className="text-text">Loading</p>
+            </div>
+        );
+    }
+
+    if(isError){
+        <div>Failed to load jobs.</div>
+    }
+
     if(!jobs.length){
         return (
             <div className="text-center py-6 text-text">
@@ -51,7 +64,7 @@ export default function CompanyJobs({jobs=[], goToJobPage}){
     return (
         <div>
             <Container className="p-6">
-                <h2 className="text-text text-xl font-bold mb-4">Posted Jobs</h2>
+                <h2 className="text-text text-2xl font-bold mb-4">Posted Jobs</h2>
                 <div className="flex flex-wrap gap-6">
                     {jobs.map((job, index) => (
                         <Card key={job.id || index} className="w-60 rounded-xl bg-foreground">
