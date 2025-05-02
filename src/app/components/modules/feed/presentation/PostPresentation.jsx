@@ -59,6 +59,7 @@ import { usePathname } from "next/navigation";
 import ReportPresentation from "./ReportPresentation";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 import Link from "next/link";
+import { Badge } from "@/app/components/ui/Badge";
 
 export default function PostPresentation({
   commentSectionOpen,
@@ -156,7 +157,7 @@ export default function PostPresentation({
             className="cursor-pointer size-10"
             onClick={() =>
               post?.isCompany
-                ? navigateTo(`company-user-admin/${post?.username}/about-page`)
+                ? navigateTo(`company/${post?.username}`)
                 : navigateTo(`/u/${post?.username}`)
             }
           >
@@ -172,9 +173,7 @@ export default function PostPresentation({
                 className="font-semibold flex items-center truncate gap-2 cursor-pointer hover:underline"
                 onClick={() =>
                   post?.isCompany
-                    ? navigateTo(
-                        `company-user-admin/${post?.username}/about-page`
-                      )
+                    ? navigateTo(`company/${post?.username}/user/home`)
                     : navigateTo(`/u/${post?.username}`)
                 }
               >
@@ -462,9 +461,9 @@ export default function PostPresentation({
             post?.tags.length > 0 &&
             post?.tags.map((user, index) => (
               <Badge
-                key={user?._id}
+                key={user?.userId}
                 className="flex items-center gap-1 px-2 py-1 bg-secondary/10 rounded-2xl text-primary font-semibold"
-                data-testid={`tagged-user-${user?._id}`}
+                data-testid={`tagged-user-${user?.userId}`}
               >
                 <Avatar className="h-5 w-5 mr-1">
                   <AvatarImage src={user?.profilePicture} alt={user?.name} />

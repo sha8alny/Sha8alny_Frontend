@@ -67,6 +67,7 @@ export default function PostButtonPresentation({
   schedulePopoverOpen,
   setSchedulePopoverOpen,
   handleUserSearch,
+  isSearching,
   handleTagUserClick,
 }) {
   return (
@@ -338,7 +339,7 @@ export default function PostButtonPresentation({
                   {/* Skeleton loading state */}
                   {taggedUser &&
                     taggedUser.length > 1 &&
-                    searchResults.length === 0 && (
+                    isSearching && (
                       <div
                         className="mt-2 max-h-60 overflow-y-auto space-y-2"
                         data-testid="user-search-skeleton"
@@ -348,10 +349,10 @@ export default function PostButtonPresentation({
                             key={i}
                             className="flex items-center gap-2 p-2 rounded-md animate-pulse"
                           >
-                            <div className="h-8 w-8 rounded-full bg-secondary/30"></div>
+                            <div className="h-8 w-8 rounded-full bg-primary/30"></div>
                             <div className="flex flex-col space-y-1.5 flex-1">
-                              <div className="h-3 bg-secondary/30 rounded w-24"></div>
-                              <div className="h-2 bg-secondary/20 rounded w-40"></div>
+                              <div className="h-3 bg-primary/30 rounded w-24"></div>
+                              <div className="h-2 bg-primary/20 rounded w-40"></div>
                             </div>
                           </div>
                         ))}
@@ -394,12 +395,12 @@ export default function PostButtonPresentation({
                   {taggedUser &&
                     taggedUser.length > 2 &&
                     searchResults.length === 0 && (
-                      <div className="mt-2 p-3 text-center border rounded-md bg-muted/10">
-                        <p className="text-xs text-muted mb-1">
-                          No users found
+                      <div className="mt-2 p-3 text-center rounded-md">
+                        <p className="text-xs text-primary font-semibold mb-1">
+                          No users found.
                         </p>
                         <p className="text-[11px] text-muted">
-                          Try a different search term
+                          Try a different search term.
                         </p>
                       </div>
                     )}

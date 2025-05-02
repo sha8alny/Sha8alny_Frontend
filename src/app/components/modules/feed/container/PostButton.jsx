@@ -28,6 +28,7 @@ export default function PostButton({ userInfo }) {
   const [scheduledDate, setScheduledDate] = useState(null);
   const [scheduledTime, setScheduledTime] = useState("");
   const [schedulePopoverOpen, setSchedulePopoverOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
   const documentInputRef = useRef(null);
@@ -413,15 +414,19 @@ export default function PostButton({ userInfo }) {
   const handleUserSearch = useCallback(async (query) => {
     if (!query || query.length < 2) {
       setSearchResults([]);
+      setIsSearching(false);
       return;
     }
 
+    setIsSearching(true);
     try {
       const results = await getTags(query);
       setSearchResults(results || []);
     } catch (error) {
       console.error("Error searching for users:", error);
       setSearchResults([]);
+    } finally {
+      setIsSearching(false);
     }
   }, []);
 
@@ -555,6 +560,7 @@ export default function PostButton({ userInfo }) {
           setSchedulePopoverOpen={setSchedulePopoverOpen}
           handleUserSearch={handleUserSearch}
           handleTagUserClick={handleTagUserClick}
+          isSearching={isSearching}
         />
       }
     />

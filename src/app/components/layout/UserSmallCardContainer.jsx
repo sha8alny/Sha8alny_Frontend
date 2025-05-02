@@ -12,7 +12,7 @@ export default function UserSmallCardContainer({ userInfo, onClick }) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [connectionStatus, setConnectionStatus] = useState(
-    userInfo?.connectionStatus || "notConnected"
+    userInfo?.connectionStatus ?? userInfo?.isConnected
   );
 
   const handleConnectMutate = useMutation({
@@ -36,7 +36,7 @@ export default function UserSmallCardContainer({ userInfo, onClick }) {
   });
 
   const handleClick = (action = "DECLINE") => {
-    switch (userInfo?.connectionStatus) {
+    switch (connectionStatus) {
       case "connected":
         router.push(`/messages?username=${userInfo?.username}`);
         break;

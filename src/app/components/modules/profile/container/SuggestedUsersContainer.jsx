@@ -24,6 +24,9 @@ export default function SuggestedUsersContainer({
     queryFn: () => fetchFunction(username),
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // Fallback to default function if helper function is not provided
