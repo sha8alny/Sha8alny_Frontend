@@ -201,7 +201,6 @@ export function MessagingContainer({ currentUser }) {
     userConversations,
     selectedConversation,
     selectConversation,
-    handleStartConversation,
   ]);
 
   // Update URL when selected conversation changes
