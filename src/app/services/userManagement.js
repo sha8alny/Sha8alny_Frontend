@@ -332,15 +332,21 @@ export const handleSignIn = async ({ email, password, rememberMe }) => {
     const { accessToken, refreshToken, isAdmin, isComplete } =
       await loginResponse.json();
     if (accessToken) {
-      sessionStorage.setItem("accessToken", accessToken);
+      // Store access token with 1-day expiry
+      sessionStorage.setItem("accessToken", JSON.stringify({
+        value: accessToken,
+        expiry: now + 24 * 60 * 60 * 1000, // 1 day
+      }));
 
       if (rememberMe) {
-        localStorage.setItem("refreshToken", refreshToken);
+        // Store refresh token with 30-day expiry
+        localStorage.setItem("refreshToken", JSON.stringify({
+          value: refreshToken,
+          expiry: now + 7 * 24 * 60 * 60 * 1000, // 30 days
+        }));
       }
       localStorage.setItem("isAdmin", isAdmin);
       localStorage.setItem("isProfileComplete", isComplete);
-      console.log("accessToken", sessionStorage.getItem("accessToken"));
-      console.log("isComplete", localStorage.getItem("isProfileComplete"));
       return { success: true };
     }
     return { success: false, message: "Login failed" };
@@ -410,11 +416,21 @@ export const handleGoogleSignIn = async (token) => {
 
     if (!response.ok) throw new Error("Login failed");
 
-    const { accessToken, refreshToken, isComplete } = await response.json();
+    const { accessToken, refreshToken, isComplete, isAdmin } = await response.json();
+    const now = Date.now();
     if (accessToken) {
-      sessionStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      // Store access token with 1-day expiry
+      sessionStorage.setItem("accessToken", JSON.stringify({
+        value: accessToken,
+        expiry: now + 24 * 60 * 60 * 1000, // 1 day
+      }));
+      // Store refresh token with 30-day expiry
+      localStorage.setItem("refreshToken", JSON.stringify({
+        value: refreshToken,
+        expiry: now + 7 * 24 * 60 * 60 * 1000, // 7 days
+      }));
       localStorage.setItem("isProfileComplete", isComplete);
+      localStorage.setItem("isAdmin", isAdmin);
       return { success: true };
     }
     return { success: false, message: "Login failed" };
