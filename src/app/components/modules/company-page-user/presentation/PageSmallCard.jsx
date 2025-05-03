@@ -1,4 +1,4 @@
-import { Plus, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import CheckIcon from '@mui/icons-material/Check';
 import Image from "next/image";
 /**
@@ -32,7 +32,7 @@ export default function PageSmallCard({ companyInfo, onClick, handleFollowClick,
         </div>
         <div className="text-left">
           <div className="flex gap-1">
-            <button onClick={() => onClick(companyInfo.companyUsername)} className="hover:underline hover:cursor-pointer truncate text-sm font-[525]">{companyInfo.name}</button>
+            <button onClick={() => onClick(companyInfo.companyUsername)} data-testid={`${companyInfo.companyUsername} button`} className="hover:underline hover:cursor-pointer truncate text-sm font-[525]">{companyInfo.name}</button>
           </div>
           <div className="text-xs text-muted">
             {companyInfo.industry.length > 30
@@ -42,7 +42,8 @@ export default function PageSmallCard({ companyInfo, onClick, handleFollowClick,
 
         </div>
         <div className="ml-auto">
-          <button className="rounded-full flex items-center gap-2 border-2 border-secondary dark:border-text hover:cursor-pointer hover:text-black hover:bg-secondary hover:dark:bg-white ease-in-out duration-300 text-xs p-3 font-[550]" onClick={handleFollowClick}>
+          <button className="rounded-full flex items-center gap-2 border-2 border-secondary dark:border-text hover:cursor-pointer hover:text-black hover:bg-secondary hover:dark:bg-white ease-in-out duration-300 text-xs p-3 font-[550]" 
+          data-testid={`${companyInfo.companyUsername}follow-button`} onClick={handleFollowClick}>
             {followStatus ? (
               <>
                 <CheckIcon className="size-4" />

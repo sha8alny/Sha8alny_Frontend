@@ -103,7 +103,7 @@ export default function Home({company,posts, goToAboutPage, goToPostsPage, loadi
             <div className="h-max rounded-xl p-6 space-y-2">
                 <div>
                     <h1 className="text-xl font-bold mb-2">Page posts</h1>
-                    <div className="flex overflow-x-auto space-x-4 pr-2 scrollbar-transparent">
+                    <div className="flex overflow-x-auto space-x-4 pr-2 scrollbar-transparent mb-4">
                         {Posts.length > 0 ? (
                             Posts.slice(0,4).map((post, i) => (
                             <div key={i} className="w-1/2 gap-4 max-w-[260px] flex-shrink-0">

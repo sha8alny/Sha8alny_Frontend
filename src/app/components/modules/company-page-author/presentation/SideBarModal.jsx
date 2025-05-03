@@ -55,7 +55,7 @@ export default function SideBarModal({ open, onClose, type, onDeactivate, onCrea
             }}>
             <div className="text-text flex items-center justify-between border-b">
                 <Typography variant="h6" className="text-lg font-semibold">{type==="deactivate" ?"Deactivate Page" :"Create Page"}</Typography>
-                <Button  className="cursor-pointer" onClick={onClose} ><CloseIcon className="text-white"/></Button>
+                <Button  className="cursor-pointer" onClick={onClose} data-testid="closeModal-button"><CloseIcon className="text-white"/></Button>
             </div>
                 {type==="deactivate" ?(
                 <>
@@ -72,10 +72,10 @@ export default function SideBarModal({ open, onClose, type, onDeactivate, onCrea
                         </ul>
                     </div>
                     <div className="border-t pt-2 ">
-                        <Button variant="contained" sx={{background:"var(--secondary)", mr:2}} onClick={onClose}>
+                        <Button variant="contained" data-testid="cancelDeactivate-button" sx={{background:"var(--secondary)", mr:2}} onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button variant="outlined" sx={{color: "var(--secondary)"}} onClick={onDeactivate}>
+                        <Button variant="outlined" data-testid="deactivate-button" sx={{color: "var(--secondary)"}} onClick={onDeactivate}>
                             Deactivate
                         </Button>
                     </div>
@@ -84,14 +84,14 @@ export default function SideBarModal({ open, onClose, type, onDeactivate, onCrea
                     <>
                     <div className="text-text">
                         <ul className="flex flex-col space-y-3 p-2">
-                            <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] cursor-pointer p-2" onClick={onCreatePost}> 
+                            <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] cursor-pointer p-2" data-testid="createPost-button" onClick={onCreatePost}> 
                                 <div className="flex items-center gap-2 hover:underline">
                                     <PostAddOutlinedIcon style={{fontSize:"20px"}}/>
                                     <span>Start a Post</span>
                                 </div>
                                 <span className="text-xs pr-24">Share content to connect with your followers</span>
                             </button>
-                            <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2 cursor-pointer" onClick={openJobsPage}>
+                            <button className="flex flex-col gap-1 hover:bg-[var(--foreground)] p-2 cursor-pointer" data-testid="postJob-button" onClick={openJobsPage}>
                                 <div className="flex items-center gap-2 hover:underline">
                                     <WorkOutlineOutlinedIcon style={{fontSize:"20px"}} />
                                     <span>Post a free job</span>
