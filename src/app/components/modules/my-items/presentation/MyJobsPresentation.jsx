@@ -7,11 +7,13 @@ import {
 } from "@/app/components/ui/Tabs";
 import { Add as AddIcon, Download as DownloadIcon } from "@mui/icons-material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
 } from "@/app/components/ui/HoverCard";
+import { useRouter } from "next/navigation";
 
 /**
  * @namespace my-items
@@ -48,6 +50,7 @@ function MyJobsPresentation({
   isError = false,
   error = null,
 }) {
+  const router = useRouter();
   if (isLoading) {
     return (
       <div className="p-8 flex flex-col items-center justify-center h-64 bg-foreground rounded-xl shadow-lg">
@@ -69,7 +72,8 @@ function MyJobsPresentation({
       </p>
       <Button
         variant="default"
-        onClick={handleRetry}
+        onClick={() => router.reload()}
+        data-testid="retry-button"
         className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"  >
         Try Again
       </Button>
