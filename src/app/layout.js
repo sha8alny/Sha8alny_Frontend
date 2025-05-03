@@ -23,7 +23,7 @@ export const metadata = {
     siteName: 'Shaغalny',
     images: [
       {
-        url: 'https://sha8alny.online/lightmode.svg',
+        url: 'https://sha8alny.online/lightmode.png',
         width: 1200,
         height: 630,
         alt: 'Shaغalny - Professional Networking Platform',
@@ -36,7 +36,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Shaغalny - Connect, Learn, and Grow Professionally',
     description: 'Shaغalny connects professionals across the Middle East with job opportunities, networking, and career development resources to boost your career journey.',
-    images: ['https://sha8alny.online/lightmode.svg'],
+    images: ['https://sha8alny.online/lightmode.png'],
     creator: '@sha8alny',
   },
   robots: {
