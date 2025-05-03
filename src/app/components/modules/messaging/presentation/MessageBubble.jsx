@@ -30,6 +30,7 @@ const FileAttachment = memo(({ url, fileName }) => (
     target="_blank"
     rel="noopener noreferrer"
     className="flex items-center gap-2 mt-2 p-2 bg-muted rounded-md text-sm hover:bg-muted/80"
+    data-testid="file-attachment-link"
   >
     <DescriptionIcon className="h-4 w-4" />
     <span className="truncate max-w-[200px]">{fileName || url.split('/').pop() || 'File'}</span>
@@ -42,6 +43,7 @@ const LinkAttachment = memo(({ url }) => (
     target="_blank"
     rel="noopener noreferrer"
     className="flex items-center gap-2 mt-2 p-2 bg-muted rounded-md text-sm hover:bg-muted/80"
+    data-testid="link-attachment-link"
   >
     <LinkIcon className="h-4 w-4" />
     <span className="truncate max-w-[200px]">{url.replace(/^https?:\/\//, '').split('/')[0]}</span>
@@ -69,6 +71,7 @@ const ImageAttachment = memo(({ url, alt = "Media" }) => {
           className="max-w-[240px] max-h-[240px] object-contain rounded-md"
           onLoad={() => setLoaded(true)}
           onError={() => setError(true)}
+          data-testid="image-attachment-img"
         />
       )}
     </div>
@@ -102,9 +105,10 @@ const VideoAttachment = memo(({ url }) => {
         playsInline
         onCanPlay={() => setLoading(false)}
         onError={() => setError(true)}
+        data-testid="video-attachment-video"
       >
         <source src={url} type="video/mp4" />
-        <p>Your browser doesn't support HTML5 video. <a href={url}>Download</a> instead.</p>
+        <p>Your browser doesn't support HTML5 video. <a href={url} data-testid="video-attachment-download-link">Download</a> instead.</p>
       </video>
     </div>
   );
@@ -121,6 +125,7 @@ const PDFAttachment = memo(({ url, fileName }) => {
           className="w-[240px] h-[180px] border-0"
           title={displayName}
           onError={(e) => e.target.style.display = 'none'}
+          data-testid="pdf-attachment-iframe"
         ></iframe>
         
         <div className="p-2 flex items-center bg-muted/80">
@@ -131,6 +136,7 @@ const PDFAttachment = memo(({ url, fileName }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="ml-2 text-xs text-primary hover:underline"
+            data-testid="pdf-attachment-open-link"
           >
             Open
           </a>

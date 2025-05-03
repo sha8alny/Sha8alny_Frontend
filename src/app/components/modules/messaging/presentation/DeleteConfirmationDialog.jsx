@@ -37,6 +37,7 @@ export function DeleteConfirmationDialog({
           <AlertDialogCancel
             className="text-muted-foreground border-2 border-muted-foreground hover:bg-muted/50"
             disabled={isDeleting}
+            data-testid="cancel-delete-conversation"
           >
             Cancel
           </AlertDialogCancel>
@@ -44,6 +45,7 @@ export function DeleteConfirmationDialog({
             onClick={onConfirm}
             disabled={isDeleting}
             className="bg-destructive text-background/80 hover:bg-destructive/90"
+            data-testid="confirm-delete-conversation"
           >
             {isDeleting ? (
               <>

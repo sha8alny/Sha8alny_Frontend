@@ -85,7 +85,7 @@ export function MessageRequestsPresentation({
         className="flex-1 flex flex-col items-center w-full"
       >
         <TabsList className="grid grid-cols-2 mx-3 mt-2 ">
-          <TabsTrigger value="received" className="flex gap-2">
+          <TabsTrigger value="received" className="flex gap-2" data-testid="tabs-trigger-received">
             Received
             {pendingCount > 0 && (
               <Badge variant="destructive" className="h-5 px-1.5">
@@ -93,7 +93,7 @@ export function MessageRequestsPresentation({
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="sent">Sent</TabsTrigger>
+          <TabsTrigger value="sent" data-testid="tabs-trigger-sent">Sent</TabsTrigger>
         </TabsList>
 
         <TabsContent

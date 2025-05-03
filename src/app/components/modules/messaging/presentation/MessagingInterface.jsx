@@ -24,6 +24,7 @@ const MessageRequestsButton = ({ onClick, requestCount }) => (
     onClick={onClick}
     className="text-secondary-foreground w-full px-4 py-2 rounded-md bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-colors flex items-center justify-center gap-2"
     variant="outline"
+    data-testid="message-requests-button"
   >
     <MailOutlineIcon className="h-5 w-5" aria-hidden="true" /> {/* Changed icon */}
     <span>Message Requests</span>
@@ -122,6 +123,7 @@ export function MessagingPresentation({
                 onClick={onViewMessageRequests}
                 className="flex-shrink-0 relative h-10 w-10 text-secondary-foreground border border-primary/20 hover:bg-primary/20 transition-colors "
                 aria-label="View message requests"
+                data-testid="message-requests-icon-button"
               >
                 <MailOutlineIcon className="h-5 w-5" /> {/* Changed icon */}
                 {pendingRequestCount > 0 && (

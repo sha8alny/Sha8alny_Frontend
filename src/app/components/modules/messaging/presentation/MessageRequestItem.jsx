@@ -54,6 +54,7 @@ export function MessageRequestItem({
       <Avatar
         className="h-10 w-10 flex-shrink-0 cursor-pointer"
         onClick={() => onViewProfile?.(participant)}
+        data-testid="avatar-view-profile"
       >
         <AvatarImage
           src={participant?.profilePicture || `/placeholder.svg`}
@@ -97,6 +98,7 @@ export function MessageRequestItem({
               className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-600 border-green-200"
               onClick={() => onAccept(request._id)}
               disabled={isProcessing}
+              data-testid="button-accept"
             >
               <CheckCircleOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
               Accept
@@ -107,6 +109,7 @@ export function MessageRequestItem({
               className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-600 border-red-200"
               onClick={() => onReject(request._id)}
               disabled={isProcessing}
+              data-testid="button-decline"
             >
               <CancelOutlinedIcon className="mr-1" sx={{ fontSize: 16 }} />
               Decline
@@ -121,6 +124,7 @@ export function MessageRequestItem({
             size="sm"
             className="mt-3 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20"
             onClick={() => onViewProfile?.(participant)}
+            data-testid="button-view-conversation"
           >
             <ChatBubbleOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
             View Conversation
@@ -136,6 +140,7 @@ export function MessageRequestItem({
             className="mt-3 bg-gray-200/10 hover:bg-gray-200/20"
             onClick={() => onDelete(request._id)}
             disabled={isProcessing}
+            data-testid="button-remove"
           >
             <DeleteOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
             Remove

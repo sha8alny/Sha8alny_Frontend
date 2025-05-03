@@ -182,7 +182,7 @@ const ChatInput = React.memo(
                   key={index}
                   file={file}
                   onRemove={() => handleRemoveFile(index)}
-                  data-testid={`remove-media-${index}`}
+                  data-testid={`remove-media-${index}-button`}
                 />
               ))}
             </div>
@@ -207,6 +207,7 @@ const ChatInput = React.memo(
               onChange={onFileSelect}
               multiple
               accept="image/*,video/*,application/pdf"
+              data-testid="file-input"
             />
             <Textarea
               placeholder="Type a message..."
