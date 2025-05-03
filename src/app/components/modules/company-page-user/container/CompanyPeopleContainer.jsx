@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { fetchCompanyPeople } from "@/app/services/companyManagement";
 import { connectUser } from "@/app/services/connectionManagement";
 import CompanyPeople from "../presentation/CompanyPeople";
-import { deleteConnection, requestConnection } from "@/app/services/connectionManagement";
 
 /**
  * @namespace company-user

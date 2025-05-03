@@ -27,6 +27,7 @@ export default function ModHeaderPresentation({
   handleResumeDownload,
   isConnecting,
   isHandlingRequest,
+  connectionStatus
 }) {
   return (
     <>
@@ -48,7 +49,7 @@ export default function ModHeaderPresentation({
               testId="download-resume-button"
             />
           )}
-          {userInfo?.connectionStatus === "requestReceived" && (
+          {connectionStatus === "requestReceived" && (
             <div className="flex gap-3">
               {isHandlingRequest && (
                 <ButtonProfile
@@ -80,7 +81,7 @@ export default function ModHeaderPresentation({
               )}
             </div>
           )}
-          {userInfo?.connectionStatus !== "requestReceived" && (
+          {connectionStatus !== "requestReceived" && (
             <ButtonProfile
               disabled={
                 userInfo?.connectionStatus === "pending" || isConnecting
@@ -91,9 +92,9 @@ export default function ModHeaderPresentation({
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span>Sending Request...</span>
                   </div>
-                ) : userInfo?.connectionStatus === "connected" ? (
+                ) : connectionStatus === "connected" ? (
                   "Message"
-                ) : userInfo?.connectionStatus === "pending" ? (
+                ) : connectionStatus === "pending" ? (
                   "Awaiting Response"
                 ) : (
                   "Connect"

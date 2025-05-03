@@ -40,10 +40,7 @@ import Image from 'next/image';
  */
 
 
-export default function SideBar({company, menuItems=[], isActive, setModalOpen, onChangeCover,  onChangeLogo, coverInputRef,  logoInputRef, OpenCompanyUserPage, handleLogout, onRemoveLogo, onRemoveCover}){
-    const [isEditingLogo, setIsEditingLogo] = useState(false)
-    const [isEditingCover, setIsEditingCover] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+export default function SideBar({company, menuItems=[], isActive, setModalOpen, onChangeCover,  onChangeLogo, coverInputRef,  logoInputRef, OpenCompanyUserPage, handleLogout, onRemoveLogo, onRemoveCover ,isEditingLogo,isEditingCover,setIsEditingLogo, setIsEditingCover, isLoading   }){
     return (
         <aside className="bg-[var(--foreground)] text-text w-70px flex flex-col mt-5 mx-3 space-y-4 border rounded-lg p-4">
             {/*Logo and cover image for company*/}
@@ -54,7 +51,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                     <div className="absolute right-2 top-2 flex gap-2">
                         <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full bg-foreground backdrop-blur-sm cursor-pointer" onClick={() => setIsEditingCover(true)}>
+                            <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full bg-foreground backdrop-blur-sm cursor-pointer" data-testid="editCoverImage-button" onClick={() => setIsEditingCover(true)}>
                                 <CameraAltRoundedIcon className="h-4 w-4" />
                             </Button>
                         </TooltipTrigger>
@@ -64,7 +61,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                         {company?.cover && onRemoveCover && (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button size="icon" variant="destructive" className="h-8 w-8 rounded-full bg-red-500/80 backdrop-blur-sm cursor-pointer" onClick={onRemoveCover}>
+                                <Button size="icon" variant="destructive" className="h-8 w-8 rounded-full bg-red-500/80 backdrop-blur-sm cursor-pointer" data-testid="removeCoverImage-button" onClick={onRemoveCover}>
                                     <Trash2 className="h-3 w-3" />
                                 </Button>
                             </TooltipTrigger>
@@ -80,7 +77,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                     <div className="absolute right-0 bottom-0 flex gap-1 p-1">
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button size="icon" variant="secondary" className="h-6 w-6 rounded-full bg-foreground backdrop-blur-sm cursor-pointer" onClick={() => setIsEditingLogo(true)}>
+                                <Button size="icon" variant="secondary" className="h-6 w-6 rounded-full bg-foreground backdrop-blur-sm cursor-pointer" data-testid="editLogo-button" onClick={() => setIsEditingLogo(true)}>
                                     <EditIcon style={{ fontSize: "14px" }} />
                                 </Button>
                             </TooltipTrigger>
@@ -90,7 +87,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                         {company?.logo && onRemoveLogo && (
                             <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button size="icon" variant="destructive" className="h-6 w-6 rounded-full bg-red-500/80 backdrop-blur-sm cursor-pointer" onClick={onRemoveLogo}>
+                                <Button size="icon" variant="destructive" className="h-6 w-6 rounded-full bg-red-500/80 backdrop-blur-sm cursor-pointer" data-testid="removeLogo-button" onClick={onRemoveLogo}>
                                     <Trash2 className="h-3 w-3" />
                                 </Button>
                             </TooltipTrigger>
@@ -109,7 +106,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                     <CardContent className="p-4 ">
                         <div className="mb-4 flex items-center justify-between">
                         <h3 className="text-lg font-medium">Edit Logo</h3>
-                        <Button className="cursor-pointer" size="icon" variant="ghost" onClick={() => setIsEditingLogo(false)}>
+                        <Button className="cursor-pointer" size="icon" variant="ghost" data-testid="closeLogoModal-button" onClick={() => setIsEditingLogo(false)}>
                             <ClearIcon className="h-4 w-4" />
                         </Button>
                         </div>
@@ -126,12 +123,12 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                         </div>
 
                         <div className="flex flex-col gap-4">
-                            <input ref={logoInputRef} type="file" accept="image/png, image/jpg, image/jpeg" onChange={onChangeLogo} className="hidden" id="logo-upload"/>
-                            <Button variant="default" onClick={() => logoInputRef.current?.click()} className="w-full bg-secondary cursor-pointer">
+                            <input ref={logoInputRef} type="file" accept="image/png, image/jpg, image/jpeg" onChange={onChangeLogo} className="hidden"  data-testid="logo-upload" id="logo-upload"/>
+                            <Button variant="default" data-testid="uploadLogo-button" onClick={() => logoInputRef.current?.click()} className="w-full bg-secondary cursor-pointer">
                                 <Upload className="mr-2 h-4 w-4" />
                                 Upload Logo
                             </Button>
-                            <Button variant="outline" className="cursor-pointer" onClick={() => setIsEditingLogo(false)} disabled={isLoading}>
+                            <Button variant="outline" className="cursor-pointer" data-testid="cancelLogo-button" onClick={() => setIsEditingLogo(false)} disabled={isLoading}>
                                 Cancel
                             </Button>
                         </div>
@@ -148,7 +145,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                 <CardContent className="p-4">
                     <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-lg font-medium">Edit Cover Image</h3>
-                    <Button className="cursor-pointer" size="icon" variant="ghost" onClick={() => setIsEditingCover(false)}>
+                    <Button className="cursor-pointer" size="icon" variant="ghost" data-testid="closeCoverModal-button" onClick={() => setIsEditingCover(false)}>
                         <ClearIcon className="h-4 w-4" />
                     </Button>
                     </div>
@@ -165,12 +162,12 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <input ref={coverInputRef} type="file" accept="image/png, image/jpg, image/jpeg" onChange={onChangeCover}  className="hidden" id="cover-upload"/>
-                        <Button variant="default" onClick={() => coverInputRef.current?.click()} className="w-full bg-secondary cursor-pointer">
+                        <input ref={coverInputRef} type="file" accept="image/png, image/jpg, image/jpeg" onChange={onChangeCover}  className="hidden" data-testid="cover-upload" id="cover-upload"/>
+                        <Button variant="default" onClick={() => coverInputRef.current?.click()} className="w-full bg-secondary cursor-pointer" data-testid="uploadCover-button">
                             <Upload className="mr-2 h-4 w-4" />
                                 Upload Cover Image
                             </Button>
-                        <Button variant="outline" className="cursor-pointer" onClick={() => setIsEditingCover(false)} disabled={isLoading}>
+                        <Button variant="outline" className="cursor-pointer" onClick={() => setIsEditingCover(false)} disabled={isLoading} data-testid="cancelCover-button">
                             Cancel
                         </Button>
                     </div>
