@@ -15,7 +15,7 @@ const allQuickAccessIcons = [
   },
   {
     icon: AdminPanelSettingsIcon,
-    title: "System Managment",
+    title: "System Management",
     path: "/admin/analytics",
     adminOnly: true,
   },
@@ -42,7 +42,7 @@ const QuickAccess = ({ navigateTo }) => {
           <icon.icon sx={{fontSize: "1.3rem"}} className={icon.className}/>
           <button
             onClick={() => navigateTo(icon.path)}
-            className="hover:underline text-sm font-semibold cursor-pointer"
+            className="hover:underline text-sm font-semibold cursor-pointer truncate"
           >
             {icon.title}
           </button>
