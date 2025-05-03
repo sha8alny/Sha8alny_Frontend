@@ -234,7 +234,37 @@ const ChatInput = React.memo(
   }
 );
 
-// Main chat presentation component
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * Renders the chat interface presentation component
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.currentUser - The current user's information
+ * @param {Object} props.otherParticipant - Information about the other chat participant
+ * @param {boolean} props.isOtherParticipantTyping - Whether the other participant is currently typing
+ * @param {boolean} props.isOtherParticipantBlocked - Whether the current user has blocked the other participant
+ * @param {boolean} props.isCurrentUserBlocked - Whether the current user is blocked by the other participant
+ * @param {Array} props.messages - Array of message objects in the conversation
+ * @param {string} props.message - Current message text in the input
+ * @param {Array} props.mediaFiles - Array of media files to be sent with the message
+ * @param {React.RefObject} props.fileInputRef - Reference to the file input element
+ * @param {React.RefObject} props.scrollAreaRef - Reference to the scroll area containing messages
+ * @param {Function} props.onBack - Handler for the back button
+ * @param {Function} props.onSendMessage - Handler for sending a message
+ * @param {Function} props.onKeyDown - Handler for key down events in the message input
+ * @param {Function} props.onFileSelect - Handler for file selection
+ * @param {Function} props.onRemoveFile - Handler for removing a selected file
+ * @param {Function} props.onTyping - Handler for typing events
+ * @param {Function} props.onBlockUser - Handler for blocking a user
+ * @param {Function} props.onUnblockUser - Handler for unblocking a user
+ * @param {Function} props.onLoadMoreMessages - Handler for loading more message history
+ * @param {boolean} props.isLoadingMore - Whether more messages are currently being loaded
+ * @param {Function} props.setIsLoadingMore - Setter for the isLoadingMore state
+ * @returns {JSX.Element} The chat interface component
+ */
 export function ChatPresentation({
   currentUser,
   otherParticipant,
@@ -364,3 +394,4 @@ export function ChatPresentation({
     </div>
   );
 }
+export default ChatPresentation;

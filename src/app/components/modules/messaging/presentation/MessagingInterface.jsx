@@ -3,9 +3,9 @@ import { ChatContainer } from "../container/ChatInterfaceContainer";
 import { ConversationListContainer } from "../container/ConversationListContainer";
 import { MessageRequestsContainer } from "../container/MessageRequestsContainer";
 import AddIcon from "@mui/icons-material/Add";
-import MailOutlineIcon from "@mui/icons-material/MailOutline"; // Changed import
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
-// Extracted New Conversation button component
+//  New Conversation button component
 const NewConversationButton = ({ onClick }) => (
   <Button
     onClick={onClick}
@@ -18,7 +18,7 @@ const NewConversationButton = ({ onClick }) => (
   </Button>
 );
 
-// Extracted Message Requests button component
+//  Message Requests button component
 const MessageRequestsButton = ({ onClick, requestCount }) => (
   <Button
     onClick={onClick}
@@ -26,7 +26,8 @@ const MessageRequestsButton = ({ onClick, requestCount }) => (
     variant="outline"
     data-testid="message-requests-button"
   >
-    <MailOutlineIcon className="h-5 w-5" aria-hidden="true" /> {/* Changed icon */}
+    <MailOutlineIcon className="h-5 w-5" aria-hidden="true" />{" "}
+    {/* Changed icon */}
     <span>Message Requests</span>
     {requestCount > 0 && (
       <span className="ml-2 bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full">
@@ -36,7 +37,11 @@ const MessageRequestsButton = ({ onClick, requestCount }) => (
   </Button>
 );
 // Empty state component when no conversation is selected
-const EmptyState = ({ onOpenConnections, onViewRequests, requestCount = 0 }) => (
+const EmptyState = ({
+  onOpenConnections,
+  onViewRequests,
+  requestCount = 0,
+}) => (
   <div className="flex flex-col items-center justify-center h-full p-4 md:opacity-100 opacity-0 transition-opacity duration-300">
     <div className="text-center mb-6">
       <h2 className="text-lg font-medium text-text">Select a conversation</h2>
@@ -47,11 +52,41 @@ const EmptyState = ({ onOpenConnections, onViewRequests, requestCount = 0 }) => 
     <div className="flex flex-col gap-3 w-full max-w-lg">
       <NewConversationButton onClick={onOpenConnections} />
 
-      <MessageRequestsButton onClick={onViewRequests} requestCount={requestCount} />
+      <MessageRequestsButton
+        onClick={onViewRequests}
+        requestCount={requestCount}
+      />
     </div>
   </div>
 );
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * MessagingPresentation
+ *
+ * Main messaging interface layout, including conversation list, chat area, and message requests.
+ *
+ * @param {Object} props
+ * @param {Array} props.userConversations - List of user conversations.
+ * @param {Object} props.selectedConversation - The currently selected conversation object.
+ * @param {string} props.currentUser - The current user's identifier.
+ * @param {function} props.onSelectConversation - Handler for selecting a conversation.
+ * @param {function} props.onToggleRead - Handler for toggling read/unread status.
+ * @param {function} props.onToggleBlock - Handler for blocking/unblocking a user.
+ * @param {function} props.onDeleteConversation - Handler for deleting a conversation.
+ * @param {boolean} props.isDeleting - Whether a conversation is being deleted.
+ * @param {function} props.onBack - Handler for navigating back.
+ * @param {function} props.onOpenConnections - Handler for opening new connections.
+ * @param {function} props.onLoadMoreMessages - Handler for loading more messages in chat.
+ * @param {boolean} [props.showMessageRequests=false] - Whether to show the message requests panel.
+ * @param {function} props.onViewMessageRequests - Handler for viewing message requests.
+ * @param {function} props.onCloseMessageRequests - Handler for closing message requests panel.
+ * @param {number} [props.pendingRequestCount=0] - Number of pending message requests.
+ * @param {function} props.navigateToUser - Handler for navigating to a user's profile.
+ * @param {function} props.startConversation - Handler for starting a new conversation.
+ */
 export function MessagingPresentation({
   userConversations,
   selectedConversation,
@@ -60,10 +95,10 @@ export function MessagingPresentation({
   onToggleRead,
   onToggleBlock,
   onDeleteConversation,
-  isDeleting,  // Add this prop
+  isDeleting,
   onBack,
   onOpenConnections,
-  onLoadMoreMessages, // Keep this one for ChatContainer
+  onLoadMoreMessages,
   showMessageRequests = false,
   onViewMessageRequests,
   onCloseMessageRequests,
@@ -75,12 +110,20 @@ export function MessagingPresentation({
 
   // Dynamic classes for responsive layout
   const asideClasses = `
-    ${hasSelectedConversation || showMessageRequests ? "translate-x-[-100%] w-0 md:translate-x-0 md:w-1/3 lg:w-1/4" : "translate-x-0 w-full md:w-1/3 lg:w-1/4"}
+    ${
+      hasSelectedConversation || showMessageRequests
+        ? "translate-x-[-100%] w-0 md:translate-x-0 md:w-1/3 lg:w-1/4"
+        : "translate-x-0 w-full md:w-1/3 lg:w-1/4"
+    }
     flex flex-col min-w-0 md:min-w-fit md:border-r overflow-hidden transition-all duration-300 ease-in-out
   `;
 
   const mainClasses = `
-    ${hasSelectedConversation || showMessageRequests ? "translate-x-0 opacity-100 w-full" : "translate-x-full opacity-0 w-0 md:translate-x-0 md:opacity-100 md:w-2/3 lg:w-3/4"}
+    ${
+      hasSelectedConversation || showMessageRequests
+        ? "translate-x-0 opacity-100 w-full"
+        : "translate-x-full opacity-0 w-0 md:translate-x-0 md:opacity-100 md:w-2/3 lg:w-3/4"
+    }
     flex flex-col overflow-hidden transition-all duration-300 ease-in-out
   `;
 
@@ -101,7 +144,7 @@ export function MessagingPresentation({
               onToggleRead={onToggleRead}
               onToggleBlock={onToggleBlock}
               onDeleteConversation={onDeleteConversation}
-              isDeleting={isDeleting}  // Pass this prop
+              isDeleting={isDeleting}
             />
           </div>
 
@@ -125,7 +168,7 @@ export function MessagingPresentation({
                 aria-label="View message requests"
                 data-testid="message-requests-icon-button"
               >
-                <MailOutlineIcon className="h-5 w-5" /> {/* Changed icon */}
+                <MailOutlineIcon className="h-5 w-5" />
                 {pendingRequestCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
                     {pendingRequestCount}
@@ -144,7 +187,7 @@ export function MessagingPresentation({
               currentUser={currentUser}
               onBack={onBack}
               onToggleBlock={onToggleBlock}
-              onLoadMoreMessages={onLoadMoreMessages} // Keep this one
+              onLoadMoreMessages={onLoadMoreMessages}
             />
           ) : showMessageRequests ? (
             <MessageRequestsContainer
@@ -165,3 +208,4 @@ export function MessagingPresentation({
     </section>
   );
 }
+export default MessagingPresentation;

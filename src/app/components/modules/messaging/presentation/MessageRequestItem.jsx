@@ -10,7 +10,24 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * MessageRequestItem
+ *
+ * Renders a single message request item with actions (accept, reject, delete, view profile).
+ *
+ * @param {Object} props
+ * @param {Object} props.request - The message request object.
+ * @param {string} [props.type="received"] - Type of request ("received" or "sent").
+ * @param {function} props.onAccept - Handler for accepting the request.
+ * @param {function} props.onReject - Handler for rejecting the request.
+ * @param {function} props.onDelete - Handler for deleting the request.
+ * @param {function} props.onViewProfile - Handler for viewing the participant's profile.
+ * @param {boolean} [props.isProcessing=false] - Whether an action is currently processing.
+ */
 export function MessageRequestItem({
   request,
   type = "received",
@@ -150,3 +167,4 @@ export function MessageRequestItem({
     </div>
   );
 }
+export default MessageRequestItem;

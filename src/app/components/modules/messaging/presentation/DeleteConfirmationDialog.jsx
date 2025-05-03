@@ -11,7 +11,22 @@ import {
 } from "@/app/components/ui/AlertDialog";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CircularProgress from "@mui/material/CircularProgress";
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * DeleteConfirmationDialog
+ *
+ * A dialog that asks the user to confirm deletion of a conversation.
+ *
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Whether the dialog is open.
+ * @param {function} props.onClose - Callback when the dialog is closed.
+ * @param {function} props.onConfirm - Callback when the user confirms deletion.
+ * @param {string} props.participantName - Name of the participant in the conversation.
+ * @param {boolean} [props.isDeleting=false] - Whether the deletion is in progress.
+ */
 export function DeleteConfirmationDialog({
   isOpen,
   onClose,
@@ -61,3 +76,4 @@ export function DeleteConfirmationDialog({
     </AlertDialog>
   );
 }
+export default DeleteConfirmationDialog;

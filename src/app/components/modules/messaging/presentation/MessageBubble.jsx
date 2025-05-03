@@ -175,7 +175,22 @@ const MediaRenderer = memo(({ mediaUrl }) => {
   }
 });
 
-// Main Message Component
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * MessageBubble
+ *
+ * Renders a single chat message bubble, including text, media attachments, and read status.
+ *
+ * @param {Object} props
+ * @param {Object} props.message - The message object containing content, media, timestamp, etc.
+ * @param {boolean} props.isCurrentUser - Whether the message is sent by the current user.
+ * @param {string} props.participantName - Name of the message sender.
+ * @param {string} props.participantPicture - URL of the sender's avatar.
+ * @returns {JSX.Element}
+ */
 export const MessageBubble = memo(({
   message,
   isCurrentUser,
@@ -233,3 +248,4 @@ export const MessageBubble = memo(({
     </div>
   );
 });
+export default MessageBubble;

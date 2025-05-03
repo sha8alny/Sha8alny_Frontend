@@ -40,7 +40,27 @@ const processConversation = (conversation, currentUser) => {
         read: isRead
     };
 };
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * Container component for managing and displaying a list of conversations.
+ * Handles data processing, filtering, sorting, and user interactions with the conversation list.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {Array} [props.conversations=[]] - Array of conversation objects to display
+ * @param {Function} props.onSelectConversation - Callback function when a conversation is selected
+ * @param {string|null} props.selectedConversationId - ID of the currently selected conversation
+ * @param {Object} props.currentUser - Current user object with user details
+ * @param {Function} props.onToggleRead - Callback function to toggle read status of a conversation
+ * @param {Function} props.onToggleBlock - Callback function to toggle blocked status of a user
+ * @param {Function} props.onDeleteConversation - Callback function to delete a conversation
+ * @param {boolean} [props.isDeleting=false] - Flag indicating if a deletion operation is in progress
+ * 
+ * @returns {JSX.Element} The conversation list UI component
+ */
 export function ConversationListContainer({
     conversations = [],
     onSelectConversation,
@@ -125,3 +145,4 @@ export function ConversationListContainer({
         />
     );
 }
+export default ConversationListContainer;

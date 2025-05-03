@@ -1,7 +1,25 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState, useEffect, useRef } from "react";
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * A modal component that displays a list of connections for messaging.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {boolean} props.loading - Whether the connections are currently loading
+ * @param {Array} props.connections - Array of connection objects to display
+ * @param {Function} props.onClose - Callback function to close the modal
+ * @param {Function} props.onSelect - Callback function when a connection is selected
+ * @param {boolean} props.hasMore - Whether there are more connections to load
+ * @param {boolean} props.loadingMore - Whether more connections are currently being loaded
+ * @param {Function} props.onLoadMore - Callback function to load more connections
+ * 
+ * @returns {JSX.Element} The connections modal component
+ */
 export function ConnectionsModal({ 
   loading, 
   connections, 
@@ -157,3 +175,4 @@ function ConnectionItem({ connection, onClick, ...props }) {
     </div>
   );
 }
+export default ConnectionsModal;
