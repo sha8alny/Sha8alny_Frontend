@@ -26,15 +26,15 @@ export default function CommentSectionContainer({ username, postId }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    if (pathname) {
-      const companyRegex = /^\/company\/([^/]+)\/admin\/posts(\/.*)?$/;
-      const match = pathname.match(companyRegex);
-      if (match && match[1]) {
-        setCompanyUsername(match[1]);
-      }
-    }
-  }, [pathname]);
+  // useEffect(() => {
+  //   if (pathname) {
+  //     const companyRegex = /^\/company\/([^/]+)\/admin\/posts(\/.*)?$/;
+  //     const match = pathname.match(companyRegex);
+  //     if (match && match[1]) {
+  //       setCompanyUsername(match[1]);
+  //     }
+  //   }
+  // }, [pathname]);
 
   const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
     setTaggedUsers((prevUsers) =>
@@ -179,13 +179,13 @@ export default function CommentSectionContainer({ username, postId }) {
           text: oldComment.trim(),
           username: companyUsername
             ? companyUsername
-            : queryClient.getQueryData(["sidebarInfo"])?.username || "user",
+            : queryClient.getQueryData(["sidebarInfo","notifications"])?.username || "user",
           profilePicture: companyUsername
             ? document.getElementById("company-logo")
-            : queryClient.getQueryData(["sidebarInfo"])?.profilePicture || "",
+            : queryClient.getQueryData(["sidebarInfo","notifications"])?.profilePicture || "",
           fullName: companyUsername
             ? document.getElementById("company-name")
-            : queryClient.getQueryData(["sidebarInfo"])?.name || "User",
+            : queryClient.getQueryData(["sidebarInfo","notifications"])?.name || "User",
           time: new Date().toISOString(),
           numLikes: 0,
           numCelebrates: 0,
@@ -206,7 +206,7 @@ export default function CommentSectionContainer({ username, postId }) {
           connectionDegree: 0,
           headline: companyUsername
             ? document.getElementById("company-industry")
-            : queryClient.getQueryData(["sidebarInfo"])?.headline || "",
+            : queryClient.getQueryData(["sidebarInfo","notifications"])?.headline || "",
           isFollowed: false,
           age: determineAge(new Date()),
         };
