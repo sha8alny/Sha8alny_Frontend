@@ -53,11 +53,8 @@ export default function SavedPostsContainer() {
             post.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             post.headline?.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchesPerson = selectedPerson
-            ? post.taggedPeople?.some(person => person.userId === selectedPerson)
-            : true;
 
-        return matchesSearch && matchesPerson;
+        return matchesSearch;
     });
 
     const handlePostClick = (postId, username) => {
@@ -72,7 +69,9 @@ export default function SavedPostsContainer() {
         setSearchQuery("");
         setSelectedPerson(null);
     };
-
+    const onRetry = () => {
+      router.refresh();
+    }
     return (
         <SavedPostsPresentation
             posts={filteredPosts}
@@ -90,6 +89,7 @@ export default function SavedPostsContainer() {
             onPostClick={handlePostClick}
             onClearFilters={clearFilters}
             formatPostTime={formatPostTime}
+            handleRetry={onRetry}
         />
     );
 }
