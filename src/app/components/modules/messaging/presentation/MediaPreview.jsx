@@ -20,7 +20,20 @@ const getFileIcon = (fileType) => {
     return <InsertDriveFileIcon className="h-4 w-4" />;
   }
 };
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * MediaPreview
+ *
+ * Displays a preview of a selected media file (image, video, pdf, or other).
+ *
+ * @param {Object} props
+ * @param {File} props.file - The file object to preview.
+ * @param {function} props.onRemove - Callback to remove the file from the preview list.
+ * @returns {JSX.Element|null}
+ */
 export function MediaPreview({ file, onRemove }) {
   const [preview, setPreview] = useState(null);
 
@@ -46,13 +59,17 @@ export function MediaPreview({ file, onRemove }) {
   if (!file) return null;
 
   return (
-    <div className="relative group">
-      <div className="w-20 h-20 rounded-md overflow-hidden border flex items-center justify-center bg-muted">
+    <div className="relative group" data-testid="media-preview-container">
+      <div 
+        className="w-20 h-20 rounded-md overflow-hidden border flex items-center justify-center bg-muted"
+        data-testid="media-preview-item"
+      >
         {file.type.startsWith("image/") && preview ? (
           <img
             src={preview}
             alt="Preview"
             className="w-full h-full object-cover"
+            data-testid="media-preview-image"
           />
         ) : (
           <div className="flex flex-col items-center justify-center p-1">
@@ -77,3 +94,4 @@ export function MediaPreview({ file, onRemove }) {
     </div>
   );
 }
+export default MediaPreview;
