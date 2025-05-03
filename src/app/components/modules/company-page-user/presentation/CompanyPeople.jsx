@@ -43,11 +43,12 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
  * @property {Array<CompanyPeople.Person>} [people=[]] - A list of people to display.
  */
 
-export default function CompanyPeople({ people=[], loading=false, goToPeoplePage, handleConnectPerson, connectedPeople, handleDeleteConnection,handleAcceptConnection, handleDeclineConnection}) {
+export default function CompanyPeople({ people=[], loading=false, goToPeoplePage, handleConnectPerson, currentUsername}) {
   const getRelationText = (relation) => {
       if (relation === 1) return "1st";
       if (relation === 2) return "2nd";
       if (relation === 3) return "3rd";
+      if(relation === -1) return "Owner";
       return `${relation}`; 
   };
 
@@ -71,7 +72,7 @@ export default function CompanyPeople({ people=[], loading=false, goToPeoplePage
   return(
       <Container className="p-6">
         <h2 className="text-2xl font-bold mb-4 text-text">People you may know</h2>
-        <div className="flex flex-wrap gap-6">
+        <div className="flex flex-wrap gap-6 ml-6 space-x-4">
             {people.map((person, index)=>(
                 <Card key={person.username || index} className="w-70 rounded-xl bg-foreground">
                     <CardContent  className="flex flex-col items-center text-center p-4 pt-12 ">
@@ -85,55 +86,36 @@ export default function CompanyPeople({ people=[], loading=false, goToPeoplePage
                             <p className="text-muted-foreground  mt-3">{getRelationText(person?.relation)}</p>
                         </div>
                         <p className="text-muted-foreground text-sm mb-2">{person?.headline}</p>
-                          {/* BUTTON LOGIC BASED ON STATUS */}
-                        {person.connectionStatus === "connected" && (
-                          <Button
-                            variant="default"
-                            className="w-full rounded-xl cursor-pointer bg-gray-300"
-                            onClick={() => handleDeleteConnection(person)}
-                          >
-                            Disconnect
-                          </Button>
-                        )}
-
-                        {person.connectionStatus === "pending" && (
-                          <Button
-                            variant="default"
-                            disabled
-                            className="w-full rounded-xl cursor-default bg-muted"
-                          >
-                            Pending...
-                          </Button>
-                        )}
-
-                        {person.connectionStatus === "request_received" && (
-                          <div className="flex flex-col gap-2 w-full">
+                        <div className="w-full">
+                        {person.relation === -1 ? (
+                          null
+                          ) : person.connectionStatus === "connected" ? (
+                            <Button
+                              disabled
+                              data-testid={`connected-button-${person.connectionStatus}`}
+                              className="w-full rounded-xl cursor-not-allowed bg-secondary"
+                            >
+                              Connected
+                            </Button>
+                          ) : person.connectionStatus === "pending" ? (
+                            <Button
+                              disabled
+                              data-testid={`pending-button-${person.connectionStatus}`}
+                              className="w-full rounded-xl cursor-not-allowed bg-secondary"
+                            >
+                              Pending...
+                            </Button>
+                          ) : (
                             <Button
                               variant="default"
-                              className="rounded-xl bg-primary hover:bg-green-600"
-                              onClick={() => handleAcceptConnection(person)}
+                              data-testid={`connect-button-${person.connectionStatus}`}
+                              className="w-full rounded-xl cursor-pointer bg-secondary hover:bg-primary"
+                              onClick={() => handleConnectPerson(person)}
                             >
-                              Accept
+                              <PersonAddIcon sx={{ fontSize: "20px" }} /> Connect
                             </Button>
-                            <Button
-                              variant="outline"
-                              className="rounded-xl hover:bg-red-100"
-                              onClick={() => handleDeclineConnection(person)}
-                            >
-                              Decline
-                            </Button>
-                          </div>
-                        )}
-
-                        {(!person.connectionStatus || person.connectionStatus === "not_connected") && (
-                          <Button
-                            variant="default"
-                            className="w-full rounded-xl cursor-pointer bg-secondary hover:bg-primary"
-                            onClick={() => handleConnectPerson(person)}
-                          >
-                            <PersonAddIcon sx={{ fontSize: "20px" }} /> Connect
-                          </Button>
-                        )}
+                          )}
+                        </div>
                       </CardContent>
                   </Card>
               ))}

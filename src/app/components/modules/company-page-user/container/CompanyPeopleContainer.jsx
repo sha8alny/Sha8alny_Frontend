@@ -33,13 +33,14 @@ export default function CompanyPeopleContainer({username}) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [connectedPeople, setConnectedPeople] = useState({});
+    const [currentUsername, setCurrentUsername] = useState("");
     const router = useRouter();
 
     useEffect(() => {
         const getCompanyPeople = async () => {
             try {
-                console.log("hi")
                 const data = await fetchCompanyPeople(username);
+                setCurrentUsername(data.username);
                 setPeople(data);
             } catch (err) {
                 setError(err.message);
@@ -53,60 +54,23 @@ export default function CompanyPeopleContainer({username}) {
     const handleConnectPerson = async (person) => {
         try {
             await connectUser(person.username);
+            console.log("persone connection statuse", person.username.connectionStatus)
             setConnectedPeople((prevState) => ({...prevState, [person.username]: true,  }));
             console.log(`Connected with ${person.username}`);
         } catch (err) {
             console.log(`Failed to connect with ${person.username}: ${err.message}`);
         }
     };
-
-    const handleAcceptConnection = async (person) => {
-        try {
-            await requestConnection(person.username, "accepted");
-            setConnectedPeople((prev) => ({ ...prev, [person.username]: true }));
-            console.log(`Accepted connection with ${person.username}`);
-        } catch (err) {
-            console.log(`Failed to accept connection: ${err.message}`);
-        }
-    };
     
-    const handleDeclineConnection = async (person) => {
-        try {
-            await requestConnection(person.username, "declined");
-            console.log(`Declined connection from ${person.username}`);
-        } catch (err) {
-            console.log(`Failed to decline connection: ${err.message}`);
-        }
-    };
-
-    
-    const handleDeleteConnection = async (person) => {
-        try {
-            await deleteConnection(person.username);
-            setConnectedPeople((prevState) => {
-                const newState = { ...prevState };
-                delete newState[person.username];  // Remove the user from the connectedPeople state
-                return newState;
-            });
-            console.log(`Disconnected from ${person.username}`);
-        } catch (err) {
-            console.log(`Failed to disconnect from ${person.username}: ${err.message}`);
-        }
-    };
-
-      
 
     const goToPeoplePage = (person) => {
         if (person?.username) {
           router.push(`/u/${person.username}`);
         }
     };
-      
-    
-    console.log("connected people", connectedPeople);
   return (
       <div>
-        <CompanyPeople people={people} loading={loading} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson} connectedPeople={connectedPeople} handleDeleteConnection={handleDeleteConnection} handleAcceptConnection={handleAcceptConnection} handleDeclineConnection={handleDeclineConnection}   />
+        <CompanyPeople people={people} loading={loading} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson}  />
       </div>
   );
 }

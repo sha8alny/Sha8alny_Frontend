@@ -1,16 +1,121 @@
-import Footer from "@/app/components/layout/Footer";
+import Footer, { FooterSkeleton } from "@/app/components/layout/Footer";
 import SuggestedUsersContainer from "../container/SuggestedUsersContainer";
 import About from "./About";
 import ProfileStrength from "./ProfileStrength";
-import ProfileHeader from "./ProfileHeader";
+import ProfileHeader, { ProfileHeaderSkeleton } from "./ProfileHeader";
 import Skills from "./Skills";
 import ChangeURL from "./ChangeURL";
 import ExperienceContainer from "../container/ExperienceContainer";
 import EducationContainer from "../container/EducationContainer";
 import CertificationsContainer from "../container/CertificationsContainer";
 import PostsContainer from "../container/PostsContainer";
+import { SuggestedUsersSkeleton } from "@/app/components/layout/SuggestedUsers";
+import Container from "@/app/components/layout/Container";
 
-export function ProfileSkeleton() {}
+export function ProfileSkeleton() {
+  return (
+    <div>
+      <main className="flex flex-col lg:flex-row gap-10 p-8 lg:px-32 bg-background">
+        <section className="md:flex-[3_1_0]">
+          <ProfileHeaderSkeleton />
+          {Array(3)
+            .fill(0)
+            .map((_, index) => (
+              <GeneralSkeleton key={index} />
+            ))}
+        </section>
+        <section className="hidden md:block flex-1 rounded-2xl space-y-2">
+          <SuggestedUsersSkeleton isLoading />
+          <SuggestedUsersSkeleton isLoading />
+          <FooterSkeleton />
+        </section>
+      </main>
+    </div>
+  );
+}
+
+const GeneralSkeleton = () => {
+  return (
+    <Container
+      className="border dark:border-[#111] shadow-lg mt-4 p-8 animate-pulse"
+      data-testid="education-skeleton-container"
+    >
+      <div className="flex justify-between items-center mb-4">
+        <div
+          className="h-6 w-40 bg-primary/60 rounded-2xl"
+          data-testid="education-skeleton-heading"
+        />
+      </div>
+
+      <div className="space-y-8" data-testid="education-skeleton-list">
+        {[...Array(2)].map((_, index) => (
+          <div
+            className="space-y-6"
+            key={index}
+            data-testid={`education-skeleton-item-${index}`}
+          >
+            <div className="flex gap-2">
+              <div
+                className="size-12 bg-primary/60 rounded-full flex-shrink-0"
+                data-testid={`education-skeleton-icon-${index}`}
+              />
+
+              <div className="flex flex-col gap-2 w-full">
+                <div className="flex justify-between">
+                  <div
+                    className="h-6 w-3/5 bg-primary/60 rounded-2xl"
+                    data-testid={`education-skeleton-school-${index}`}
+                  />
+                </div>
+
+                <div
+                  className="h-5 w-4/5 bg-primary/60 rounded-2xl"
+                  data-testid={`education-skeleton-degree-${index}`}
+                />
+
+
+                <div
+                  className="h-4 w-1/3 bg-primary/60 rounded-2xl"
+                  data-testid={`education-skeleton-dates-${index}`}
+                />
+
+                <div
+                  className="h-4 w-1/4 bg-primary/60 rounded-2xl"
+                  data-testid={`education-skeleton-location-${index}`}
+                />
+
+                <div
+                  className="h-16 w-full bg-primary/60 rounded-2xl mt-2"
+                  data-testid={`education-skeleton-description-${index}`}
+                />
+
+                <div
+                  className="flex gap-2 mt-2"
+                  data-testid={`education-skeleton-skills-${index}`}
+                >
+                  {[...Array(2)].map((_, skillIndex) => (
+                    <div
+                      key={skillIndex}
+                      className="h-6 w-16 bg-primary/60 rounded-full"
+                      data-testid={`education-skeleton-skill-${index}-${skillIndex}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {index < 1 && (
+              <div
+                className="h-px w-full bg-primary/60"
+                data-testid={`education-skeleton-separator-${index}`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </Container>
+  );
+};
 
 /**
  * @namespace profile

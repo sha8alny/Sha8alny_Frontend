@@ -141,10 +141,10 @@ export const ConnectionsCard = ({
             >
               {connection?.name}
             </h3>
-            {!isMyProfile && <span className="text-muted ml-2">•</span>}
+            {!isMyProfile && <span className="text-muted">•</span>}
             {!isMyProfile && (
               <span
-                className="text-muted ml-2"
+                className="text-muted text-xs"
                 data-testid={`connection-relation-${connection?._id}`}
               >
                 {connection?.relation}

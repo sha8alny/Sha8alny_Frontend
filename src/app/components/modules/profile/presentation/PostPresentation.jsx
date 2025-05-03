@@ -26,7 +26,7 @@ export default function PostPresentation({
     >
       {post?.isShared && (
         <div
-          className="flex items-center gap-1 mb-2 text-xs pb-2"
+          className="flex items-center justify-center gap-1 mb-2 text-xs py-1 px-1 bg-secondary/20 rounded-2xl truncate"
           data-testid={`post-shared-${post?.postId}`}
         >
           <Avatar
@@ -39,7 +39,7 @@ export default function PostPresentation({
             </AvatarFallback>
           </Avatar>
           <h5
-            className="font-semibold"
+            className="font-semibold truncate"
             data-testid={`post-shared-fullname-${post?.postId}`}
           >
             {post?.isShared?.fullName}
@@ -67,9 +67,9 @@ export default function PostPresentation({
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col w-full">
-          <div className="flex justify-between items-center gap-2 w-full">
+          <div className="flex justify-between flex-wrap items-center gap-2 w-full truncate">
             <h5
-              className="font-semibold text-sm cursor-pointer hover:underline"
+              className="font-semibold text-sm cursor-pointer hover:underline truncate"
               onClick={(e) => {
                 e.stopPropagation();
                 navigateTo(post?.username);

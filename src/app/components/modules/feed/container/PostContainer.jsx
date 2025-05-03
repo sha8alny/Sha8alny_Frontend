@@ -52,6 +52,13 @@ export default function PostContainer({ post, singlePost = false }) {
   const toast = useToast();
   const prevReaction = useRef(isLiked);
 
+  useEffect(() => {
+    console.log("post?.isFollowed", post?.isFollowed);
+    if (post?.isFollowed !== isFollowing) {
+      setIsFollowing(post?.isFollowed);
+    }
+  }, [post?.isFollowed]);
+
   const fileName = post?.media[0]?.split("/").pop() || "Document";
   const fileExtension = post?.media[0]?.split(".").pop()?.toUpperCase();
   const reportOptions = [
@@ -86,16 +93,16 @@ export default function PostContainer({ post, singlePost = false }) {
 
   const handleSendMessageMutation = useMutation({
     mutationFn: (params) => {
-      const { receiverName , shareUrl } = params;
-      return messagingService.sendMessage()
+      const { receiverName, shareUrl } = params;
+      return messagingService.sendMessage();
     },
     onSuccess: () => {
       toast("Message sent successfully.");
     },
     onError: () => {
       toast("Error sending message.", false);
-    }
-  })
+    },
+  });
 
   const handleRepostMutation = useMutation({
     mutationFn: (postId) => repostPost(postId),
@@ -137,7 +144,15 @@ export default function PostContainer({ post, singlePost = false }) {
 
   const handleFollowMutation = useMutation({
     mutationFn: (username) => followUser(username),
-    onMutate: () => {
+    onMutate: async (username) => {
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+      await queryClient.cancelQueries({ queryKey: ["comments"] });
+      await queryClient.cancelQueries({ queryKey: ["commentReplies"] });
+
+      const previousPosts = queryClient.getQueryData(["posts"]);
+      const previousFollowingState = isFollowing;
+      setIsFollowing(true);
+
       queryClient.setQueryData(["posts"], (oldData) => {
         if (!oldData) return oldData;
         return {
@@ -151,22 +166,65 @@ export default function PostContainer({ post, singlePost = false }) {
           ),
         };
       });
-    },
-    onError: () => {
-      setIsFollowing(false);
-      queryClient.setQueryData(["posts"], (oldData) => {
-        if (!oldData) return oldData;
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page) =>
-            Array.isArray(page)
-              ? page.map((p) =>
-                  p.username === username ? { ...p, isFollowed: false } : p
-                )
-              : page
-          ),
-        };
+
+      const commentQueryKeys = queryClient.getQueryCache().findAll({
+        queryKey: ["comments"],
+        exact: false,
       });
+
+      commentQueryKeys.forEach(({ queryKey }) => {
+        queryClient.setQueryData(queryKey, (oldComments) => {
+          if (!oldComments || !oldComments.pages) return oldComments;
+          return {
+            ...oldComments,
+            pages: oldComments.pages.map((commentPage) => ({
+              ...commentPage,
+              data: Array.isArray(commentPage.data)
+                ? commentPage.data.map((c) =>
+                    c.username === username ? { ...c, isFollowed: true } : c
+                  )
+                : commentPage.data,
+            })),
+          };
+        });
+      });
+
+      const replyQueryKeys = queryClient.getQueryCache().findAll({
+        queryKey: ["commentReplies"],
+        exact: false,
+      });
+
+      replyQueryKeys.forEach(({ queryKey }) => {
+        queryClient.setQueryData(queryKey, (oldReplies) => {
+          if (!oldReplies || !oldReplies.pages) return oldReplies;
+          return {
+            ...oldReplies,
+            pages: oldReplies.pages.map((replyPage) => ({
+              ...replyPage,
+              data: Array.isArray(replyPage.data)
+                ? replyPage.data.map((cr) =>
+                    cr.username === username ? { ...cr, isFollowed: true } : cr
+                  )
+                : replyPage.data,
+            })),
+          };
+        });
+      });
+
+      return { previousPosts, previousFollowingState };
+    },
+    onError: (err, username, context) => {
+
+      setIsFollowing(context.previousFollowingState);
+
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["posts"], context.previousPosts);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["comments"] });
+      queryClient.invalidateQueries({ queryKey: ["commentReplies"] });
+
+      console.error("Error following user:", err);
     },
   });
 
@@ -431,7 +489,7 @@ export default function PostContainer({ post, singlePost = false }) {
 
   const handleAnimEnd = () => setReactAnim(false);
 
-  const sendPostAsMessage = () => {}
+  const sendPostAsMessage = () => {};
 
   return (
     <PostPresentation
@@ -499,7 +557,6 @@ export default function PostContainer({ post, singlePost = false }) {
       setImageLoading={setImageLoading}
       reactAnim={reactAnim}
       handleAnimEnd={handleAnimEnd}
-
     />
   );
 }

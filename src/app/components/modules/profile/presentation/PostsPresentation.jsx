@@ -74,7 +74,7 @@ export default function PostsPresentation({
       </div>
 
       {/* Desktop Grid */}
-      <div className="hidden md:grid md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 mt-4 gap-4">
+      <div className="hidden md:grid md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 flex-wrap mt-4 gap-4">
         {isLoading &&
           Array(5)
             .fill(0)

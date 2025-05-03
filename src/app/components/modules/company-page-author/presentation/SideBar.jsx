@@ -76,7 +76,7 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
                 <input id="upload-cover" type="file" className="hidden" accept="image/png, image/jpg, image/jpeg" ref={coverInputRef} onChange={onChangeCover} />
                 <div className="absolute left-4 bottom-[50px] w-[80px] h-[80px] bg-gray-700 rounded-lg flex justify-center items-center overflow-hidden relative">
                     {/*Logo */}
-                    <img src={company?.logo || "/placeholder.svg"} alt="logo" className="w-24 h-24 object-cover rounded-lg"/>
+                    <img id="company-logo"  src={company?.logo || "/placeholder.svg"} alt="logo" className="w-24 h-24 object-cover rounded-lg"/>
                     <div className="absolute right-0 bottom-0 flex gap-1 p-1">
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -183,7 +183,8 @@ export default function SideBar({company, menuItems=[], isActive, setModalOpen, 
             {/*Company name*/}
             <div>
                 <div className="text-[var(--text)] mb-1 border-b border-[var(--secondary)] pb-2 w-full">
-                    <p className="text-2xl font-bold w-full">{company?.name}</p>
+                    <p id="company-name" className="text-2xl font-bold w-full">{company?.name}</p>
+                    <p id="company-industry" className="hidden text-sm text-muted-foreground">{company?.industry}</p>
                     <p className="text-xs"> {company?.numFollowers} followers</p>
                 </div>
                 <div className="border-b border-[var(--secondary)] pb-2 flex flex-row justify-between items-center">

@@ -11,9 +11,9 @@ export default function LandingPage({goToSignIn, goToSignUp, handleGoogleLogIn})
                 </div>
                 <div className="items-center justify-center text-center max-w-md">
                     <p className="text-sm text-muted-foreground">By clicking Continue to join or sign in, you agree to Shaغalny's 
-                        <a href="#" className="text-secondary hover:underline transition-all duration-150 cursor-pointer "> User Agreement, </a>
-                        <a href="#" className="text-secondary hover:underline transition-all duration-150 cursor-pointer">Privacy Policy, </a> and  
-                        <a href="#" className="text-secondary hover:underline transition-all duration-150 cursor-pointer"> Cookie Policy.</a></p>
+                        <a href="/user-agreement" className="text-secondary hover:underline transition-all duration-150 cursor-pointer "> User Agreement, </a>
+                        <a href="/privacy-policy" className="text-secondary hover:underline transition-all duration-150 cursor-pointer">Privacy Policy, </a> and  
+                        <a href="/cookie-policy" className="text-secondary hover:underline transition-all duration-150 cursor-pointer"> Cookie Policy.</a></p>
                     <p className="text-text pt-4">New to Shaغalny? <span className="text-secondary cursor-pointer hover:underline transition-all duration-150 cursor-pointer" onClick={goToSignUp}>Join now</span></p>
                 </div>
             </div>

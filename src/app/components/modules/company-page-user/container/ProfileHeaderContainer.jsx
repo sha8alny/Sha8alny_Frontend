@@ -1,10 +1,12 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getCompany } from "@/app/services/companyManagement";
 import { followCompany, unfollowCompany } from "@/app/services/companyManagement";
 import ProfileHeader from "../presentation/ProfileHeader";
+import { report } from "@/app/services/privacy";
+import { useMutation  } from "@tanstack/react-query";
 
 /**
  * @namespace company-user
@@ -42,23 +44,28 @@ export default function ProfileHeaderContainer({ username }) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(null);
   const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [blockUserModalOpen, setBlockUserModalOpen] = useState(false);
+  const [reportUserModalOpen, setReportUserModalOpen] = useState(false);
+  const [reportState, setReportState] = useState(0);
+  const [reportText, setReportText] = useState("");
+  const [reportType, setReportType] = useState(null);
+  const dropdownRef = useRef(null);
   const router = useRouter();
 
 
-  const handleFollowClick = async () => {
-    if (!isFollowing) {
-      try {
-        await followCompany(username);
-        setIsFollowing(true);
-        setFollowerCount((prev) => prev + 1);
-      } catch (err) {
-        setError("Could not follow the company.");
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
       }
-    } else {
-      setShowUnfollowDialog(true);
-    }
-  };
-  
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -74,7 +81,22 @@ export default function ProfileHeaderContainer({ username }) {
   
     if (username) fetchCompany();
   }, [username]);
-  
+
+
+  const handleFollowClick = async () => {
+    if (!isFollowing) {
+      try {
+        await followCompany(username);
+        setIsFollowing(true);
+        setFollowerCount((prev) => prev + 1);
+      } catch (err) {
+        setError("Could not follow the company.");
+      }
+    } else {
+      setShowUnfollowDialog(true);
+    }
+  };
+    
   const handleDialogConfirm = async () => {
     try {
       await unfollowCompany(username);
@@ -90,7 +112,62 @@ export default function ProfileHeaderContainer({ username }) {
   const handleDialogCancel = () => {
     setShowUnfollowDialog(false);
   };
+
+  const handleReportMutation = useMutation({
+    mutationFn: (params) => {
+      const { username, reportObj } = params;
+
+      return report(null, null, username, null, null, reportObj);
+    },
+    onMutate: () => {
+      setReportState(1);
+    },
+    onSuccess: () => {
+      setReportState(2);
+    },
+    onError: (error) => {
+      console.error("Error reporting post:", error);
+      setReportState(3);
+    },
+    onSettled: () => {
+      setTimeout(() => {
+        setReportUserModalOpen(false);
+        setReportText("");
+        setReportType(null);
+        setReportState(0);
+      }, 2000);
+    },
+  });
   
+  const handleReport = () => {
+    console.log(username);
+    if (!username) {
+      console.error("Cannot report: username is missing or invalid.");
+      setReportState(3);
+      setTimeout(() => {
+        setReportUserModalOpen(false);
+        setReportText("");
+        setReportType(null);
+        setReportState(0);
+      }, 2000);
+      return;
+    }
+
+    const reportObj = {
+      reason: reportType,
+      text: reportType === "Something Else" ? reportText : null,
+    };
+    handleReportMutation.mutate({ username, reportObj });
+  };
+
+  const handleBlock = () => {
+    if (!userProfile?.username) {
+      console.error("Cannot block: username is missing or invalid.");
+      return;
+    }
+    handleBlockMutation.mutate(userProfile?.username);
+  };
+
   const visitWebsite = () =>{
     router.push(`/company/${username}/user/posts`);
   }
@@ -101,7 +178,7 @@ export default function ProfileHeaderContainer({ username }) {
   
   return (
     <div>
-      <ProfileHeader username={username} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} showUnfollowDialog={showUnfollowDialog} handleDialogConfirm={handleDialogConfirm} handleDialogCancel={handleDialogCancel}   />
+      <ProfileHeader username={username} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} showUnfollowDialog={showUnfollowDialog} handleDialogConfirm={handleDialogConfirm} handleDialogCancel={handleDialogCancel} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} dropdownRef={dropdownRef} setReportUserModalOpen={setReportUserModalOpen} setBlockUserModalOpen={setBlockUserModalOpen} blockUserModalOpen={blockUserModalOpen} reportUserModalOpen={reportUserModalOpen} reportState={reportState} reportText={reportText} reportType={reportType} setReportText={setReportText} setReportType={setReportType} onReport={handleReport} onBlock={handleBlock} />
     </div>
   );
 }
