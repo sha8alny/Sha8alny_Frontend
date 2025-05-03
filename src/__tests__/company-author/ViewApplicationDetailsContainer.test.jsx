@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ViewApplicationDetailsContainer from "../../app/components/modules/company-author/container/ViewApplicationDetailsContainer";
-import ViewApplicationDetailsModal from "../../app/components/modules/company-author/presentation/ViewApplicationDetailsModal";
+import ViewApplicationDetailsContainer from "../../app/components/modules/company-jobs/container/ViewApplicationDetailsContainer";
 import { getApplication, updateApplication } from "../../app/services/companyManagement";
 import { useToast } from "../../app/context/ToastContext";
 import "@testing-library/jest-dom";
