@@ -86,7 +86,7 @@ export default function Home({company,posts, goToAboutPage, goToPostsPage, loadi
 
     return(
         <>
-        <Container className="border-[#111] border shadow-lg">
+        <Container className="shadow-lg">
             <div className="h-max rounded-xl p-6 space-y-2">
                 <div>
                     <h1 className="text-xl font-bold">Overview</h1>
@@ -99,7 +99,7 @@ export default function Home({company,posts, goToAboutPage, goToPostsPage, loadi
                 </button>
             </div>
         </Container>
-        <Container className="mt-4 border-[#111] border shadow-lg">
+        <Container className="mt-4 shadow-lg">
             <div className="h-max rounded-xl p-6 space-y-2">
                 <div>
                     <h1 className="text-xl font-bold mb-2">Page posts</h1>

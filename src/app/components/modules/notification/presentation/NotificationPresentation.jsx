@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/Alert"
 /**
  * @namespace notification
  * @module notification
+ * @component NotificationPresentation
  * Notification presentation component that renders the UI for notifications
  * 
  * @param {Object} props Component props
@@ -147,7 +148,8 @@ function NotificationPresentation({
           <Badge variant="outline" className="text-xs text-text" data-testid="notification-type">
           {notification.type === "ConnectionRequest" ? "Connection Request" : 
            notification.type === "ConnectionAccepted" ? "Connection Accepted" : 
-           notification.type}
+           notification.type === "FollowRequest" ? "Follow Request" :
+           notification.type }
           </Badge>
           )}
         </div>

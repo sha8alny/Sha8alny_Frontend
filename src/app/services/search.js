@@ -87,13 +87,15 @@ export const searchUser = async (
   } else {
     data = null;
   }
-
+  if(response.status === 204) {
+    return [];
+  }
   if (!response.ok) {
     const message = data?.message || data?.error || "Failed to search users";
     throw new Error(message);
   }
 
-  return data;
+  return data.users;
 };
 
 export const fetchJobListings = async (text, pageNum) => {

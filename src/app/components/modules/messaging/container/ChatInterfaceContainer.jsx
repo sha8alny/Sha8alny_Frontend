@@ -4,7 +4,29 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { ChatPresentation } from "../presentation/ChatInterface";
 import { useMessages } from "@/app/hooks/messaging/useMessages";
 import { getOtherParticipantUsername, getParticipantDetails } from "@/app/utils/participantUtils";
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * Chat interface container component that manages the logic for displaying and interacting with messages.
+ * 
+ * This component handles:
+ * - Message display and management
+ * - Sending messages and media files
+ * - Typing indicators
+ * - User blocking/unblocking
+ * - Message loading
+ * - Scroll management
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.selectedConversation - The currently selected conversation data
+ * @param {string} props.currentUser - The username of the current user
+ * @param {Function} props.onBack - Function to handle navigation back
+ * @param {Function} props.onToggleBlock - Function to handle blocking/unblocking a user
+ * @param {Function} props.onLoadMoreMessages - Function to load more messages in the conversation
+ * @returns {JSX.Element} The chat interface container component
+ */
 export function ChatContainer({
   selectedConversation,
   currentUser,
@@ -260,3 +282,4 @@ export function ChatContainer({
     />
   );
 }
+export default ChatContainer;

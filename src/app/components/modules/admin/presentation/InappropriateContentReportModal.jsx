@@ -131,29 +131,33 @@ export function InappropriateContentReportModal({ isOpen, onClose, report, kind 
         />
         <div>
             <h3 className="font-bold text-lg">{name}</h3>
-            <p className="text-sm text-text">
-            <strong>Username:</strong> {report.itemDetails.username}
-            </p>
             <div>
+            <div className="flex items-center space-x-3">
             <img
             src={report.itemDetails.creator.profilePicture || "https://www.gravatar.com/avatar/?d=mp&s=200"}
             alt={report.itemDetails.creator.name}
             className="h-10 w-10 rounded-full"
             />
-            <p className="text-sm text-text">
+            <div className="flex flex-col text-xs">
+            <p className="text-text">
             <strong>Creator Name:</strong> {report.itemDetails.creator.name}
             </p>
-            <p className="text-sm text-text">
+            <p className="text-text">
             <strong>Creator Username:</strong> {report.itemDetails.creator.username}
             </p>
-            <p className="text-sm text-text">
+            <p className="text-text">
             <strong>Creator Email:</strong> {report.itemDetails.creator.email}
             </p>
+            </div>
+            </div>
             </div>
         </div>
         </div>
         <div className="bg-red-100 p-4 rounded-md mt-4 text-black">
         <h3 className="font-semibold text-red-700">Report Information</h3>
+        <p>
+            <strong>Company Username:</strong> {report.itemDetails.username}
+        </p>
         <p>
             <strong>Location:</strong> {report.itemDetails.location}
         </p>
@@ -161,7 +165,7 @@ export function InappropriateContentReportModal({ isOpen, onClose, report, kind 
             <strong>Organization Size:</strong> {report.itemDetails.orgSize}
         </p>
         <p>
-            <strong>Number of Followers:</strong> {report.itemDetails.numberOfEmployees}
+            <strong>Number of Followers:</strong> {report.itemDetails.numberOfFollowers}
         </p>
         <p>
             <strong>Number of Posts:</strong> {report.itemDetails.numberOfPosts}
@@ -171,7 +175,8 @@ export function InappropriateContentReportModal({ isOpen, onClose, report, kind 
         </p>
         <p>
             <strong>Admins:</strong> 
-            {report.itemDetails.admins.map((admin, index) => (
+            {report.itemDetails.admins.length === 0 ? " None" :
+            (report.itemDetails.admins.map((admin, index) => (
                 <li key={index} className="text-sm text-text">
                 <img
                     src={admin.profilePicture || "https://www.gravatar.com/avatar/?d=mp&s=200"}
@@ -182,7 +187,8 @@ export function InappropriateContentReportModal({ isOpen, onClose, report, kind 
                 <strong> Username:</strong> {admin.username}
                 <strong> Email:</strong> {admin.email}
                 </li>
-            ))}
+            )))
+            }
         </p>
         <p>
         <strong>Deletion Status:</strong> {report.itemDetails.isDeleted ? "Deleted" : "Not Deleted"}
