@@ -41,7 +41,6 @@ export default function CompanyPeopleContainer({username}) {
             try {
                 const data = await fetchCompanyPeople(username);
                 setCurrentUsername(data.username);
-                console.log("data of oastaz bate5a: ", data);
                 setPeople(data);
             } catch (err) {
                 setError(err.message);
@@ -63,28 +62,12 @@ export default function CompanyPeopleContainer({username}) {
         }
     };
     
-    const handleDeleteConnection = async (person) => {
-        try {
-            await deleteConnection(person.username);
-            setConnectedPeople((prevState) => {
-                const newState = { ...prevState };
-                delete newState[person.username];  // Remove the user from the connectedPeople state
-                return newState;
-            });
-            console.log(`Disconnected from ${person.username}`);
-        } catch (err) {
-            console.log(`Failed to disconnect from ${person.username}: ${err.message}`);
-        }
-    };
-
 
     const goToPeoplePage = (person) => {
         if (person?.username) {
           router.push(`/u/${person.username}`);
         }
     };
-      
-    console.log("connected people", connectedPeople);
   return (
       <div>
         <CompanyPeople people={people} loading={loading} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson}  />

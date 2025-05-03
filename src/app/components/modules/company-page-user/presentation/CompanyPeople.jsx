@@ -87,7 +87,6 @@ export default function CompanyPeople({ people=[], loading=false, goToPeoplePage
                         </div>
                         <p className="text-muted-foreground text-sm mb-2">{person?.headline}</p>
                         <div className="w-full">
-                        {console.log("status", person?.connectionStatus)}
                         {person.relation === -1 ? (
                           null
                           ) : person.connectionStatus === "connected" ? (
