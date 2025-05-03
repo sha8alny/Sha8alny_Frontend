@@ -171,29 +171,27 @@ export const getConnections = async (
 };
 
 
-export const getFollowers = async (
-  name,
-  industry,
-  location,
-  connectionDegree,
-  page
-) => {
+export const getFollowers = async (page, username) => {
+  console.log("username", username)
   const pageSize = 9;
-  const response = await fetchWithAuth(
-    `${apiURL}/followers/${page}/${pageSize}?name=${encodeURIComponent(
-      name
-    )}&industry=${encodeURIComponent(
-      industry || ""
-    )}&location=${encodeURIComponent(
-      location || ""
-    )}&connectionDegree=${encodeURIComponent(connectionDegree || "")}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}?username=${username}`, {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch followers");
+  }
+  if(response.status === 204) {
+    return [];
+  }
+  const data = await response.json();
+  return data;
+}
+
+export const getCompanyFollowers = async (page, username) => {
+  const pageSize = 9;
+  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}?username=${username}`, {
+    method: "GET",
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch followers");
   }

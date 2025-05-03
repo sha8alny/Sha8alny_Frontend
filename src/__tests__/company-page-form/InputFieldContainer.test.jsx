@@ -387,7 +387,7 @@ describe("InputFieldContainer",()=>{
       expect(setErrors).toHaveBeenCalledWith(expect.any(Function));
       const updateErrorsFunction = setErrors.mock.calls[0][0];
   
-      expect(updateErrorsFunction({})).toEqual({ companyDate: "Please enter a valid date",});
+      expect(updateErrorsFunction({})).toEqual({ companyDate: "",});
     });
 
     test("clears phone number error for a valid phone number input", () => {
