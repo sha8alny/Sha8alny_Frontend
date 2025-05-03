@@ -9,7 +9,7 @@ export default function Page() {
     <div className="w-full">
       <div className="min-h-screen gap-4 px-4 md:px-16 pt-8 flex flex-col md:flex-row">
         <div className="md:flex-1 md:flex flex-col gap-2 items-center">
-          <div className="sticky top-8 w-full">
+          <div className="sticky top-20 w-full">
             <LeftSidebar addButton />
           </div>
         </div>
@@ -17,7 +17,7 @@ export default function Page() {
           <PostsContainer />
         </div>
         <div className="hidden md:block md:flex-1">
-          <div className="sticky top-8 w-full">
+          <div className="sticky top-20 w-full">
             <RightSidebar />
           </div>
         </div>

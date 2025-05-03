@@ -1,8 +1,7 @@
 import DialogMod from "@/app/components/ui/DialogMod";
-import { fetchUserConnections } from "@/app/services/userProfile";
 import { createPost, getTags } from "@/app/services/post";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState, useCallback, useMemo } from "react";
 import PostButtonPresentation from "../presentation/PostButtonPresentation";
 import { useToast } from "@/app/context/ToastContext";
 import Image from "next/image";
