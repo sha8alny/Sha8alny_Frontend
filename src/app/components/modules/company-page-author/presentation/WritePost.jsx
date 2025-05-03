@@ -6,7 +6,7 @@ import {
   PersonAddOutlined,
   VideocamOutlined,
 } from "@mui/icons-material";
-import { Maximize2 } from "lucide-react";
+import { Close } from "@mui/icons-material";
 
 /**
  * @namespace WritePost
@@ -45,7 +45,7 @@ import { Maximize2 } from "lucide-react";
  * @property {Function} onSubmit - Function to handle the post submission.
  */
 
-export default function WritePost({company, text, setText,onImageUpload,videoUpload, preview, triggerFileInput,imageInputRef, videoInputRef, onSubmit}) {
+export default function WritePost({company, text, setText,onImageUpload,videoUpload, preview, triggerFileInput,imageInputRef, videoInputRef, onSubmit, handleRemoveMedia, fileType}) {
   return (
     <div className="text-text">
         <div className="bg-[var(--foreground)] border rounded-lg p-4">
@@ -55,8 +55,37 @@ export default function WritePost({company, text, setText,onImageUpload,videoUpl
                     alt="company-logo" 
                     className="rounded-full w-14 h-14 object-cover" 
                 />
-                <textarea className="flex-grow rounded-lg p-2 border border-[var(--background)] " placeholder="Start a post" value={text} onChange={(e)=>setText(e.target.value)}></textarea>
+                <textarea className="flex-grow rounded-lg p-2 border border-[var(--background)] resize-none " placeholder="Start a post" value={text} onChange={(e)=>setText(e.target.value)}></textarea>
+                {/* Media Preview */}
             </div>
+            {preview && (
+            <div className="mt-4 relative w-25 h-25">
+                {/* Image or Video Preview */}
+                {fileType === "image" ? (
+                <img
+                    src={preview}
+                    alt="media-preview"
+                    className="w-full h-full object-cover rounded-lg"
+                />
+                ) : fileType === "video" ? (
+                <video
+                    src={preview}
+                    alt="video-preview"
+                    className="w-full h-full object-cover rounded-lg"
+                    controls
+                />
+                ) : null}
+
+                <button
+                onClick={handleRemoveMedia}
+                className="absolute cursor-pointer top-0 right-0 bg-opacity-60 hover:bg-opacity-80 text-text rounded-full p-1 z-10"
+                aria-label="Remove media"
+                data-testid="remove-media-button"
+                >
+                <Close sx={{fontSize:"20px"}} />
+                </button>
+            </div>
+            )}
             {/*Icons for writing a post*/}
             <div className="flex items-center gap-4 mt-4 justify-between">
                 <div htmlFor="upload-image" className="relative group">
@@ -77,32 +106,23 @@ export default function WritePost({company, text, setText,onImageUpload,videoUpl
                 </div>
 
                 <div htmlFor="upload-tags" className="relative group">
-                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
+                    <div className="relative group"  data-testid="upload-tags-button">
                         <LocalOfferOutlined className="cursor-pointer group"/>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Upload tags</span>
                     </div>
                 </div>
 
                 <div htmlFor="upload-tags" className="relative group">
-                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
+                    <div className="relative group" data-testid="upload-schedulePosts-button">
                         <AccessTimeOutlined className="cursor-pointer group"/>
-                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> idk</span>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> Scheduled posts</span>
                     </div>
                 </div>
-                
-                <div htmlFor="upload-tags" className="relative group">
-                    <div className="relative group" onClick={()=>triggerFileInput("image")} data-testid="upload-tags-button">
-                        <PersonAddOutlined className="cursor-pointer group"/>
-                        <span className="absolute top-full left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 text-[var(--text)] text-xs transition-opacity duration-200 "> idk</span>
-                    </div>
-                </div>
-                
                 <button className={`bg-[var(--secondary)] rounded-full cursor-pointer py-1 px-4 mt-2 transition-opacity ${!text.trim() && !preview ? "opacity-50 cursor-not-allowed" : "" }`} onClick={onSubmit} disabled={!text.trim() && !preview}
                 data-testid="post-button">
                     Post
                 </button>
             </div>
-            {/*Filters*/}
         </div>
     </div>
   );

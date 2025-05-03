@@ -37,6 +37,9 @@ export default function SideBarContainer({company,setCompany, username ,setLogo 
     const [isModalOpen, setModalOpen] = useState(false); 
     const [modalType, setModalType] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
+    const [isEditingLogo, setIsEditingLogo] = useState(false)
+    const [isEditingCover, setIsEditingCover] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const coverInputRef = useRef(null);
     const logoInputRef = useRef(null);
     const router = useRouter(); 
@@ -139,13 +142,13 @@ export default function SideBarContainer({company,setCompany, username ,setLogo 
     }
 
     const menuItems =[
-        {name: "Dashboard", href:`/company/${username}/admin/dashboard`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/> },
-        {name: "Page Posts", href:`/company/${username}/admin/posts` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Followers", href:`/company/${username}/admin/followers`, icon: <GroupIcon style={{fontSize:"20px"}}/> },
-        {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Jobs", href:`/company/${username}/admin/jobs`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>},
-        {name: "Blocked Followers", href:`/company/${username}/admin/blocked`, icon: <BlockIcon style={{fontSize:"20px"}}/> },
-        {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate")}
+        {name: "Dashboard", href:`/company/${username}/admin/dashboard`,icon: <GridViewOutlinedIcon style={{fontSize:"20px"}}/>, testid:"dashborad-menu-item"},
+        {name: "Page Posts", href:`/company/${username}/admin/posts` , icon: < PostAddOutlinedIcon style={{fontSize:"20px"}}/>, testid:"dashborad-posts-item"},
+        {name: "Followers", href:`/company/${username}/admin/followers`, icon: <GroupIcon style={{fontSize:"20px"}}/>, testid:"dashborad-followers-item" },
+        {name: "Edit Page", href:`/company/${username}/admin/edit`, icon: <BorderColorOutlinedIcon style={{fontSize:"20px"}}/>, testid:"dashborad-edit-item"},
+        {name: "Jobs", href:`/company/${username}/admin/jobs`,icon: <WorkOutlineOutlinedIcon style={{fontSize:"20px"}}/>, testid:"dashborad-jobs-item"},
+        {name: "Blocked Followers", href:`/company/${username}/admin/blocked`, icon: <BlockIcon style={{fontSize:"20px"}}/>, testid:"dashborad-blocked-item"} ,
+        {name: "Deactivate Page", href:"#", icon: <DeleteIcon style={{fontSize:"20px"}}/>, action: () => handleOpenModal("deactivate"), testid:"dashborad-deactivate-item"}
     ]
     return(
         <div>
@@ -156,6 +159,7 @@ export default function SideBarContainer({company,setCompany, username ,setLogo 
             coverInputRef={coverInputRef} logoInputRef={logoInputRef} 
             fileusername={username} OpenCompanyUserPage={OpenCompanyUserPage}
             handleLogout={handleLogout} onRemoveLogo={handleRemoveLogo} onRemoveCover={handleRemoveCover}
+            isEditingLogo={isEditingLogo} isEditingCover ={isEditingCover} setIsEditingLogo={setIsEditingLogo} setIsEditingCover={setIsEditingCover} isLoading={isLoading}
             />
 
             <SideBarModal open={isModalOpen} onClose={()=>setModalOpen(false)} type={modalType} onDeactivate={handleConfirmDeactivate} onCreatePost={OpenPostsPage} openJobsPage={OpenJobsPage}/> 

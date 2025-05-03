@@ -6,6 +6,21 @@ import FollowersList from '../presentation/FollowersList';
 import { getCompanyFollowers } from '@/app/services/connectionManagement';
 import { blockUser } from '@/app/services/privacy';
 
+
+/**
+ * @namespace FollowersListContainer
+ */
+
+/**
+ * A component that fetches and displays a list of followers for a given company.
+ * Allows blocking users and redirects to user pages.
+ *
+ * @memberof FollowersListContainer
+ * @param {Object} props - The component props.
+ * @param {string} props.companyUsername - The username of the company whose followers are to be fetched.
+ * @returns {JSX.Element} The rendered component.
+ */
+
 export default function FollowersListContainer({companyUsername}){
     const [followers, setFollowers] = useState([]);
     const [error, setError] = useState(null);

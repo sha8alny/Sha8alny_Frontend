@@ -1,5 +1,23 @@
 import { Button } from "@/app/components/ui/Button";
 
+/**
+ * @namespace FollowersList
+ */
+
+/**
+ * A component that displays a list of followers with options to block or unblock them.
+ * It shows the follower's profile information and allows navigation to their profile page.
+ *
+ * @memberof FollowersList
+ * @param {Object} props - The component props.
+ * @param {Array<Object>} props.followers - The list of followers to be displayed.
+ * @param {Function} props.goToUserPage - A function to navigate to the selected user's profile page.
+ * @param {Function} props.block - A function to block a user.
+ * @param {Function} props.unblock - A function to unblock a user.
+ * @param {boolean} [props.isBlocked=false] - Flag to indicate if the list is for blocked followers.
+ * @returns {JSX.Element} The rendered component.
+ */
+
 export default function FollowersList({followers, goToUserPage, block, unblock, isBlocked=false }){    
     return (
         <div className="max-w-4xl mx-auto p-6 bg-foreground rounded-lg shadow-sm">
@@ -24,9 +42,9 @@ export default function FollowersList({followers, goToUserPage, block, unblock, 
                     </div>
                     <div className="flex flex-row justify-end gap-2">
                         {isBlocked?(
-                            <Button variant="default" className ="bg-secondary rounded-full cursor-pointer" onClick={()=>unblock(follower.username)}> unBlock </Button>
+                            <Button variant="default" className ="bg-secondary rounded-full cursor-pointer" data-testid="unblock-follower-button" onClick={()=>unblock(follower.username)}> unBlock </Button>
                         ):(
-                            <Button variant="default" className ="bg-secondary rounded-full cursor-pointer" onClick={()=>block(follower.username)}> Block </Button>
+                            <Button variant="default" className ="bg-secondary rounded-full cursor-pointer" data-testid="block-follower-button" onClick={()=>block(follower.username)}> Block </Button>
                         )}
                     </div>
                 </div>
@@ -38,8 +56,8 @@ export default function FollowersList({followers, goToUserPage, block, unblock, 
             )}
           </div>
           <div className="mt-6 flex justify-end text-sm text-gray-500 space-x-4">
-            <button className="hover:underline cursor-pointer">Previous</button>
-            <button className="hover:underline cursor-pointer">Next</button>
+            <button className="hover:underline cursor-pointer" data-testid="Previous-button" >Previous</button>
+            <button className="hover:underline cursor-pointer" data-testid="Next-button">Next</button>
           </div>
         </div>
     );

@@ -66,7 +66,7 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
             <p className="text-muted">{company?.industry} , {company?.location}</p>
           </div>
           <div className="flex flex-row gap-2 items-center mb-3">
-            <Button  className={`rounded-full cursor-pointer py-1 px-4 mt-2 transition-all ${isFollowing ? "bg-[var(--foreground)] border border-[var(--secondary)]": "bg-[var(--secondary)]"}`} onClick={handleFollowClick} data-testid="follow-button">
+            <Button data-testid={`${username}-follow-button`} className={`rounded-full cursor-pointer py-1 px-4 mt-2 transition-all ${isFollowing ? "bg-[var(--foreground)] border border-[var(--secondary)]": "bg-[var(--secondary)]"}`} onClick={handleFollowClick}>
               {isFollowing ? (
                 <div className="text-text">
                   <CheckIcon className="mr-1" fontSize="small" />
@@ -93,6 +93,7 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
                   <DropdownMenuTrigger asChild>
                     <button
                       className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
+                      data-testid="dropDown-button"
                     >
                       <MoreHoriz
                         className="text-muted"
@@ -109,6 +110,7 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
                     <DropdownMenuItem
                       className="hover:bg-primary/20 cursor-pointer"
                       onClick={() => setReportUserModalOpen(true)}
+                      data-testid="report-button"
                     >
                       <FlagOutlined
                         className="mr-2"
@@ -120,6 +122,7 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
                     <DropdownMenuItem
                       className="hover:bg-primary/20 cursor-pointer"
                       onClick={goToCreateCompany}
+                      data-testid="create-new-company-button"
                     >
                       <AddIcon
                         className="mr-2"
@@ -151,7 +154,7 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
           <CardContent className="p-4">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-medium">Unfollow page</h3>
-                <Button className="cursor-pointer" size="icon" variant="ghost" onClick={handleDialogCancel}>
+                <Button data-testid="close-unfollow-dialog-button" className="cursor-pointer" size="icon" variant="ghost" onClick={handleDialogCancel}>
                     <ClearIcon className="h-4 w-4" />
                 </Button>
               </div>
@@ -161,10 +164,10 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
                 </p>
               </div>
               <div className="flex flex-row justify-end gap-2">
-                  <Button variant="outline" className="rounded-full cursor-pointer" onClick={handleDialogCancel}>
+                  <Button variant="outline" className="rounded-full cursor-pointer" data-testid="close-dialog-button" onClick={handleDialogCancel}>
                       Cancel
                   </Button>
-                  <Button  className="rounded-full bg-secondary cursor-pointer" onClick={handleDialogConfirm}>
+                  <Button data-testid="unfollow-dialog-button" className="rounded-full bg-secondary cursor-pointer" onClick={handleDialogConfirm}>
                       Unfollow
                   </Button>
               </div>

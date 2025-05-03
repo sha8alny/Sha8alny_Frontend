@@ -29,36 +29,49 @@ export default function WritePostContainer({ company, onPostSubmit, logo }) {
   const [videos, setVideos] = useState(null);
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
+  const [fileType, setFileType] = useState(null);
   const imageInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
   const imageUpload = (e) => {
     const selectedFile = e.target.files[0];
-    console.log("Image selected", e.target.files[0]);
     if (selectedFile && selectedFile.type.startsWith("image/")) {
       setFile(selectedFile);
+      setFileType("image");
       setPreview(URL.createObjectURL(selectedFile));
       setImages([selectedFile]);
+      setVideos(null);
     }
   };
 
   const videoUpload = (e) => {
     const selectedFile = e.target.files[0];
-    console.log("video selected", e.target.files[0]);
     if (selectedFile && selectedFile.type.startsWith("video/")) {
       setFile(selectedFile);
+      setFileType("video");
       setPreview(URL.createObjectURL(selectedFile));
       setVideos([selectedFile]);
+      setImages([]);
     }
   };
 
+  const handleRemoveMedia = () => {
+    setPreview(null);
+    setFile(null);
+    setFileType(null);
+    setImages([]);
+    setVideos(null);
+  };
+
   const triggerFileInput = (fileType) => {
-    if (fileType === "image") imageInputRef.current?.click();
+    if (fileType === "image")  imageInputRef.current?.click();
     if (fileType === "video") videoInputRef.current?.click();
   };
 
   const handleSubmit = async () => {
-    console.log("Videos:", videos);
+    setPreview(null);
+    setFileType(null);
+
     if (text.trim() === "" && images.length === 0 && !videos) {
       setError("Please add text or media to your post.");
       return;
@@ -76,7 +89,6 @@ export default function WritePostContainer({ company, onPostSubmit, logo }) {
     if (videos) {
       formData.append("media", videos);
     }
-    console.log(company)
     const postJSON = {
       text: text,
       fullName: company.name,
@@ -100,6 +112,7 @@ export default function WritePostContainer({ company, onPostSubmit, logo }) {
     };
     onPostSubmit(formData, postJSON);
   };
+
   return (
     <div className="max-w-2xl mx-auto mb-10">
       <WritePost
@@ -114,6 +127,8 @@ export default function WritePostContainer({ company, onPostSubmit, logo }) {
         videoInputRef={videoInputRef}
         onSubmit={handleSubmit}
         logo={logo}
+        handleRemoveMedia={handleRemoveMedia}
+        fileType={fileType}
       />
     </div>
   );
