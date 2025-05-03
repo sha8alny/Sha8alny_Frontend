@@ -20,7 +20,11 @@ export default function PostPresentation({
 }) {
   return (
     <Container
-      onClick={() => navigateTo(`${post?.username}/post/${post?.postId}`)}
+      onClick={() =>
+        post?.isCompany
+          ? navigateTo(`/company/${post?.username}/post/${post?.postId}`)
+          : navigateTo(`${post?.username}/post/${post?.postId}`)
+      }
       className="p-4 flex flex-col hover:bg-primary/15 cursor-pointer duration-200 shadow-md"
       data-testid={`post-container-${post?.postId}`}
     >
