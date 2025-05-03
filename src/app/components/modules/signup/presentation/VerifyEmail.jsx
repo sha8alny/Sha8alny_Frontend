@@ -50,21 +50,20 @@ const VerifyEmail =({
             </div>
              <div className="flex items-center justify-center w-70 h-15  text-text rounded-full mx-auto">
             <InputOTP 
-            data-testid="otp-input"
             maxLength={6}
             value={verifyCode}
             onChange={(value) => setVerifyCode(value )}
             >
             <InputOTPGroup >
-                <InputOTPSlot index={0} inputMode="numeric" pattern="[0-9]*" />
-                <InputOTPSlot index={1} inputMode="numeric" pattern="[0-9]*" />
-                <InputOTPSlot index={2} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input-0" index={0} inputMode="numeric" pattern="[0-9]*" />
+                <InputOTPSlot data-testid="otp-input-1" index={1} inputMode="numeric" pattern="[0-9]*" />
+                <InputOTPSlot data-testid="otp-input-2" index={2} inputMode="numeric" pattern="[0-9]*"/>
             </InputOTPGroup>
             <InputOTPSeparator />
             <InputOTPGroup>
-                <InputOTPSlot index={3} inputMode="numeric" pattern="[0-9]*"/>
-                <InputOTPSlot index={4} inputMode="numeric" pattern="[0-9]*"/>
-                <InputOTPSlot index={5} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input-3" index={3} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input-4" index={4} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input-5" index={5} inputMode="numeric" pattern="[0-9]*"/>
             </InputOTPGroup>
             </InputOTP>
             </div>
