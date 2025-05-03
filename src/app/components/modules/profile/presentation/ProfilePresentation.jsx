@@ -219,7 +219,7 @@ export default function ProfilePresentation({
             onSendMessageRequest={onSendMessageRequest}
             isSendingMessageRequest={isSendingMessageRequest}
           />
-          <PostsContainer username={userProfile.username} />
+          {!userProfile?.isBlocked && <PostsContainer username={userProfile.username} />}
           <About about={userProfile.about} isMyProfile={isMyProfile} />
           <ExperienceContainer experience={userProfile.experience} />
           <EducationContainer education={userProfile.education} />

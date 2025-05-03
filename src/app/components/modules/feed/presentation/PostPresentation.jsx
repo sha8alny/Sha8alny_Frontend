@@ -224,8 +224,8 @@ export default function PostPresentation({
               </div>
               {post?.relation && (
                 <div className="text-muted text-xs space-x-2 flex items-center">
-                  <span className="text-muted text-xs">•</span>
-                  <span className="text-muted text-xs">{post?.relation}</span>
+                  <span className="text-muted truncate text-xs">•</span>
+                  <span className="text-muted truncate text-xs">{post?.relation}</span>
                 </div>
               )}
               {post?.connectionDegree !== 0 &&
@@ -321,7 +321,7 @@ export default function PostPresentation({
         </CardHeader>
 
         <CardContent>
-          <div className="whitespace-pre-line">
+          <div className="whitespace-pre-line break-all">
             <p className="mb-3">{post?.textElement}</p>
           </div>
           {isDocument && post?.media && post?.media.length > 0 && (
