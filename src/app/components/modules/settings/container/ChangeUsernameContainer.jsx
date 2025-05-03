@@ -25,6 +25,7 @@ const ChangeUsernameContainer = ({ handleUsernameForm }) => {
     mutationFn: updateUsername,
     onSuccess: () => {
       showToast("User name updated successfully");
+      window.location.reload();
       handleUsernameForm();
     },
     onError: (err) => {
