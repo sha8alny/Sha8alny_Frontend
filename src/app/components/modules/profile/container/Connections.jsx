@@ -17,10 +17,11 @@ import { removeConnection } from "@/app/services/connectionManagement";
 import { useToast } from "@/app/context/ToastContext";
 
 export default function Connections({ userInfo }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const observerTarget = useRef(null);
   const router = useRouter();
   const { isMyProfile } = useIsMyProfile();
-  
+
   const {
     data,
     fetchNextPage,
@@ -48,22 +49,33 @@ export default function Connections({ userInfo }) {
   };
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
+    if (!isDialogOpen) return;
+
+    const timer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+            console.log("Intersection detected, loading more...");
+            fetchNextPage();
+          }
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "100px",
         }
-      },
-      { threshold: 0.5 }
-    );
+      );
 
-    const currentTarget = observerTarget.current;
-    if (currentTarget) observer.observe(currentTarget);
+      const currentTarget = observerTarget.current;
+      if (currentTarget) observer.observe(currentTarget);
 
-    return () => {
-      if (currentTarget) observer.unobserve(currentTarget);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+      return () => {
+        if (currentTarget) observer.unobserve(currentTarget);
+        clearTimeout(timer);
+      };
+    }, 300); // Small delay to ensure dialog is rendered
+
+    return () => clearTimeout(timer);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isDialogOpen]);
 
   const connections = data?.pages.flatMap((page) => page) || [];
 
@@ -71,11 +83,19 @@ export default function Connections({ userInfo }) {
     const date = new Date(dateString);
     const now = new Date();
 
-    const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const startOfNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+    const startOfNow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
     const diffTime = startOfNow - startOfDate;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  
+
     if (diffDays === 0) {
       return "Connected today";
     } else if (diffDays === 1) {
@@ -113,9 +133,10 @@ export default function Connections({ userInfo }) {
     relation: changeRelation(connection?.connectionDegree),
   }));
 
-
   return (
     <Dialog
+      open={isDialogOpen}
+      onOpenChange={setIsDialogOpen}
       useRegularButton
       buttonData={
         (userInfo?.connectionsCount >= 500

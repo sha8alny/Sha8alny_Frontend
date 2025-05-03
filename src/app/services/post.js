@@ -99,17 +99,17 @@ export const createPost = async (postData, companyUsername = null) => {
   if (companyUsername) {
     url = `${apiURL}/posts?companyUsername=${companyUsername}`;
   }
-  
+
   try {
     const response = await fetchWithAuth(url, {
       method: "POST",
       body: postData,
     });
-    
+
     if (!response.ok) {
       throw new Error("Failed to create post");
     }
-    
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -274,7 +274,13 @@ export async function reactToContent(
  * @returns {Promise<Object>} - Response data
  */
 
-export const addComment = async ({ postId, commentId, text, tags = [], companyUsername = null }) => {
+export const addComment = async ({
+  postId,
+  commentId,
+  text,
+  tags = [],
+  companyUsername = null,
+}) => {
   try {
     let url = `${apiURL}/posts/${postId}/comment`;
 
@@ -499,4 +505,57 @@ export const getTags = async (text) => {
     return [];
   }
   return await response.json();
+};
+
+export const fetchReactions = async (
+  postId,
+  commentId = null,
+  pageNum,
+  reactionType
+) => {
+  const apiURL = process.env.NEXT_PUBLIC_API_URL;
+  let url = `${apiURL}/posts/${postId}/react?pageNum=${pageNum}`;
+  if (commentId) {
+    url += `&commentId=${commentId}`;
+  }
+  if (reactionType) {
+    url += `&reactionType=${reactionType}`;
+  }
+  const response = await fetchWithAuth(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) throw new Error("Failed to fetch reactions");
+  return await response.json();
+};
+
+
+export const deleteAllMedia = async (postId) => {
+  const apiURL = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetchWithAuth(
+    `${apiURL}/myPosts/${postId}/media`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+  if (!response.ok) throw new Error("Failed to delete media");
+  return response.status;
+}
+
+export const editPost = async (postId, postData) => {
+  const apiURL = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetchWithAuth(
+    `${apiURL}/myPosts/${postId}`,
+    {
+      method: "PATCH",
+      body: postData,
+    }
+  )
+  if (!response.ok) throw new Error("Failed to edit post");
+  return response.json();
 }

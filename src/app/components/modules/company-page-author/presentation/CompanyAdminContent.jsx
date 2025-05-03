@@ -52,7 +52,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                 <p className="text-2xl mt-2"> This Shaغalny Page isn't available </p>
                 <p className="text-sm text-zinc-400 mt-2"> The Page you are searching for is no longer exist </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center mt-3">
-                    <Button variant="default" className="bg-secondary cursor-pointer" onClick={onClick}>
+                    <Button variant="default" className="bg-secondary cursor-pointer" data-testid="companyNotFound-button" onClick={onClick}>
                         Go Back
                     </Button>
                 </div>
@@ -69,7 +69,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                 <p className="text-2xl mt-2"> Access Denied </p>
                 <p className="text-sm text-zinc-400 mt-2"> You don't have permission to access this page.</p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center mt-3">
-                    <Button variant="default" className="bg-secondary cursor-pointer" onClick={onClick}>
+                    <Button variant="default" className="bg-secondary cursor-pointer"  data-testid="NotOwner-button" onClick={onClick}>
                         Go Back
                     </Button>
                 </div>
@@ -84,6 +84,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                     onClick={toggleSidebar}
                     className="p-2 rounded-md text-text cursor-pointer"
                     aria-label="Toggle Sidebar"
+                    data-testid="Sidebar-button"
                 >
                     {isSidebarOpen ? <ClearIcon/> : <DensityMediumIcon/>}
                 </button>
@@ -92,6 +93,7 @@ export default function CompanyAdminContent({ company,setCompany, username,logo,
                     onClick={toggleAnalytics}
                     className="p-2 rounded-md text-text cursor-pointer"
                     aria-label="Toggle Analytics"
+                    data-testid="Analytics-button"
                 >
                     {isAnalyticsOpen ? <ClearIcon/> : <BarChartIcon/>}
                 </button>

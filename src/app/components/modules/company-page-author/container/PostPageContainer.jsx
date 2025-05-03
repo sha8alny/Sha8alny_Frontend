@@ -34,7 +34,6 @@ export default function PostPageContainer({ username, logo }) {
       return createPost(newPost, username);
     },
     onSuccess: (createdPost, variables) => {
-      console.log("Post created:", createdPost);
       router.push(`/company/${username}/admin/posts`);
       const { postJSON } = variables;
       console.log(username);

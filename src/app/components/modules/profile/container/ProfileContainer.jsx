@@ -196,6 +196,7 @@ function ProfileContent({ username }) {
   const handleRemoveConnectionMutation = useMutation({
     mutationFn: () => removeConnection(userProfile?.username),
     onSuccess: () => {
+      removeConnectionModalOpen(false);
       queryClient.invalidateQueries(["userProfile", username]);
       queryClient.invalidateQueries(["connections"]);
       toast("Connection removed successfully");
