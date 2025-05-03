@@ -10,6 +10,27 @@ import { useConnections } from "@/app/hooks/messaging/useConnections";
 import { useMessageRequests } from "@/app/hooks/messaging/useMessageRequests";
 import { getOtherParticipantUsername } from "@/app/utils/participantUtils";
 
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * MessagingContainer component for managing messaging functionality.
+ * 
+ * This component handles:
+ * - User conversations and selection
+ * - Message loading and typing indicators
+ * - User connections management
+ * - Message requests handling
+ * - URL synchronization with selected conversations
+ * - Navigation between conversations
+ * - Cleanup of typing indicators on component unmount or page refresh
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} props.currentUser - The currently authenticated user object
+ * @returns {JSX.Element} Messaging interface with conversation list and chat window
+ */
 export function MessagingContainer({ currentUser }) {
   // ---- INITIALIZATION ----
   const router = useRouter();
@@ -189,6 +210,10 @@ export function MessagingContainer({ currentUser }) {
       // Close message requests if open
       setShowMessageRequests(false);
       selectConversation(matchingConversation);
+    } else if (usernameParam) {
+      // Start a new conversation if usernameParam exists but no matching conversation is found
+      const connection = { username: usernameParam };
+      handleStartConversation(connection);
     }
 
     setIsHandlingUrlChange(false);
@@ -325,3 +350,4 @@ export function MessagingContainer({ currentUser }) {
     </>
   );
 }
+export default MessagingContainer;

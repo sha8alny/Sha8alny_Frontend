@@ -21,7 +21,7 @@ function Navbar() {
     "/terms",
     "/user-agreement",
     '/moodrnfr',
-  ];
+  , '/home'];
   if (PUBLIC_PATHS.some((path) => pathName.startsWith(path))) {
     return null;
   }

@@ -2,6 +2,8 @@
 "use client";
 import { Button } from "./Button";
 import {  AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel  } from "./AlertDialog";
+import { useEffect,useState } from "react";
+import { getConnectionMutuals } from "@/app/services/connectionManagement";
 const ProfileCard = ({
     username,
     name,
@@ -17,7 +19,19 @@ const ProfileCard = ({
     removeLoading,
     openDeleteDialog,
     setOpenDeleteDialog,
+    getConnectionDegree,
+    type
 }) => {
+    const [mutualConnections, setMutualConnections] = useState({ count: 0, connections: [] });  
+    useEffect(() => {
+        if(type === "applicant") return;
+        const fetchMutualConnections = async () => {
+          const mutuals = await getConnectionMutuals(username);
+          setMutualConnections(mutuals);
+        };
+        fetchMutualConnections();
+      }, [getConnectionMutuals, username]);
+    
 return(
     <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl bg-background shadow-lg rounded-lg overflow-hidden border ">
     <div className="h-28 sm:h-32 md:h-37 lg:h-27 rounded-t-lg overflow-hidden">
@@ -44,7 +58,8 @@ return(
         This action cannot be undone. This will permanently delete this account from your network. </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-        <AlertDialogCancel className="text-text bg-secondary cursor-pointer hover:bg-secondary/80 transition-colors duration-200"
+        <AlertDialogCancel 
+        className=" bg-foreground rounded-2xl font-semibold cursor-pointer hover:bg-primary/70 dark:bg-foreground dark:hover:bg-red-300 hover:text-background text-text"
         onClick={() => {
             setOpenDeleteDialog(false);
         }}
@@ -54,7 +69,7 @@ return(
         data-testid="confirm-delete"
         onClick={onRemove}
         disabled={removeLoading}
-        className="bg-red-600 rounded-2xl text-white hover:bg-red-700 text-sm font-semibold p-2"
+        className="bg-secondary rounded-2xl text-background hover:bg-secondary/80 text-sm font-semibold p-2"
         >
         {removeLoading ? "Removing..." : "Confirm Remove"}
         
@@ -80,8 +95,12 @@ return(
             />
             </a>
         </div>
-        <a href={`/u/${username}`} className="text-lg sm:text-md font-semibold text-text mt-2">{name}</a>
+        <a href={`/u/${username}`} className="text-lg sm:text-md font-semibold text-text mt-2">{name} 
+        {getConnectionDegree && <span className="text-sm font-bold text-muted-foreground"> •{getConnectionDegree}</span>}</a>
         <p className="text-sm sm:text-md font-thin text-text break-words whitespace-normal max-w-xs sm:max-w-sm ">{title}</p>
+        {(!(type === "applicant"))&& (
+        <p className="text-xs sm:text-sm font-semibold text-secondary break-words whitespace-normal max-w-xs sm:max-w-sm ">{mutualConnections.count > 10 ? '10+' : mutualConnections.count} mutual connections</p>
+        )}
         <p className="text-xs sm:text-sm font-bold text-secondary break-words whitespace-normal max-w-xs sm:max-w-sm ">{numberOfConnections} connections</p>
         {showButton && (
         <Button 

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import PostNewJobContainer from "../../app/components/modules/company-author/container/PostNewJobContainer";
+import PostNewJobContainer from "../../app/components/modules/company-jobs/container/PostNewJobContainer";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
 import "@testing-library/jest-dom";

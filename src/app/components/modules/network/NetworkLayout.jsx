@@ -78,7 +78,7 @@ const NetworkLayout = ({ children, activeContent }) => {
           {/* Right Sidebar */}
           <div className="w-full md:w-1/4 order-last ">
           <div className="w-full flex flex-col gap-4">
-            <NetworkFilterContainer activeTab={activeContent} onResults={setFilteredResults}/>
+            <NetworkFilterContainer activeTab={activeContent} />
 
             {/* <SuggestedUsersSkeleton /> */}
             <SuggestedUsersContainer 

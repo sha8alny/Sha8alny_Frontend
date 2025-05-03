@@ -101,6 +101,7 @@ return (
               showButton={true}
               showRemoveButton={false}
               onRemove={() => {}}
+              type="applicant"
             />
           ))
         )}

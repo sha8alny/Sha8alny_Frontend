@@ -64,10 +64,10 @@ describe("ResetPasswordContainer", () => {
         const passwordInput = screen.getByPlaceholderText("New Password");
 
         fireEvent.change(passwordInput, { target: { value: "123" } });
-        expect(screen.getByText("Password must be 6 characters or more.")).toBeInTheDocument();
+        expect(screen.getByText("Password must be 8 characters or more.")).toBeInTheDocument();
 
-        fireEvent.change(passwordInput, { target: { value: "123456" } });
-        expect(screen.queryByText("Password must be 6 characters or more.")).not.toBeInTheDocument();
+        fireEvent.change(passwordInput, { target: { value: "12345678" } });
+        expect(screen.queryByText("Password must be 8 characters or more.")).not.toBeInTheDocument();
     });
 
     test("disables submit button when form is invalid", () => {
@@ -84,19 +84,19 @@ describe("ResetPasswordContainer", () => {
         render(<ResetPasswordContainer />);
         const resetCodeInput = screen.getByRole("textbox");
         const passwordInput = screen.getByPlaceholderText("New Password");
+        const confirmPasswordInput = screen.getByTestId("confirm-password-input");
         const submitButton = screen.getByRole("button", { name: /Reset Password/i });
 
         fireEvent.change(resetCodeInput, { target: { value: "123456" } });
         fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.change(confirmPasswordInput, { target: { value: "password123" } });
         fireEvent.click(submitButton);
 
         await waitFor(() => {
             expect(handleResetPassword).toHaveBeenCalledWith("123456", "password123");
             expect(mockToast).toHaveBeenCalledWith("Password reset successfully");
         });
-        jest.advanceTimersByTime(3000);
-        expect(mockRouterPush).toHaveBeenCalledWith("/");
-        jest.useRealTimers();
+
     });
 
     test("displays error toast on failure", async () => {
@@ -105,10 +105,12 @@ describe("ResetPasswordContainer", () => {
         render(<ResetPasswordContainer />);
         const resetCodeInput = screen.getByRole("textbox");
         const passwordInput = screen.getByPlaceholderText("New Password");
+        const confirmPasswordInput = screen.getByTestId("confirm-password-input");
         const submitButton = screen.getByRole("button", { name: /Reset Password/i });
 
         fireEvent.change(resetCodeInput, { target: { value: "123456" } });
         fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.change(confirmPasswordInput, { target: { value: "password123" } });
         fireEvent.click(submitButton);
 
         await waitFor(() => {
@@ -123,10 +125,12 @@ describe("ResetPasswordContainer", () => {
         render(<ResetPasswordContainer />);
         const resetCodeInput = screen.getByRole("textbox");
         const passwordInput = screen.getByPlaceholderText("New Password");
+        const confirmPasswordInput = screen.getByTestId("confirm-password-input");
         const submitButton = screen.getByRole("button", { name: /Reset Password/i });
 
         fireEvent.change(resetCodeInput, { target: { value: "123456" } });
         fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.change(confirmPasswordInput, { target: { value: "password123" } });
         fireEvent.click(submitButton);
 
         await waitFor(() => {

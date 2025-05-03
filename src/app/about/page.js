@@ -187,7 +187,10 @@ export default function AboutPage() {
                     <p className="text-secondary">Developer</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    developed things here
+                    I'm responsible for your entire journey—from searching for
+                    the perfect job to applying and tracking your
+                    application—while also building messaging features to ensure
+                    a smooth, user-friendly experience from start to finish.
                   </p>
                 </div>
                 <div className="flex flex-col items-center space-y-4 text-center">
