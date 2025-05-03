@@ -93,7 +93,7 @@ export const searchUser = async (
     throw new Error(message);
   }
 
-  return data;
+  return data.users;
 };
 
 export const fetchJobListings = async (text, pageNum) => {
