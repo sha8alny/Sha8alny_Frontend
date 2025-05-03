@@ -65,9 +65,9 @@ export default function CompanyJobs({jobs=[], goToJobPage, isLoading, isError}){
         <div>
             <Container className="p-6">
                 <h2 className="text-text text-2xl font-bold mb-4 ">Posted Jobs</h2>
-                <div className="flex flex-wrap gap-6 items-center space-x-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8 max-w-7xl mx-auto">
                     {jobs.map((job, index) => (
-                        <Card key={job.id || index} className="w-60 rounded-xl bg-foreground">
+                        <Card key={job.id || index} className="w-full rounded-xl bg-foreground">
                             <CardContent className="flex flex-col pt-12 pl-6 pb-6">
                                 <img
                                     src={job?.companyData.logo || "/placeholder.svg"}
