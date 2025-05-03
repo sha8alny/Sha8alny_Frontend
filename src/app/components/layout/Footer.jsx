@@ -25,11 +25,17 @@ export default function Footer() {
           Terms
         </Link>
         <span>•</span>
-        <Link className="hover:text-secondary hover:underline" href="/privacy-policy">
+        <Link
+          className="hover:text-secondary hover:underline"
+          href="/privacy-policy"
+        >
           Privacy Policy
         </Link>
         <span>•</span>
-        <Link className="hover:text-secondary hover:underline" href="/cookie-policy">
+        <Link
+          className="hover:text-secondary hover:underline"
+          href="/cookie-policy"
+        >
           Cookie Policy
         </Link>
       </div>
@@ -39,3 +45,22 @@ export default function Footer() {
     </footer>
   );
 }
+
+export const FooterSkeleton = () => {
+  return (
+    <footer className="bg-foreground w-full border dark:border-[#111] rounded-2xl shadow-md p-4 mt-2 mb-4">
+      <div className="flex flex-wrap gap-2 text-xs text-muted">
+        <div className="animate-pulse bg-primary/60 h-4 w-16 rounded-2xl"></div>
+        <span>•</span>
+        <div className="animate-pulse bg-primary/60 h-4 w-16 rounded-2xl"></div>
+        <span>•</span>
+        <div className="animate-pulse bg-primary/60 h-4 w-16 rounded-2xl"></div>
+        <span>•</span>
+        <div className="animate-pulse bg-primary/60 h-4 w-16 rounded-2xl"></div>
+      </div>
+      <div className="text-xs text-primary mt-2">
+        <div className="animate-pulse bg-primary/60 h-4 w-16 rounded-2xl"></div>
+      </div>
+    </footer>
+  );
+};

@@ -1,18 +1,91 @@
 "use client";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { addComment, determineAge, getCommentReplies } from "@/app/services/post";
+import {
+  addComment,
+  determineAge,
+  getCommentReplies,
+  getTags,
+} from "@/app/services/post";
 import { useMutation } from "@tanstack/react-query";
 import CommentSectionPresentation from "../presentation/CommentSectionPresentation";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useCallback } from "react";
 
 export default function CommentSectionContainer({ username, postId }) {
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
+  const [companyUsername, setCompanyUsername] = useState(null);
+  const [taggedUser, setTaggedUser] = useState("");
+  const [taggedUsers, setTaggedUsers] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [tagError, setTagError] = useState(null);
 
   const queryClient = useQueryClient();
   const router = useRouter();
-  const currentPath = usePathname();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname) {
+      const companyRegex = /^\/company\/([^/]+)\/admin\/posts(\/.*)?$/;
+      const match = pathname.match(companyRegex);
+      if (match && match[1]) {
+        setCompanyUsername(match[1]);
+      }
+    }
+  }, [pathname]);
+
+  const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
+    setTaggedUsers((prevUsers) =>
+      prevUsers.filter((user) => user._id !== userIdToRemove)
+    );
+    setTagError(null);
+  }, []);
+
+  const handleTagUserClick = useCallback(
+    (user) => {
+      if (taggedUsers.some((u) => u._id === user._id)) {
+        return; // User already tagged
+      }
+
+      if (taggedUsers.length >= 5) {
+        setTagError("You can tag a maximum of 5 users.");
+        return;
+      }
+
+      setTaggedUsers((prev) => [...prev, user]);
+      setTaggedUser("");
+      setSearchResults([]);
+    },
+    [taggedUsers]
+  );
+
+  const handleUserSearch = useCallback(
+    async (query) => {
+      if (!query || query.length < 2) {
+        setSearchResults([]);
+        setIsSearching(false);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const results = await getTags(query);
+        const filteredResults = results.filter(
+          (user) =>
+            !taggedUsers.some((taggedUser) => taggedUser._id === user._id)
+        );
+        setSearchResults(filteredResults || []);
+      } catch (error) {
+        console.error("Error searching for users:", error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [taggedUsers]
+  );
 
   const {
     data,
@@ -47,9 +120,13 @@ export default function CommentSectionContainer({ username, postId }) {
       const perPage = 5;
       return data.length === perPage ? lastPage.pageParam + 1 : undefined;
     },
-    staleTime: Infinity,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     retry: 0,
-    refetchOnWindowFocus: false,
+    refetchInterval: false,
+    gcTime: 0,
   });
 
   const comments =
@@ -82,22 +159,33 @@ export default function CommentSectionContainer({ username, postId }) {
         postId: params.postId,
         commentId: params.commentId,
         text: params.comment,
-        tags: [],
+        tags: taggedUsers.map((user) => user._id),
+        companyUsername: companyUsername,
       }),
     onSuccess: (newComment) => {
       setError(null);
       const oldComment = comment;
-      setComment(""); // Clear input field immediately for better UX
+      setComment("");
+      setTaggedUsers([]);
+      setTaggedUser("");
+      setSearchResults([]);
+      setIsSearching(false);
+      setTagError(null);
 
       queryClient.setQueryData(["comments", postId], (oldData) => {
         // Create the comment object with all required fields
         const commentObj = {
           commentId: newComment.commentId,
           text: oldComment.trim(),
-          username: queryClient.getQueryData(["sidebarInfo"])?.username || "user",
-          profilePicture:
-            queryClient.getQueryData(["sidebarInfo"])?.profilePicture || "",
-          fullName: queryClient.getQueryData(["sidebarInfo"])?.name || "User",
+          username: companyUsername
+            ? companyUsername
+            : queryClient.getQueryData(["sidebarInfo"])?.username || "user",
+          profilePicture: companyUsername
+            ? document.getElementById("company-logo")
+            : queryClient.getQueryData(["sidebarInfo"])?.profilePicture || "",
+          fullName: companyUsername
+            ? document.getElementById("company-name")
+            : queryClient.getQueryData(["sidebarInfo"])?.name || "User",
           time: new Date().toISOString(),
           numLikes: 0,
           numCelebrates: 0,
@@ -105,11 +193,20 @@ export default function CommentSectionContainer({ username, postId }) {
           numSupports: 0,
           numFunnies: 0,
           numInsightfuls: 0,
+          tags: taggedUsers.map((user) => ({
+            userId: user._id,
+            username: user.username,
+            profilePicture: user.profilePicture,
+            name: user.name,
+            connectionDegree: user.connectionDegree,
+          })),
           numComments: 0,
           numReacts: 0,
           reaction: null,
           connectionDegree: 0,
-          headline: queryClient.getQueryData(["sidebarInfo"])?.headline || "",
+          headline: companyUsername
+            ? document.getElementById("company-industry")
+            : queryClient.getQueryData(["sidebarInfo"])?.headline || "",
           isFollowed: false,
           age: determineAge(new Date()),
         };
@@ -155,6 +252,12 @@ export default function CommentSectionContainer({ username, postId }) {
     },
     onError: (error) => {
       setError(error.message);
+      setComment("");
+      setTaggedUsers([]);
+      setTaggedUser("");
+      setSearchResults([]);
+      setIsSearching(false);
+      setTagError(null);
     },
   });
 
@@ -162,7 +265,7 @@ export default function CommentSectionContainer({ username, postId }) {
     router.push(`/u/${username}/post/${postId}`);
   };
 
-  const isPost = currentPath.includes("/post/");
+  const isPost = pathname.includes("/post/");
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -200,6 +303,16 @@ export default function CommentSectionContainer({ username, postId }) {
       isLoading={isLoading}
       isLoadingComments={isFetchingNextPage}
       postUsername={username}
+      taggedUser={taggedUser}
+      setTaggedUser={setTaggedUser}
+      taggedUsers={taggedUsers}
+      setTaggedUsers={setTaggedUsers}
+      handleTagUserClick={handleTagUserClick}
+      handleRemoveTaggedUser={handleRemoveTaggedUser}
+      handleUserSearch={handleUserSearch}
+      isSearching={isSearching}
+      searchResults={searchResults}
+      tagError={tagError}
     />
   );
 }

@@ -41,7 +41,7 @@ export default function About({company,goToCompanyPage, loading, error}){
     if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
 
     return(
-        <Container className="border-[#111] border shadow-lg">
+        <Container className="shadow-lg">
             <div className="h-max rounded-xl p-6 space-y-2">
                 <div>
                     <h1 className="text-xl font-bold">Overview</h1>

@@ -274,12 +274,20 @@ export async function reactToContent(
  * @returns {Promise<Object>} - Response data
  */
 
-export const addComment = async ({ postId, commentId, text, tags = [] }) => {
+export const addComment = async ({ postId, commentId, text, tags = [], companyUsername = null }) => {
   try {
     let url = `${apiURL}/posts/${postId}/comment`;
 
     if (commentId) {
       url += `?commentId=${commentId}`;
+    }
+    if (companyUsername) {
+      if (url.includes("?")) {
+        url += `&companyUsername=${companyUsername}`;
+      }
+      else {
+        url += `?companyUsername=${companyUsername}`;
+      }
     }
 
     const body = {
@@ -487,5 +495,8 @@ export const getTags = async (text) => {
     }
   );
   if (!response.ok) throw new Error("Failed to fetch tags");
+  if (response.status === 204) {
+    return [];
+  }
   return await response.json();
 }

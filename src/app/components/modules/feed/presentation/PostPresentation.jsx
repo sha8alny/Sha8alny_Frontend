@@ -58,6 +58,8 @@ import SharePresentation from "../presentation/SharePresentation";
 import { usePathname } from "next/navigation";
 import ReportPresentation from "./ReportPresentation";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
+import Link from "next/link";
+import { Badge } from "@/app/components/ui/Badge";
 
 export default function PostPresentation({
   commentSectionOpen,
@@ -124,6 +126,7 @@ export default function PostPresentation({
             <div className="flex items-center gap-2 px-4 text-sm text-muted">
               <Avatar className="size-6 cursor-pointer">
                 <AvatarImage
+                  className="object-cover"
                   src={post?.isShared?.profilePicture}
                   alt={post?.isShared?.fullName}
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
@@ -134,7 +137,7 @@ export default function PostPresentation({
               </Avatar>
               <span>
                 <span
-                  className="hover:underline cursor-pointer"
+                  className="hover:underline cursor-pointer truncate"
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
                 >
                   {post?.isShared?.fullName}
@@ -155,11 +158,15 @@ export default function PostPresentation({
             className="cursor-pointer size-10"
             onClick={() =>
               post?.isCompany
-                ? navigateTo(`company-user-admin/${post?.username}/about-page`)
+                ? navigateTo(`company/${post?.username}`)
                 : navigateTo(`/u/${post?.username}`)
             }
           >
-            <AvatarImage src={post?.profilePicture} alt={post?.fullName} />
+            <AvatarImage
+              className="object-cover"
+              src={post?.profilePicture}
+              alt={post?.fullName}
+            />
             <AvatarFallback>
               {post?.fullName?.substring(0, 2).toUpperCase()}
             </AvatarFallback>
@@ -168,12 +175,10 @@ export default function PostPresentation({
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <div
-                className="font-semibold flex items-center gap-2 cursor-pointer hover:underline"
+                className="font-semibold flex items-center truncate gap-2 cursor-pointer hover:underline"
                 onClick={() =>
                   post?.isCompany
-                    ? navigateTo(
-                        `company-user-admin/${post?.username}/about-page`
-                      )
+                    ? navigateTo(`company/${post?.username}/user/home`)
                     : navigateTo(`/u/${post?.username}`)
                 }
               >
@@ -195,7 +200,10 @@ export default function PostPresentation({
                 post?.connectionDegree !== -1 && (
                   <button
                     disabled={isFollowing}
-                    onClick={() => onFollow(post?.username)}
+                    onClick={() => {
+                      console.log("Following");
+                      onFollow(post?.username);
+                    }}
                     className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
                       isFollowing
                         ? "bg-secondary/80 text-background dark:text-primary cursor-default"
@@ -454,6 +462,32 @@ export default function PostPresentation({
               ))}
             </span>
           )}
+          {post?.tags &&
+            post?.tags.length > 0 &&
+            post?.tags.map((user, index) => (
+              <Badge
+                key={user?.userId}
+                className="flex items-center gap-1 px-2 py-1 bg-secondary/10 rounded-2xl text-primary font-semibold"
+                data-testid={`tagged-user-${user?.userId}`}
+              >
+                <Avatar className="h-5 w-5 mr-1">
+                  <AvatarImage
+                    className="object-cover"
+                    src={user?.profilePicture}
+                    alt={user?.name}
+                  />
+                  <AvatarFallback>
+                    {user?.name?.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Link
+                  href={`/u/${user?.username}`}
+                  className="hover:underline cursor-pointer"
+                >
+                  {user?.name}
+                </Link>
+              </Badge>
+            ))}
         </CardContent>
 
         <CardFooter className="flex justify-between border-t">

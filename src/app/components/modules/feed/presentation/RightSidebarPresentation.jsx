@@ -3,7 +3,7 @@ import SuggestedUsersContainer from "../../profile/container/SuggestedUsersConta
 import TrendingTopicsContainer from "../container/TrendingTopicsContainer";
 import { fetchPeopleYouMayKnow } from "@/app/services/connectionManagement";
 
-function RightSidebarPresentation({ navigateTo, helperFunction }) {
+function RightSidebarPresentation({ navigateTo }) {
   return (
     <aside
       className="w-full flex flex-col gap-2"
@@ -13,7 +13,6 @@ function RightSidebarPresentation({ navigateTo, helperFunction }) {
       <SuggestedUsersContainer
         title="People You May Know"
         fetchFunction={fetchPeopleYouMayKnow}
-        helperFunction={helperFunction}
         navigateTo={navigateTo}
       />
       <Footer />
