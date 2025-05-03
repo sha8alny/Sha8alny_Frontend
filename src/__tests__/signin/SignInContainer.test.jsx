@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import SignInContainer from '@/app/components/modules/signin/container/SignInContainer';
+import SignInContainer from '@/app/components/modules/signin/container/signinContainer';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { useToast } from "../../app/context/ToastContext";

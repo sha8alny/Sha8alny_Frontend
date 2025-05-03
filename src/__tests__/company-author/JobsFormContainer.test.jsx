@@ -1,305 +1,285 @@
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
-import JobsFormContainer from "../../app/components/modules/company-author/container/JobsFormContainer";
-import JobsForm from "../../app/components/modules/company-author/presentation/JobsForm";
-import "@testing-library/jest-dom";
-import { useMutation } from "@tanstack/react-query";
-import { postedJobs, deleteJob, editJob } from "../../app/services/companyManagement";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import JobsFormContainer from "../../app/components/modules/company-jobs/container/JobsFormContainer";
+import {
+  postedJobs,
+  deletedJobs,
+  deleteJob,
+  editJob,
+  restoreJob,
+} from "../../app/services/companyManagement";
 import { useToast } from "@/app/context/ToastContext";
+import "@testing-library/jest-dom";
 
-// Mocking the service and react-query hook
-jest.mock("../../app/services/companyManagement", () => ({
-  postedJobs: jest.fn(),
-  deleteJob:jest.fn(),
-  editJob:jest.fn(),
-}));
+jest.mock(".../../../app/services/companyManagement");
+jest.mock("../../app/context/ToastContext");
 
-jest.mock("@tanstack/react-query", () => ({
-  useMutation: jest.fn(),
-}));
-
-jest.mock("../../app/context/ToastContext", () => ({
-  useToast: jest.fn(),
-}));
-const getJobsMock = jest.fn();
+const mockPostedJobs = [
+  { id: "1", title: "Software Engineer" },
+  { id: "2", title: "Frontend Developer" },
+  { id: "3", title: "Backend Developer" },
+  { id: "4", title: "Full Stack Developer" },
+  { id: "5", title: "Data Scientist" },
+  { id: "6", title: "DevOps Engineer" },
+  { id: "7", title: "UX/UI Designer" },
+  { id: "8", title: "Product Manager" },
+  { id: "9", title: "QA Engineer" },
+  { id: "10", title: "System Administrator" },
+];
+const mockDeletedJobs = [
+  { id: "3", title: "Deleted Job 1" },
+  { id: "4", title: "Deleted Job 2" },
+  { id: "5", title: "Deleted Job 3" },
+  { id: "6", title: "Deleted Job 4" },
+  { id: "7", title: "Deleted Job 5" },
+  { id: "8", title: "Deleted Job 6" },
+  { id: "9", title: "Deleted Job 7" },
+  { id: "10", title: "Deleted Job 8" },
+];
 
 describe("JobsFormContainer", () => {
-  const mockJobs = [
-    {
-      job_id: "1",
-      title: "Software Engineer",
-      location: "New York",
-      industry: "Tech",
-      employmentType: "Full-Time",
-      salary: "100k",
-      experience: "2-5 years",
-      workLocation: "On-site",
-      numViews: 200,
-      numApplications: 10,
-      time: "2023-02-01T00:00:00Z",
-    },
-    {
-      job_id: "2",
-      title: "Data Scientist",
-      location: "San Francisco",
-      industry: "Tech",
-      employmentType: "Full-Time",
-      salary: "120k",
-      experience: "3-6 years",
-      workLocation: "Hybrid",
-      numViews: 150,
-      numApplications: 8,
-      time: "2023-02-01T00:00:00Z",
-    },
-    {
-      job_id: "3",
-      title: "Backend Developer",
-      location: "San Francisco",
-      industry: "Tech",
-      employmentType: "Full-Time",
-      salary: "120k",
-      experience: "3-6 years",
-      workLocation: "Hybrid",
-      numViews: 150,
-      numApplications: 8,
-      time: "2023-02-01T00:00:00Z",
-    },
-    {
-      job_id: "4",
-      title: "Cybersecurity Analyst",
-      location: "San Francisco",
-      industry: "Tech",
-      employmentType: "Full-Time",
-      salary: "120k",
-      experience: "3-6 years",
-      workLocation: "Hybrid",
-      numViews: 150,
-      numApplications: 8,
-      time: "2023-02-01T00:00:00Z",
-    },
-    {
-      job_id: "5",
-      title: "Technical Writer",
-      location: "San Francisco",
-      industry: "Tech",
-      employmentType: "Full-Time",
-      salary: "120k",
-      experience: "3-6 years",
-      workLocation: "Hybrid",
-      numViews: 150,
-      numApplications: 8,
-      time: "2023-02-01T00:00:00Z",
-    },
-    {
-      job_id: "6",
-      title: "FrontEnd Developer",
-      location: "San Francisco",
-      industry: "Tech",
-      employmentType: "Full-Time",
-      salary: "120k",
-      experience: "3-6 years",
-      workLocation: "Hybrid",
-      numViews: 150,
-      numApplications: 8,
-      time: "2023-02-01T00:00:00Z",
-    },
-  ];
-  const updatedJob = {
-    title: 'Updated Title',
-    description: 'Updated Description',
-    // Add any updated fields here
-  };
-  let mutateMock;
+  let toastMock;
+  let queryClient;
+
 
   beforeEach(() => {
     jest.clearAllMocks();
+    toastMock = jest.fn();
+    useToast.mockReturnValue(toastMock);
 
-    // Mocking the mutation function
-    mutateMock = jest.fn();
-    useMutation.mockReturnValue({
-      mutate: mutateMock,
-      isPending: false,
+    postedJobs.mockImplementation(({ page }) => {
+      if (page === 1) {
+        return Promise.resolve(mockPostedJobs.slice(0, 5)); // First 5 jobs
+      } else if (page === 2) {
+        return Promise.resolve(mockPostedJobs.slice(5, 10)); // Next 5 jobs
+      }
+      return Promise.resolve([]);
     });
-    useToast.mockReturnValue(jest.fn());
+    deletedJobs.mockResolvedValue(mockDeletedJobs);
+    deleteJob.mockResolvedValue(true);
+    editJob.mockResolvedValue(true);
+    restoreJob.mockResolvedValue(true);
+    queryClient = new QueryClient();
   });
 
-  test("renders loading state initially", async () => {
-    useMutation.mockReturnValueOnce({
-        mutate: jest.fn(),
-        isPending: true,
-      });
+  const renderWithQueryClient = (ui) => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        {ui}
+      </QueryClientProvider>
+    );
+  };
+  test("renders active jobs and handles pagination", async () => {
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
 
-    render(<JobsFormContainer />);
-
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
-  });
-
-  test("fetches and displays jobs correctly", async () => {
-    mutateMock.mockImplementation((_, { onSuccess }) => onSuccess(mockJobs));
-
-    await act(async () => {
-      render(<JobsFormContainer />);
-    });
-
-    // Ensure jobs are displayed
-    expect(screen.getByText("Software Engineer")).toBeInTheDocument();
-    expect(screen.getByText("Data Scientist")).toBeInTheDocument();
-
-    // Ensure 'No jobs posted yet' is NOT displayed
-    expect(screen.queryByText(/No jobs posted yet/i)).not.toBeInTheDocument();
-  });
-
-  test("shows 'No jobs posted yet' if no jobs are returned", async () => {
-    mutateMock.mockImplementation((_, { onSuccess }) => onSuccess([]));
-
-    await act(async () => {
-      render(<JobsFormContainer />);
-    });
-
-    expect(screen.getByText(/No jobs posted yet/i)).toBeInTheDocument();
-  });
-
-  test("navigates to 'Post New Job' when the button is clicked", async () => {
-    mutateMock.mockImplementation((_, { onSuccess }) => onSuccess(mockJobs));
-
-    await act(async () => {
-      render(<JobsFormContainer />);
-    });
-
-    // Click "Post new job" button
-    fireEvent.click(screen.getByRole("button", { name: /post new job/i }));
-
-    // Verify navigation to PostNewJobContainer
+    // Wait for active jobs to load
     await waitFor(() => {
-      expect(screen.getByText(/Post New Job/i)).toBeInTheDocument();
+      expect(screen.getByText("Software Engineer")).toBeInTheDocument();
+      expect(screen.getByText("Frontend Developer")).toBeInTheDocument();
     });
+
+    // Simulate clicking the next page button
+    const nextButton = screen.getByTestId("next-page");
+    fireEvent.click(nextButton);
+
+    // Verify that the next page of jobs is fetched
+    await waitFor(() => {
+      expect(postedJobs).toHaveBeenCalledWith({ page: 2, companyUsername: "testCompany" });
+    });
+    });
+
+  test("toggles between active and deleted jobs", async () => {
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+
+    // Wait for active jobs to load
+    await waitFor(() => {
+      expect(screen.getByText("Software Engineer")).toBeInTheDocument();
+    });
+
+    // Simulate toggling to show deleted jobs
+    const toggleDeletedJobsButton = screen.getByText(/Deleted Jobs/i);
+    fireEvent.click(toggleDeletedJobsButton);
+
+    // Wait for deleted jobs to load
+    await waitFor(() => {
+      expect(screen.getByText("Deleted Job 1")).toBeInTheDocument();
+      expect(screen.getByText("Deleted Job 2")).toBeInTheDocument();
+    });
+
+    // Verify that the deleted jobs API was called
+    expect(deletedJobs).toHaveBeenCalledWith({ page: 1, companyUsername: "testCompany" });
+  });
+
+  test("handles restoring a deleted job", async () => {
+    restoreJob.mockResolvedValueOnce(true); // Mock restoreJob to resolve successfully
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+
+    // Simulate toggling to show deleted jobs
+    const toggleDeletedJobsButton = screen.getByText(/Deleted Jobs/i);
+    fireEvent.click(toggleDeletedJobsButton);
+
+    // Wait for deleted jobs to load
+    await waitFor(() => {
+      expect(screen.getByText("Deleted Job 1")).toBeInTheDocument();
+    });
+
+    // Simulate clicking the restore button for a deleted job
+    const restoreButton = screen.getAllByText(/Restore/i);
+    fireEvent.click(restoreButton[0]); 
+        // If a confirmation dialog appears:
+    const confirmButton = await screen.findAllByTestId("restore-job");
+    fireEvent.click(confirmButton[0]); // Simulate clicking the confirm button
+    // Verify that the restoreJob function was called
+    await waitFor(() => {
+      expect(restoreJob).toHaveBeenCalledWith({ companyUsername: "testCompany", jobId: undefined });
+      expect(toastMock).toHaveBeenCalledWith("Job restored successfully!");
+    });
+      
+
+  });
+
+  test("handles deleting a job", async () => {
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+
+    // Wait for active jobs to load
+    await waitFor(() => {
+      expect(screen.getByText("Software Engineer")).toBeInTheDocument();
+    });
+
+    // Simulate clicking the delete button for a job
+    const deleteButton = screen.getAllByText(/Delete/i); 
+    fireEvent.click(deleteButton[0]); 
+
   });
 
   test("navigates to 'Job Applicants' when the button is clicked", async () => {
-    mutateMock.mockImplementation((_, { onSuccess }) => onSuccess(mockJobs));
-  
-    await act(async () => {
-      render(<JobsFormContainer />);
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+
+    // Wait for jobs to load
+    await waitFor(() => {
+      expect(screen.getByText("Software Engineer")).toBeInTheDocument();
     });
-  
-    // Ensure jobs are displayed
-    expect(screen.getByText("Software Engineer")).toBeInTheDocument();
-  
-    // Click "Show Applicants" for the first job
-    fireEvent.click(screen.getAllByRole("button", { name: /show applicants/i })[0]);
-  
+
+    // Simulate clicking "Show Applicants" for the first job
+    const showApplicantsButton = screen.getAllByText(/Show Applicants/i);
+    fireEvent.click(showApplicantsButton[0]); // Assuming the first job is clicked
   });
+  it("handles deleting a job successfully", async () => {
+    deleteJob.mockResolvedValueOnce(true); // Mock deleteJob to resolve successfully
+  
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+  
+    // Wait for the delete button to appear
+    const deleteButton = await screen.findAllByTestId("DeleteJob"); // Ensure the test ID matches the component
+    fireEvent.click(deleteButton[0]); // Simulate clicking the first delete button
+    // If a confirmation dialog appears:
+    const confirmButton = await screen.findAllByTestId("confirm-delete"); // or whatever the confirm button says
+    fireEvent.click(confirmButton[0]); // Simulate clicking the confirm button
+  
+    // Wait for the toast message
+    await waitFor(() => {
+      expect(deleteJob).toHaveBeenCalledWith({ companyUsername: "testCompany", jobId: undefined });
+      expect(toastMock).toHaveBeenCalledWith("Job deleted successfully!");
+    });
+  });
+  it("handles editing a job successfully", async () => {
+    editJob.mockResolvedValueOnce(true);
+
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+
+    // Simulate updating the job data
+    await waitFor(() => {
+    const editButton = screen.getAllByTestId("EditJob"); // Replace with the actual test ID or query for the edit button
+    fireEvent.click(editButton[0]); // Simulate clicking the first edit button
+    }
+    );
+  // Fill out the edit form fields
+  fireEvent.change(screen.getAllByTestId("edit-title")[0], { target: { value: "Updated Job Title" } });
+
+  // Simulate clicking the save button
+  const saveButton = screen.getAllByTestId("save-edit");
+  fireEvent.click(saveButton[0]); // Simulate clicking the first save button
+
+  // Wait for the toast message
+  await waitFor(() => {
+    expect(editJob).toHaveBeenCalledWith({
+      companyUsername: "testCompany",
+      jobId: undefined, // Ensure the job ID is passed correctly
+      jobData: {
+        title: "Updated Job Title",
+      },
+    });
+      expect(toastMock).toHaveBeenCalledWith("Job updated successfully!");
+    });
+
+  });
+
   test("handles pagination correctly", async () => {
-    mutateMock.mockImplementation((_, { onSuccess }) => onSuccess(mockJobs.slice(0, 3))); // Page 1
-  
-    const onNextPage = jest.fn();
-    const onPrevPage = jest.fn();
-  
-    // First render with page 1 and hasMore true
-    await act(async () => {
-      render(
-        <JobsFormContainer />
-      );
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+
+    // Wait for jobs to load
+    await waitFor(() => {
+      expect(screen.getByText("Software Engineer")).toBeInTheDocument();
     });
-  
-    // Simulate clicking next page
-    const nextButton = screen.getByRole("button", { name: /next/i }); 
+
+    // Simulate clicking the next page button
+    const nextButton = screen.getByTestId("next-page");
     fireEvent.click(nextButton);
-  
-    expect(onNextPage).toHaveBeenCalledTimes(0); 
-  
-    // Simulate clicking previous page
-    const prevButton = screen.getByRole("button", { name: /previous/i });
+
+    // Verify that the next page of jobs is fetched
+    expect(postedJobs).toHaveBeenCalledWith({ page: 2, companyUsername: "testCompany" });
+
+    await waitFor(() => {
+      expect(screen.getByText("DevOps Engineer")).toBeInTheDocument();
+    });
+    // Simulate clicking the previous page button
+    const prevButton = screen.getByTestId("prev-page");
     fireEvent.click(prevButton);
-  
-    // Verify the back button is disabled on page 1
-    expect(prevButton).toBeDisabled();
-  
-    // Check if page label is correct
-    expect(screen.getByText("Page 1")).toBeInTheDocument();
+
+    // Verify that the previous page of jobs is fetched
+    expect(postedJobs).toHaveBeenCalledWith({ page: 1, companyUsername: "testCompany" });
   });
-  
+  it("checks if there are more deleted jobs to fetch from inside the component", async () => {
 
-  test("logs an error when fetching jobs fails", async () => {
-    const consoleErrorMock = jest.spyOn(console, "error").mockImplementation(() => {});
-    mutateMock.mockImplementation((_, { onError }) => onError(new Error("API Error")));
-
-    await act(async () => {
-      render(<JobsFormContainer />);
-    });
-
-    expect(consoleErrorMock).toHaveBeenCalledWith("Error fetching jobs:", expect.any(Error));
-    consoleErrorMock.mockRestore();
-  }); 
+    deletedJobs.mockResolvedValueOnce(mockDeletedJobs.slice(0, 5)); // Mock the first page of deleted jobs
+    deletedJobs.mockResolvedValueOnce(mockDeletedJobs.slice(5, 10)); // Mock the second page of deleted jobs
   
- 
-  test('opens the edit job form and triggers handleEditJob on save', async () => {
-    // Mock API inside handleEditJob
-    mutateMock.mockImplementation((_, { onSuccess }) => onSuccess(mockJobs));
-    editJob.mockResolvedValue({});
+    renderWithQueryClient(<JobsFormContainer username="testCompany" />);
   
-    const jobId = '1';
-    const username = 'testCompany';
+    // Simulate toggling to show deleted jobs
+    const toggleDeletedJobsButton = screen.getByText(/Deleted Jobs/i);
+    fireEvent.click(toggleDeletedJobsButton);
   
-    render(<JobsFormContainer username={username}  />);
-  
-    // Wait for the job cards to load
-    const editIcons = await screen.findAllByTestId('EditJob');
-    fireEvent.click(editIcons[0]);
-  
-    // Simulate form input
-    fireEvent.change(screen.getByLabelText(/Title/i), {
-      target: { value: 'Updated Title' },
-    });
-  
-    fireEvent.change(screen.getByLabelText(/Description/i), {
-      target: { value: 'Updated Description' },
-    });
-  
-    // Click Save
-    const saveButton = screen.getByText(/Save/i);
-    fireEvent.click(saveButton);
-  
+    // Wait for deleted jobs to load
     await waitFor(() => {
-      expect(editJob).toHaveBeenCalledWith({
-        companyUsername: username,
-        jobId:undefined,
-        jobData: expect.objectContaining({
-          title: 'Updated Title',
-          description: 'Updated Description',
-        }),
-      });
-      });
-  });
-  
-  test('opens the delete confirmation dialog and triggers handleDeleteJob on confirm', async () => {
-    // Mock API inside handleDeleteJob
-    mutateMock.mockImplementation((_, { onSuccess }) => onSuccess(mockJobs));
-    deleteJob.mockResolvedValue({});
-  
-    const jobId = '1';
-    const username = 'testCompany';
-  
-    render(<JobsFormContainer username={username} />);
-  
-    // Wait for the job cards to load
-    const deleteIcons = await screen.findAllByTestId('DeleteJob');
-    fireEvent.click(deleteIcons[0]);
-  
-    // Wait for the delete confirmation dialog to show
-    const confirmDeleteButton = await screen.findByText(/Confirm Delete/i);
-  
-    // Click the "Confirm Delete" button
-    fireEvent.click(confirmDeleteButton);
-  
-    await waitFor(() => {
-      // Verify that deleteJob was called with the correct job ID
-      expect(deleteJob).toHaveBeenCalledWith({
-        jobId:undefined,  // Ensure it's the correct jobId
-        companyUsername: username,
-      });
+      expect(screen.getByText("Deleted Job 1")).toBeInTheDocument();
+      expect(screen.getByText("Deleted Job 5")).toBeInTheDocument();
     });
-  });
-  
-  
+  // Wait for the next page of deleted jobs to load
+  await waitFor(() => {
+    expect(deletedJobs).toHaveBeenCalledWith({
+      page: 2,
+      companyUsername: "testCompany",
+    });
+    // Simulate clicking the next page button
+    const nextButton = screen.getByTestId("next-page");
+    fireEvent.click(nextButton);
 
+    expect(screen.getByText("Deleted Job 6")).toBeInTheDocument();
+    expect(screen.getByText("Deleted Job 7")).toBeInTheDocument();
+  });
 });
+it("renders PostNewJobContainer when showPostJobForm is true", async () => {
+  renderWithQueryClient(<JobsFormContainer username="testCompany" />);
+
+  // Simulate setting showPostJobForm to true
+  const postJobButton = screen.getByTestId("PostNewJob"); 
+  fireEvent.click(postJobButton);
+
+  // Verify that PostNewJobContainer is rendered
+  await waitFor(() => {
+    expect(screen.getByText("Post New Job")).toBeInTheDocument(); 
+  });
+});
+});
+

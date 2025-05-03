@@ -32,7 +32,7 @@ const ResetPasswordContainer = () => {
             isResetCodeValid &&
             isConfirmPasswordValid
         );
-    }, [newPassword, resetCode, isPasswordValid, isResetCodeValid]);
+    }, [newPassword, resetCode, isPasswordValid, isResetCodeValid, isConfirmPasswordValid]);
     const validatePassword = (value) => {
         const valid = value.length >= 8;
         setIsPasswordValid(valid);

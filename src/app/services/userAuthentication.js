@@ -147,3 +147,34 @@ export const checkAdminStatus = async () => {
     return false;
   }
 };
+
+export  const checkIfDeleted = async () => {
+    const tokenStr = getValidAccessToken();
+    if (!tokenStr) return;
+    try {
+      const response = await fetch(`${apiURL}/check-deleted`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenStr}`,
+        },
+      });
+  
+      if (!response.ok) {
+        // Handle HTTP errors (like 401, 500, etc.)
+        console.error("Server returned error status");
+        return;
+      }
+  
+      const data = await response.json(); // Assume it returns { isDeleted: true | false }
+  
+      if (data.isDeleted === true) {
+        redirectToSignIn(); // redirect the user if their account is deleted
+        return null;
+      }
+    }
+    catch (error) {
+      console.error("Error checking if account is deleted:", error);
+    }
+  }
+

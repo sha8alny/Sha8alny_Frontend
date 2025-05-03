@@ -324,3 +324,16 @@ export const cancelConnectionRequest = async ({username}) => {
   }
   return true;
 }
+
+export const getConnectionMutuals = async (username) => {
+  const response = await fetchWithAuth(`${apiURL}/users/mutual/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch connection mutuals");
+  }
+  return response.json();
+}
