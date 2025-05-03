@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -18,14 +17,14 @@ import NotificationPresentation from "../presentation/NotificationPresentation";
  * @module notification
  * @component NotificationContainer
  * Container component for notifications that manages state and data fetching.
- * 
+ *
  * This component:
  * - Manages active tab state (all or unread notifications)
  * - Fetches notifications data with infinite scrolling
  * - Handles marking notifications as read
  * - Provides navigation links based on notification type
- * 
- * 
+ *
+ *
  * @returns {JSX.Element} Rendered NotificationPresentation component with all necessary props
  */
 function NotificationContainer() {
@@ -99,7 +98,9 @@ function NotificationContainer() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["sidebarInfo", "notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: ["sidebarInfo", "notifications"],
+      });
     },
     onError: (err, variables, context) => {
       if (context?.previousData) {
@@ -141,7 +142,7 @@ function NotificationContainer() {
           notification.data?.postId || ""
         }`;
       case "Message":
-        return `/messages/?${notification.data?.fromUsername || ""}`;
+        return `/messages/?username=${notification.data?.fromUsername || ""}`;
       case "ConnectionRequest":
         return `/network/pending`;
       case "FollowRequest":
@@ -152,7 +153,6 @@ function NotificationContainer() {
         return "#";
     }
   };
-
   const allNotifications =
     data?.pages[data.pages.length - 1]?.notifications || [];
 
