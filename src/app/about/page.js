@@ -167,7 +167,7 @@ export default function AboutPage() {
                     <p className="text-secondary">Developer</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    developed things here
+                    Designed and implemented the company creation form, landing page, and complete company page with admin and user views, including all features.
                   </p>
                 </div>
                 <div className="flex flex-col items-center space-y-4 text-center">
@@ -252,7 +252,7 @@ export default function AboutPage() {
                     <p className="text-secondary">Developer</p>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    developed things here
+                    Implemented full authentication (sign-up, email verification, password reset, sign-in), network features (connect, accept/reject/remove), company job management (post/view jobs, manage applicants), and admin tools for inappropriate content.
                   </p>
                 </div>
               </div>
