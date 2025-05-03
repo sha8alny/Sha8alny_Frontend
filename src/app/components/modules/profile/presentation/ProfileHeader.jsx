@@ -242,7 +242,7 @@ export default function ProfileHeader({
                         </>
                       )}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
+                    {!userProfile.isBlocked && <DropdownMenuItem
                       className="hover:bg-primary/20 cursor-pointer"
                       data-testid={`connection-message-option-${userProfile?.username}`}
                       disabled={isSendingMessageRequest}
@@ -263,7 +263,7 @@ export default function ProfileHeader({
                       ) : (
                         <span>Message</span>
                       )}
-                    </DropdownMenuItem>
+                    </DropdownMenuItem>}
                     <DropdownMenuItem
                       className="hover:bg-primary/20 cursor-pointer"
                       data-testid={`connection-report-option-${userProfile?.username}`}
@@ -293,11 +293,22 @@ export default function ProfileHeader({
                       data-testid={`connection-block-option-${userProfile?.username}`}
                       onClick={() => setBlockUserModalOpen(true)}
                     >
-                      <PersonAddAlt1
-                        className="mr-2"
-                        sx={{ fontSize: "1rem" }}
-                      />
-                      <span>Block</span>
+                      {!userProfile?.isBlocked ? (
+                        <PersonRemoveAlt1
+                          data-testid={`connection-block-icon-${userProfile?.username}`}
+                          className="mr-2"
+                          sx={{ fontSize: "1rem" }}
+                        />
+                      ) : (
+                        <PersonAddAlt1
+                          data-testid={`connection-unblock-icon-${userProfile?.username}`}
+                          className="mr-2"
+                          sx={{ fontSize: "1rem" }}
+                        />
+                      )}
+                      <span>
+                        {userProfile?.isBlocked ? "Unblock" : "Block"}
+                      </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -319,26 +330,34 @@ export default function ProfileHeader({
               <p className="text-muted text-sm" data-testid="profile-location">
                 {userProfile?.location}
               </p>
-              <h6 className="text-muted">•</h6>
+              {!userProfile?.isBlocked && (<h6 className="text-muted">•</h6>)}
               <div data-testid="profile-contact-info">
-                <ContactInfoPresentation
-                  userInfo={userProfile}
-                  onCopy={onCopy}
-                  onEmail={onEmail}
-                  copied={copied}
-                />
+                {!userProfile?.isBlocked && (
+                  <ContactInfoPresentation
+                    userInfo={userProfile}
+                    onCopy={onCopy}
+                    onEmail={onEmail}
+                    copied={copied}
+                  />
+                )}
               </div>
             </div>
             <div
               className="w-full md:justify-between flex md:flex-row flex-col"
               data-testid="profile-connections"
             >
-              <Connections userInfo={userProfile} />
+              <div>
+                {!userProfile?.isBlocked && (
+                  <Connections userInfo={userProfile} />
+                )}
+              </div>
               <div
                 className="flex flex-wrap mt-4 md:mt-0 md:ml-auto md:self-end"
                 data-testid="profile-mod-header"
               >
-                <ModHeader userInfo={userProfile} />
+                {!userProfile?.isBlocked && (
+                  <ModHeader userInfo={userProfile} />
+                )}
               </div>
             </div>
           </div>
@@ -395,17 +414,31 @@ export default function ProfileHeader({
             onConfirmDelete={onBlock}
             isLoading={isBlocking}
             isError={isBlockingError}
-            error="Failed to block user"
+            error={
+              userProfile?.isBlocked
+                ? "Failed to unblock user."
+                : "Failed to block user."
+            }
             onOpenChange={setBlockUserModalOpen}
             itemType="User"
-            loadingText="Blocking user..."
+            loadingText={
+              userProfile?.isBlocked ? "Unblocking user..." : "Blocking user..."
+            }
             errorTitle="Error"
-            errorMessage="Failed to block user"
-            confirmTitle={`Block ${userProfile?.name}`}
-            confirmMessage="Are you sure you want to block this user?"
-            confirmButtonText="Block"
+            errorMessage={
+              userProfile?.isBlocked
+                ? "Failed to unblock user."
+                : "Failed to block user."
+            }
+            confirmTitle={`${userProfile.isBlocked ? "Unblock" : "Block"} ${userProfile?.name}`}
+            confirmMessage={
+              userProfile?.isBlocked
+                ? "Are you sure you want to unblock this user?"
+                : "Are you sure you want to block this user?"
+            }
+            confirmButtonText={userProfile?.isBlocked ? "Unblock" : "Block"}
             cancelButtonText="Cancel"
-            Icon={BlockOutlined}
+            Icon={userProfile?.isBlocked ? PersonAddAlt1 : BlockOutlined}
           />
         }
       />

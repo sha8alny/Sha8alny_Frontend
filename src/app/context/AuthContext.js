@@ -7,7 +7,22 @@ import { redirectToSignIn, refreshAccessToken, getValidAccessToken, getValidRefr
 import { checkAdminStatus } from "../services/userAuthentication";
 
 // Define public paths that don't require authentication
-const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/verify-email', '/error', '/about', '/privacy-policy', '/cookie-policy', '/terms', '/home'];
+const PUBLIC_PATHS = [
+  "/login",
+  "/signin",
+  "/signup",
+  "/register",
+  "/forget-password",
+  "/reset-password",
+  "/verify-email",
+  "/error",
+  "/about",
+  "/privacy-policy",
+  "/cookie-policy",
+  "/terms",
+  '/user-agreement',
+  'moodrnfr',
+, '/home'];
 
 // Define admin paths that require admin authorization
 const ADMIN_PATHS = ['/admin'];
@@ -30,7 +45,6 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = useCallback(async () => {
     if (!pathname) return;
-    
 
     // Skip auth check for public paths
     if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
@@ -39,8 +53,8 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    const accessToken = getValidAccessToken();
-    const refreshToken = getValidRefreshToken();
+    const accessToken = sessionStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
     const isProfileComplete = localStorage.getItem("isProfileComplete");
         // Special case for root "/"
     if (pathname === "/") {
@@ -102,8 +116,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuth();
-    checkIfDeleted()
-  }, [checkAuth, checkIfDeleted]);
+  }, [checkAuth]);
 
   const getRedirectPath = useCallback(() => {
     return sessionStorage.getItem('redirectPath') || '/';

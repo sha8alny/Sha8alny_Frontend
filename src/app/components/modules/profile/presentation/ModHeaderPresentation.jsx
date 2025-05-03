@@ -27,14 +27,25 @@ export default function ModHeaderPresentation({
   handleResumeDownload,
   isConnecting,
   isHandlingRequest,
-  connectionStatus
+  connectionStatus,
 }) {
   return (
     <>
+      {isMyProfile && (
+        <>
+          {userInfo?.resume && (
+            <ButtonProfile
+              text="Download Resume"
+              onClick={handleResumeDownload}
+              testId="download-resume-button"
+            />
+          )}
+        </>
+      )}
       {isMyProfile ? (
         <DialogMod
           useRegularButton
-          buttonClass="bg-secondary text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
+          buttonClass="bg-secondary ml-2 text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
           className="min-w-[60vh]"
           buttonData={"Edit Profile"}
           testId="edit-profile-button"
@@ -551,7 +562,10 @@ export const ModifyProfilePresentation = ({
 
                 {/* Profile Info */}
                 <div className="pt-20 pb-6 px-6">
-                  <h2 className="text-left text-2xl font-bold" data-testid="preview-name">
+                  <h2
+                    className="text-left text-2xl font-bold"
+                    data-testid="preview-name"
+                  >
                     {name || "Your Name"}
                   </h2>
                   <div>
