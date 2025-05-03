@@ -203,6 +203,26 @@ export const getFollowers = async (
   return data;
 }
 
+export const getCompanyFollowers = async (page, username) => {
+  const pageSize = 9;
+  const response = await fetchWithAuth( `${apiURL}/followers/${page}/${pageSize}?username=${encodeURIComponent(username)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch followers");
+  }
+  if(response.status === 204) {
+    return [];
+  }
+  const data = await response.json();
+  return data;
+}
+
 export const getFollowing = async (
   name,
   industry,
