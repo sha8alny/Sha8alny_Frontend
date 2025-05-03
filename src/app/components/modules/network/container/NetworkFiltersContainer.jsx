@@ -29,6 +29,8 @@ const NetworkFilterContainer = ({activeTab}) => {
   }
     const shouldShowConnectionDegree =
     activeTab === "followers&followings" || activeTab === "pending";
+    const showFirstDegree = 
+      activeTab === "followers&followings";
   return (
     <NetworkFilter
         filters={filters}
@@ -40,6 +42,7 @@ const NetworkFilterContainer = ({activeTab}) => {
         setTempLocation={setTempLocation}
         shouldShowConnectionDegree={shouldShowConnectionDegree}
         updateFilter={updateFilter}
+        showFirstDegree={showFirstDegree}
       />
     
 

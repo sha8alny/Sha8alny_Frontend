@@ -14,6 +14,7 @@ const NetworkFilters = ({
     setTempLocation,
     shouldShowConnectionDegree,
     updateFilter,
+    showFirstDegree,
   }) => (
     <div className="bg-foreground p-4 rounded-lg shadow border h-fit w-full top-20">
       <div className="flex items-center gap-2 mb-4">
@@ -96,7 +97,9 @@ const NetworkFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={0} data-testid="user-connection-all">All</SelectItem>
+              {showFirstDegree && (
               <SelectItem value={1} data-testid="user-connection-1st">1st Degree</SelectItem>
+              )}
               <SelectItem value={2} data-testid="user-connection-2nd">2nd Degree</SelectItem>
               <SelectItem value={3} data-testid="user-connection-3rd">3rd Degree</SelectItem>
             </SelectContent>

@@ -222,7 +222,7 @@ const JobsForm = ({
                       {" "}
                       views:
                       <p className="text-text text-semibold text-sm text-center font-bold">
-                        {job.views|| job.numImpressions}{" "}
+                        {job.views}{" "}
                       </p>
                     </span>
                   </div>
