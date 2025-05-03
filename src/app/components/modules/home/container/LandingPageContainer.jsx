@@ -5,10 +5,13 @@ import { signInWithPopup } from "firebase/auth";
 import { handleGoogleSignIn } from "../../../../services/userManagement";
 import { auth, provider } from "@/firebase/firebase";
 import { useToast } from "@/app/context/ToastContext";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function LandingPageContainer(){
     const router = useRouter();
     const toast = useToast();
+    const Auth = useAuth();
+    const isCompleteProfile = localStorage.getItem("isProfileComplete");
 
     const goToSignIn =()=>{
         router.push(`/signin`);
