@@ -55,7 +55,7 @@ export default function ModHeader({ userInfo }) {
   });
 
   const handleClick = (action = "DECLINE") => {
-    switch (userInfo?.connectionStatus) {
+    switch (connectionStatus) {
       case "connected":
         router.push(`/messages?username=${userInfo.username}`);
         break;
@@ -79,9 +79,10 @@ export default function ModHeader({ userInfo }) {
       isMyProfile={isMyProfile}
       handleClick={handleClick}
       handleResumeDownload={handleResumeDownload}
-      userInfo={{ ...userInfo, connectionStatus: connectionStatus }}
+      userInfo={userInfo}
       isConnecting={isConnecting}
       isHandlingRequest={isHandlingRequest}
+      connectionStatus={connectionStatus}
     />
   );
 }

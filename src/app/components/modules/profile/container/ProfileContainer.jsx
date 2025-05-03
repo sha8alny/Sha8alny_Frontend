@@ -24,7 +24,7 @@ import {
   removeConnection,
   unFollowUser,
 } from "@/app/services/connectionManagement";
-import { report } from "@/app/services/privacy";
+import { blockUser, report, unblockUser } from "@/app/services/privacy";
 
 /**
  * @namespace profile
@@ -165,6 +165,9 @@ function ProfileContent({ username }) {
     queryFn: () => fetchUserProfile(username),
     retry: 0,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnMount: "always",
+    refecthOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 
   const handleReportMutation = useMutation({
@@ -196,6 +199,7 @@ function ProfileContent({ username }) {
   const handleRemoveConnectionMutation = useMutation({
     mutationFn: () => removeConnection(userProfile?.username),
     onSuccess: () => {
+      removeConnectionModalOpen(false);
       queryClient.invalidateQueries(["userProfile", username]);
       queryClient.invalidateQueries(["connections"]);
       toast("Connection removed successfully");
@@ -208,6 +212,17 @@ function ProfileContent({ username }) {
       queryClient.invalidateQueries(["userProfile", username]);
       queryClient.invalidateQueries(["connections"]);
       toast("User blocked successfully");
+      setBlockUserModalOpen(false);
+    },
+  });
+
+  const handleUnblockMutation = useMutation({
+    mutationFn: () => unblockUser(userProfile?.username),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["userProfile", username]);
+      queryClient.invalidateQueries(["connections"]);
+      toast("User unblocked successfully");
+      setBlockUserModalOpen(false);
     },
   });
 
@@ -357,7 +372,11 @@ function ProfileContent({ username }) {
       console.error("Cannot block: username is missing or invalid.");
       return;
     }
-    handleBlockMutation.mutate(userProfile?.username);
+    if (userProfile?.isBlocked) {
+      handleUnblockMutation.mutate(userProfile?.username);
+    } else {
+      handleBlockMutation.mutate(userProfile?.username);
+    }
   };
 
   const handleFollow = () => {
@@ -428,8 +447,8 @@ function ProfileContent({ username }) {
       isReporting={handleReportMutation.isPending}
       isReportingError={handleReportMutation.isError}
       onBlock={handleBlock}
-      isBlocking={handleBlockMutation.isPending}
-      isBlockingError={handleBlockMutation.isError}
+      isBlocking={handleBlockMutation.isPending || handleUnblockMutation.isPending}
+      isBlockingError={handleBlockMutation.isError || handleUnblockMutation.isError}
       onFollow={handleFollow}
       isHandlingFollow={handleFollowMutation.isPending}
       isHandlingFollowError={handleFollowMutation.isError}

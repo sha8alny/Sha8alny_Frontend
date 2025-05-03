@@ -46,6 +46,7 @@ import {
   IosShare,
   Send,
   CommentOutlined,
+  Edit,
 } from "@mui/icons-material";
 import React from "react";
 import {
@@ -67,6 +68,9 @@ import ReportPresentation from "./ReportPresentation";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 import Link from "next/link";
 import { Badge } from "@/app/components/ui/Badge";
+import ReactionsContainer from "../container/ReactionsContainer";
+import SendMessageContainer from "../container/SendMessageContainer";
+import EditPostPresentation from "./EditPostPresentation";
 
 export default function PostPresentation({
   commentSectionOpen,
@@ -124,7 +128,27 @@ export default function PostPresentation({
   setImageLoading,
   reactAnim,
   handleAnimEnd,
-  topReacts,
+  allReactions,
+  numReacts,
+  editModalOpen,
+  setEditModalOpen,
+  onEdit,
+  postText,
+  setPostText,
+  postTags,
+  setPostTags,
+  postKeywords,
+  setPostKeywords,
+  postMedia,
+  setPostMedia,
+  postPhotos,
+  setPostPhotos,
+  postVideo,
+  setPostVideo,
+  postDocument,
+  setPostDocument,
+  isEditing,
+  errorEditing,
 }) {
   return (
     <>
@@ -200,8 +224,8 @@ export default function PostPresentation({
               </div>
               {post?.relation && (
                 <div className="text-muted text-xs space-x-2 flex items-center">
-                  <span className="text-muted text-xs">•</span>
-                  <span className="text-muted text-xs">{post?.relation}</span>
+                  <span className="text-muted truncate text-xs">•</span>
+                  <span className="text-muted truncate text-xs">{post?.relation}</span>
                 </div>
               )}
               {post?.connectionDegree !== 0 &&
@@ -247,6 +271,12 @@ export default function PostPresentation({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {post?.connectionDegree === 0 && (
+                  <DropdownMenuItem onClick={() => setEditModalOpen(true)}>
+                    <Edit sx={{ fontSize: "1.3rem" }} />
+                    <span>Edit</span>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={onSave}>
                   {isSaved ? (
                     <>
@@ -291,7 +321,7 @@ export default function PostPresentation({
         </CardHeader>
 
         <CardContent>
-          <div className="whitespace-pre-line">
+          <div className="whitespace-pre-line break-all">
             <p className="mb-3">{post?.textElement}</p>
           </div>
           {isDocument && post?.media && post?.media.length > 0 && (
@@ -501,27 +531,20 @@ export default function PostPresentation({
         <CardFooter className="px-0 flex flex-col gap-2">
           {/* Post Impressions section */}
           <div className="flex items-center justify-between w-full px-6">
-            {post?.numReacts > 0 && (
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-1">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
-                    <Heart className="w-3.5 h-3.5 text-white" fill="white" />
-                  </div>
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">
-                    <Award className="w-3.5 h-3.5 text-white" />
-                  </div>
-                </div>
-                <span className="text-sm text-muted">{post?.numReacts}</span>
-              </div>
-            )}
-            {post?.numReacts === 0 && <div />}
+            <div>
+              {post?.numReacts > 0 && (
+                <ReactionsContainer
+                  allReactions={allReactions}
+                  numReactions={post?.numReacts}
+                  postId={post?.postId}
+                />
+              )}
+            </div>
             <div className="flex cursor-default items-center gap-4 text-sm text-muted">
               <span data-testid={`post-${post?.postId}-numcomments`}>
                 {post?.numComments} Comment(s)
               </span>
-              <span
-
-              >{post?.numShares} Repost(s)</span>
+              <span>{post?.numShares} Repost(s)</span>
             </div>
           </div>
           <section className="flex items-center justify-between border-t w-full pt-4 px-6">
@@ -615,15 +638,7 @@ export default function PostPresentation({
               <span className="text-primary/90 font-semibold">Repost</span>
             </Button>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex gap-2 items-center cursor-pointer text-primary rounded-md hover:bg-primary/10"
-              data-testid="share-button"
-            >
-              <Send sx={{ fontSize: "1.3rem" }} className="-rotate-45" />
-              <span className="text-primary/90 font-semibold">Send</span>
-            </Button>
+            <SendMessageContainer shareUrl={shareUrl} />
           </section>
         </CardFooter>
 
@@ -662,6 +677,22 @@ export default function PostPresentation({
               reportType={reportType}
               setReportType={setReportType}
               onReport={onReport}
+            />
+          }
+        />
+        <Dialog
+          open={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          buttonClass="hidden"
+          className="min-w-max"
+          AlertContent={
+            <EditPostPresentation
+              postText={postText}
+              setPostText={setPostText}
+              
+              onEdit={onEdit}
+              isEditing={isEditing}
+              errorEditing={errorEditing}
             />
           }
         />

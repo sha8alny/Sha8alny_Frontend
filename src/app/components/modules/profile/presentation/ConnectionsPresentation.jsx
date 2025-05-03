@@ -66,7 +66,7 @@ export default function ConnectionsPresentation({
           ))}
           <div
             ref={observerTarget}
-            className="h-5"
+            className="h-10" // Increased from h-5 to h-10
             data-testid="connections-observer-target"
           >
             {isFetchingNextPage && <ConnectionsSkeleton />}
@@ -77,7 +77,9 @@ export default function ConnectionsPresentation({
           className="flex flex-col items-center justify-center py-12 text-center text-muted"
           data-testid="no-connections-message"
         >
-          <p className="text-lg text-primary font-semibold mb-1">No connections found.</p>
+          <p className="text-lg text-primary font-semibold mb-1">
+            No connections found.
+          </p>
           <p className="text-sm text-muted">
             {isMyProfile
               ? "You haven't connected with anyone yet."
@@ -87,9 +89,7 @@ export default function ConnectionsPresentation({
           </p>
           {isMyProfile && (
             <button className="mt-4 bg-secondary rounded-md p-3 px-6 text-background font-semibold hover:bg-secondary/80 duration-200">
-              <Link href="/network">
-                Connect With People
-              </Link>
+              <Link href="/network">Connect With People</Link>
             </button>
           )}
         </div>

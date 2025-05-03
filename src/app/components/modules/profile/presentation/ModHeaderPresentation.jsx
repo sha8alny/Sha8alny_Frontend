@@ -27,13 +27,25 @@ export default function ModHeaderPresentation({
   handleResumeDownload,
   isConnecting,
   isHandlingRequest,
+  connectionStatus,
 }) {
   return (
     <>
+      {isMyProfile && (
+        <>
+          {userInfo?.resume && (
+            <ButtonProfile
+              text="Download Resume"
+              onClick={handleResumeDownload}
+              testId="download-resume-button"
+            />
+          )}
+        </>
+      )}
       {isMyProfile ? (
         <DialogMod
           useRegularButton
-          buttonClass="bg-secondary text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
+          buttonClass="bg-secondary ml-2 text-background text-sm rounded-md cursor-pointer py-2 px-4 font-semibold hover:opacity-90 duration-250"
           className="min-w-[60vh]"
           buttonData={"Edit Profile"}
           testId="edit-profile-button"
@@ -48,7 +60,7 @@ export default function ModHeaderPresentation({
               testId="download-resume-button"
             />
           )}
-          {userInfo?.connectionStatus === "requestReceived" && (
+          {connectionStatus === "requestReceived" && (
             <div className="flex gap-3">
               {isHandlingRequest && (
                 <ButtonProfile
@@ -80,7 +92,7 @@ export default function ModHeaderPresentation({
               )}
             </div>
           )}
-          {userInfo?.connectionStatus !== "requestReceived" && (
+          {connectionStatus !== "requestReceived" && (
             <ButtonProfile
               disabled={
                 userInfo?.connectionStatus === "pending" || isConnecting
@@ -91,9 +103,9 @@ export default function ModHeaderPresentation({
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span>Sending Request...</span>
                   </div>
-                ) : userInfo?.connectionStatus === "connected" ? (
+                ) : connectionStatus === "connected" ? (
                   "Message"
-                ) : userInfo?.connectionStatus === "pending" ? (
+                ) : connectionStatus === "pending" ? (
                   "Awaiting Response"
                 ) : (
                   "Connect"
@@ -550,7 +562,10 @@ export const ModifyProfilePresentation = ({
 
                 {/* Profile Info */}
                 <div className="pt-20 pb-6 px-6">
-                  <h2 className="text-left text-2xl font-bold" data-testid="preview-name">
+                  <h2
+                    className="text-left text-2xl font-bold"
+                    data-testid="preview-name"
+                  >
                     {name || "Your Name"}
                   </h2>
                   <div>

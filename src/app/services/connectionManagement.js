@@ -62,7 +62,6 @@ export const requestConnection = async (username, status) => {
 
 
 export const followUser = async (username) => {
-  console.log("Following user:", username);
   const response = await fetchWithAuth(`${apiURL}/follow`, {
     method: "POST",
     headers: {
@@ -171,27 +170,29 @@ export const getConnections = async (
 };
 
 
-export const getFollowers = async (page, username) => {
-  console.log("username", username)
+export const getFollowers = async (
+  name,
+  industry,
+  location,
+  connectionDegree,
+  page
+) => {
   const pageSize = 9;
-  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}?username=${username}`, {
-    method: "GET",
-  });
-  if (!response.ok) {
-    throw new Error("Failed to fetch followers");
-  }
-  if(response.status === 204) {
-    return [];
-  }
-  const data = await response.json();
-  return data;
-}
-
-export const getCompanyFollowers = async (page, username) => {
-  const pageSize = 9;
-  const response = await fetchWithAuth(`${apiURL}/followers/${page}/${pageSize}?username=${username}`, {
-    method: "GET",
-  });
+  const response = await fetchWithAuth(
+    `${apiURL}/followers/${page}/${pageSize}?name=${encodeURIComponent(
+      name
+    )}&industry=${encodeURIComponent(
+      industry || ""
+    )}&location=${encodeURIComponent(
+      location || ""
+    )}&connectionDegree=${encodeURIComponent(connectionDegree || "")}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch followers");
   }

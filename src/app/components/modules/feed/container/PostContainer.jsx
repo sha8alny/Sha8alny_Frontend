@@ -12,6 +12,7 @@ import {
   deletePost,
   reactToContent,
   repostPost,
+  editPost,
 } from "@/app/services/post";
 import { useState } from "react";
 import { Reactions } from "@/app/utils/Reactions";
@@ -24,22 +25,32 @@ import { useToast } from "@/app/context/ToastContext";
 
 export default function PostContainer({ post, singlePost = false }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(post?.reaction || false);
+  const [reactions, setReactions] = useState({
+    current: post?.reaction || false,
+    counts: {
+      Like: post?.numLikes || 0,
+      Celebrate: post?.numCelebrates || 0,
+      Love: post?.numLoves || 0,
+      Support: post?.numSupports || 0,
+      Funny: post?.numFunnies || 0,
+      Insightful: post?.numInsightfuls || 0,
+    },
+    total:
+      post?.numLikes +
+        post?.numCelebrates +
+        post?.numLoves +
+        post?.numSupports +
+        post?.numFunnies +
+        post?.numInsightfuls || 0,
+  });
   const [isSaved, setIsSaved] = useState(post?.isSaved || false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isFollowing, setIsFollowing] = useState(post?.isFollowed || false);
   const [numReposts, setNumReposts] = useState(post?.numShares || 0);
-  const [reactionCount, setReactionCount] = useState(
-    post?.numLikes +
-      post?.numCelebrates +
-      post?.numLoves +
-      post?.numSupports +
-      post?.numFunnies +
-      post?.numInsightfuls
-  );
   const [reportText, setReportText] = useState("");
   const [reportType, setReportType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,8 +60,12 @@ export default function PostContainer({ post, singlePost = false }) {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(true);
   const [reactAnim, setReactAnim] = useState(false);
+
+  // Edit post states
+  const [postText, setPostText] = useState(post?.text || "");
+
   const toast = useToast();
-  const prevReaction = useRef(isLiked);
+  const prevReaction = useRef(reactions.current);
 
   useEffect(() => {
     console.log("post?.isFollowed", post?.isFollowed);
@@ -82,6 +97,62 @@ export default function PostContainer({ post, singlePost = false }) {
     router.push(path);
   };
 
+  const handleEditMutation = useMutation({
+    mutationFn: (data) => editPost(post.postId, data),
+    onSuccess: () => {
+      // Close edit modal
+      setEditModalOpen(false);
+
+      // Update the post in the cache for all relevant queries
+      if (post?.isCompany) {
+        queryClient.setQueryData(["posts", post?.username], (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) =>
+              Array.isArray(page)
+                ? page.map((p) =>
+                    p.postId === post.postId ? { ...p, text: postText } : p
+                  )
+                : page
+            ),
+          };
+        });
+      }
+
+      // Update in main posts list
+      queryClient.setQueryData(["posts"], (oldData) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) =>
+            Array.isArray(page)
+              ? page.map((p) =>
+                  p.postId === post.postId ? { ...p, text: postText } : p
+                )
+              : page
+          ),
+        };
+      });
+
+      if (singlePost) {
+        queryClient.setQueryData(["post", post.postId], (oldData) => {
+          return { ...oldData, text: postText };
+        });
+      }
+      toast("Post updated successfully!");
+    },
+    onError: (error) => {
+      console.error("Error updating post:", error);
+      toast("Failed to update post. Please try again.", false);
+    },
+  });
+
+  const handleEdit = () => {
+    const formData = new FormData();
+    formData.append("text", postText);
+    handleEditMutation.mutate(formData);
+  };
   const handleLikeMutation = useMutation({
     mutationFn: (params) => {
       const { postId, reaction, previousReaction } = params;
@@ -89,18 +160,18 @@ export default function PostContainer({ post, singlePost = false }) {
         ? reactToContent(postId, null, null, true)
         : reactToContent(postId, null, reaction);
     },
-  });
+    onSuccess: (data, variables) => {
+      // Force refresh of UI state after successful reaction change
+      const { reaction, previousReaction } = variables;
 
-  const handleSendMessageMutation = useMutation({
-    mutationFn: (params) => {
-      const { receiverName, shareUrl } = params;
-      return messagingService.sendMessage();
-    },
-    onSuccess: () => {
-      toast("Message sent successfully.");
-    },
-    onError: () => {
-      toast("Error sending message.", false);
+      // No need to update if we're just removing a reaction (already handled in handleLike)
+      if (previousReaction === reaction) return;
+
+      // If we're changing reactions, make sure the UI fully updates
+      if (previousReaction && previousReaction !== reaction) {
+        // Force a state update to ensure the UI refreshes
+        setReactions({ ...reactions });
+      }
     },
   });
 
@@ -140,6 +211,14 @@ export default function PostContainer({ post, singlePost = false }) {
 
   const handleSaveMutation = useMutation({
     mutationFn: (postId) => savePost(postId),
+    onMutate: () => {
+      const previousSavedState = isSaved;
+      setIsSaved(true);
+      return { previousSavedState };
+    },
+    onError: (error, variables, context) => {
+      setIsSaved(context.previousSavedState);
+    },
   });
 
   const handleFollowMutation = useMutation({
@@ -261,17 +340,49 @@ export default function PostContainer({ post, singlePost = false }) {
   });
 
   const handleLike = (reaction) => {
-    const previousReaction = isLiked;
+    const previousReaction = reactions.current;
 
-    if (isLiked && isLiked === reaction) {
-      setIsLiked(false);
-      setReactionCount((prev) => prev - 1);
-    } else {
-      if (!isLiked) {
-        setReactionCount((prev) => prev + 1);
+    setReactions((prev) => {
+      // Create a copy of the current state
+      const newState = {
+        ...prev,
+        counts: { ...prev.counts },
+      };
+
+      // Case 1: Removing a reaction (unliking)
+      if (previousReaction === reaction) {
+        newState.counts[previousReaction] = Math.max(
+          0,
+          newState.counts[previousReaction] - 1
+        );
+        newState.current = false;
+        newState.total = Math.max(0, newState.total - 1);
       }
-      setIsLiked(reaction);
-    }
+      // Case 2: Changing from one reaction to another
+      else if (previousReaction && previousReaction !== reaction) {
+        // Decrement previous reaction count
+        newState.counts[previousReaction] = Math.max(
+          0,
+          newState.counts[previousReaction] - 1
+        );
+
+        // Increment new reaction count
+        newState.counts[reaction] = newState.counts[reaction] + 1;
+
+        newState.current = reaction;
+        // Total count stays the same when switching reactions
+      }
+      // Case 3: Adding a new reaction (no previous reaction)
+      else {
+        // Increment new reaction count
+        newState.counts[reaction] = newState.counts[reaction] + 1;
+
+        newState.current = reaction;
+        newState.total = newState.total + 1;
+      }
+
+      return newState;
+    });
 
     handleLikeMutation.mutate({
       postId: post.postId,
@@ -306,7 +417,6 @@ export default function PostContainer({ post, singlePost = false }) {
   };
 
   const handleSave = () => {
-    setIsSaved(true);
     handleSaveMutation.mutate(post.postId);
   };
 
@@ -377,7 +487,6 @@ export default function PostContainer({ post, singlePost = false }) {
     }
   };
 
-  // TODO : Modify the share URL for company posts
   const shareUrl = post?.isCompany
     ? `${process.env.NEXT_PUBLIC_DOMAIN_URL}/company/${post?.username}/post/${post?.postId}`
     : `${process.env.NEXT_PUBLIC_DOMAIN_URL}/u/${post?.username}/post/${post?.postId}`;
@@ -492,44 +601,72 @@ export default function PostContainer({ post, singlePost = false }) {
       setImageLoading(false);
     }, 100);
   };
+
   useEffect(() => {
-    if (isLiked && prevReaction.current !== isLiked) {
+    if (reactions.current && prevReaction.current !== reactions.current) {
       setReactAnim(true);
-      prevReaction.current = isLiked;
+      prevReaction.current = reactions.current;
     }
-  }, [isLiked]);
+  }, [reactions.current]);
 
   const handleAnimEnd = () => setReactAnim(false);
 
-  const sendPostAsMessage = () => {};
-
-  const findTopReactions = () => {
-    const reactions = [
-      { name: "Like", count: post?.numLikes },
-      { name: "Celebrate", count: post?.numCelebrates },
-      { name: "Love", count: post?.numLoves },
-      { name: "Support", count: post?.numSupports },
-      { name: "Funny", count: post?.numFunnies },
-      { name: "Insightful", count: post?.numInsightfuls },
+  const getActiveReactions = () => {
+    const reactionsList = [
+      {
+        name: "Like",
+        count: reactions.counts.Like,
+        borderColor: "border-secondary",
+      },
+      {
+        name: "Celebrate",
+        count: reactions.counts.Celebrate,
+        borderColor: "border-green-500",
+      },
+      {
+        name: "Love",
+        count: reactions.counts.Love,
+        borderColor: "border-red-500",
+      },
+      {
+        name: "Support",
+        count: reactions.counts.Support,
+        borderColor: "border-purple-400",
+      },
+      {
+        name: "Funny",
+        count: reactions.counts.Funny,
+        borderColor: "border-blue-300",
+      },
+      {
+        name: "Insightful",
+        count: reactions.counts.Insightful,
+        borderColor: "border-yellow-300",
+      },
     ];
 
-    const sortedReactions = reactions
-      .filter((reaction) => reaction.count > 0)
-      .sort((a, b) => b.count - a.count);
-
-    const topReacts = sortedReactions.slice(0, 3).map((reaction) => ({
+    const activeReactions = reactionsList.filter(
+      (reaction) => reaction.count > 0
+    );
+    const sortedReactions = [...activeReactions].sort(
+      (a, b) => b.count - a.count
+    );
+    const topReactionIcons = sortedReactions.slice(0, 3).map((reaction) => ({
       ...reaction,
       icon: Reactions[reaction.name].icon,
     }));
 
-    return topReacts;
+    return {
+      allActive: activeReactions,
+      topReactions: topReactionIcons,
+    };
   };
 
   return (
     <PostPresentation
       commentSectionOpen={commentSectionOpen}
       setCommentSectionOpen={setCommentSectionOpen}
-      isLiked={isLiked}
+      isLiked={reactions.current}
       isSaved={isSaved}
       onLike={handleLike}
       onRepost={handleRepost}
@@ -543,7 +680,7 @@ export default function PostContainer({ post, singlePost = false }) {
         age: determineAge(post?.time),
         textElement: extractLinks(post?.text).element,
         relation: convertRelation(post?.connectionDegree),
-        numReacts: reactionCount,
+        numReacts: reactions.total,
         numShares: numReposts,
       }}
       userReactions={Reactions}
@@ -591,7 +728,15 @@ export default function PostContainer({ post, singlePost = false }) {
       setImageLoading={setImageLoading}
       reactAnim={reactAnim}
       handleAnimEnd={handleAnimEnd}
-      topReacts={findTopReactions()}
+      allReactions={getActiveReactions()}
+      editModalOpen={editModalOpen}
+      setEditModalOpen={setEditModalOpen}
+      onEdit={handleEdit}
+      postText={postText}
+      setPostText={setPostText}
+      numReacts={reactions.total}
+      isEditing={handleEditMutation.isPending}
+      errorEditing={handleEditMutation.isError}
     />
   );
 }
