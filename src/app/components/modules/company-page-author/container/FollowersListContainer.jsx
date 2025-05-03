@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import FollowersList from '../presentation/FollowersList';
-import { getFollowers } from '@/app/services/connectionManagement';
-import { blockUser, unblockUser } from '@/app/services/privacy';
+import { getCompanyFollowers } from '@/app/services/connectionManagement';
+import { blockUser } from '@/app/services/privacy';
 
 export default function FollowersListContainer({companyUsername}){
     const [followers, setFollowers] = useState([]);
@@ -15,9 +15,9 @@ export default function FollowersListContainer({companyUsername}){
     console.log("username in follower", companyUsername);
 
     useEffect(() => {
-        const getCompanyFollowers = async () => {
+        const getFollowers = async () => {
         try {
-            const data = await getFollowers(1, companyUsername);
+            const data = await getCompanyFollowers(1, companyUsername);
             setFollowers(data);
             console.log("Fetched data:", data);
         } catch (err) {
@@ -25,7 +25,7 @@ export default function FollowersListContainer({companyUsername}){
             setError("Failed to load followers.");
         }
         };
-        getCompanyFollowers();
+        getFollowers();
     }, [companyUsername]);
 
 

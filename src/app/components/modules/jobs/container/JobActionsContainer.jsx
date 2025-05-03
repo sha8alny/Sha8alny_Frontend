@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 
 import JobActions from "../presentation/JobActions";
 import { report } from "@/app/services/privacy";
-
+/**
+ * @namespace jobs
+ * @module jobs
+ */
 /**
  * Container component for JobActions that handles business logic
  * 

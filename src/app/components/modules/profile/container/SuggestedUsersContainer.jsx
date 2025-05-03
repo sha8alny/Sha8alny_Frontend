@@ -24,6 +24,9 @@ export default function SuggestedUsersContainer({
     queryFn: () => fetchFunction(username),
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // Fallback to default function if helper function is not provided
@@ -43,6 +46,7 @@ export default function SuggestedUsersContainer({
   };
 
   const changeRelations = (users) => {
+    if (!users || users?.length === 0) return [];
     return users.map((user) => ({
       ...user,
       relation: changeRelation(user?.connectionDegree),
@@ -50,7 +54,7 @@ export default function SuggestedUsersContainer({
   };
 
   if (isLoading || isError)
-    return <SuggestedUsersSkeleton isLoading={isLoading} title={title} />;
+    return <SuggestedUsersSkeleton isLoading={isLoading}/>;
 
   if (helperFunction) {
     const filteredUsers = helperFunction(suggestedUsers);

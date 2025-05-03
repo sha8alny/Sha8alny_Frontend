@@ -250,8 +250,26 @@ const ConversationItem = React.memo(
     );
   }
 );
-
-// Main component
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * ConversationListPresentation
+ *
+ * Displays a searchable, scrollable list of conversations.
+ *
+ * @param {Object} props
+ * @param {Array} props.filteredConversations - Array of conversation objects to display.
+ * @param {string} props.selectedConversationId - ID of the currently selected conversation.
+ * @param {string} props.searchQuery - Current search input value.
+ * @param {function} props.onSearchChange - Handler for search input changes.
+ * @param {function} props.onSelectConversation - Handler for selecting a conversation.
+ * @param {function} props.onToggleRead - Handler for toggling read/unread status.
+ * @param {function} props.onToggleBlock - Handler for blocking/unblocking a participant.
+ * @param {function} props.onDeleteConversation - Handler for deleting a conversation.
+ * @param {boolean} [props.isDeleting=false] - Whether a conversation is currently being deleted.
+ */
 export function ConversationListPresentation({
   filteredConversations,
   selectedConversationId,
@@ -312,3 +330,4 @@ export function ConversationListPresentation({
     </div>
   );
 }
+export default ConversationListPresentation;

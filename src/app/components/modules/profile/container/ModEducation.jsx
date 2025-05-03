@@ -233,6 +233,22 @@ export default function ModEducation({ education, adding }) {
         const startYearNum = parseInt(startYear);
         const endYearNum = parseInt(endYear);
 
+        // Check if start date is in the future
+        const currentYear = new Date().getFullYear();
+        if (startYearNum > currentYear) {
+          setStartYearError("Start date cannot be in the future.");
+          isValid = false;
+        }
+        else if (startYearNum === currentYear) {
+          const monthIndex = (month) => months.findIndex((m) => m === month);
+          const startMonthIndex = monthIndex(startMonth);
+          const currentMonthIndex = monthIndex(new Date().toLocaleString("default", { month: "long" }));
+          if (startMonthIndex > currentMonthIndex) {
+            setStartMonthError("Start date cannot be in the future.");
+            isValid = false;
+          }
+        }
+
         if (startYearNum > endYearNum) {
           setEndYearError("End date cannot be before start date.");
           setEndMonthError("End date cannot be before start date.");

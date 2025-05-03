@@ -1,4 +1,6 @@
 "use client";
+import Dialog from "@/app/components/ui/DialogMod";
+import ReportPresentation from "../../feed/presentation/ReportPresentation";
 import Container from "@/app/components/layout/Container";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +10,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Card, CardContent } from "@/app/components/ui/Card";
 import { Button } from '@/app/components/ui/Button';
 import ClearIcon from '@mui/icons-material/Clear';
+import MoreHoriz from '@mui/icons-material/MoreVert';
+import { FlagOutlined } from "@mui/icons-material";
+import {  DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem, DropdownMenu } from "@/app/components/ui/DropDownMenu";
 
 /**
  * @namespace profile
@@ -31,7 +36,7 @@ import ClearIcon from '@mui/icons-material/Clear';
  * @param {string} [props.company.location] - Company location
  * @returns {JSX.Element} Profile header component with company branding and navigation
  */
-export default function ProfileHeader({ username, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage, handleDialogConfirm, handleDialogCancel, showUnfollowDialog }) {
+export default function ProfileHeader({ username, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage, handleDialogConfirm, handleDialogCancel, showUnfollowDialog, isMenuOpen, dropdownRef, setReportUserModalOpen, reportUserModalOpen, reportState, reportText, reportType, setReportText, setReportType, onReport, goToCreateCompany }) {
   return (
     <Container className="shadow-lg">
       <div className="h-max rounded-xl">
@@ -82,6 +87,50 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
                 <VisibilityIcon className="transition-transform duration-200 group-hover:scale-110" /> View as admin
               </Button>
             )}
+            <div className="relative" ref={dropdownRef}>
+              {!isMenuOpen && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
+                    >
+                      <MoreHoriz
+                        className="text-muted"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    start="right"
+                    className="bg-foreground text-primary border"
+                  >
+                  {!company?.isOwner && 
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer"
+                      onClick={() => setReportUserModalOpen(true)}
+                    >
+                      <FlagOutlined
+                        className="mr-2"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                      <span>Report</span>
+                    </DropdownMenuItem>
+                    }
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer"
+                      onClick={goToCreateCompany}
+                    >
+                      <AddIcon
+                        className="mr-2"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                      <span>Create new company</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           </div>
         </div>
         <div className="border-t border-[var(--text)] flex flex-row space-x-6  cursor-pointer ">
@@ -123,6 +172,22 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
           </Card>
         </div>
       }
+      <Dialog 
+        open={reportUserModalOpen}
+        onOpenChange={setReportUserModalOpen}
+        buttonClass="hidden"
+        AlertContent={
+        <ReportPresentation
+          type="company"
+          reportState={reportState}
+          reportText={reportText}
+          setReportText={setReportText}
+          reportType={reportType}
+          setReportType={setReportType}
+          onReport={onReport}
+        />
+        }
+      />
     </Container>
   );
 }

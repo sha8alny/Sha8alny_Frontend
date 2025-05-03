@@ -56,22 +56,16 @@ export default function SuggestedUsers({
  * @component
  * @returns {JSX.Element} A container with placeholder elements for loading state
  */
-export function SuggestedUsersSkeleton({ title, isLoading }) {
+export function SuggestedUsersSkeleton({ isLoading }) {
   return (
     <Container
       className="border dark:border-[#111] flex flex-col gap-2 shadow-xs p-4"
       data-testid="suggested-users-skeleton-root"
     >
-      <h2
-        className="text-lg font-semibold mb-4 flex items-center"
+      <div
+        className="text-lg font-semibold animate-pulse bg-primary/60 rounded-2xl h-6 w-[70%] mb-2 flex items-center"
         data-testid="suggested-users-skeleton-title"
-      >
-        <Users
-          className="size-5 mr-2 fill-current"
-          data-testid="suggested-users-skeleton-icon"
-        />
-        {title}
-      </h2>
+      />
       {[...Array(5)].map((_, index) => (
         <div
           key={index}
@@ -87,21 +81,21 @@ export function SuggestedUsersSkeleton({ title, isLoading }) {
               <div
                 className={`${
                   isLoading && "animate-pulse"
-                } bg-primary/60 h-4 w-20 rounded`}
+                } bg-primary/60 h-4 w-20 rounded-2xl`}
                 data-testid="suggested-users-skeleton-name"
               ></div>
-              <div className="text-xs self-center text-muted">•</div>
+              <div className="text-xs self-center text-muted animate-pulse">•</div>
               <div
                 className={`${
                   isLoading && "animate-pulse"
-                } bg-primary/60 h-3 w-14 rounded self-center`}
+                } bg-primary/60 h-3 w-14 rounded-2xl self-center`}
                 data-testid="suggested-users-skeleton-meta"
               ></div>
             </div>
             <div
               className={`${
                 isLoading && "animate-pulse"
-              } bg-primary/40 h-3 w-28 rounded`}
+              } bg-primary/40 h-3 w-28 rounded-2xl`}
               data-testid="suggested-users-skeleton-headline"
             ></div>
           </div>

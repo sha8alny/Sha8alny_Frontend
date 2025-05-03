@@ -7,6 +7,19 @@ import { auth, provider } from "@/firebase/firebase";
 import { useToast } from "@/app/context/ToastContext";
 import { useAuth } from "@/app/context/AuthContext";
 
+/**
+ * @module LandingPageContainer
+ * @namespace LandingPageContainer
+ */
+
+/**
+ * Container component for the landing page.
+ *
+ * @function
+ * @memberof LandingPageContainer
+ * @returns {JSX.Element} The rendered LandingPage presentation component with interaction handlers.
+ */
+
 export default function LandingPageContainer(){
     const router = useRouter();
     const toast = useToast();

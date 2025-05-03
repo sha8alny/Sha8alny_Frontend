@@ -1,6 +1,13 @@
 import Image from "next/image";
 import SafeImage from "@/app/components/ui/SafeImage";
-import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Loader2,
+  Heart,
+  Award,
+} from "lucide-react";
 import SafeVideo from "@/app/components/ui/SafeVideo";
 import {
   Avatar,
@@ -58,6 +65,8 @@ import SharePresentation from "../presentation/SharePresentation";
 import { usePathname } from "next/navigation";
 import ReportPresentation from "./ReportPresentation";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
+import Link from "next/link";
+import { Badge } from "@/app/components/ui/Badge";
 
 export default function PostPresentation({
   commentSectionOpen,
@@ -115,6 +124,7 @@ export default function PostPresentation({
   setImageLoading,
   reactAnim,
   handleAnimEnd,
+  topReacts,
 }) {
   return (
     <>
@@ -124,6 +134,7 @@ export default function PostPresentation({
             <div className="flex items-center gap-2 px-4 text-sm text-muted">
               <Avatar className="size-6 cursor-pointer">
                 <AvatarImage
+                  className="object-cover"
                   src={post?.isShared?.profilePicture}
                   alt={post?.isShared?.fullName}
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
@@ -134,12 +145,12 @@ export default function PostPresentation({
               </Avatar>
               <span>
                 <span
-                  className="hover:underline cursor-pointer"
+                  className="hover:underline cursor-pointer truncate"
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
                 >
                   {post?.isShared?.fullName}
                 </span>{" "}
-                shared a post
+                reposted a post
               </span>
             </div>
             <Separator />
@@ -155,11 +166,15 @@ export default function PostPresentation({
             className="cursor-pointer size-10"
             onClick={() =>
               post?.isCompany
-                ? navigateTo(`company-user-admin/${post?.username}/about-page`)
+                ? navigateTo(`/company/${post?.username}/user/home`)
                 : navigateTo(`/u/${post?.username}`)
             }
           >
-            <AvatarImage src={post?.profilePicture} alt={post?.fullName} />
+            <AvatarImage
+              className="object-cover"
+              src={post?.profilePicture}
+              alt={post?.fullName}
+            />
             <AvatarFallback>
               {post?.fullName?.substring(0, 2).toUpperCase()}
             </AvatarFallback>
@@ -168,12 +183,10 @@ export default function PostPresentation({
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <div
-                className="font-semibold flex items-center gap-2 cursor-pointer hover:underline"
+                className="font-semibold flex items-center truncate gap-2 cursor-pointer hover:underline"
                 onClick={() =>
                   post?.isCompany
-                    ? navigateTo(
-                        `company-user-admin/${post?.username}/about-page`
-                      )
+                    ? navigateTo(`/company/${post?.username}/user/home`)
                     : navigateTo(`/u/${post?.username}`)
                 }
               >
@@ -195,7 +208,10 @@ export default function PostPresentation({
                 post?.connectionDegree !== -1 && (
                   <button
                     disabled={isFollowing}
-                    onClick={() => onFollow(post?.username)}
+                    onClick={() => {
+                      console.log("Following");
+                      onFollow(post?.username);
+                    }}
                     className={`rounded-2xl items-center flex px-2 py-1 text-xs group ${
                       isFollowing
                         ? "bg-secondary/80 text-background dark:text-primary cursor-default"
@@ -454,102 +470,161 @@ export default function PostPresentation({
               ))}
             </span>
           )}
+          {post?.tags &&
+            post?.tags.length > 0 &&
+            post?.tags.map((user, index) => (
+              <Badge
+                key={user?.userId}
+                className="flex items-center gap-1 px-2 py-1 bg-secondary/10 rounded-2xl text-primary font-semibold"
+                data-testid={`tagged-user-${user?.userId}`}
+              >
+                <Avatar className="h-5 w-5 mr-1">
+                  <AvatarImage
+                    className="object-cover"
+                    src={user?.profilePicture}
+                    alt={user?.name}
+                  />
+                  <AvatarFallback>
+                    {user?.name?.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Link
+                  href={`/u/${user?.username}`}
+                  className="hover:underline cursor-pointer"
+                >
+                  {user?.name}
+                </Link>
+              </Badge>
+            ))}
         </CardContent>
 
-        <CardFooter className="flex justify-between border-t">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <span
-                  onClick={() => onLike("Like")}
-                  className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
-                >
-                  <span
-                    className={`inline-flex items-center ${
-                      reactAnim ? "animate-react-pop" : ""
-                    }`}
-                    onAnimationEnd={handleAnimEnd}
-                  >
-                    {isLiked === "Like" && <Like size="1.5rem" />}
-                    {isLiked === "Insightful" && <Insightful size="1.3rem" />}
-                    {isLiked === "Support" && <Support size="1.5rem" />}
-                    {isLiked === "Funny" && <Funny size="1.5rem" />}
-                    {isLiked === "Love" && <Love size="1.5rem" />}
-                    {isLiked === "Celebrate" && <Celebrate size="1.5rem" />}
-                    {!isLiked && (
-                      <ThumbUpOutlined
-                        sx={{ fontSize: "1.3rem" }}
-                        className="rotate-y-180"
-                      />
-                    )}
-                  </span>
-                  <span
-                    className={
-                      isLiked ? "text-secondary/70 font-semibold" : "text-muted"
-                    }
-                  >
-                    {post?.numReacts}
-                  </span>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent className="bg-foreground flex gap-1 border text-primary rounded-md">
-                {Object.entries(userReactions).map(([name, { icon }]) => (
-                  <div
-                    key={name}
-                    onClick={() => {
-                      onLike(name);
-                    }}
-                    className="relative group flex items-center justify-center flex-1 px-2"
-                  >
-                    <div className="cursor-pointer duration-300 transition-transform">
-                      {React.createElement(icon, {
-                        className:
-                          "transform transition-transform group-hover:scale-150 duration-200",
-                      })}
-                    </div>
-
-                    <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-                      {name}
-                    </div>
+        <CardFooter className="px-0 flex flex-col gap-2">
+          {/* Post Impressions section */}
+          <div className="flex items-center justify-between w-full px-6">
+            {post?.numReacts > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-1">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                    <Heart className="w-3.5 h-3.5 text-white" fill="white" />
                   </div>
-                ))}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">
+                    <Award className="w-3.5 h-3.5 text-white" />
+                  </div>
+                </div>
+                <span className="text-sm text-muted">{post?.numReacts}</span>
+              </div>
+            )}
+            {post?.numReacts === 0 && <div />}
+            <div className="flex cursor-default items-center gap-4 text-sm text-muted">
+              <span data-testid={`post-${post?.postId}-numcomments`}>
+                {post?.numComments} Comment(s)
+              </span>
+              <span
 
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
-            onClick={() => setCommentSectionOpen(!commentSectionOpen)}
-          >
-            <CommentOutlined sx={{ fontSize: "1.3rem" }} />
-            <span
-              className={`text-muted ${
-                commentSectionOpen ? "text-secondary" : ""
-              }`}
+              >{post?.numShares} Repost(s)</span>
+            </div>
+          </div>
+          <section className="flex items-center justify-between border-t w-full pt-4 px-6">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span
+                    onClick={() => onLike("Like")}
+                    className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
+                  >
+                    <span
+                      className={`inline-flex items-center ${
+                        reactAnim ? "animate-react-pop" : ""
+                      }`}
+                      onAnimationEnd={handleAnimEnd}
+                    >
+                      {isLiked === "Like" && <Like size="1.5rem" />}
+                      {isLiked === "Insightful" && <Insightful size="1.5rem" />}
+                      {isLiked === "Support" && <Support size="1.5rem" />}
+                      {isLiked === "Funny" && <Funny size="1.5rem" />}
+                      {isLiked === "Love" && <Love size="1.5rem" />}
+                      {isLiked === "Celebrate" && <Celebrate size="1.5rem" />}
+                      {!isLiked && (
+                        <ThumbUpOutlined
+                          sx={{ fontSize: "1.3rem" }}
+                          className="rotate-y-180"
+                        />
+                      )}
+                    </span>
+                    <span
+                      className={
+                        isLiked
+                          ? "text-secondary/70 font-semibold"
+                          : "text-primary/90"
+                      }
+                    >
+                      {isLiked ? isLiked : "Like"}
+                    </span>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="bg-foreground flex gap-1 border text-primary rounded-md">
+                  {Object.entries(userReactions).map(([name, { icon }]) => (
+                    <div
+                      key={name}
+                      onClick={() => {
+                        onLike(name);
+                      }}
+                      className="relative group flex items-center justify-center flex-1 px-2"
+                    >
+                      <div className="cursor-pointer duration-300 transition-transform">
+                        {React.createElement(icon, {
+                          className:
+                            "transform transition-transform group-hover:scale-150 duration-200",
+                        })}
+                      </div>
+
+                      <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                        {name}
+                      </div>
+                    </div>
+                  ))}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
+              data-testid="comment-button"
+              onClick={() => setCommentSectionOpen(!commentSectionOpen)}
             >
-              {post?.numComments}
-            </span>
-          </Button>
+              <CommentOutlined sx={{ fontSize: "1.3rem" }} />
+              <span
+                className={`text-primary/90 font-semibold ${
+                  commentSectionOpen ? "text-secondary/70" : ""
+                }`}
+              >
+                Comment
+              </span>
+            </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
-            onClick={onRepost}
-          >
-            <Repeat sx={{ fontSize: "1.3rem" }} />
-            <span className="text-muted">{post?.numShares}</span>
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
+              data-testid="repost-button"
+              onClick={onRepost}
+            >
+              <Repeat sx={{ fontSize: "1.3rem" }} />
+              <span className="text-primary/90 font-semibold">Repost</span>
+            </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex gap-2 items-center cursor-pointer text-primary rounded-md hover:bg-primary/10"
-          >
-            <Send sx={{ fontSize: "1.3rem" }} className="-rotate-45" />
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex gap-2 items-center cursor-pointer text-primary rounded-md hover:bg-primary/10"
+              data-testid="share-button"
+            >
+              <Send sx={{ fontSize: "1.3rem" }} className="-rotate-45" />
+              <span className="text-primary/90 font-semibold">Send</span>
+            </Button>
+          </section>
         </CardFooter>
 
         {commentSectionOpen && (

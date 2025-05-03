@@ -12,7 +12,7 @@ export default function UserSmallCardContainer({ userInfo, onClick }) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [connectionStatus, setConnectionStatus] = useState(
-    userInfo?.connectionStatus || "notConnected"
+    userInfo?.connectionStatus ?? userInfo?.isConnected
   );
 
   const handleConnectMutate = useMutation({
@@ -24,7 +24,7 @@ export default function UserSmallCardContainer({ userInfo, onClick }) {
 
   const handleConnectionRequestMutate = useMutation({
     mutationFn: (action) => handleConnectionRequest(userInfo?.username, action),
-    onSuccess: () => {
+    onSuccess: (_data, action) => {
       queryClient.invalidateQueries(["connections"]);
       queryClient.invalidateQueries(["userProfile", userInfo?.username]);
       if (action === "ACCEPT") {
@@ -36,7 +36,7 @@ export default function UserSmallCardContainer({ userInfo, onClick }) {
   });
 
   const handleClick = (action = "DECLINE") => {
-    switch (userInfo?.connectionStatus) {
+    switch (connectionStatus) {
       case "connected":
         router.push(`/messages?username=${userInfo?.username}`);
         break;
