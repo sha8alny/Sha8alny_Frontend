@@ -25,7 +25,24 @@ import { useToast } from "@/app/context/ToastContext";
 
 export default function PostContainer({ post, singlePost = false }) {
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(post?.reaction || false);
+  const [reactions, setReactions] = useState({
+    current: post?.reaction || false,
+    counts: {
+      Like: post?.numLikes || 0,
+      Celebrate: post?.numCelebrates || 0,
+      Love: post?.numLoves || 0,
+      Support: post?.numSupports || 0,
+      Funny: post?.numFunnies || 0,
+      Insightful: post?.numInsightfuls || 0,
+    },
+    total:
+      post?.numLikes +
+        post?.numCelebrates +
+        post?.numLoves +
+        post?.numSupports +
+        post?.numFunnies +
+        post?.numInsightfuls || 0,
+  });
   const [isSaved, setIsSaved] = useState(post?.isSaved || false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -34,25 +51,6 @@ export default function PostContainer({ post, singlePost = false }) {
   const [copied, setCopied] = useState(false);
   const [isFollowing, setIsFollowing] = useState(post?.isFollowed || false);
   const [numReposts, setNumReposts] = useState(post?.numShares || 0);
-  const [reactionCount, setReactionCount] = useState(
-    post?.numLikes +
-      post?.numCelebrates +
-      post?.numLoves +
-      post?.numSupports +
-      post?.numFunnies +
-      post?.numInsightfuls
-  );
-
-  // Add state for individual reaction counts
-  const [reactionCounts, setReactionCounts] = useState({
-    numLikes: post?.numLikes || 0,
-    numCelebrates: post?.numCelebrates || 0,
-    numLoves: post?.numLoves || 0,
-    numSupports: post?.numSupports || 0,
-    numFunnies: post?.numFunnies || 0,
-    numInsightfuls: post?.numInsightfuls || 0,
-  });
-
   const [reportText, setReportText] = useState("");
   const [reportType, setReportType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,7 +65,7 @@ export default function PostContainer({ post, singlePost = false }) {
   const [postText, setPostText] = useState(post?.text || "");
 
   const toast = useToast();
-  const prevReaction = useRef(isLiked);
+  const prevReaction = useRef(reactions.current);
 
   useEffect(() => {
     console.log("post?.isFollowed", post?.isFollowed);
@@ -114,7 +112,7 @@ export default function PostContainer({ post, singlePost = false }) {
             pages: oldData.pages.map((page) =>
               Array.isArray(page)
                 ? page.map((p) =>
-                    p.postId === post.postId ? { ...p, text: postText  } : p
+                    p.postId === post.postId ? { ...p, text: postText } : p
                   )
                 : page
             ),
@@ -161,6 +159,19 @@ export default function PostContainer({ post, singlePost = false }) {
       return previousReaction && previousReaction === reaction
         ? reactToContent(postId, null, null, true)
         : reactToContent(postId, null, reaction);
+    },
+    onSuccess: (data, variables) => {
+      // Force refresh of UI state after successful reaction change
+      const { reaction, previousReaction } = variables;
+
+      // No need to update if we're just removing a reaction (already handled in handleLike)
+      if (previousReaction === reaction) return;
+
+      // If we're changing reactions, make sure the UI fully updates
+      if (previousReaction && previousReaction !== reaction) {
+        // Force a state update to ensure the UI refreshes
+        setReactions({ ...reactions });
+      }
     },
   });
 
@@ -329,38 +340,48 @@ export default function PostContainer({ post, singlePost = false }) {
   });
 
   const handleLike = (reaction) => {
-    const previousReaction = isLiked;
+    const previousReaction = reactions.current;
 
-    // Update reaction counts
-    setReactionCounts((prevCounts) => {
-      const newCounts = { ...prevCounts };
+    setReactions((prev) => {
+      // Create a copy of the current state
+      const newState = {
+        ...prev,
+        counts: { ...prev.counts },
+      };
 
-      // Decrement previous reaction if it exists
-      if (previousReaction) {
-        const previousCountKey = `num${previousReaction}s`;
-        newCounts[previousCountKey] = Math.max(
-          0,
-          newCounts[previousCountKey] - 1
-        );
-      }
-
-      // If toggling the same reaction off, don't increment
+      // Case 1: Removing a reaction (unliking)
       if (previousReaction === reaction) {
-        setIsLiked(false);
-        setReactionCount((prev) => prev - 1);
-      } else {
-        // If new reaction, increment that reaction's count
-        const countKey = `num${reaction}s`;
-        newCounts[countKey] = (newCounts[countKey] || 0) + 1;
+        newState.counts[previousReaction] = Math.max(
+          0,
+          newState.counts[previousReaction] - 1
+        );
+        newState.current = false;
+        newState.total = Math.max(0, newState.total - 1);
+      }
+      // Case 2: Changing from one reaction to another
+      else if (previousReaction && previousReaction !== reaction) {
+        // Decrement previous reaction count
+        newState.counts[previousReaction] = Math.max(
+          0,
+          newState.counts[previousReaction] - 1
+        );
 
-        // Update total reaction count
-        if (!previousReaction) {
-          setReactionCount((prev) => prev + 1);
-        }
-        setIsLiked(reaction);
+        // Increment new reaction count
+        newState.counts[reaction] = newState.counts[reaction] + 1;
+
+        newState.current = reaction;
+        // Total count stays the same when switching reactions
+      }
+      // Case 3: Adding a new reaction (no previous reaction)
+      else {
+        // Increment new reaction count
+        newState.counts[reaction] = newState.counts[reaction] + 1;
+
+        newState.current = reaction;
+        newState.total = newState.total + 1;
       }
 
-      return newCounts;
+      return newState;
     });
 
     handleLikeMutation.mutate({
@@ -580,50 +601,53 @@ export default function PostContainer({ post, singlePost = false }) {
       setImageLoading(false);
     }, 100);
   };
+
   useEffect(() => {
-    if (isLiked && prevReaction.current !== isLiked) {
+    if (reactions.current && prevReaction.current !== reactions.current) {
       setReactAnim(true);
-      prevReaction.current = isLiked;
+      prevReaction.current = reactions.current;
     }
-  }, [isLiked]);
+  }, [reactions.current]);
 
   const handleAnimEnd = () => setReactAnim(false);
 
   const getActiveReactions = () => {
-    const reactions = [
+    const reactionsList = [
       {
         name: "Like",
-        count: reactionCounts.numLikes,
+        count: reactions.counts.Like,
         borderColor: "border-secondary",
       },
       {
         name: "Celebrate",
-        count: reactionCounts.numCelebrates,
+        count: reactions.counts.Celebrate,
         borderColor: "border-green-500",
       },
       {
         name: "Love",
-        count: reactionCounts.numLoves,
+        count: reactions.counts.Love,
         borderColor: "border-red-500",
       },
       {
         name: "Support",
-        count: reactionCounts.numSupports,
+        count: reactions.counts.Support,
         borderColor: "border-purple-400",
       },
       {
         name: "Funny",
-        count: reactionCounts.numFunnies,
+        count: reactions.counts.Funny,
         borderColor: "border-blue-300",
       },
       {
         name: "Insightful",
-        count: reactionCounts.numInsightfuls,
+        count: reactions.counts.Insightful,
         borderColor: "border-yellow-300",
       },
     ];
 
-    const activeReactions = reactions.filter((reaction) => reaction.count > 0);
+    const activeReactions = reactionsList.filter(
+      (reaction) => reaction.count > 0
+    );
     const sortedReactions = [...activeReactions].sort(
       (a, b) => b.count - a.count
     );
@@ -642,7 +666,7 @@ export default function PostContainer({ post, singlePost = false }) {
     <PostPresentation
       commentSectionOpen={commentSectionOpen}
       setCommentSectionOpen={setCommentSectionOpen}
-      isLiked={isLiked}
+      isLiked={reactions.current}
       isSaved={isSaved}
       onLike={handleLike}
       onRepost={handleRepost}
@@ -656,7 +680,7 @@ export default function PostContainer({ post, singlePost = false }) {
         age: determineAge(post?.time),
         textElement: extractLinks(post?.text).element,
         relation: convertRelation(post?.connectionDegree),
-        numReacts: reactionCount,
+        numReacts: reactions.total,
         numShares: numReposts,
       }}
       userReactions={Reactions}
@@ -710,7 +734,7 @@ export default function PostContainer({ post, singlePost = false }) {
       onEdit={handleEdit}
       postText={postText}
       setPostText={setPostText}
-      numReacts={reactionCount}
+      numReacts={reactions.total}
       isEditing={handleEditMutation.isPending}
       errorEditing={handleEditMutation.isError}
     />

@@ -1,4 +1,3 @@
-import { Heart, Award, ThumbsUp, Loader2 } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -11,12 +10,6 @@ import {
   TabsTrigger,
 } from "@/app/components/ui/Tabs";
 import { Reactions } from "@/app/utils/Reactions";
-import Like from "../../../ui/Like";
-import Celebrate from "../../../ui/Celebrate";
-import Support from "../../../ui/Support";
-import Love from "../../../ui/Love";
-import Insightful from "../../../ui/Insightful";
-import Funny from "../../../ui/Funny";
 import Link from "next/link";
 
 const ReactionsSkeleton = () => {
@@ -32,8 +25,6 @@ const ReactionsSkeleton = () => {
 };
 
 export default function ReactionsPresentation({
-  reactions,
-  currentReaction,
   users,
   isLoading,
   isLoadingMore,
@@ -43,18 +34,23 @@ export default function ReactionsPresentation({
   numReactions,
   handleReactionChange,
   activeReactions,
+  navigateTo,
 }) {
   return (
     <Tabs defaultValue="all" className="w-full">
-      <div className="border-b mb-1 border-primary">
-        <TabsList className="h-12 bg-transparent w-full justify-start px-4 gap-4">
+      <div className="border-b mb-1 pb-2 border-primary">
+        <TabsList
+          data-testid="reactions-tabs-list"
+          className="h-12 bg-transparent w-full justify-start px-4 gap-4"
+        >
           <TabsTrigger
             value="all"
-            className="border-0 data-[state=active]:bg-secondary/60 data-[state=active]:dark:text-background text-primary data-[state=active]:text-primary shadow-xs drop-shadow-xs data-[state=active]:font-semibold"
+            data-testid="reactions-tab-all"
+            className="border-0 data-[state=active]:text-primary data-[state=active]:bg-primary/10 data-[state=active]:dark:text-primary text-primary shadow-xs drop-shadow-xs data-[state=active]:font-semibold"
             onClick={() => handleReactionChange("all")}
           >
             All{" "}
-            <span className="ml-1.5 text-xs bg-primary/20 px-1.5 py-0.5 rounded-full">
+            <span className="ml-1.5 text-xs text-background bg-secondary px-1.5 py-0.5 rounded-full">
               {numReactions}
             </span>
           </TabsTrigger>
@@ -66,12 +62,13 @@ export default function ReactionsPresentation({
             return (
               <TabsTrigger
                 key={reaction.name}
+                data-testid={`reactions-tab-${reaction.name}`}
                 value={reaction.name.toLowerCase()}
-                className="border-0 data-[state=active]:bg-secondary/60 data-[state=active]:dark:text-background text-primary data-[state=active]:text-primary shadow-xs drop-shadow-xs data-[state=active]:font-semibold"
+                className="border-0 data-[state=active]:text-primary data-[state=active]:bg-primary/10 data-[state=active]:dark:text-primary text-primary shadow-xs drop-shadow-xs data-[state=active]:font-semibold"
                 onClick={() => handleReactionChange(reaction.name)}
               >
-                <Icon size="1rem" className={`mr-1.5`} />{" "}
-                <span className="ml-1.5 text-xs bg-primary/20 px-1.5 py-0.5 rounded-full">
+                <Icon size="1.5rem" className={`mr-1.5`} />{" "}
+                <span className="ml-1.5 text-xs text-background bg-secondary px-1.5 py-0.5 rounded-full">
                   {reaction.count}
                 </span>
               </TabsTrigger>
@@ -81,7 +78,11 @@ export default function ReactionsPresentation({
       </div>
 
       {/* All reactions tab content */}
-      <TabsContent value="all" className="mt-0">
+      <TabsContent
+        data-testid="reactions-tab-content-all"
+        value="all"
+        className="mt-0"
+      >
         <div className="max-h-[60vh] overflow-y-auto">
           {isLoading ? (
             Array.from({ length: 2 }, (_, index) => (
@@ -96,7 +97,11 @@ export default function ReactionsPresentation({
           ) : (
             <>
               {users.map((user, index) => (
-                <UserCard user={user} key={user.username} />
+                <UserCard
+                  user={user}
+                  key={user.username}
+                  navigateTo={navigateTo}
+                />
               ))}
 
               {isLoadingMore &&
@@ -113,6 +118,7 @@ export default function ReactionsPresentation({
       {/* Dynamic tab content for each reaction type */}
       {activeReactions.map((reaction) => (
         <TabsContent
+          data-testid={`reactions-tab-content-${reaction.name}`}
           key={reaction.name}
           value={reaction.name.toLowerCase()}
           className="mt-0"
@@ -147,28 +153,55 @@ export default function ReactionsPresentation({
   );
 }
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, navigateTo }) => {
   return (
-    <div className="flex items-center gap-2 p-4 hover:bg-primary/20 rounded-md transition-colors">
-      <Avatar className="h-10 w-10">
-        <AvatarImage src={user.profilePicture || "/placeholder.svg"} />
-        <AvatarFallback className="bg-primary/50">
+    <div className="flex items-center gap-2 p-4 hover:bg-primary/5 rounded-md transition-colors">
+      <Avatar
+        onClick={() => navigateTo(`/u/${user?.username}`)}
+        data-testid={`user-card-${user?.username}`}
+        className="h-10 w-10 cursor-pointer"
+      >
+        <AvatarImage
+          data-testid={`user-card-avatar-${user?.username}`}
+          src={user?.profilePicture}
+        />
+        <AvatarFallback
+          data-testid={`user-card-avatar-fallback-${user?.username}`}
+          className="bg-primary/50"
+        >
           {user.fullName?.charAt(0) || "U"}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
+        <div
+          data-testid={`user-card-name-${user?.username}`}
+          className="flex items-center gap-1.5"
+        >
           <Link
-            href={`/u/${user.username}`}
+            href={`/u/${user?.username}`}
             className="text-primary font-semibold truncate hover:underline"
+            data-testid={`user-card-name-${user?.username}`}
           >
-            {user.fullName}
+            {user?.fullName}
           </Link>
-          <span className="text-xs text-primary/40">@{user.username}</span>
+          <span
+            data-testid={`user-card-username-${user?.username}`}
+            className="text-xs text-primary/40"
+          >
+            @{user?.username}
+          </span>
         </div>
-        <p className="text-xs text-muted truncate">{user.headline || ""}</p>
+        <p
+          data-testid={`user-card-headline-${user?.username}`}
+          className="text-xs text-muted truncate"
+        >
+          {user?.headline || ""}
+        </p>
       </div>
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center`}>
+      <div
+        data-testid={`user-card-reaction-${user?.username}`}
+        className={`w-8 h-8 rounded-full flex items-center justify-center`}
+      >
         <user.reaction size="1.3rem" />
       </div>
     </div>

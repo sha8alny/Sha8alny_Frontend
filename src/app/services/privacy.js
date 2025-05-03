@@ -100,9 +100,6 @@ export const report = async (
 
 
 export const blockUser = async (username, isCompany = false, companyUsername) => {
-  console.log("username", username);
-  console.log("isCompany", isCompany);
-  console.log("companyUsername", companyUsername);
   let url = `${apiURL}/blocks/${username}`;
   if (isCompany) {
     url += `?isCompany=${isCompany}`;

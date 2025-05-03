@@ -1,21 +1,46 @@
 // context/AuthContext.js
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { redirectToSignIn, refreshAccessToken, checkAdminStatus } from "../services/userAuthentication";
+import {
+  redirectToSignIn,
+  refreshAccessToken,
+  checkAdminStatus,
+} from "../services/userAuthentication";
 
 // Define public paths that don't require authentication
-const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/verify-email', '/error', '/about', '/privacy-policy', '/cookie-policy', '/terms'];
+const PUBLIC_PATHS = [
+  "/login",
+  "/signin",
+  "/signup",
+  "/register",
+  "/forget-password",
+  "/reset-password",
+  "/verify-email",
+  "/error",
+  "/about",
+  "/privacy-policy",
+  "/cookie-policy",
+  "/terms",
+  '/user-agreement',
+  'moodrnfr',
+];
 
 // Define admin paths that require admin authorization
-const ADMIN_PATHS = ['/admin'];
+const ADMIN_PATHS = ["/admin"];
 
 const AuthContext = createContext({
   authenticated: false,
   loading: true,
   isAdmin: false,
-  getRedirectPath: () => '/',
+  getRedirectPath: () => "/",
   clearRedirectPath: () => {},
 });
 
@@ -31,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     if (!pathname) return;
 
     // Skip auth check for public paths
-    if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
+    if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
       setAuthenticated(false);
       setLoading(false);
       return;
@@ -41,13 +66,17 @@ export const AuthProvider = ({ children }) => {
     const refreshToken = localStorage.getItem("refreshToken");
     const isProfileComplete = localStorage.getItem("isProfileComplete");
 
-    if (isProfileComplete=== "false" && pathname !== "/complete-profile" && accessToken) {
-      router.push('/complete-profile');
+    if (
+      isProfileComplete === "false" &&
+      pathname !== "/complete-profile" &&
+      accessToken
+    ) {
+      router.push("/complete-profile");
       return;
     }
 
-    if (!accessToken && !refreshToken ) {
-      sessionStorage.setItem('redirectPath', pathname);
+    if (!accessToken && !refreshToken) {
+      sessionStorage.setItem("redirectPath", pathname);
       redirectToSignIn();
       return;
     }
@@ -55,25 +84,25 @@ export const AuthProvider = ({ children }) => {
     if (!accessToken && refreshToken) {
       const newAccessToken = await refreshAccessToken();
       if (!newAccessToken) {
-        sessionStorage.setItem('redirectPath', pathname);
+        sessionStorage.setItem("redirectPath", pathname);
         redirectToSignIn();
         return;
       }
     }
 
     // Check admin status for admin routes
-    if (ADMIN_PATHS.some(path => pathname.startsWith(path))) {
+    if (ADMIN_PATHS.some((path) => pathname.startsWith(path))) {
       try {
         const adminStatus = await checkAdminStatus();
         setIsAdmin(adminStatus);
-        
+
         if (!adminStatus) {
-          router.push('/'); // Redirect to home if not admin
+          router.push("/"); // Redirect to home if not admin
           return;
         }
       } catch (error) {
         console.error("Failed to verify admin status:", error);
-        router.push('/');
+        router.push("/");
         return;
       }
     }
@@ -87,11 +116,11 @@ export const AuthProvider = ({ children }) => {
   }, [checkAuth]);
 
   const getRedirectPath = useCallback(() => {
-    return sessionStorage.getItem('redirectPath') || '/';
+    return sessionStorage.getItem("redirectPath") || "/";
   }, []);
 
   const clearRedirectPath = useCallback(() => {
-    sessionStorage.removeItem('redirectPath');
+    sessionStorage.removeItem("redirectPath");
   }, []);
 
   const contextValue = {
