@@ -211,6 +211,30 @@ export default function ModCertificate({ certificate, adding }) {
         }
       }
 
+      // Check if start date if in the future
+      if (issueDate.year && issueDate.month) {
+        const currentDate = new Date();
+        const issueYear = parseInt(issueDate.year, 10);
+        const issueMonthIndex = months.indexOf(issueDate.month);
+
+        if (issueYear > currentDate.getFullYear()) {
+          setIssueDateError((prev) => ({
+            ...prev,
+            year: "Issue year cannot be in the future",
+          }));
+          isValid = false;
+        } else if (
+          issueYear === currentDate.getFullYear() &&
+          issueMonthIndex > currentDate.getMonth()
+        ) {
+          setIssueDateError((prev) => ({
+            ...prev,
+            month: "Issue month cannot be in the future",
+          }));
+          isValid = false;
+        }
+      }
+
       // Validate expiration date is after issue date if both are present
       if (
         !neverExpires &&

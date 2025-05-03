@@ -33,7 +33,7 @@ const TrendingTopicsPresentation = ({ trendingTopics, navigateTo }) => {
             >
               <p
                 onClick={() => navigateTo(topic?.unchangedKeyword)}
-                className="font-semibold hover:underline cursor-pointer"
+                className="font-semibold truncate hover:underline cursor-pointer"
                 data-testid="trending-topics-keyword"
               >
                 #{topic?.keyword}
@@ -55,7 +55,7 @@ const TrendingTopicsPresentation = ({ trendingTopics, navigateTo }) => {
 const TrendingTopicsPresentationSkeleton = ({ isLoading, error }) => {
   return (
     <Container
-      className="border-[#111] border shadow-sm p-4"
+      className="dark:border-[#111] border shadow-sm p-4"
       data-testid="trending-topics-skeleton-root"
     >
       <h2

@@ -5,6 +5,7 @@ import {
   addComment,
   determineAge,
   deleteComment,
+  getTags,
 } from "@/app/services/post";
 import {
   useMutation,
@@ -12,26 +13,23 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import CommentPresentation from "../presentation/CommentPresentation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { followUser } from "@/app/services/connectionManagement";
 import { Reactions } from "@/app/utils/Reactions";
 import { report } from "@/app/services/privacy";
-import { useEffect } from "react";
-import { useRef } from "react";
+import { useCallback } from "react";
 
 function updateAncestorCommentCounts(
   queryClient,
   postId,
-  startParentId,
+  parentIdToUpdate,
   delta
 ) {
-  let currentParentId = startParentId;
-  let nextParentId = null;
-
-  if (!currentParentId) {
+  if (!parentIdToUpdate) {
     const updatePostCommentCount = (oldData) => {
       if (!oldData) return oldData;
+
       if (oldData.pages) {
         return {
           ...oldData,
@@ -57,79 +55,73 @@ function updateAncestorCommentCounts(
           ),
         };
       }
+
       if (oldData.postId === postId) {
         return {
           ...oldData,
           numComments: Math.max(0, (oldData.numComments || 0) + delta),
         };
       }
+
       return oldData;
     };
 
     queryClient.setQueryData(["posts"], updatePostCommentCount);
     queryClient.setQueryData(["post", postId], updatePostCommentCount);
-
     return;
   }
 
-  let parentFound = false;
-  const findAndUpdateComment = (oldData, queryKey) => {
-    if (
-      !oldData ||
-      !oldData.pages ||
-      !Array.isArray(oldData.pages) ||
-      parentFound
-    )
-      return oldData;
+  let parentFoundAndUpdated = false;
+  let grandParentId = null;
 
-    let found = false;
+  const findAndUpdateInPages = (oldData) => {
+    if (parentFoundAndUpdated || !oldData?.pages) {
+      return oldData;
+    }
+
+    let commentFound = false;
     const newPages = oldData.pages.map((page) => {
-      if (found || !page || !page.data || !Array.isArray(page.data))
+      if (commentFound || !page || !Array.isArray(page.data)) {
         return page;
+      }
+
       let pageModified = false;
-      const newData = page.data.map((c) => {
-        if (c?.commentId === currentParentId) {
-          found = true;
-          parentFound = true;
+      const newData = page.data.map((comment) => {
+        if (comment?.commentId === parentIdToUpdate) {
+          commentFound = true;
+          parentFoundAndUpdated = true;
           pageModified = true;
-          nextParentId = c.parentId;
-          const newNumComments = Math.max(0, (c.numComments || 0) + delta);
+          grandParentId = comment.parentId;
           return {
-            ...c,
-            numComments: newNumComments,
+            ...comment,
+            numComments: Math.max(0, (comment.numComments || 0) + delta),
           };
         }
-        return c;
+        return comment;
       });
+
       return pageModified ? { ...page, data: newData } : page;
     });
-    return found ? { ...oldData, pages: newPages } : oldData;
+
+    return commentFound ? { ...oldData, pages: newPages } : oldData;
   };
 
-  queryClient.setQueryData(["comments", postId], (old) =>
-    findAndUpdateComment(old, ["comments", postId])
-  );
+  queryClient.setQueryData(["comments", postId], findAndUpdateInPages);
 
-  if (!parentFound) {
+  if (!parentFoundAndUpdated) {
     const replyQueryKeys = queryClient.getQueryCache().findAll({
       queryKey: ["commentReplies", postId],
       exact: false,
     });
 
     for (const query of replyQueryKeys) {
-      const queryKey = query.queryKey;
-      if (parentFound) break;
-
-      queryClient.setQueryData(queryKey, (old) =>
-        findAndUpdateComment(old, queryKey)
-      );
+      if (parentFoundAndUpdated) break;
+      queryClient.setQueryData(query.queryKey, findAndUpdateInPages);
     }
   }
 
-  if (parentFound) {
-    updateAncestorCommentCounts(queryClient, postId, nextParentId, delta);
-  } else {
-    updateAncestorCommentCounts(queryClient, postId, null, delta);
+  if (parentFoundAndUpdated) {
+    updateAncestorCommentCounts(queryClient, postId, grandParentId, delta);
   }
 }
 
@@ -151,6 +143,14 @@ export default function CommentContainer({
   const [reportText, setReportText] = useState("");
   const [reportType, setReportType] = useState(null);
   const [reactAnim, setReactAnim] = useState(false);
+  const [isOnCompanyPage, setIsOnCompanyPage] = useState(false);
+  const [companyUsername, setCompanyUsername] = useState(null);
+  const [taggedUser, setTaggedUser] = useState("");
+  const [taggedUsers, setTaggedUsers] = useState([]);
+  const [taggedUserPopoverOpen, setTaggedUserPopoverOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [tagError, setTagError] = useState(null);
   const prevReaction = useRef(isLiked);
 
   const [reactionCount, setReactionCount] = useState(
@@ -167,11 +167,86 @@ export default function CommentContainer({
   const pathname = usePathname();
 
   useEffect(() => {
-      if (isLiked && prevReaction.current !== isLiked) {
-        setReactAnim(true);
-        prevReaction.current = isLiked;
+    if (pathname) {
+      const companyAdminRegex = /^\/company\/.*\/admin\/posts(\/.*)?$/;
+      setIsOnCompanyPage(companyAdminRegex.test(pathname));
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (pathname) {
+      const companyRegex = /^\/company\/([^/]+)\/admin\/posts(\/.*)?$/;
+      const match = pathname.match(companyRegex);
+
+      if (match && match[1]) {
+        setCompanyUsername(match[1]);
       }
-    }, [isLiked]);
+    }
+  }, [pathname]);
+
+  const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
+    setTaggedUsers((prevUsers) =>
+      prevUsers.filter((user) => user._id !== userIdToRemove)
+    );
+    setTagError(null);
+  }, []);
+
+  const handleTagUserClick = useCallback(
+    (user) => {
+      if (taggedUsers.some((u) => u._id === user._id)) {
+        return; // User already tagged
+      }
+
+      if (taggedUsers.length >= 5) {
+        setTagError("You can tag a maximum of 5 users.");
+        return;
+      }
+
+      setTaggedUsers((prev) => [...prev, user]);
+      setTaggedUser("");
+      setSearchResults([]);
+    },
+    [taggedUsers]
+  );
+
+  const handleUserSearch = useCallback(
+    async (query) => {
+      if (!query || query.length < 2) {
+        setSearchResults([]);
+        setIsSearching(false);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const results = await getTags(query);
+        const filteredResults = results.filter(
+          (user) =>
+            !taggedUsers.some((taggedUser) => taggedUser._id === user._id)
+        );
+        setSearchResults(filteredResults || []);
+      } catch (error) {
+        console.error("Error searching for users:", error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [taggedUsers]
+  );
+
+  useEffect(() => {
+    if (comment?.isFollowed !== isFollowing) {
+      setIsFollowing(comment?.isFollowed);
+    }
+  }, [comment?.isFollowed]);
+
+  useEffect(() => {
+    if (isLiked && prevReaction.current !== isLiked) {
+      setReactAnim(true);
+      prevReaction.current = isLiked;
+    }
+  }, [isLiked]);
 
   const {
     data,
@@ -232,30 +307,93 @@ export default function CommentContainer({
   };
 
   const handleFollowMutation = useMutation({
-    mutationFn: () => followUser(comment?.username),
-    onMutate: () => {
+    mutationFn: (username) => followUser(username),
+    onMutate: async (username) => {
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+      await queryClient.cancelQueries({ queryKey: ["comments", postId] });
+      await queryClient.cancelQueries({ queryKey: ["commentReplies", postId] });
+
+      const previousPosts = queryClient.getQueryData(["posts"]);
+      const previousComments = queryClient.getQueryData(["comments", postId]);
+
+      const previousFollowingState = isFollowing;
       setIsFollowing(true);
 
-      queryClient.setQueryData(["comments", postId], (oldData) => {
+      queryClient.setQueryData(["posts"], (oldData) => {
         if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) =>
+            Array.isArray(page)
+              ? page.map((p) =>
+                  p.username === username ? { ...p, isFollowed: true } : p
+                )
+              : page
+          ),
+        };
+      });
 
+      queryClient.setQueryData(["comments", postId], (oldData) => {
+        if (!oldData || !oldData.pages) return oldData;
         return {
           ...oldData,
           pages: oldData.pages.map((page) => ({
             ...page,
-            data: page.data.map((c) =>
-              c.commentId === comment.commentId ? { ...c, isFollowed: true } : c
-            ),
+            data: Array.isArray(page.data)
+              ? page.data.map((c) =>
+                  c.username === username ? { ...c, isFollowed: true } : c
+                )
+              : page.data,
           })),
         };
       });
 
-      return { previousFollowingState: !isFollowing };
+      const replyQueryKeys = queryClient.getQueryCache().findAll({
+        queryKey: ["commentReplies", postId],
+        exact: false,
+      });
+
+      replyQueryKeys.forEach(({ queryKey }) => {
+        queryClient.setQueryData(queryKey, (oldReplies) => {
+          if (!oldReplies || !oldReplies.pages) return oldReplies;
+          return {
+            ...oldReplies,
+            pages: oldReplies.pages.map((replyPage) => ({
+              ...replyPage,
+              data: Array.isArray(replyPage.data)
+                ? replyPage.data.map((cr) =>
+                    cr.username === username ? { ...cr, isFollowed: true } : cr
+                  )
+                : replyPage.data,
+            })),
+          };
+        });
+      });
+
+      return { previousPosts, previousComments, previousFollowingState };
     },
     onError: (error, username, context) => {
       setIsFollowing(context.previousFollowingState);
+
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["posts"], context.previousPosts);
+      }
+      if (context?.previousComments) {
+        queryClient.setQueryData(
+          ["comments", postId],
+          context.previousComments
+        );
+      }
+      queryClient.invalidateQueries({ queryKey: ["commentReplies", postId] });
+
       console.error("Error following user:", error);
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+      queryClient.invalidateQueries({ queryKey: ["commentReplies", postId] });
+    },
+    onSettled: () => {},
   });
 
   const handleReactMutation = useMutation({
@@ -290,7 +428,7 @@ export default function CommentContainer({
         setReportState(0);
       }, 2000);
     },
-  })
+  });
 
   const handleCommentMutation = useMutation({
     mutationFn: (params) =>
@@ -298,7 +436,8 @@ export default function CommentContainer({
         postId: params.postId,
         commentId: params.commentId,
         text: params.text,
-        tags: params.tags || [],
+        tags: taggedUsers.map((user) => user._id),
+        companyUsername: isOnCompanyPage ? companyUsername : null,
       }),
     onSuccess: (newReplyData, variables) => {
       if (nestCount > 2) {
@@ -337,6 +476,12 @@ export default function CommentContainer({
         numComments: 0,
         numReacts: 0,
         reaction: null,
+        tags: taggedUsers.map((user) => ({
+          userId: user._id,
+          username: user.username,
+          profilePicture: user.profilePicture,
+          name: user.name,
+        })),
         connectionDegree: 0,
         isFollowed: false,
         age: determineAge(new Date()),
@@ -364,10 +509,9 @@ export default function CommentContainer({
         }
       );
 
-      // 2. Update ancestor counts recursively (updates B in A's cache, A in post cache, etc.)
-      updateAncestorCommentCounts(queryClient, postId, comment?.commentId, 1); // Start update from B
+      updateAncestorCommentCounts(queryClient, postId, comment?.commentId, 1);
 
-      setShowReplies(true); // Show C's section within B's container
+      setShowReplies(true);
     },
     onError: (error) => {
       console.error("Error adding reply:", error);
@@ -541,8 +685,8 @@ export default function CommentContainer({
     handleReportMutation.mutate({ commentId: comment.commentId, reportObj });
   };
 
-  const handleFollow = (username) => {
-    handleFollowMutation.mutate(username);
+  const handleFollow = () => {
+    handleFollowMutation.mutate(comment?.username);
   };
 
   const handleDelete = () => {
@@ -590,7 +734,7 @@ export default function CommentContainer({
 
   const commentAge = determineAge(comment?.time || new Date());
   const hasRepliesSection = showReplies;
-  const hasReplies = comment?.numComments > 0;
+  comment.hasReplies = comment?.numComments > 0;
 
   return (
     <CommentPresentation
@@ -623,7 +767,7 @@ export default function CommentContainer({
       onShowReplies={handleShowReplies}
       onHideReplies={handleHideReplies}
       onDelete={handleDelete}
-      hasReplies={hasReplies}
+      hasReplies={comment?.hasReplies}
       isDeleting={isDeleting}
       nestCount={nestCount}
       postUsername={postUsername}
@@ -642,6 +786,19 @@ export default function CommentContainer({
       onReportComment={handleReport}
       reactAnim={reactAnim}
       handleAnimEnd={handleAnimEnd}
+      taggedUser={taggedUser}
+      setTaggedUser={setTaggedUser}
+      taggedUsers={taggedUsers}
+      setTaggedUsers={setTaggedUsers}
+      taggedUserPopoverOpen={taggedUserPopoverOpen}
+      setTaggedUserPopoverOpen={setTaggedUserPopoverOpen}
+      handleTagUserClick={handleTagUserClick}
+      handleRemoveTaggedUser={handleRemoveTaggedUser}
+      handleUserSearch={handleUserSearch}
+      isSearching={isSearching}
+      searchResults={searchResults}
+      setSearchResults={setSearchResults}
+      tagError={tagError}
     />
   );
 }
