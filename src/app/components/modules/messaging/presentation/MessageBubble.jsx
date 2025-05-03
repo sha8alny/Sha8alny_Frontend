@@ -46,7 +46,7 @@ const LinkAttachment = memo(({ url }) => (
     data-testid="link-attachment-link"
   >
     <LinkIcon className="h-4 w-4" />
-    <span className="truncate max-w-[200px]">{url.replace(/^https?:\/\//, '').split('/')[0]}</span>
+    <span className="truncate max-w-[200px]">{url.replace(/^https?:\/\//, '')}</span>
   </a>
 ));
 
@@ -175,6 +175,26 @@ const MediaRenderer = memo(({ mediaUrl }) => {
   }
 });
 
+// Utility to check if a string is a URL or URI (including encrypted links)
+function isLikelyUrl(str) {
+  // Matches http(s), www, custom URI schemes, or percent-encoded URLs
+  return /^(https?:\/\/|www\.|[a-zA-Z0-9+.-]+:\/)/.test(str)
+    || /^https?%3A%2F%2F/i.test(str); // percent-encoded http(s)
+}
+
+// Helper to decode percent-encoded URLs if needed
+function decodeIfEncodedUrl(str) {
+  try {
+    // If it looks like a percent-encoded URL, decode it
+    if (/^https?%3A%2F%2F/i.test(str)) {
+      return decodeURIComponent(str);
+    }
+  } catch {
+    // ignore decode errors
+  }
+  return str;
+}
+
 /**
  * @namespace messages
  * @module messages
@@ -201,7 +221,11 @@ export const MessageBubble = memo(({
   const messageContent = typeof message.messageContent === "string" 
     ? message.messageContent.replace(/^"|"$/g, '')
     : message.messageContent;
-    
+
+  // Check if the message content is a URL/URI (including percent-encoded)
+  const isContentUrl = typeof messageContent === "string" && isLikelyUrl(messageContent);
+  const decodedContent = isContentUrl ? decodeIfEncodedUrl(messageContent) : messageContent;
+
   return (
     <div
       className={`flex gap-2 max-w-[80%] ${isCurrentUser ? "ml-auto flex-row-reverse" : ""}`}
@@ -227,7 +251,16 @@ export const MessageBubble = memo(({
           }`}
           data-testid={`message-content-${message.id}`}
         >
-          {messageContent && <div>{messageContent}</div>}
+          {/* Render message content as a link/attachment if it's a URL/URI */}
+          {messageContent && (
+            isContentUrl ? (
+              // Use MediaRenderer for rich preview if possible, fallback to LinkAttachment
+              <MediaRenderer mediaUrl={decodedContent} />
+            ) : (
+              <div>{messageContent}</div>
+            )
+          )}
+          {/* Render mediaUrl as before */}
           {message.mediaUrl && <MediaRenderer mediaUrl={message.mediaUrl} />}
         </div>
         <div
