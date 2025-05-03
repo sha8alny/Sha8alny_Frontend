@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { redirectToSignIn, refreshAccessToken, getValidAccessToken, getValidRefreshToken } from "../services/userAuthentication";
+import { redirectToSignIn, refreshAccessToken, getValidAccessToken, getValidRefreshToken, checkIfDeleted } from "../services/userAuthentication";
 import { checkAdminStatus } from "../services/userAuthentication";
 
 // Define public paths that don't require authentication
@@ -102,7 +102,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    checkIfDeleted()
+  }, [checkAuth, checkIfDeleted]);
 
   const getRedirectPath = useCallback(() => {
     return sessionStorage.getItem('redirectPath') || '/';
