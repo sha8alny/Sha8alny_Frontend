@@ -72,7 +72,9 @@ export default function SavedPostsContainer() {
         setSearchQuery("");
         setSelectedPerson(null);
     };
-
+    const onRetry = () => {
+      router.refresh();
+    }
     return (
         <SavedPostsPresentation
             posts={filteredPosts}
@@ -90,6 +92,7 @@ export default function SavedPostsContainer() {
             onPostClick={handlePostClick}
             onClearFilters={clearFilters}
             formatPostTime={formatPostTime}
+            handleRetry={onRetry}
         />
     );
 }

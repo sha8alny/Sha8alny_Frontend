@@ -1,7 +1,5 @@
 "use client";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
-import ShareIcon from "@mui/icons-material/Share";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SearchIcon from "@mui/icons-material/Search";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -11,13 +9,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/app/components/ui/Dropdown-menu";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+
 import {
   Card,
   CardContent,
@@ -47,6 +40,7 @@ export default function SavedPostsPresentation({
   onPostClick,
   onClearFilters,
   formatPostTime,
+  handleRetry,
 }) {
   if (isLoading) {
     return (
