@@ -72,7 +72,7 @@ function MyJobsPresentation({
       </p>
       <Button
         variant="default"
-        onClick={() => router.reload()}
+        onClick={() => router.refresh()}
         data-testid="retry-button"
         className="bg-secondary text-background hover:bg-secondary/80 transition-colors duration-200"  >
         Try Again
