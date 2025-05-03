@@ -47,7 +47,7 @@ export default function SavedPostsPresentation({
       <div className="p-8 flex flex-col items-center justify-center h-64 bg-foreground rounded-xl shadow-lg">
         <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
         <p className="text-lg font-medium text-gray-600 dark:text-gray-300 animate-pulse">
-          Loading saved jobs...
+          Loading saved Posts...
         </p>
       </div>
     );
@@ -61,7 +61,7 @@ export default function SavedPostsPresentation({
           className=" text-red-500 mx-auto mb-4"
         />
         <p className="text-red-600 dark:text-red-400 text-lg font-medium mb-4">
-          Unable to load saved jobs
+          Unable to load saved Posts
         </p>
         <p className="text-gray-600 dark:text-gray-300 mb-6">
           {error?.message || "Something went wrong. Please try again."}
@@ -101,37 +101,6 @@ export default function SavedPostsPresentation({
             />
           </div>
         </div>
-
-        {allTaggedPeople.length > 0 && (
-          <div className="flex flex-wrap gap-2 pb-2">
-            <Badge
-              variant={selectedPerson === null ? "default" : "outline"}
-              className="cursor-pointer hover:bg-opacity-80"
-              onClick={() => onPersonSelect(null)}
-              data-testid="filter-all-badge"
-            >
-              All
-            </Badge>
-            {allTaggedPeople.map((person) => (
-              <Badge
-                key={person.userId}
-                variant={
-                  selectedPerson === person.userId ? "default" : "outline"
-                }
-                className="cursor-pointer hover:bg-opacity-80 flex items-center gap-1"
-                onClick={() =>
-                  onPersonSelect(
-                    selectedPerson === person.userId ? null : person.userId
-                  )
-                }
-                data-testid={`filter-person-badge-${person.userId}`}
-              >
-                <PersonIcon className="h-3 w-3" />
-                {person.fullName}
-              </Badge>
-            ))}
-          </div>
-        )}
 
         {posts.length > 0 ? (
           <div className="grid gap-4">
@@ -181,10 +150,10 @@ function PostCard({ post, onPostClick, formatPostTime }) {
   }).reduce((sum, [_, count]) => sum + count, 0);
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow duration-200 bg-foreground ">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow duration-200 bg-foreground border border-border/40">
       <div className="flex flex-col sm:flex-row">
         {post.media && post.media.length > 0 && (
-          <div className="hidden sm:block w-32 h-auto bg-neutral-700 ml-2 rounded-lg overflow-hidden ">
+          <div className="hidden sm:block w-32 h-auto bg-neutral-700 m-2 rounded-lg overflow-hidden">
             {post.media[0].includes(".mp4") ||
             post.media[0].includes(".webm") ||
             post.media[0].includes(".ogg") ? (
@@ -200,7 +169,7 @@ function PostCard({ post, onPostClick, formatPostTime }) {
                 Your browser does not support the video tag.
               </video>
             ) : post.media[0].includes(".pdf") ? (
-              <div className="w-full h-full flex items-center justify-center bg-background">
+              <div className="w-full h-full flex items-center justify-center bg-background/80">
                 <div className="flex flex-col items-center p-2">
                   <PictureAsPdfIcon className="text-red-500" fontSize="large" />
                   <span className="text-xs mt-1 text-center">PDF Document</span>
@@ -219,9 +188,9 @@ function PostCard({ post, onPostClick, formatPostTime }) {
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
               <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10 border">
+                <Avatar className="h-10 w-10 border ring-1 ring-secondary/20">
                   <AvatarImage src={post.profilePicture} alt={post.fullName} />
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-secondary/20">
                     {post.fullName?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -231,17 +200,17 @@ function PostCard({ post, onPostClick, formatPostTime }) {
                     {post?.connectionDegree > 0 && (
                       <Badge
                         variant="outline"
-                        className="text-xs px-1.5 py-0 bg-green-50 text-green-700 border-green-200"
+                        className="text-xs px-1.5 py-0 bg-green-50/80 text-green-700 border-green-200"
                       >
                         {formatOrdinal(post.connectionDegree)}
                       </Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground line-clamp-1">
-                    {post.headline}
+                    {post.username || 'user'} · {post.headline}
                   </p>
                   <div className="flex items-center text-xs text-muted-foreground mt-1">
-                    <CalendarTodayIcon fontSize="0.75rem" className=" mr-1" />
+                    <CalendarTodayIcon sx={{ fontSize: 12 }} className="mr-1" />
                     <span>{formattedTime}</span>
                   </div>
                 </div>
@@ -250,42 +219,41 @@ function PostCard({ post, onPostClick, formatPostTime }) {
           </CardHeader>
 
           <CardContent className="pb-3">
-            {post.taggedPeople && post.taggedPeople.length > 0 && (
+            {post.tags && post.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2 items-center">
                 <span className="text-xs text-muted-foreground">Tagged:</span>
-                {post.taggedPeople.map((person) => (
+                {post.tags.map((person) => (
                   <Badge
                     key={person.userId}
-                    variant="secondary"
-                    className="text-xs flex items-center gap-1"
+                    className="text-xs flex items-center gap-1 bg-secondary"
                   >
-                    <PersonIcon className="h-3 w-3" />
-                    {person.fullName}
+                    <PersonIcon sx={{ fontSize: 12 }} />
+                    {person.name}
                   </Badge>
                 ))}
               </div>
             )}
-            <p className="text-sm line-clamp-3">{post.text || "No content"}</p>
+            <p className="text-sm line-clamp-3 mt-1">{post.text || "No content"}</p>
           </CardContent>
           <CardFooter className="pt-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-1.5"
+              className="flex items-center gap-1.5 hover:bg-secondary/10"
               onClick={() => onPostClick(post.postId, post.username)}
               data-testid={`read-post-btn-${post.postId}`}
             >
-              <LaunchIcon fontSize="0.875rem" className="h-3.5 w-3.5" />
+              <LaunchIcon sx={{ fontSize: 14 }} />
               <span>Read post</span>
             </Button>
 
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <div className="flex items-center">
-                <ThumbUpOutlinedIcon className="h-3 w-3 mr-1" />
+                <ThumbUpOutlinedIcon sx={{ fontSize: 14 }} className="mr-1" />
                 <span>{totalReactions}</span>
               </div>
               <div className="flex items-center">
-                <ChatBubbleOutlineIcon className="h-3 w-3 mr-1" />
+                <ChatBubbleOutlineIcon sx={{ fontSize: 14 }} className="mr-1" />
                 <span>{post.numComments}</span>
               </div>
             </div>
