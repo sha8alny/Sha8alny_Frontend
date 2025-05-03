@@ -104,22 +104,6 @@ export default function WritePost({company, text, setText,onImageUpload,videoUpl
             </div>
             {/*Filters*/}
         </div>
-        <div className="mt-4 w-full overflow-x-auto scrollbar-hide">
-            <div className="flex justify-between space-x-2 min-w-max pb-2">
-                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap" data-testid="page-posts-button">
-                    Page Posts
-                </button>
-                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap"  data-testid="following-button">
-                    Following
-                </button>
-                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap" data-testid="employee-posts-button">
-                    Employee Posts
-                </button>
-                <button className="border border-[var(--secondary)] text-[var(--secondary)] bg-[var(--foreground)] rounded-full cursor-pointer py-1 px-2 sm:py-1.5 sm:px-3 md:py-2 md:px-4 whitespace-nowrap" data-testid="hashtags-button">
-                    Hashtags
-                </button>
-            </div>
-        </div>
     </div>
   );
 }

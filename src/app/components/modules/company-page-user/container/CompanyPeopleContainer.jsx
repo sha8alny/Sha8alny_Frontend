@@ -33,12 +33,14 @@ export default function CompanyPeopleContainer({username}) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [connectedPeople, setConnectedPeople] = useState({});
+    const [currentUsername, setCurrentUsername] = useState("");
     const router = useRouter();
 
     useEffect(() => {
         const getCompanyPeople = async () => {
             try {
                 const data = await fetchCompanyPeople(username);
+                setCurrentUsername(data.username);
                 console.log("data of oastaz bate5a: ", data);
                 setPeople(data);
             } catch (err) {
@@ -82,11 +84,10 @@ export default function CompanyPeopleContainer({username}) {
         }
     };
       
-    
     console.log("connected people", connectedPeople);
   return (
       <div>
-        <CompanyPeople people={people} loading={loading} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson}   />
+        <CompanyPeople people={people} loading={loading} goToPeoplePage={goToPeoplePage} handleConnectPerson={handleConnectPerson}  />
       </div>
   );
 }
