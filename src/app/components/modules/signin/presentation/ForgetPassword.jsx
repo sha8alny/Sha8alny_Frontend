@@ -30,7 +30,7 @@ return (
    
         <div className="bg-foreground p-8 rounded-lg shadow-2xl shadow-secondary w-96">
             <div className="flex items-center justify-center w-70 h-15  text-background rounded-full mx-auto">
-             <h2 className="text-3xl font-bold text-center text-secondary">Forget Password</h2>
+             <h2 className="text-3xl font-bold text-center text-secondary">Forgot Password</h2>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
                 <input

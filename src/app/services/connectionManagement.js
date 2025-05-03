@@ -118,13 +118,31 @@ export const fetchPeopleYouMayKnow = async () => {
   return response.json();
 }
 
-export const getConnections = async (page) => {
+export const getConnections = async (
+  name,
+  industry,
+  location,
+  connectionDegree,
+  page
+) => {
   const pageSize = 9;
 
   try {
-    const response = await fetchWithAuth(`${apiURL}/connections/${page}/${pageSize}`, {
-      method: "GET",
-    });
+    const response = await fetchWithAuth(
+    `${apiURL}/connections/${page}/${pageSize}?name=${encodeURIComponent(
+          name
+        )}&industry=${encodeURIComponent(
+          industry || ""
+        )}&location=${encodeURIComponent(
+          location || ""
+        )}&connectionDegree=${encodeURIComponent(connectionDegree || "")}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch connections: ${response.status}`);
@@ -184,10 +202,27 @@ export const getCompanyFollowers = async (page, username) => {
   return data;
 }
 
-export const getFollowing = async (page) => {
+export const getFollowing = async (
+  name,
+  industry,
+  location,
+  connectionDegree,
+  page
+) => {
   const pageSize = 9;
-  const response = await fetchWithAuth(`${apiURL}/following/users/${page}/${pageSize}`, {
+  const response = await fetchWithAuth(
+    `${apiURL}/following/users/${page}/${pageSize}?name=${encodeURIComponent(
+      name
+    )}&industry=${encodeURIComponent(
+      industry || ""
+    )}&location=${encodeURIComponent(
+      location || ""
+    )}&connectionDegree=${encodeURIComponent(connectionDegree || "")}`,
+  {
     method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) {
     throw new Error("Failed to fetch following");
@@ -199,10 +234,27 @@ export const getFollowing = async (page) => {
   return data;
 }
 
-export const getConnectionRequests = async (page) => {
+export const getConnectionRequests = async (
+  name,
+  industry,
+  location,
+  connectionDegree,
+  page
+) => {
   const pageSize = 9;
-  const response = await fetchWithAuth(`${apiURL}/connections/pending/received/${page}/${pageSize}`, {
+  const response = await fetchWithAuth(
+    `${apiURL}/connections/pending/received/${page}/${pageSize}?name=${encodeURIComponent(
+      name
+    )}&industry=${encodeURIComponent(
+      industry || ""
+    )}&location=${encodeURIComponent(
+      location || ""
+    )}&connectionDegree=${encodeURIComponent(connectionDegree || "")}`,
+  {
     method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) {
     throw new Error("Failed to fetch connection requests");
@@ -214,10 +266,27 @@ export const getConnectionRequests = async (page) => {
   return data;
 }
 
-export const getSentConnectionRequests = async (page) => {
+export const getSentConnectionRequests = async (
+  name,
+  industry,
+  location,
+  connectionDegree,
+  page
+) => {
   const pageSize = 9;
-  const response = await fetchWithAuth(`${apiURL}/connections/pending/sent/${page}/${pageSize}`, {
+  const response = await fetchWithAuth(
+    `${apiURL}/connections/pending/sent/${page}/${pageSize}?name=${encodeURIComponent(
+      name
+    )}&industry=${encodeURIComponent(
+      industry || ""
+    )}&location=${encodeURIComponent(
+      location || ""
+    )}&connectionDegree=${encodeURIComponent(connectionDegree || "")}`,
+  {
     method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) {
     throw new Error("Failed to fetch sent connection requests");

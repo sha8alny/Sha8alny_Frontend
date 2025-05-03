@@ -3,10 +3,11 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { redirectToSignIn, refreshAccessToken, checkAdminStatus } from "../services/userAuthentication";
+import { redirectToSignIn, refreshAccessToken, getValidAccessToken, getValidRefreshToken } from "../services/userAuthentication";
+import { checkAdminStatus } from "../services/userAuthentication";
 
 // Define public paths that don't require authentication
-const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/verify-email', '/error', '/about', '/privacy-policy', '/cookie-policy', '/terms'];
+const PUBLIC_PATHS = ['/login', '/signin', '/signup', '/register', '/forget-password', '/reset-password', '/verify-email', '/error', '/about', '/privacy-policy', '/cookie-policy', '/terms', '/home'];
 
 // Define admin paths that require admin authorization
 const ADMIN_PATHS = ['/admin'];
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = useCallback(async () => {
     if (!pathname) return;
+    
 
     // Skip auth check for public paths
     if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
@@ -37,9 +39,25 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    const accessToken = sessionStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+    const accessToken = getValidAccessToken();
+    const refreshToken = getValidRefreshToken();
     const isProfileComplete = localStorage.getItem("isProfileComplete");
+        // Special case for root "/"
+    if (pathname === "/") {
+
+    if (!accessToken && !refreshToken) {
+      router.push("/home");
+      return;
+    }
+
+    if (!accessToken && refreshToken) {
+      const newAccessToken = await refreshAccessToken();
+      if (!newAccessToken) {
+        router.push("/home");
+        return;
+      }
+    }
+    }
 
     if (isProfileComplete=== "false" && pathname !== "/complete-profile" && accessToken) {
       router.push('/complete-profile');
