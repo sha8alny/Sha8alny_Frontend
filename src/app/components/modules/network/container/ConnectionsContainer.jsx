@@ -1,6 +1,6 @@
 "use client"
 import { useState , useEffect} from "react";
-import {getConnections, removeConnection, getConnectionMutuals} from "../../../../services/connectionManagement"
+import {getConnections, removeConnection} from "../../../../services/connectionManagement"
 import Connections from "../presentation/Connections";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
