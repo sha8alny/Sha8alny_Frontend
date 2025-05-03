@@ -315,7 +315,7 @@ export default function PostButtonPresentation({
               </PopoverTrigger>
               <PopoverContent
                 className="w-80 p-3 pointer-events-auto"
-                align="start"
+                align="end"
                 data-testid="tag-user-popover-content"
               >
                 <div className="space-y-2">

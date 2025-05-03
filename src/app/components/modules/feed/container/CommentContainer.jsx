@@ -5,6 +5,7 @@ import {
   addComment,
   determineAge,
   deleteComment,
+  getTags,
 } from "@/app/services/post";
 import {
   useMutation,
@@ -17,6 +18,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { followUser } from "@/app/services/connectionManagement";
 import { Reactions } from "@/app/utils/Reactions";
 import { report } from "@/app/services/privacy";
+import { useCallback } from "react";
 
 function updateAncestorCommentCounts(
   queryClient,
@@ -141,6 +143,14 @@ export default function CommentContainer({
   const [reportText, setReportText] = useState("");
   const [reportType, setReportType] = useState(null);
   const [reactAnim, setReactAnim] = useState(false);
+  const [isOnCompanyPage, setIsOnCompanyPage] = useState(false);
+  const [companyUsername, setCompanyUsername] = useState(null);
+  const [taggedUser, setTaggedUser] = useState("");
+  const [taggedUsers, setTaggedUsers] = useState([]);
+  const [taggedUserPopoverOpen, setTaggedUserPopoverOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [tagError, setTagError] = useState(null);
   const prevReaction = useRef(isLiked);
 
   const [reactionCount, setReactionCount] = useState(
@@ -155,6 +165,75 @@ export default function CommentContainer({
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname) {
+      const companyAdminRegex = /^\/company\/.*\/admin\/posts(\/.*)?$/;
+      setIsOnCompanyPage(companyAdminRegex.test(pathname));
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (pathname) {
+      const companyRegex = /^\/company\/([^/]+)\/admin\/posts(\/.*)?$/;
+      const match = pathname.match(companyRegex);
+
+      if (match && match[1]) {
+        setCompanyUsername(match[1]);
+      }
+    }
+  }, [pathname]);
+
+  const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
+    setTaggedUsers((prevUsers) =>
+      prevUsers.filter((user) => user._id !== userIdToRemove)
+    );
+    setTagError(null);
+  }, []);
+
+  const handleTagUserClick = useCallback(
+    (user) => {
+      if (taggedUsers.some((u) => u._id === user._id)) {
+        return; // User already tagged
+      }
+
+      if (taggedUsers.length >= 5) {
+        setTagError("You can tag a maximum of 5 users.");
+        return;
+      }
+
+      setTaggedUsers((prev) => [...prev, user]);
+      setTaggedUser("");
+      setSearchResults([]);
+    },
+    [taggedUsers]
+  );
+
+  const handleUserSearch = useCallback(
+    async (query) => {
+      if (!query || query.length < 2) {
+        setSearchResults([]);
+        setIsSearching(false);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const results = await getTags(query);
+        const filteredResults = results.filter(
+          (user) =>
+            !taggedUsers.some((taggedUser) => taggedUser._id === user._id)
+        );
+        setSearchResults(filteredResults || []);
+      } catch (error) {
+        console.error("Error searching for users:", error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [taggedUsers]
+  );
 
   useEffect(() => {
     if (comment?.isFollowed !== isFollowing) {
@@ -357,7 +436,8 @@ export default function CommentContainer({
         postId: params.postId,
         commentId: params.commentId,
         text: params.text,
-        tags: params.tags || [],
+        tags: taggedUsers.map((user) => user._id),
+        companyUsername: isOnCompanyPage ? companyUsername : null,
       }),
     onSuccess: (newReplyData, variables) => {
       if (nestCount > 2) {
@@ -396,6 +476,12 @@ export default function CommentContainer({
         numComments: 0,
         numReacts: 0,
         reaction: null,
+        tags: taggedUsers.map((user) => ({
+          userId: user._id,
+          username: user.username,
+          profilePicture: user.profilePicture,
+          name: user.name,
+        })),
         connectionDegree: 0,
         isFollowed: false,
         age: determineAge(new Date()),
@@ -700,6 +786,19 @@ export default function CommentContainer({
       onReportComment={handleReport}
       reactAnim={reactAnim}
       handleAnimEnd={handleAnimEnd}
+      taggedUser={taggedUser}
+      setTaggedUser={setTaggedUser}
+      taggedUsers={taggedUsers}
+      setTaggedUsers={setTaggedUsers}
+      taggedUserPopoverOpen={taggedUserPopoverOpen}
+      setTaggedUserPopoverOpen={setTaggedUserPopoverOpen}
+      handleTagUserClick={handleTagUserClick}
+      handleRemoveTaggedUser={handleRemoveTaggedUser}
+      handleUserSearch={handleUserSearch}
+      isSearching={isSearching}
+      searchResults={searchResults}
+      setSearchResults={setSearchResults}
+      tagError={tagError}
     />
   );
 }

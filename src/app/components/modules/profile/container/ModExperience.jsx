@@ -295,6 +295,75 @@ export default function ModExperience({ experience, adding }) {
           isValid = false;
         }
       }
+      // Check if isCurrent is true so start date cant be in the future
+      if (isCurrent) {
+        const currentDate = new Date();
+        const currentMonth = currentDate.toLocaleString("default", {
+          month: "long",
+        });
+        const currentYear = currentDate.getFullYear();
+        const startYear = parseInt(startDate.year);
+        const startMonthIndex = months.findIndex(
+          (month) => month === startDate.month
+        );
+        const currentMonthIndex = months.findIndex(
+          (month) => month === currentMonth
+        );
+        if (startYear > currentYear) {
+          setStartDateError((prev) => ({
+            ...prev,
+            year: "Start date cannot be in the future.",
+          }));
+          isValid = false;
+        } else if (startYear === currentYear) {
+          if (startMonthIndex > currentMonthIndex) {
+            setStartDateError((prev) => ({
+              ...prev,
+              month: "Start date cannot be in the future.",
+            }));
+            isValid = false;
+          }
+        }
+      }
+
+      // Check if start date is in the future when both dates are set
+      if (
+        startDate?.year &&
+        startDate?.month &&
+        endDate?.year &&
+        endDate?.month &&
+        fields.some(
+          (field) => field.includes("startDate") || field.includes("endDate")
+        )
+      ) {
+        const currentDate = new Date();
+        const currentMonth = currentDate.toLocaleString("default", {
+          month: "long",
+        });
+        const currentYear = currentDate.getFullYear();
+        const startYear = parseInt(startDate.year);
+        const startMonthIndex = months.findIndex(
+          (month) => month === startDate.month
+        );
+        const currentMonthIndex = months.findIndex(
+          (month) => month === currentMonth
+        );
+        if (startYear > currentYear) {
+          setStartDateError((prev) => ({
+            ...prev,
+            year: "Start date cannot be in the future.",
+          }));
+          isValid = false;
+        } else if (startYear === currentYear) {
+          if (startMonthIndex > currentMonthIndex) {
+            setStartDateError((prev) => ({
+              ...prev,
+              month: "Start date cannot be in the future.",
+            }));
+            isValid = false;
+          }
+        }
+      }
 
       // Check if end date is after start date when both dates are set
       if (

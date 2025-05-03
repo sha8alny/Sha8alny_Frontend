@@ -3,6 +3,7 @@ import {
   ExpandMore,
   Person,
   PersonAdd,
+  PersonAddOutlined,
   Send,
   ThumbUpOutlined,
 } from "@mui/icons-material";
@@ -31,6 +32,13 @@ import Funny from "@/app/components/ui/Funny";
 import Dialog from "@/app/components/ui/DialogMod";
 import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 import ReportPresentation from "./ReportPresentation";
+import Link from "next/link";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/Popover";
+import { Search } from "lucide-react";
 
 export default function CommentPresentation({
   comment,
@@ -74,6 +82,15 @@ export default function CommentPresentation({
   onReportComment,
   reactAnim,
   handleAnimEnd,
+  taggedUser,
+  setTaggedUser,
+  taggedUsers,
+  handleTagUserClick,
+  handleRemoveTaggedUser,
+  handleUserSearch,
+  isSearching,
+  searchResults,
+  tagError,
 }) {
   return (
     <div
@@ -168,9 +185,22 @@ export default function CommentPresentation({
                 {comment.age}
               </span>
             </div>
-            <p className="text-sm" data-testid="comment-text">
-              {comment?.text}
-            </p>
+            <div className="flex gap-2 flex-wrap items-center">
+              <p className="text-sm" data-testid="comment-text">
+                {comment?.text}
+              </p>
+              {comment?.tags?.length > 0 &&
+                comment?.tags.map((user) => (
+                  <Link
+                    key={user.userId}
+                    href={`/u/${user.username}`}
+                    className="text-sm text-secondary/70 font-semibold hover:underline cursor-pointer"
+                    data-testid={`comment-tag-${user.userId}`}
+                  >
+                    @{user.name}
+                  </Link>
+                ))}
+            </div>
           </div>
 
           <div
@@ -349,34 +379,169 @@ export default function CommentPresentation({
 
           {isReplying && (
             <div
-              className="flex items-end gap-2 mt-2"
+              className="flex flex-col gap-2 mt-2"
               data-testid="comment-reply-section"
             >
-              <Textarea
-                placeholder="Write a reply..."
-                className="flex-1 text-sm"
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                onKeyDown={onKeyPress}
-                rows={1}
-                data-testid="comment-reply-textarea"
-              />
-              <Button
-                size="icon"
-                onClick={onReply}
-                disabled={!replyText.trim() || isCommenting}
-                className="cursor-pointer bg-secondary/80 dark:text-primary hover:bg-secondary/60 transition-colors duration-200"
-                data-testid="comment-reply-send-btn"
-              >
-                {isCommenting ? (
-                  <div
-                    className="size-4 animate-spin border-2 border-t-transparent rounded-full border-primary"
-                    data-testid="comment-reply-loading"
-                  />
-                ) : (
-                  <Send sx={{ fontSize: "1rem" }} />
-                )}
-              </Button>
+              <div className="flex items-end gap-2">
+                <Textarea
+                  placeholder="Write a reply..."
+                  className="flex-1 text-sm"
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  onKeyDown={onKeyPress}
+                  rows={1}
+                  data-testid="comment-reply-textarea"
+                />
+                <Button
+                  size="icon"
+                  onClick={onReply}
+                  disabled={!replyText.trim() || isCommenting}
+                  className="cursor-pointer bg-secondary/80 dark:text-primary hover:bg-secondary/60 transition-colors duration-200"
+                  data-testid="comment-reply-send-btn"
+                >
+                  {isCommenting ? (
+                    <div
+                      className="size-4 animate-spin border-2 border-t-transparent rounded-full border-primary"
+                      data-testid="comment-reply-loading"
+                    />
+                  ) : (
+                    <Send sx={{ fontSize: "1rem" }} />
+                  )}
+                </Button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="icon"
+                      className="bg-gradient-to-br from-secondary/60 to-blue-500 text-background dark:text-primary rounded-md text-sm font-semibold hover:bg-secondary/70 cursor-pointer transition-colors"
+                      data-testid="comment-section-more-btn"
+                    >
+                      <PersonAddOutlined sx={{ fontSize: "1rem" }} />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-80 p-3 pointer-events-auto"
+                    align="end"
+                    data-testid="tag-user-popover-content"
+                  >
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold">
+                        Tag people in your post
+                      </h4>
+                      <div className="flex items-center gap-2 border rounded-md px-3 py-2">
+                        <Search className="h-4 w-4 text-muted" />
+                        <input
+                          type="text"
+                          value={taggedUser}
+                          onChange={(e) => {
+                            setTaggedUser(e.target.value);
+                            handleUserSearch(e.target.value);
+                          }}
+                          className="flex-1 border-none bg-transparent text-sm focus:outline-none"
+                          placeholder="Search for people..."
+                          data-testid="tag-user-search"
+                        />
+                      </div>
+                      {/* Skeleton loading state */}
+                      {taggedUser && taggedUser.length > 1 && isSearching && (
+                        <div
+                          className="mt-2 max-h-60 overflow-y-auto space-y-2"
+                          data-testid="user-search-skeleton"
+                        >
+                          {[1, 2, 3].map((i) => (
+                            <div
+                              key={i}
+                              className="flex items-center gap-2 p-2 rounded-md animate-pulse"
+                            >
+                              <div className="h-8 w-8 rounded-full bg-primary/30"></div>
+                              <div className="flex flex-col space-y-1.5 flex-1">
+                                <div className="h-3 bg-primary/30 rounded w-24"></div>
+                                <div className="h-2 bg-primary/20 rounded w-40"></div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {/* Search results */}
+                      {searchResults.length > 0 && (
+                        <div className="mt-2 max-h-60 overflow-y-auto">
+                          {searchResults.map((user) => (
+                            <div
+                              key={user._id}
+                              className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded-md cursor-pointer transition-colors"
+                              onClick={() => handleTagUserClick(user)}
+                              data-testid={`user-search-result-${user._id}`}
+                            >
+                              <Avatar className="h-8 w-8 ring-1 ring-secondary/10">
+                                <AvatarImage
+                                  src={user.profilePicture}
+                                  alt={user.name}
+                                />
+                                <AvatarFallback className="text-xs bg-secondary/5">
+                                  {user.name?.substring(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-semibold">
+                                  {user.name}
+                                </span>
+                                {user.headline && (
+                                  <span className="text-xs text-muted truncate max-w-[180px]">
+                                    {user.headline}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {/* No results state - only show when there was an attempt to search */}
+                      {taggedUser &&
+                        taggedUser.length > 2 &&
+                        searchResults.length === 0 && (
+                          <div className="mt-2 p-3 text-center rounded-md">
+                            <p className="text-xs text-primary font-semibold mb-1">
+                              No users found.
+                            </p>
+                            <p className="text-[11px] text-muted">
+                              Try a different search term.
+                            </p>
+                          </div>
+                        )}
+                      {/* Error state */}
+                      {tagError && (
+                        <div className="mt-2 p-3 text-center">
+                          <p className="text-xs text-red-500 mb-1">
+                            {tagError}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              {taggedUsers.length > 0 && (
+                <div
+                  className="flex items-center flex-wrap gap-2 px-2 mt-1"
+                  data-testid="tagged-users-container"
+                >
+                  {taggedUsers.map((user) => (
+                    <div
+                      key={user._id}
+                      className="flex items-center gap-2 bg-secondary text-background rounded-full px-2 font-semibold py-1 text-xs"
+                      data-testid={`tagged-user-${user._id}`}
+                    >
+                      <span>{user.name}</span>
+                      <button
+                        onClick={() => handleRemoveTaggedUser(user._id)}
+                        className="text-background cursor-pointer hover:bg-primary/10 rounded-full px-1"
+                        data-testid={`remove-tagged-user-${user._id}`}
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

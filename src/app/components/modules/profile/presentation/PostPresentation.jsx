@@ -26,7 +26,7 @@ export default function PostPresentation({
     >
       {post?.isShared && (
         <div
-          className="flex items-center gap-1 mb-2 text-xs pb-2 truncate"
+          className="flex items-center justify-center gap-1 mb-2 text-xs py-1 px-1 bg-secondary/20 rounded-2xl truncate"
           data-testid={`post-shared-${post?.postId}`}
         >
           <Avatar

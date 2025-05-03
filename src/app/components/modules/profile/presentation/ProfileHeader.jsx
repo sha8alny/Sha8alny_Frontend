@@ -248,7 +248,9 @@ export default function ProfileHeader({
                       disabled={isSendingMessageRequest}
                       onClick={() =>
                         userProfile?.connectionStatus === "connected"
-                          ? navigateTo(`/messages?username=${userProfile?.username}`)
+                          ? navigateTo(
+                              `/messages?username=${userProfile?.username}`
+                            )
                           : onSendMessageRequest()
                       }
                     >
@@ -451,5 +453,79 @@ export default function ProfileHeader({
         </div>
       )}
     </>
+  );
+}
+
+export function ProfileHeaderSkeleton() {
+  return (
+    <Container
+      className="dark:border-[#111] border shadow-lg animate-pulse"
+      data-testid="profile-header-skeleton"
+    >
+      <div className="w-full h-max rounded-2xl">
+        <div className="relative w-full flex">
+          {/* Cover photo skeleton */}
+          <div
+            className="absolute top-0 left-0 w-full h-40 bg-primary/60 rounded-t-xl"
+            data-testid="profile-cover-photo-skeleton"
+          />
+
+          {/* Profile picture skeleton */}
+          <div
+            className="relative size-48 z-10 ml-6 bg-primary/60 rounded-full border-8 border-foreground mt-10"
+            data-testid="profile-picture-skeleton"
+          />
+        </div>
+      </div>
+      <div className="py-4 px-8 flex flex-col md:flex-row">
+        <div className="w-full">
+          {/* Name skeleton */}
+          <div className="flex justify-between items-center w-full">
+            <div
+              className="w-48 h-8 bg-primary/60 rounded-2xl mb-2"
+              data-testid="profile-name-skeleton"
+            />
+          </div>
+
+          {/* Headline skeleton */}
+          <div
+            className="w-72 h-5 bg-primary/60 rounded-2xl mt-2"
+            data-testid="profile-headline-skeleton"
+          />
+
+          {/* Industry skeleton */}
+          <div
+            className="w-40 h-4 bg-primary/60 rounded-2xl mt-4"
+            data-testid="profile-industry-skeleton"
+          />
+
+          {/* Location and contact info skeleton */}
+          <div className="flex gap-2 items-center mt-2">
+            <div
+              className="w-32 h-4 bg-primary/60 rounded-2xl"
+              data-testid="profile-location-skeleton"
+            />
+            •
+            <div
+              className="w-24 h-4 bg-primary/60 rounded-2xl"
+              data-testid="profile-contact-info-skeleton"
+            />
+          </div>
+
+          {/* Connections and action buttons skeleton */}
+          <div className="w-full md:justify-between flex md:flex-row flex-col mt-4">
+            <div
+              className="w-48 h-6 bg-primary/60 rounded-2xl"
+              data-testid="profile-connections-skeleton"
+            />
+            <div className="flex flex-wrap mt-4 md:mt-0 md:ml-auto md:self-end gap-2">
+              <div className="w-24 h-8 bg-primary/60 rounded-2xl" />
+              <div className="w-24 h-8 bg-primary/60 rounded-2xl" />
+              <div className="w-24 h-8 bg-primary/60 rounded-2xl" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Container>
   );
 }

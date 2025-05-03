@@ -126,6 +126,7 @@ export default function PostPresentation({
             <div className="flex items-center gap-2 px-4 text-sm text-muted">
               <Avatar className="size-6 cursor-pointer">
                 <AvatarImage
+                  className="object-cover"
                   src={post?.isShared?.profilePicture}
                   alt={post?.isShared?.fullName}
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
@@ -161,7 +162,11 @@ export default function PostPresentation({
                 : navigateTo(`/u/${post?.username}`)
             }
           >
-            <AvatarImage src={post?.profilePicture} alt={post?.fullName} />
+            <AvatarImage
+              className="object-cover"
+              src={post?.profilePicture}
+              alt={post?.fullName}
+            />
             <AvatarFallback>
               {post?.fullName?.substring(0, 2).toUpperCase()}
             </AvatarFallback>
@@ -466,7 +471,11 @@ export default function PostPresentation({
                 data-testid={`tagged-user-${user?.userId}`}
               >
                 <Avatar className="h-5 w-5 mr-1">
-                  <AvatarImage src={user?.profilePicture} alt={user?.name} />
+                  <AvatarImage
+                    className="object-cover"
+                    src={user?.profilePicture}
+                    alt={user?.name}
+                  />
                   <AvatarFallback>
                     {user?.name?.substring(0, 2).toUpperCase()}
                   </AvatarFallback>

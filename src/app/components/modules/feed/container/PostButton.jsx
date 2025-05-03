@@ -40,6 +40,7 @@ export default function PostButton({ userInfo }) {
     mutationFn: (formData) => createPost(formData),
     onSuccess: (response) => {
       if (!scheduledDate && !scheduledTime) {
+        console.log(taggedUsers);
         const newPostData = {
           postId: response.postId,
           text: text,
@@ -51,8 +52,9 @@ export default function PostButton({ userInfo }) {
           headline: userInfo.headline,
           time: new Date().toISOString(),
           tags: taggedUsers.map((user) => ({
+            userId: user._id,
             username: user.username,
-            fullName: user.fullName,
+            name: user.name,
             profilePicture: user.profilePicture,
           })),
           numLikes: 0,
@@ -163,7 +165,7 @@ export default function PostButton({ userInfo }) {
         0,
         0
       );
-      formData.append("scheduledTime", scheduledDateTime.toISOString());
+      formData.append("time", scheduledDateTime.toISOString());
     }
     handlePostMutation.mutate(formData);
   }, [
@@ -370,22 +372,6 @@ export default function PostButton({ userInfo }) {
     setTags((prevTags) => prevTags.filter((t) => t !== tagToRemove));
   }, []);
 
-  const handleAddTaggedUser = useCallback(() => {
-    if (
-      taggedUser &&
-      !taggedUsers.some((user) => user._id === taggedUser._id)
-    ) {
-      if (taggedUsers.length >= 5) {
-        setError("You can tag a maximum of 5 users.");
-        return;
-      }
-      setTaggedUsers((prev) => [...prev, taggedUser]);
-      setTaggedUser("");
-      setSearchResults([]);
-      setTaggedUserPopoverOpen(false);
-    }
-  }, [taggedUser, taggedUsers]);
-
   const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
     setTaggedUsers((prevUsers) =>
       prevUsers.filter((user) => user._id !== userIdToRemove)
@@ -411,24 +397,31 @@ export default function PostButton({ userInfo }) {
     [taggedUsers]
   );
 
-  const handleUserSearch = useCallback(async (query) => {
-    if (!query || query.length < 2) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
+  const handleUserSearch = useCallback(
+    async (query) => {
+      if (!query || query.length < 2) {
+        setSearchResults([]);
+        setIsSearching(false);
+        return;
+      }
 
-    setIsSearching(true);
-    try {
-      const results = await getTags(query);
-      setSearchResults(results || []);
-    } catch (error) {
-      console.error("Error searching for users:", error);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, []);
+      setIsSearching(true);
+      try {
+        const results = await getTags(query);
+        const filteredResults = results.filter(
+          (user) =>
+            !taggedUsers.some((taggedUser) => taggedUser._id === user._id)
+        );
+        setSearchResults(filteredResults || []);
+      } catch (error) {
+        console.error("Error searching for users:", error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [taggedUsers]
+  );
 
   const imagePreviews = useMemo(() => {
     return images?.map((image, index) => (
@@ -535,7 +528,6 @@ export default function PostButton({ userInfo }) {
           taggedUser={taggedUser}
           setTaggedUser={setTaggedUser}
           taggedUsers={taggedUsers}
-          onAddTaggedUser={handleAddTaggedUser}
           onRemoveTaggedUser={handleRemoveTaggedUser}
           searchResults={searchResults}
           setSearchResults={setSearchResults}

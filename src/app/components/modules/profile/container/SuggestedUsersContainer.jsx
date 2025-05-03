@@ -54,7 +54,7 @@ export default function SuggestedUsersContainer({
   };
 
   if (isLoading || isError)
-    return <SuggestedUsersSkeleton isLoading={isLoading} title={title} />;
+    return <SuggestedUsersSkeleton isLoading={isLoading}/>;
 
   if (helperFunction) {
     const filteredUsers = helperFunction(suggestedUsers);
