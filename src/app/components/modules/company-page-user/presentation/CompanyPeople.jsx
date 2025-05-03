@@ -48,7 +48,7 @@ export default function CompanyPeople({ people=[], loading=false, goToPeoplePage
       if (relation === 1) return "1st";
       if (relation === 2) return "2nd";
       if (relation === 3) return "3rd";
-      if(relation === -1) return "Owner";
+      if(relation === -1) return "You";
       return `${relation}`; 
   };
 
@@ -72,9 +72,9 @@ export default function CompanyPeople({ people=[], loading=false, goToPeoplePage
   return(
       <Container className="p-6">
         <h2 className="text-2xl font-bold mb-4 text-text">People you may know</h2>
-        <div className="flex flex-wrap gap-6 ml-6 space-x-4">
+        <div className="flex flex-wrap gap-x-6 gap-y-6 justify-center md:justify-start">
             {people.map((person, index)=>(
-                <Card key={person.username || index} className="w-70 rounded-xl bg-foreground">
+                <Card key={person.username || index} className="w-full sm:w-[60%] md:w-[45%] lg:w-[48%] xl:w-[30%] rounded-xl bg-foreground">
                     <CardContent  className="flex flex-col items-center text-center p-4 pt-12 ">
                         <img
                         src={person.profilePicture || "/placeholder.svg"}

@@ -14,6 +14,9 @@ import {
 } from "@/app/services/notificationService";
 import NotificationPresentation from "../presentation/NotificationPresentation";
 /**
+ * @namespace notification
+ * @module notification
+ * @component NotificationContainer
  * Container component for notifications that manages state and data fetching.
  * 
  * This component:
@@ -22,9 +25,6 @@ import NotificationPresentation from "../presentation/NotificationPresentation";
  * - Handles marking notifications as read
  * - Provides navigation links based on notification type
  * 
- * @namespace notification
- * @module notification
- * @component NotificationContainer
  * 
  * @returns {JSX.Element} Rendered NotificationPresentation component with all necessary props
  */
@@ -143,6 +143,8 @@ function NotificationContainer() {
       case "Message":
         return `/messages/?${notification.data?.fromUsername || ""}`;
       case "ConnectionRequest":
+        return `/network/pending`;
+      case "FollowRequest":
         return `/network/pending`;
       case "ConnectionAccepted":
         return `/network/connections`;

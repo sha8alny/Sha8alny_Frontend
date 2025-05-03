@@ -1,7 +1,25 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState, useEffect, useRef } from "react";
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * A modal component that displays a list of connections for messaging.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {boolean} props.loading - Whether the connections are currently loading
+ * @param {Array} props.connections - Array of connection objects to display
+ * @param {Function} props.onClose - Callback function to close the modal
+ * @param {Function} props.onSelect - Callback function when a connection is selected
+ * @param {boolean} props.hasMore - Whether there are more connections to load
+ * @param {boolean} props.loadingMore - Whether more connections are currently being loaded
+ * @param {Function} props.onLoadMore - Callback function to load more connections
+ * 
+ * @returns {JSX.Element} The connections modal component
+ */
 export function ConnectionsModal({ 
   loading, 
   connections, 
@@ -36,11 +54,13 @@ export function ConnectionsModal({
     <div 
       className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 animate-fadeIn"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      data-testid="connections-modal-background"
     >
       <div 
         ref={modalRef}
         className="bg-foreground rounded-xl max-w-md w-full p-6 max-h-[80vh] overflow-hidden flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
+        data-testid="connections-modal-content"
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-text">Select a Connection</h2>
@@ -95,9 +115,7 @@ export function ConnectionsModal({
                   key={connection.id || connection.username}
                   connection={connection}
                   onClick={() => onSelect(connection)}
-                  data-testid={`connection-item-${
-                    connection.id || connection.username
-                  }`}
+                  data-testid={`connection-item-${connection.id || connection.username}`}
                 />
               ))}
             </div>
@@ -131,7 +149,9 @@ function ConnectionItem({ connection, onClick, ...props }) {
     <div
       onClick={onClick}
       className="flex items-center gap-3 p-3 hover:bg-background/60 rounded-lg cursor-pointer transition-colors"
-      data-testid={props["data-testid"]}
+      data-testid={props["data-testid"] || `connection-item-${connection.id || connection.username}`}
+      tabIndex={0}
+      role="button"
     >
       <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden shadow-sm flex-shrink-0">
         {connection.avatar || connection.profilePicture ? (
@@ -155,3 +175,4 @@ function ConnectionItem({ connection, onClick, ...props }) {
     </div>
   );
 }
+export default ConnectionsModal;

@@ -10,7 +10,24 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * MessageRequestItem
+ *
+ * Renders a single message request item with actions (accept, reject, delete, view profile).
+ *
+ * @param {Object} props
+ * @param {Object} props.request - The message request object.
+ * @param {string} [props.type="received"] - Type of request ("received" or "sent").
+ * @param {function} props.onAccept - Handler for accepting the request.
+ * @param {function} props.onReject - Handler for rejecting the request.
+ * @param {function} props.onDelete - Handler for deleting the request.
+ * @param {function} props.onViewProfile - Handler for viewing the participant's profile.
+ * @param {boolean} [props.isProcessing=false] - Whether an action is currently processing.
+ */
 export function MessageRequestItem({
   request,
   type = "received",
@@ -54,6 +71,7 @@ export function MessageRequestItem({
       <Avatar
         className="h-10 w-10 flex-shrink-0 cursor-pointer"
         onClick={() => onViewProfile?.(participant)}
+        data-testid="avatar-view-profile"
       >
         <AvatarImage
           src={participant?.profilePicture || `/placeholder.svg`}
@@ -97,6 +115,7 @@ export function MessageRequestItem({
               className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-600 border-green-200"
               onClick={() => onAccept(request._id)}
               disabled={isProcessing}
+              data-testid="button-accept"
             >
               <CheckCircleOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
               Accept
@@ -107,6 +126,7 @@ export function MessageRequestItem({
               className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-600 border-red-200"
               onClick={() => onReject(request._id)}
               disabled={isProcessing}
+              data-testid="button-decline"
             >
               <CancelOutlinedIcon className="mr-1" sx={{ fontSize: 16 }} />
               Decline
@@ -121,6 +141,7 @@ export function MessageRequestItem({
             size="sm"
             className="mt-3 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20"
             onClick={() => onViewProfile?.(participant)}
+            data-testid="button-view-conversation"
           >
             <ChatBubbleOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
             View Conversation
@@ -136,6 +157,7 @@ export function MessageRequestItem({
             className="mt-3 bg-gray-200/10 hover:bg-gray-200/20"
             onClick={() => onDelete(request._id)}
             disabled={isProcessing}
+            data-testid="button-remove"
           >
             <DeleteOutlineIcon className="mr-1" sx={{ fontSize: 16 }} />
             Remove
@@ -145,3 +167,4 @@ export function MessageRequestItem({
     </div>
   );
 }
+export default MessageRequestItem;

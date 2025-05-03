@@ -214,7 +214,6 @@ export default function PostContainer({ post, singlePost = false }) {
       return { previousPosts, previousFollowingState };
     },
     onError: (err, username, context) => {
-
       setIsFollowing(context.previousFollowingState);
 
       if (context?.previousPosts) {
@@ -231,6 +230,19 @@ export default function PostContainer({ post, singlePost = false }) {
   const handleDeleteMutation = useMutation({
     mutationFn: (postId) => deletePost(postId),
     onSuccess: () => {
+      if (post?.isCompany) {
+        queryClient.setQueryData(["posts", post?.username], (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) =>
+              Array.isArray(page)
+                ? page.filter((otherPost) => otherPost.postId !== post.postId)
+                : page
+            ),
+          };
+        });
+      }
       queryClient.setQueryData(["posts"], (oldData) => {
         if (!oldData) return oldData;
         return {
@@ -367,7 +379,7 @@ export default function PostContainer({ post, singlePost = false }) {
 
   // TODO : Modify the share URL for company posts
   const shareUrl = post?.isCompany
-    ? `${process.env.NEXT_PUBLIC_DOMAIN_URL}/${pathName}`
+    ? `${process.env.NEXT_PUBLIC_DOMAIN_URL}/company/${post?.username}/post/${post?.postId}`
     : `${process.env.NEXT_PUBLIC_DOMAIN_URL}/u/${post?.username}/post/${post?.postId}`;
 
   const copyToClipboard = () => {
@@ -491,6 +503,28 @@ export default function PostContainer({ post, singlePost = false }) {
 
   const sendPostAsMessage = () => {};
 
+  const findTopReactions = () => {
+    const reactions = [
+      { name: "Like", count: post?.numLikes },
+      { name: "Celebrate", count: post?.numCelebrates },
+      { name: "Love", count: post?.numLoves },
+      { name: "Support", count: post?.numSupports },
+      { name: "Funny", count: post?.numFunnies },
+      { name: "Insightful", count: post?.numInsightfuls },
+    ];
+
+    const sortedReactions = reactions
+      .filter((reaction) => reaction.count > 0)
+      .sort((a, b) => b.count - a.count);
+
+    const topReacts = sortedReactions.slice(0, 3).map((reaction) => ({
+      ...reaction,
+      icon: Reactions[reaction.name].icon,
+    }));
+
+    return topReacts;
+  };
+
   return (
     <PostPresentation
       commentSectionOpen={commentSectionOpen}
@@ -557,6 +591,7 @@ export default function PostContainer({ post, singlePost = false }) {
       setImageLoading={setImageLoading}
       reactAnim={reactAnim}
       handleAnimEnd={handleAnimEnd}
+      topReacts={findTopReactions()}
     />
   );
 }

@@ -117,7 +117,7 @@ export default function ProfileHeaderContainer({ username }) {
     mutationFn: (params) => {
       const { username, reportObj } = params;
 
-      return report(null, null, username, null, null, reportObj);
+      return report(null, null, username, null, true, reportObj);
     },
     onMutate: () => {
       setReportState(1);
@@ -126,7 +126,7 @@ export default function ProfileHeaderContainer({ username }) {
       setReportState(2);
     },
     onError: (error) => {
-      console.error("Error reporting post:", error);
+      console.error("Error reporting company:", error);
       setReportState(3);
     },
     onSettled: () => {
@@ -160,14 +160,6 @@ export default function ProfileHeaderContainer({ username }) {
     handleReportMutation.mutate({ username, reportObj });
   };
 
-  const handleBlock = () => {
-    if (!userProfile?.username) {
-      console.error("Cannot block: username is missing or invalid.");
-      return;
-    }
-    handleBlockMutation.mutate(userProfile?.username);
-  };
-
   const visitWebsite = () =>{
     router.push(`/company/${username}/user/posts`);
   }
@@ -175,10 +167,14 @@ export default function ProfileHeaderContainer({ username }) {
   const OpenCompanyAdminPage =() =>{
     router.push(`/company/${username}/admin/dashboard`);
   }
+
+  const goToCreateCompany =()=>{
+    router.push(`/company/setup`);
+  }
   
   return (
     <div>
-      <ProfileHeader username={username} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} showUnfollowDialog={showUnfollowDialog} handleDialogConfirm={handleDialogConfirm} handleDialogCancel={handleDialogCancel} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} dropdownRef={dropdownRef} setReportUserModalOpen={setReportUserModalOpen} setBlockUserModalOpen={setBlockUserModalOpen} blockUserModalOpen={blockUserModalOpen} reportUserModalOpen={reportUserModalOpen} reportState={reportState} reportText={reportText} reportType={reportType} setReportText={setReportText} setReportType={setReportType} onReport={handleReport} onBlock={handleBlock} />
+      <ProfileHeader username={username} isActive={isActive} company={company} handleFollowClick={handleFollowClick} isFollowing={isFollowing} visitWebsite={visitWebsite} OpenCompanyAdminPage={OpenCompanyAdminPage} showUnfollowDialog={showUnfollowDialog} handleDialogConfirm={handleDialogConfirm} handleDialogCancel={handleDialogCancel} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} dropdownRef={dropdownRef} setReportUserModalOpen={setReportUserModalOpen} reportUserModalOpen={reportUserModalOpen} reportState={reportState} reportText={reportText} reportType={reportType} setReportText={setReportText} setReportType={setReportType} onReport={handleReport} goToCreateCompany={goToCreateCompany} />
     </div>
   );
 }

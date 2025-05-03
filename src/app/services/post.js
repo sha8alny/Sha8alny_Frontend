@@ -281,14 +281,14 @@ export const addComment = async ({ postId, commentId, text, tags = [], companyUs
     if (commentId) {
       url += `?commentId=${commentId}`;
     }
-    if (companyUsername) {
-      if (url.includes("?")) {
-        url += `&companyUsername=${companyUsername}`;
-      }
-      else {
-        url += `?companyUsername=${companyUsername}`;
-      }
-    }
+    // if (companyUsername) {
+    //   if (url.includes("?")) {
+    //     url += `&companyUsername=${companyUsername}`;
+    //   }
+    //   else {
+    //     url += `?companyUsername=${companyUsername}`;
+    //   }
+    // }
 
     const body = {
       text,

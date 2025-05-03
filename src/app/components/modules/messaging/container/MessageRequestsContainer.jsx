@@ -5,7 +5,22 @@ import { MessageRequestsPresentation } from "../presentation/MessageRequests";
 import { useMessageRequests } from "@/app/hooks/messaging/useMessageRequests";
 import { useToast } from "@/app/context/ToastContext";
 
-
+/**
+ * @namespace messages
+ * @module messages
+ */
+/**
+ * Container component that handles the messaging requests functionality.
+ * Manages requests state and provides handlers for user interactions.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.currentUser - The current logged in user object
+ * @param {Function} props.onBack - Callback function to handle back navigation
+ * @param {Function} props.onSelectConversation - Callback function to select a conversation
+ * @param {Function} props.navigateToUser - Callback function to navigate to a user's profile
+ * 
+ * @returns {JSX.Element} Message requests UI with tabs for received and sent requests
+ */
 export function MessageRequestsContainer({
   currentUser,
   onBack,
@@ -82,12 +97,6 @@ export function MessageRequestsContainer({
     }
   }, [handleDeleteRequest, showToast]);
   
-  // Handle viewing a profile or conversation
-  const handleViewProfile = useCallback((participant) => {
-    if (participant?.username) {
-      navigateToUser(participant.username);
-    }
-  }, [navigateToUser]);
   
   return (
     <MessageRequestsPresentation
@@ -106,3 +115,4 @@ export function MessageRequestsContainer({
     />
   );
 }
+export default MessageRequestsContainer;

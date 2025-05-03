@@ -1,6 +1,5 @@
 "use client";
 import Dialog from "@/app/components/ui/DialogMod";
-import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 import ReportPresentation from "../../feed/presentation/ReportPresentation";
 import Container from "@/app/components/layout/Container";
 import Image from "next/image";
@@ -13,7 +12,6 @@ import { Button } from '@/app/components/ui/Button';
 import ClearIcon from '@mui/icons-material/Clear';
 import MoreHoriz from '@mui/icons-material/MoreVert';
 import { FlagOutlined } from "@mui/icons-material";
-import { PersonAddAlt1 } from "@mui/icons-material";
 import {  DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem, DropdownMenu } from "@/app/components/ui/DropDownMenu";
 
 /**
@@ -38,7 +36,7 @@ import {  DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem, DropdownMenu
  * @param {string} [props.company.location] - Company location
  * @returns {JSX.Element} Profile header component with company branding and navigation
  */
-export default function ProfileHeader({ username, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage, handleDialogConfirm, handleDialogCancel, showUnfollowDialog, isMenuOpen, setIsMenuOpen, dropdownRef, setReportUserModalOpen, setBlockUserModalOpen, blockUserModalOpen, reportUserModalOpen, reportState, reportText, reportType, setReportText, setReportType, onReport, onBlock }) {
+export default function ProfileHeader({ username, isActive, company, handleFollowClick, isFollowing, visitWebsite, OpenCompanyAdminPage, handleDialogConfirm, handleDialogCancel, showUnfollowDialog, isMenuOpen, dropdownRef, setReportUserModalOpen, reportUserModalOpen, reportState, reportText, reportType, setReportText, setReportType, onReport, goToCreateCompany }) {
   return (
     <Container className="shadow-lg">
       <div className="h-max rounded-xl">
@@ -89,62 +87,50 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
                 <VisibilityIcon className="transition-transform duration-200 group-hover:scale-110" /> View as admin
               </Button>
             )}
-            {/* <div className="relative" ref={dropdownRef}>
-              <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
-                    data-testid="more-options-button"
-                  >
-                    <MoreHoriz className="text-muted" sx={{ fontSize: "1rem" }} />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" side="bottom" className="bg-foreground text-primary border">
-                  <DropdownMenuItem
-                    className="hover:bg-primary/20 cursor-pointer"
-                    onClick={() => {
-                      console.log("Opening report dialog");
-                      setReportUserModalOpen(true);
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    <FlagOutlined className="mr-2" sx={{ fontSize: "1rem" }} />
-                    <span>Report</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="hover:bg-primary/20 cursor-pointer font-black text-red-400 hover:text-red-400"
-                    onClick={() => setBlockUserModalOpen(true)}
-                  >
-                    <PersonAddAlt1 className="mr-2" sx={{ fontSize: "1rem" }} />
-                    <span>Block</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div> */}
             <div className="relative" ref={dropdownRef}>
-  <button
-    onClick={() => setIsMenuOpen(!isMenuOpen)}
-    className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
-  >
-    <MoreHoriz className="text-muted" sx={{ fontSize: "1rem" }} />
-  </button>
-  
-  {isMenuOpen && (
-    <div className="absolute right-0 mt-2 w-48 bg-foreground rounded-md shadow-lg z-10 border border-primary">
-      <div 
-        className="hover:bg-primary/20 cursor-pointer px-4 py-2 flex items-center"
-        onClick={() => {
-          console.log("Simple menu clicked");
-          setReportUserModalOpen(true);
-          setIsMenuOpen(false);
-        }}
-      >
-        <FlagOutlined className="mr-2" sx={{ fontSize: "1rem" }} />
-        <span>Report</span>
-      </div>
-    </div>
-  )}
-</div>
+              {!isMenuOpen && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="cursor-pointer p-2 flex items-center justify-center rounded-md hover:bg-primary/10 transition-colors"
+                    >
+                      <MoreHoriz
+                        className="text-muted"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    start="right"
+                    className="bg-foreground text-primary border"
+                  >
+                  {!company?.isOwner && 
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer"
+                      onClick={() => setReportUserModalOpen(true)}
+                    >
+                      <FlagOutlined
+                        className="mr-2"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                      <span>Report</span>
+                    </DropdownMenuItem>
+                    }
+                    <DropdownMenuItem
+                      className="hover:bg-primary/20 cursor-pointer"
+                      onClick={goToCreateCompany}
+                    >
+                      <AddIcon
+                        className="mr-2"
+                        sx={{ fontSize: "1rem" }}
+                      />
+                      <span>Create new company</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           </div>
         </div>
         <div className="border-t border-[var(--text)] flex flex-row space-x-6  cursor-pointer ">
@@ -186,45 +172,22 @@ export default function ProfileHeader({ username, isActive, company, handleFollo
           </Card>
         </div>
       }
-<Dialog 
-  open={reportUserModalOpen}
-  onOpenChange={setReportUserModalOpen}
-  buttonClass="hidden"
->
-  <ReportPresentation
-    type="user"
-    reportState={reportState}
-    reportText={reportText}
-    setReportText={setReportText}
-    reportType={reportType}
-    setReportType={setReportType}
-    onReport={onReport}
-  />
-</Dialog>
-      {/* Block User Modal */}
-      {/* <Dialog
-        open={blockUserModalOpen}
-        onOpenChange={setBlockUserModalOpen}
+      <Dialog 
+        open={reportUserModalOpen}
+        onOpenChange={setReportUserModalOpen}
         buttonClass="hidden"
         AlertContent={
-          <GeneralDeletePresentation
-            onConfirmDelete={onBlock}
-            isLoading={isBlocking}
-            isError={isBlockingError}
-            error="Failed to block user"
-            onOpenChange={setBlockUserModalOpen}
-            itemType="User"
-            loadingText="Blocking user..."
-            errorTitle="Error"
-            errorMessage="Failed to block user"
-            confirmTitle={`Block ${userProfile?.name}`}
-            confirmMessage="Are you sure you want to block this user?"
-            confirmButtonText="Block"
-            cancelButtonText="Cancel"
-            Icon={BlockOutlined}
-          />
+        <ReportPresentation
+          type="company"
+          reportState={reportState}
+          reportText={reportText}
+          setReportText={setReportText}
+          reportType={reportType}
+          setReportType={setReportType}
+          onReport={onReport}
+        />
         }
-      /> */}
+      />
     </Container>
   );
 }
