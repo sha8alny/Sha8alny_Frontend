@@ -80,26 +80,6 @@ describe("PostPageContainer", () => {
     });
   });
 
-//   test("submits post with image and redirects", async () => {
-//     createPost.mockResolvedValue({
-//       postId: "abc123",
-//       media: ["https://media.com/image.png"],
-//     });
-
-//     setup();
-
-//     const textInput = await screen.findByPlaceholderText("Start a post");
-//     fireEvent.change(textInput, { target: { value: "A new post!" } });
-
-//     const postButton = screen.getByText("Post");
-//     fireEvent.click(postButton);
-
-//     await waitFor(() => {
-//       expect(createPost).toHaveBeenCalled();
-//       expect(mockPush).toHaveBeenCalledWith(`/company/${username}/admin/posts`);
-//     });
-//   });
-
   test("handles post submission failure", async () => {
     createPost.mockRejectedValue(new Error("Post failed"));
 
