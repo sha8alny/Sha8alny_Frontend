@@ -47,38 +47,35 @@ import {
   } from "../../../ui/AlertDialog";  
   import RestoreIcon from '@mui/icons-material/Restore';
   import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
-  /**
-   * @namespace admin
-   * @module admin
-   */
-  /**
-   * FlaggedJobsTablePresentation Component
-   *
-   * This component renders a table displaying flagged job reports with various actions and filters.
-   * It includes functionality for sorting, filtering by status, pagination, and handling actions
-   * such as viewing details, approving, rejecting, or setting the status of a report.
-   *
-   * @param {Object} props - The component props.
-   * @param {Array} props.reports - The list of flagged job reports to display.
-   * @param {boolean} props.isDialogOpen - Indicates whether the details dialog is open.
-   * @param {Object} props.selectedReport - The currently selected report for viewing details.
-   * @param {Function} props.handleViewDetails - Function to handle viewing details of a report.
-   * @param {Function} props.handleCloseDialog - Function to handle closing the details dialog.
-   * @param {Function} props.handleDeleteReport - Function to handle deleting a report.
-   * @param {Function} props.handleDeleteItem - Function to handle deleting a job.
-   * @param {Function} props.handleUpdateReport - Function to handle updating the status of a report.
-   * @param {number} props.page - The current page number for pagination.
-   * @param {Function} props.setPage - Function to set the current page number.
-   * @param {boolean} props.isFetching - Indicates whether data is being fetched.
-   * @param {Array} props.statusOptions - The list of available status options for filtering.
-   * @param {Function} props.toggleTypesFilter - Function to toggle the selected status filter.
-   * @param {Array} props.selectedStatuses - The list of currently selected statuses for filtering.
-   * @param {Function} props.getStatusColor - Function to get the color class for a status badge.
-   * @param {string} props.sortOrder - The current sort order ("asc" or "des").
-   * @param {Function} props.setSortOrder - Function to set the sort order.
-   * @param {boolean} props.isLoading - Indicates whether the data is loading.
-   * @param {boolean} props.isError - Indicates whether there was an error loading the data.
-   */
+/**
+ * InappropriateContentReportsPresentation component displays a list of inappropriate content reports
+ * and provides functionality for filtering, pagination, and managing reports.
+ *
+ * @param {Object} props - The component props.
+ * @param {Array} props.reports - The list of inappropriate content reports to display.
+ * @param {Array} props.filters - The list of available filters for report types (e.g., "User", "Post").
+ * @param {Function} props.handleFilterChange - Function to handle changes in the selected filters.
+ * @param {boolean} props.isDialogOpen - Indicates whether the details dialog is open.
+ * @param {Object} props.selectedReport - The currently selected report for viewing details.
+ * @param {Function} props.handleViewDetails - Function to handle viewing details of a report.
+ * @param {Function} props.handleCloseDialog - Function to handle closing the details dialog.
+ * @param {Function} props.handleDeleteReport - Function to handle deleting a report.
+ * @param {Function} props.handleDeleteItem - Function to handle deleting an item (e.g., a job, post, or user).
+ * @param {Function} props.handleUpdateReport - Function to handle updating the status of a report.
+ * @param {number} props.page - The current page number for pagination.
+ * @param {Function} props.setPage - Function to set the current page number.
+ * @param {boolean} props.isFetching - Indicates whether data is being fetched.
+ * @param {Array} props.statusOptions - The list of available status options for filtering.
+ * @param {Function} props.toggleTypesFilter - Function to toggle the selected type filter.
+ * @param {Array} props.selectedStatuses - The list of currently selected statuses for filtering.
+ * @param {Function} props.getStatusColor - Function to get the color class for a status badge.
+ * @param {string} props.sortOrder - The current sort order ("asc" or "desc").
+ * @param {Function} props.setSortOrder - Function to set the sort order.
+ * @param {boolean} props.isLoading - Indicates whether the data is loading.
+ * @param {boolean} props.isError - Indicates whether there was an error loading the data.
+ *
+ * @returns {JSX.Element} The presentation component for inappropriate content reports.
+ */
   
   export function InappropriateContentReportsPresentation({
     reports,

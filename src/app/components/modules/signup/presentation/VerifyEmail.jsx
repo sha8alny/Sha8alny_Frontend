@@ -86,6 +86,7 @@ const VerifyEmail =({
                 <p className="text-center flex flex-col text-text text-sm mt-4">
                     Code Expired or Didn't Recieve an Email?
                     <button
+                        data-testid="resend-button"
                         onClick={handleResendEmail}
                         className="text-secondary font-semibold hover:underline"
                         disabled={loading}>
@@ -99,7 +100,7 @@ const VerifyEmail =({
                 </p>
                 <p className="text-center text-text text-sm mt-4">
                     Incorrect Account Info? 
-                    <a href="/signup" className="text-secondary font-semibold hover:underline"> Sign Up</a>
+                    <a href="/signup" className="text-secondary font-semibold hover:underline" data-testid="signup"> Sign Up</a>
                 </p>
             </form>
 

@@ -4,6 +4,30 @@ import { Input } from "@/app/components/ui/Input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/Select";
 import React from "react";
 
+/**
+ * NetworkFilters component displays a set of filters for managing and refining network searches.
+ * Includes filters for name, industry, location, and connection degree.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.tempName - The temporary value for the name filter.
+ * @param {Function} props.setTempName - Function to update the temporary name filter.
+ * @param {string} props.tempIndustry - The temporary value for the industry filter.
+ * @param {Function} props.setTempIndustry - Function to update the temporary industry filter.
+ * @param {string} props.tempLocation - The temporary value for the location filter.
+ * @param {Function} props.setTempLocation - Function to update the temporary location filter.
+ * @param {Function} props.updateFilter - Function to update the global filters.
+ * @param {boolean} props.shouldShowConnectionDegree - Indicates whether the connection degree filter should be displayed.
+ * @param {Object} props.filters - The current global filters.
+ * @param {number} props.filters.connectionDegree - The selected connection degree filter (e.g., 0 for all, 1 for 1st degree).
+ * @param {boolean} props.showFirstDegree - Indicates whether the 1st-degree connection option should be displayed.
+ *
+ * @returns {JSX.Element} The NetworkFilters component.
+ */
+
 const NetworkFilters = ({
     filters,
     tempName,

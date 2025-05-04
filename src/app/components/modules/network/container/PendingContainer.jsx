@@ -6,19 +6,60 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
 import { useFilters } from "@/app/context/NetworkFilterContext";
 
-const PendingContainer =({filteredResults})=>{
+/**
+ * Container component for managing and displaying pending connection requests.
+ * Handles state management, API calls, and passes data to the `Pending` presentation component.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ */
+
+
+const PendingContainer =()=>{
     const [manageRequest, setmanageRequest] = useState(false);
     const queryClient = useQueryClient();
     const toast = useToast();
     const [openDeleteDialog, setOpenDeleteDialog] = useState(null);
+      /**
+   * State for the current page number for received pending requests pagination.
+   * @type {number}
+   */
     const [pageReceived, setpageReceived] = useState(1);
+      /**
+   * State for the current page number for sent pending requests pagination.
+   * @type {number}
+   */
     const [pageSent, setpageSent] = useState(1);
+      /**
+   * Indicates whether there are more received pending requests to fetch for pagination.
+   * @type {boolean}
+   */
     const [hasMoreReceived, sethasMoreReceived] = useState(true);
+    
+  /**
+   * Indicates whether there are more sent pending requests to fetch for pagination.
+   * @type {boolean}
+   */
     const [hasMoreSent, sethasMoreSent] = useState(true);
     const [tab, setTab] = useState("received");
+      /**
+   * Filters applied to the pending requests queries.
+   * @type {Object}
+   * @property {string} name - The name filter for pending requests.
+   * @property {string} industry - The industry filter for pending requests.
+   * @property {string} location - The location filter for pending requests.
+   * @property {string} connectionDegree - The degree of connection filter (e.g., 1st, 2nd).
+   */
     const {filters} = useFilters();
 
-
+  /**
+   * Fetches the list of received pending requests using React Query.
+   * @type {Object}
+   * @property {Array} data - The list of received pending requests fetched from the server.
+   * @property {boolean} isLoading - Indicates if the received pending requests are currently being loaded.
+   * @property {boolean} isError - Indicates if there was an error fetching the received pending requests.
+   */
     const { data: received=[], isLoading: isReceivedLoading, isErrorReceived } = useQuery(
         {queryKey:["received",filters,pageReceived], 
         queryFn:({queryKey})=>getConnectionRequests(
@@ -29,6 +70,14 @@ const PendingContainer =({filteredResults})=>{
             queryKey[2],
             ),
         });
+
+      /**
+   * Fetches the list of sent pending requests using React Query.
+   * @type {Object}
+   * @property {Array} data - The list of sent pending requests fetched from the server.
+   * @property {boolean} isLoading - Indicates if the sent pending requests are currently being loaded.
+   * @property {boolean} isError - Indicates if there was an error fetching the sent pending requests.
+   */    
     const { data: sent = [], isLoading: isSentLoading, isErrorSend } = useQuery(
         {queryKey:["sent",filters,pageSent], 
         queryFn:({queryKey})=>getSentConnectionRequests(
@@ -39,7 +88,9 @@ const PendingContainer =({filteredResults})=>{
             queryKey[2],
             ),
            });
-
+  /**
+   * Effect to check if there are more received pending requests to fetch for pagination.
+   */
     useEffect(() => {
         const checkhasMoreReceived = async () => {
             if (received && received.length === 9) {
@@ -59,6 +110,9 @@ const PendingContainer =({filteredResults})=>{
                 sethasMoreReceived(false);
             }
         };
+          /**
+   * Effect to check if there are more sent pending requests to fetch for pagination.
+   */
         const checkhasMoreSent = async () => {
             if (sent && sent.length === 9) {
                 try {

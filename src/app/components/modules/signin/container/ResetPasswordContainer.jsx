@@ -5,24 +5,83 @@ import ResetPassword from "../presentation/ResetPassword";
 import { handleResetPassword } from "@/app/services/userManagement";
 import { useRouter } from "next/navigation";
 
-
+/**
+ * Container component for handling the reset password functionality.
+ * Manages state, form validation, and API calls, and passes data to the `ResetPassword` presentation component.
+ *
+ * @namespace signin
+ * @module signin
+ * @component
+ *
+ * @returns {JSX.Element} The ResetPasswordContainer component.
+ */
 
 const ResetPasswordContainer = () => {
+      /**
+   * State for the new password input value.
+   * @type {string}
+   */
     const [newPassword, setNewPassword] = useState("");
+      /**
+   * State for the reset code input value.
+   * @type {string}
+   */
     const [resetCode, setResetCode] = useState("");
     const [loading, setLoading] = useState(false);
+      /**
+   * State for storing error messages related to the password input.
+   * @type {string|null}
+   */
     const [passwordError, setPasswordError] = useState(null);
     const [resetCodeError, setResetCodeError] = useState(null);
+      /**
+   * State for controlling the validity of the new password.
+   * @type {boolean}
+   */
     const [isPasswordValid, setIsPasswordValid] = useState(false);
+      /**
+   * State for controlling the validity of the reset code.
+   * @type {boolean}
+   */
     const [isResetCodeValid, setIsResetCodeValid] = useState(false);
+      /**
+   * State for controlling the validity of the entire form.
+   * @type {boolean}
+   */
     const [isFormValid, setIsFormValid] = useState(false);
+      /**
+   * Toast function for displaying notifications.
+   * @type {Function}
+   */
     const toast = useToast();
+      /**
+   * Next.js router for navigation.
+   * @type {Object}
+   */
     const router = useRouter();
+      /**
+   * State for the confirm password input value.
+   * @type {string}
+   */
     const [confirmPassword, setConfirmPassword] = useState("");
+      /**
+   * State for storing error messages related to the confirm password input.
+   * @type {string|null}
+   */
     const [confirmPasswordError, setConfirmPasswordError] = useState(null);
+      /**
+   * State for controlling the validity of the confirm password.
+   * @type {boolean}
+   */
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
+      /**
+   * State for controlling the visibility of the reset password form.
+   * @type {boolean}
+   */
     const [showForm, setShowForm] = useState(false);
-
+  /**
+   * Effect to validate the entire form whenever any of the input states change.
+   */
 
     useEffect(() => {
         setIsFormValid(
