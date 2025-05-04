@@ -152,16 +152,26 @@ export default function PostPresentation({
 }) {
   return (
     <>
-      <Card className="bg-foreground w-full max-w-2xl mx-auto mb-4">
+      <Card
+        className="bg-foreground w-full max-w-2xl mx-auto mb-4"
+        data-testid={`post-card-${post?.postId}`}
+      >
         {post?.isShared && (
-          <div className="space-y-4 pt-1">
-            <div className="flex items-center gap-2 px-4 text-sm text-muted">
-              <Avatar className="size-6 cursor-pointer">
+          <div className="space-y-4 pt-1" data-testid="post-shared-header">
+            <div
+              className="flex items-center gap-2 px-4 text-sm text-muted"
+              data-testid="post-shared-user"
+            >
+              <Avatar
+                className="size-6 cursor-pointer"
+                data-testid="post-shared-avatar"
+              >
                 <AvatarImage
                   className="object-cover"
                   src={post?.isShared?.profilePicture}
                   alt={post?.isShared?.fullName}
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
+                  data-testid="post-shared-avatar-img"
                 />
                 <AvatarFallback>
                   {post?.isShared?.fullName?.substring(0, 2).toUpperCase()}
@@ -171,6 +181,7 @@ export default function PostPresentation({
                 <span
                   className="hover:underline cursor-pointer truncate"
                   onClick={() => navigateTo(`/u/${post?.isShared?.username}`)}
+                  data-testid="post-shared-username"
                 >
                   {post?.isShared?.fullName}
                 </span>{" "}
@@ -185,6 +196,7 @@ export default function PostPresentation({
           className={`flex flex-row items-start space-y-0 gap-3 ${
             post?.isShared ? "" : "pt-3"
           }`}
+          data-testid="post-header"
         >
           <Avatar
             className="cursor-pointer size-10"
@@ -193,19 +205,24 @@ export default function PostPresentation({
                 ? navigateTo(`/company/${post?.username}/user/home`)
                 : navigateTo(`/u/${post?.username}`)
             }
+            data-testid="post-avatar"
           >
             <AvatarImage
               className="object-cover"
               src={post?.profilePicture}
               alt={post?.fullName}
+              data-testid="post-avatar-img"
             />
             <AvatarFallback>
               {post?.fullName?.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
 
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
+          <div className="flex-1" data-testid="post-header-main">
+            <div
+              className="flex items-center gap-2"
+              data-testid="post-header-row"
+            >
               <div
                 className="font-semibold flex items-center truncate gap-2 cursor-pointer hover:underline"
                 onClick={() =>
@@ -213,19 +230,26 @@ export default function PostPresentation({
                     ? navigateTo(`/company/${post?.username}/user/home`)
                     : navigateTo(`/u/${post?.username}`)
                 }
+                data-testid="post-username"
               >
                 {post?.fullName}
                 {post?.isCompany && (
                   <Verified
                     className="text-secondary"
                     sx={{ fontSize: "1rem" }}
+                    data-testid="post-company-verified"
                   />
                 )}
               </div>
               {post?.relation && (
-                <div className="text-muted text-xs space-x-2 flex items-center">
+                <div
+                  className="text-muted text-xs space-x-2 flex items-center"
+                  data-testid="post-relation"
+                >
                   <span className="text-muted truncate text-xs">•</span>
-                  <span className="text-muted truncate text-xs">{post?.relation}</span>
+                  <span className="text-muted truncate text-xs">
+                    {post?.relation}
+                  </span>
                 </div>
               )}
               {post?.connectionDegree !== 0 &&
@@ -241,6 +265,7 @@ export default function PostPresentation({
                         ? "bg-secondary/80 text-background dark:text-primary cursor-default"
                         : "bg-primary/10 hover:bg-primary/20 cursor-pointer"
                     } transition-colors duration-200`}
+                    data-testid="post-follow-btn"
                   >
                     {isFollowing &&
                     (post?.connectionDegree !== 0 ||
@@ -256,28 +281,42 @@ export default function PostPresentation({
                 )}
             </div>
 
-            <div className="text-sm text-muted">{post?.headline}</div>
+            <div className="text-sm text-muted" data-testid="post-headline">
+              {post?.headline}
+            </div>
           </div>
-          <div className="flex gap-1 items-center">
-            <div className="text-xs text-muted">{post?.age}</div>
+          <div
+            className="flex gap-1 items-center"
+            data-testid="post-header-actions"
+          >
+            <div className="text-xs text-muted" data-testid="post-age">
+              {post?.age}
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
                   variant="ghost"
                   size="icon"
                   className="p-1 rounded-md hover:bg-primary/10 cursor-pointer duration-200"
+                  data-testid="post-menu-trigger"
                 >
                   <MoreHoriz sx={{ fontSize: "1.3rem" }} />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" data-testid="post-menu-content">
                 {post?.connectionDegree === 0 && (
-                  <DropdownMenuItem onClick={() => setEditModalOpen(true)}>
+                  <DropdownMenuItem
+                    onClick={() => setEditModalOpen(true)}
+                    data-testid="post-edit-button"
+                  >
                     <Edit sx={{ fontSize: "1.3rem" }} />
                     <span>Edit</span>
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={onSave}>
+                <DropdownMenuItem
+                  onClick={onSave}
+                  data-testid="post-save-button"
+                >
                   {isSaved ? (
                     <>
                       <Bookmark sx={{ fontSize: "1.3rem" }} />
@@ -290,7 +329,10 @@ export default function PostPresentation({
                     </>
                   )}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShareModalOpen(true)}>
+                <DropdownMenuItem
+                  onClick={() => setShareModalOpen(true)}
+                  data-testid="post-share-button"
+                >
                   <IosShare sx={{ fontSize: "1.3rem" }} />
                   <span>Share</span>
                 </DropdownMenuItem>
@@ -300,6 +342,11 @@ export default function PostPresentation({
                     post?.connectionDegree !== 0
                       ? () => setReportModalOpen(true)
                       : () => setDeleteModalOpen(true)
+                  }
+                  data-testid={
+                    post?.connectionDegree === 0
+                      ? "post-delete-button"
+                      : "post-report-button"
                   }
                 >
                   {post?.connectionDegree !== 0 && (
@@ -320,14 +367,23 @@ export default function PostPresentation({
           </div>
         </CardHeader>
 
-        <CardContent>
-          <div className="whitespace-pre-line break-all">
+        <CardContent data-testid="post-content">
+          <div
+            className="whitespace-pre-line break-all"
+            data-testid="post-text"
+          >
             <p className="mb-3">{post?.textElement}</p>
           </div>
           {isDocument && post?.media && post?.media.length > 0 && (
-            <div className="relative w-full rounded-lg overflow-hidden border border-primary/10 bg-primary/5">
+            <div
+              className="relative w-full rounded-lg overflow-hidden border border-primary/10 bg-primary/5"
+              data-testid="post-document"
+            >
               {/* Document header with info */}
-              <div className="flex items-center justify-between p-2 bg-primary/10">
+              <div
+                className="flex items-center justify-between p-2 bg-primary/10"
+                data-testid="post-document-header"
+              >
                 <div className="flex items-center gap-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -352,6 +408,7 @@ export default function PostPresentation({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-primary hover:text-primary/80 flex items-center gap-1"
+                  data-testid="post-document-open"
                 >
                   <span>Open</span>
                   <svg
@@ -370,9 +427,11 @@ export default function PostPresentation({
                   </svg>
                 </a>
               </div>
-
               {/* Document preview with React state for loading/error */}
-              <div className="relative aspect-[4/3] w-full bg-background">
+              <div
+                className="relative aspect-[4/3] w-full bg-background"
+                data-testid="post-document-preview"
+              >
                 {!hasError && (
                   <embed
                     src={post?.media[0]}
@@ -383,19 +442,24 @@ export default function PostPresentation({
                       setIsLoading(false);
                       setHasError(true);
                     }}
+                    data-testid="post-document-embed"
                   />
                 )}
-
                 {/* Loading indicator */}
                 {isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/50 transition-opacity duration-300">
+                  <div
+                    className="absolute inset-0 flex items-center justify-center bg-background/50 transition-opacity duration-300"
+                    data-testid="post-document-loading"
+                  >
                     <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full"></div>
                   </div>
                 )}
-
                 {/* Error fallback */}
                 {hasError && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 transition-opacity duration-300">
+                  <div
+                    className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 transition-opacity duration-300"
+                    data-testid="post-document-error"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-10 w-10 text-primary/70 mb-2"
@@ -418,6 +482,7 @@ export default function PostPresentation({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-3 px-3 py-1.5 bg-primary text-background rounded-md text-sm hover:bg-primary/80 transition-colors"
+                      data-testid="post-document-error-open"
                     >
                       Open Document
                     </a>
@@ -431,10 +496,11 @@ export default function PostPresentation({
               src={post?.media[0]}
               controls
               className="w-full aspect-video rounded-2xl"
+              data-testid="post-video"
             />
           )}
           {!isDocument && !isVideo && post?.media && post?.media.length > 0 && (
-            <div className={`gap-2 ${layoutClass}`}>
+            <div className={`gap-2 ${layoutClass}`} data-testid="post-images">
               {post?.media
                 .slice(0, post?.media.length > 4 ? 4 : post?.media.length)
                 .map((mediaUrl, index) => (
@@ -442,15 +508,20 @@ export default function PostPresentation({
                     key={index}
                     className={`relative ${itemClasses[index]} cursor-pointer group`}
                     onClick={() => openImageCarousel(index)}
+                    data-testid={`post-image-${index}`}
                   >
                     <SafeImage
                       src={mediaUrl}
                       alt={`Post media ${index + 1}`}
                       fill
                       className="object-cover rounded-md transition-transform duration-300 group-hover:scale-105"
+                      data-testid={`post-image-img-${index}`}
                     />
                     {index === 3 && post?.media.length > 4 && (
-                      <div className="absolute inset-0 bg-background/40 flex items-center justify-center group-hover:scale-105 transition-all duration-300 rounded-md">
+                      <div
+                        className="absolute inset-0 bg-background/40 flex items-center justify-center group-hover:scale-105 transition-all duration-300 rounded-md"
+                        data-testid="post-image-more"
+                      >
                         <span className="text-primary text-2xl font-bold">
                           +{post?.media.length - 4}
                         </span>
@@ -481,11 +552,15 @@ export default function PostPresentation({
             </div>
           )}
           {post?.keywords?.length > 0 && (
-            <span className="text-background text-xs flex gap-1.5 flex-wrap pt-3">
+            <span
+              className="text-background text-xs flex gap-1.5 flex-wrap pt-3"
+              data-testid="post-keywords"
+            >
               {post?.keywords.map((keyword, index) => (
                 <span
                   className="px-2 py-1 font-semibold bg-secondary/20 text-secondary rounded-full"
                   key={index}
+                  data-testid={`post-keyword-${index}`}
                 >
                   {index > 0 && " "}
                   <span
@@ -528,15 +603,22 @@ export default function PostPresentation({
             ))}
         </CardContent>
 
-        <CardFooter className="px-0 flex flex-col gap-2">
+        <CardFooter
+          className="px-0 flex flex-col gap-2"
+          data-testid="post-footer"
+        >
           {/* Post Impressions section */}
-          <div className="flex items-center justify-between w-full px-6">
+          <div
+            className="flex items-center justify-between w-full px-6"
+            data-testid="post-impressions"
+          >
             <div>
               {post?.numReacts > 0 && (
                 <ReactionsContainer
                   allReactions={allReactions}
                   numReactions={post?.numReacts}
                   postId={post?.postId}
+                  data-testid="post-reactions"
                 />
               )}
             </div>
@@ -544,22 +626,29 @@ export default function PostPresentation({
               <span data-testid={`post-${post?.postId}-numcomments`}>
                 {post?.numComments} Comment(s)
               </span>
-              <span>{post?.numShares} Repost(s)</span>
+              <span data-testid={`post-${post?.postId}-numshares`}>
+                {post?.numShares} Repost(s)
+              </span>
             </div>
           </div>
-          <section className="flex items-center justify-between border-t w-full pt-4 px-6">
+          <section
+            className="flex items-center justify-between border-t w-full pt-4 px-6"
+            data-testid="post-actions"
+          >
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
                   <span
                     onClick={() => onLike("Like")}
                     className="flex p-1 items-center text-sm gap-2 cursor-pointer text-primary rounded-md hover:bg-primary/10"
+                    data-testid="post-like-btn"
                   >
                     <span
                       className={`inline-flex items-center ${
                         reactAnim ? "animate-react-pop" : ""
                       }`}
                       onAnimationEnd={handleAnimEnd}
+                      data-testid="post-like-anim"
                     >
                       {isLiked === "Like" && <Like size="1.5rem" />}
                       {isLiked === "Insightful" && <Insightful size="1.5rem" />}
@@ -580,12 +669,16 @@ export default function PostPresentation({
                           ? "text-secondary/70 font-semibold"
                           : "text-primary/90"
                       }
+                      data-testid="post-like-label"
                     >
                       {isLiked ? isLiked : "Like"}
                     </span>
                   </span>
                 </TooltipTrigger>
-                <TooltipContent className="bg-foreground flex gap-1 border text-primary rounded-md">
+                <TooltipContent
+                  className="bg-foreground flex gap-1 border text-primary rounded-md"
+                  data-testid="post-like-tooltip"
+                >
                   {Object.entries(userReactions).map(([name, { icon }]) => (
                     <div
                       key={name}
@@ -593,6 +686,7 @@ export default function PostPresentation({
                         onLike(name);
                       }}
                       className="relative group flex items-center justify-center flex-1 px-2"
+                      data-testid={`post-like-reaction-${name}`}
                     >
                       <div className="cursor-pointer duration-300 transition-transform">
                         {React.createElement(icon, {
@@ -600,7 +694,6 @@ export default function PostPresentation({
                             "transform transition-transform group-hover:scale-150 duration-200",
                         })}
                       </div>
-
                       <div className="absolute bottom-[125%] mb-1 px-2 py-1 rounded bg-primary text-background text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
                         {name}
                       </div>
@@ -638,7 +731,10 @@ export default function PostPresentation({
               <span className="text-primary/90 font-semibold">Repost</span>
             </Button>
 
-            <SendMessageContainer shareUrl={shareUrl} />
+            <SendMessageContainer
+              shareUrl={shareUrl}
+              data-testid="post-send-message"
+            />
           </section>
         </CardFooter>
 
@@ -646,6 +742,7 @@ export default function PostPresentation({
           <CommentSectionContainer
             username={post?.username}
             postId={post?.postId}
+            data-testid="post-comment-section"
           />
         )}
 
@@ -659,6 +756,7 @@ export default function PostPresentation({
               copyToClipboard={copyToClipboard}
               copied={copied}
               shareUrl={shareUrl}
+              data-testid="post-share-modal"
             />
           }
         />
@@ -677,6 +775,7 @@ export default function PostPresentation({
               reportType={reportType}
               setReportType={setReportType}
               onReport={onReport}
+              data-testid="post-report-modal"
             />
           }
         />
@@ -689,10 +788,10 @@ export default function PostPresentation({
             <EditPostPresentation
               postText={postText}
               setPostText={setPostText}
-              
               onEdit={onEdit}
               isEditing={isEditing}
               errorEditing={errorEditing}
+              data-testid="post-edit-modal"
             />
           }
         />
@@ -716,6 +815,7 @@ export default function PostPresentation({
               confirmMessage="This action cannot be undone. Are you sure you want to delete this post?"
               confirmButtonText="Delete"
               cancelButtonText="Cancel"
+              data-testid="post-delete-modal"
             />
           }
         />
@@ -733,6 +833,7 @@ export default function PostPresentation({
             className="absolute top-4 right-4 text-background bg-secondary rounded-full p-2.5 hover:bg-secondary/80 cursor-pointer transition-colors duration-200 shadow-lg z-50"
             onClick={closeImageCarousel}
             aria-label="Close image carousel"
+            data-testid="image-carousel-close"
           >
             <X size={24} />
           </button>
@@ -747,6 +848,7 @@ export default function PostPresentation({
                   prevImage();
                 }}
                 aria-label="Previous image"
+                data-testid="image-carousel-prev"
               >
                 <ChevronLeft size={24} />
               </button>
@@ -758,6 +860,7 @@ export default function PostPresentation({
                   nextImage();
                 }}
                 aria-label="Next image"
+                data-testid="image-carousel-next"
               >
                 <ChevronRight size={24} />
               </button>
@@ -767,10 +870,14 @@ export default function PostPresentation({
           <div
             className="relative max-w-[95vw] max-h-[95vh] min-h-[300px] min-w-[300px] flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
+            data-testid="image-carousel-main"
           >
             {/* Better loading indicator with smoother transitions */}
             {imageLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center z-10 animate-in fade-in duration-200">
+              <div
+                className="absolute inset-0 flex flex-col items-center justify-center z-10 animate-in fade-in duration-200"
+                data-testid="image-carousel-loading"
+              >
                 <div className="relative">
                   <Loader2 className="h-12 w-12 text-white animate-spin" />
                   <div className="absolute inset-0 blur-lg opacity-50">
@@ -789,20 +896,27 @@ export default function PostPresentation({
                 imageLoading ? "opacity-0" : "opacity-100"
               }`}
               onLoad={handleImageLoad}
-              key={`carousel-${post?.postId}-${carouselIndex}`} // More robust key to ensure proper re-render
+              key={`carousel-${post?.postId}-${carouselIndex}`}
               style={{
                 transitionProperty: "opacity",
               }}
+              data-testid="image-carousel-img"
             />
 
             {/* Image counter */}
-            <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm font-medium shadow-lg">
+            <div
+              className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm font-medium shadow-lg"
+              data-testid="image-carousel-counter"
+            >
               {carouselIndex + 1} / {post.media.length}
             </div>
 
             {/* Navigation dots */}
             {post.media.length > 1 && (
-              <div className="absolute left-0 right-0 bottom-8 flex justify-center pointer-events-none">
+              <div
+                className="absolute left-0 right-0 bottom-8 flex justify-center pointer-events-none"
+                data-testid="image-carousel-dots"
+              >
                 <div className="bg-black/70 backdrop-blur-sm px-4 py-2 rounded-full flex items-center shadow-xl pointer-events-auto">
                   {post.media.map((_, index) => (
                     <button
@@ -819,6 +933,7 @@ export default function PostPresentation({
                       }}
                       aria-label={`Go to image ${index + 1}`}
                       aria-current={index === carouselIndex ? "true" : "false"}
+                      data-testid={`image-carousel-dot-${index}`}
                     />
                   ))}
                 </div>
