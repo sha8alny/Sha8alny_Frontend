@@ -201,7 +201,7 @@ const SignUpForm = ({
             </form>
             <p className="text-center text-sm text-text mt-4">
                 Already A Member?{" "}
-                <a href="/signin" className="text-secondary hover:underline">
+                <a href="/signin" className="text-secondary hover:underline" data-testid="signin">
                  Sign In 
                 </a>
             </p>

@@ -76,21 +76,20 @@ const ResetPassword =({
             </div>
              <div className="flex items-center justify-center w-70 h-15  text-text rounded-full mx-auto">
             <InputOTP 
-            data-testid="otp-input"
             maxLength={6}
             value={resetCode}
             onChange={(value) => handleChange("resetCode",value )}
             >
             <InputOTPGroup >
-                <InputOTPSlot index={0} inputMode="numeric" pattern="[0-9]*" />
-                <InputOTPSlot index={1} inputMode="numeric" pattern="[0-9]*" />
-                <InputOTPSlot index={2} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input0" index={0} inputMode="numeric" pattern="[0-9]*" />
+                <InputOTPSlot data-testid="otp-input1" index={1} inputMode="numeric" pattern="[0-9]*" />
+                <InputOTPSlot data-testid="otp-input2" index={2} inputMode="numeric" pattern="[0-9]*"/>
             </InputOTPGroup>
             <InputOTPSeparator />
             <InputOTPGroup>
-                <InputOTPSlot index={3} inputMode="numeric" pattern="[0-9]*"/>
-                <InputOTPSlot index={4} inputMode="numeric" pattern="[0-9]*"/>
-                <InputOTPSlot index={5} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input3" index={3} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input4" index={4} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input5" index={5} inputMode="numeric" pattern="[0-9]*"/>
             </InputOTPGroup>
             </InputOTP>
             </div>
@@ -142,13 +141,13 @@ const ResetPassword =({
                 </button>
                 <p className="text-center flex flex-col text-text text-sm mt-4">
                     Reset Code Expired Or Incorrect Email?
-                    <a href="/forget-password" className="text-secondary font-semibold hover:underline">
+                    <a href="/forget-password" className="text-secondary font-semibold hover:underline" data-testid="forgot-password-button">
                       Try Again 
                     </a>
                 </p>
                 <p className="text-center text-text text-sm mt-4">
                     Remembered your password? 
-                    <a href="/signin" className="text-secondary font-semibold hover:underline"> Sign In</a>
+                    <a href="/signin" className="text-secondary font-semibold hover:underline" data-testid="signin"> Sign In</a>
                 </p>
             </form>
 

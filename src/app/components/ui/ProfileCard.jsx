@@ -87,6 +87,7 @@ return(
         <div className="relative -mt-12 sm:-mt-16 w-20 h-20 md:w-32 md:h-32 sm:w-24 sm:h-24 lg:w-36 lg:h-36"> 
             {/* // profile image */}
             <a
+            data-testid="profile-link"
             href={`/u/${username}`}>
            <img 
             src={profilePic || "https://www.gravatar.com/avatar/?d=mp&s=200"}
@@ -95,7 +96,7 @@ return(
             />
             </a>
         </div>
-        <a href={`/u/${username}`} className="text-lg sm:text-md font-semibold text-text mt-2">{name} 
+        <a href={`/u/${username}`} data-testid="profile-route" className="text-lg sm:text-md font-semibold text-text mt-2">{name} 
         {getConnectionDegree && <span className="text-sm font-bold text-muted-foreground"> •{getConnectionDegree}</span>}</a>
         <p className="text-sm sm:text-md font-thin text-text break-words whitespace-normal max-w-xs sm:max-w-sm ">{title}</p>
         {(!(type === "applicant"))&& (mutualConnections?.count !== undefined)&& (
