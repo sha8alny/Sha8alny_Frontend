@@ -21,7 +21,7 @@ const PUBLIC_PATHS = [
   "/cookie-policy",
   "/terms",
   '/user-agreement',
-  'moodrnfr',
+  '/moodrnfr',
 , '/home'];
 
 // Define admin paths that require admin authorization

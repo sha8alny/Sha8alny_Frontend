@@ -205,7 +205,7 @@ export const ConnectionsCard = ({
               data-testid={`connection-block-option-${connection?._id}`}
               onClick={() => setBlockModalOpen(true)}
             >
-              <PersonAddAlt1 className="mr-2" sx={{ fontSize: "1rem" }} />
+              <BlockOutlined className="mr-2" sx={{ fontSize: "1rem" }} />
               <span>Block</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
