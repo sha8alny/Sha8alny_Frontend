@@ -2,6 +2,33 @@
 import ProfileCard from "@/app/components/ui/ProfileCard";
 import { ArrowForwardIos, ArrowBackIos } from "@mui/icons-material";
 
+/**
+ * FollowersAndFollowings component displays a list of followers or followings with pagination controls.
+ * Handles loading states, empty states, and provides functionality to remove followings.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.tab - The currently active tab ("followers" or "following").
+ * @param {Function} props.setTab - Function to set the active tab.
+ * @param {Array} props.data - The list of followers or followings to display.
+ * @param {boolean} props.isLoading - Indicates whether the data is currently being loaded.
+ * @param {boolean} props.isError - Indicates whether there was an error loading the data.
+ * @param {Function} props.nextPage - Function to navigate to the next page of data.
+ * @param {Function} props.prevPage - Function to navigate to the previous page of data.
+ * @param {number} props.page - The current page number for pagination.
+ * @param {boolean} props.hasMore - Indicates whether there are more items to fetch for pagination.
+ * @param {Function} props.onRemoveFollow - Function to handle removing a following.
+ * @param {boolean} props.removeFollowLoading - Indicates whether a following removal is in progress.
+ * @param {Object|null} props.openDeleteDialog - The currently open delete confirmation dialog, if any.
+ * @param {Function} props.setOpenDeleteDialog - Function to set the currently open delete confirmation dialog.
+ * @param {Function} props.getConnectionDegree - Function to get the connection degree of a user.
+ *
+ * @returns {JSX.Element} The FollowersAndFollowings component.
+ */
+
 const FollowersAndFollowings = ({
     tab,
     setTab,
