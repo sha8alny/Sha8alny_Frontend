@@ -1,6 +1,23 @@
 "use client";
 
-
+/**
+ * ForgetPassword component displays a form for users to request a password reset.
+ * Handles user input for the email field and provides a submit button to trigger the reset process.
+ *
+ * @namespace signin
+ * @module signin
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.email - The current value of the email input field.
+ * @param {Function} props.setEmail - Function to update the email input field.
+ * @param {boolean} props.loading - Indicates whether the password reset request is in progress.
+ * @param {string|null} props.error - Error message related to the email input, if any.
+ * @param {Function} props.handleChange - Function to handle changes in the email input field.
+ * @param {Function} props.handleSubmit - Function to handle the form submission for password reset.
+ *
+ * @returns {JSX.Element} The ForgetPassword component.
+ */
 const ForgetPassword = ({
     handleSubmit,
     handleChange,
