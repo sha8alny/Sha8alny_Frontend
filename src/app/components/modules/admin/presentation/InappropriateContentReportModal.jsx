@@ -3,25 +3,29 @@
  * @namespace admin
  * @module admin
  */
+
 /**
- * InappropriateContentReportModal component displays the details of a flagged job in a modal.
+ * InappropriateContentReportModal component displays the details of an inappropriate content report in a modal.
  *
  * @param {Object} props - The component props.
  * @param {boolean} props.isOpen - Indicates whether the modal is open.
  * @param {Function} props.onClose - Function to call when the modal is closed.
- * @param {Object} props.report - The report data containing details of the flagged job.
- * @param {Object} props.report.job - The job data.
+ * @param {Object} props.report - The report data containing details of the inappropriate content.
+ * @param {string} props.kind - The type of content being reported (e.g., "User", "Post", "Comment", "Company").
+ * @param {Object} [props.report.job] - The job data (if the report is related to a job).
  * @param {string} props.report.job.title - The title of the job.
- * @param {Object} props.report.companyData - The company data.
- * @param {string} props.report.companyData.logo - The URL of the company's logo.
- * @param {string} props.report.companyData.name - The name of the company.
  * @param {string} props.report.job.location - The location of the job.
  * @param {string} props.report.job.work_location - The work location type (e.g., remote, on-site).
  * @param {string} props.report.job.employment_type - The employment type (e.g., full-time, part-time).
- * @param {Object} props.report.user - The user who flagged the job.
- * @param {string} props.report.user.username - The username of the user who flagged the job.
- * @param {string} props.report.createdAt - The date when the job was flagged.
- * @param {string} props.report.text - The reason for flagging the job.
+ * @param {Object} [props.report.companyData] - The company data (if the report is related to a company).
+ * @param {string} props.report.companyData.logo - The URL of the company's logo.
+ * @param {string} props.report.companyData.name - The name of the company.
+ * @param {Object} [props.report.user] - The user who flagged the content (if applicable).
+ * @param {string} props.report.user.username - The username of the user who flagged the content.
+ * @param {string} props.report.createdAt - The date when the content was flagged.
+ * @param {string} props.report.text - The reason for flagging the content.
+ *
+ * @returns {JSX.Element|null} The modal component or `null` if the modal is not open or no report is provided.
  */
 
 export function InappropriateContentReportModal({ isOpen, onClose, report, kind }) {

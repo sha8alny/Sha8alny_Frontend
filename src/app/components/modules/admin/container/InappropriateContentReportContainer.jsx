@@ -9,35 +9,100 @@ import { useEffect } from "react";
 import { data } from "autoprefixer";
 
 /**
+ * Container component for managing inappropriate content reports.
+ * Handles state management, API calls, and passes data to the presentation component.
+ *
  * @namespace admin
  * @module admin
- */
-/**
- * FlaggedJobsTableContainer component handles the logic for displaying and managing flagged job reports.
- * It fetches the reports, handles deletion of reports and jobs, and manages the state for viewing report details.
- *
  * @component
- * @returns {JSX.Element} The rendered component.
  */
 
 export function InappropriateContentReportsContainer() {
+  /**
+   * State for the currently selected report.
+   * @type {Object|null}
+   */
   const [selectedReport, setSelectedReport] = useState(null);
+
+  /**
+   * State for controlling the dialog visibility.
+   * @type {boolean}
+   */
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+    /**
+   * Current page number for pagination.
+   * @type {number}
+   */
   const [page, setPage] = useState(1);
+    /**
+   * List of selected statuses for filtering reports.
+   * @type {string[]}
+   */
   const [selectedStatuses, setSelectedStatuses] = useState([]);
+
+  /**
+   * Sort order for the reports (e.g., "asc" or "desc").
+   * @type {string}
+   */
+
   const [sortOrder, setSortOrder] = useState("asc");
+
+  /**
+   * List of filters for report types (e.g., "User", "Comment", "Post", "Company").
+   * @type {string[]}
+   */
+
   const [filters, setFilters] = useState(["User", "Comment", "Post", "Company"]);
+
+  /**
+   * All available filter options.
+   * @type {string[]}
+   */
+
   const allFilter = ["User", "Comment", "Post", "Company"];
+
+    /**
+   * Status options for filtering reports.
+   * @type {string[]}
+   */
+
   const statusOptions = ["Pending", "Resolved", "Rejected"];
+  /**
+   * React Query's query client for managing cache and queries.
+   * @type {QueryClient}
+   */
   const queryClient = useQueryClient();
+
+  /**
+   * Toast function for displaying notifications.
+   * @type {Function}
+   */
   const showToast = useToast();
+
+  /**
+   * State for controlling the confirmation dialog visibility.
+   * @type {Object|null}
+   */
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(null);
 
+  /**
+   * Effect to log the selected report's ID whenever it changes.
+   */
+  
   useEffect(() => {
     if (selectedReport) {
       console.log("Selected Report ID:", selectedReport.itemDetails._id);
     }
   }, [selectedReport]);
+
+    /**
+   * Fetches inappropriate content reports using React Query.
+   * @type {Object}
+   * @property {Array} data - The list of reports fetched from the server.
+   * @property {boolean} isLoading - Indicates if the reports are currently being loaded.
+   * @property {boolean} isError - Indicates if there was an error fetching the reports.
+   * @property {boolean} isFetching - Indicates if the reports are being fetched in the background.
+   */
   
   const { data: reports, isLoading, isError, isFetching } = useQuery({
     queryKey: ["inappropriateContentReports", page, sortOrder, selectedStatuses, filters],
@@ -50,6 +115,14 @@ export function InappropriateContentReportsContainer() {
       }),
     keepPreviousData: true,
   });
+
+  /**
+   * Mutation for deleting a report.
+   * Calls the `deleteReport` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
+
   const deleteReportMutation = useMutation({
     mutationFn: deleteReport,
     onSuccess: () => {
@@ -58,30 +131,68 @@ export function InappropriateContentReportsContainer() {
     },
   });
 
+  /**
+   * Mutation for deleting a user.
+   * Calls the `deleteUser` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
+
   const deleteUserMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries(["inappropriateContentReports"]);
     },
   });
+
+  /**
+   * Mutation for deleting a post.
+   * Calls the `deletePost` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
+
   const deletePostMutation = useMutation({
     mutationFn: deletePost,
     onSuccess: () => {
       queryClient.invalidateQueries(["inappropriateContentReports"]);
     },
   });
+
+  /**
+   * Mutation for deleting a comment.
+   * Calls the `deleteComment` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
+
   const deleteCommentMutation = useMutation({
     mutationFn: deleteComment,
     onSuccess: () => {
       queryClient.invalidateQueries(["inappropriateContentReports"]);
     },
   });
+
+    /**
+   * Mutation for deleting a company.
+   * Calls the `deleteCompany` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
+
   const deleteCompanyMutation = useMutation({
     mutationFn: deleteCompany,
     onSuccess: () => {
       queryClient.invalidateQueries(["inappropriateContentReports"]);
     },
   });
+
+    /**
+   * Mutation for updating the status of a report.
+   * Calls the `updateStatusReport` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
   
   const updateReportMutation = useMutation({
     mutationFn: updateStatusReport,
@@ -91,6 +202,13 @@ export function InappropriateContentReportsContainer() {
       setOpenConfirmationDialog(null);
     },
   });
+
+  /**
+   * Mutation for reactivating content.
+   * Calls the `reactivateContent` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
 
   const reactivateContentMutation = useMutation({
     mutationFn: reactivateContent,
