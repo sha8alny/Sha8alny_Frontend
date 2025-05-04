@@ -7,7 +7,32 @@ import {
     InputOTPSeparator,
     InputOTPSlot,
   } from "../../../ui/Input-otp"
-
+/**
+ * ResetPassword component displays a form for users to reset their password.
+ * Handles user input for the reset code, new password, and confirm password fields.
+ * Provides a submit button to trigger the password reset process.
+ *
+ * @namespace signin
+ * @module signin
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.resetCode - The current value of the reset code input field.
+ * @param {Function} props.setResetCode - Function to update the reset code input field.
+ * @param {string} props.newPassword - The current value of the new password input field.
+ * @param {Function} props.setNewPassword - Function to update the new password input field.
+ * @param {string} props.confirmPassword - The current value of the confirm password input field.
+ * @param {Function} props.setConfirmPassword - Function to update the confirm password input field.
+ * @param {boolean} props.isFormValid - Indicates whether the form is valid for submission.
+ * @param {Function} props.validatePassword - Function to validate the new password input.
+ * @param {Function} props.validateResetCode - Function to validate the reset code input.
+ * @param {string|null} props.passwordError - Error message related to the new password input, if any.
+ * @param {string|null} props.confirmPasswordError - Error message related to the confirm password input, if any.
+ * @param {boolean} props.showForm - Indicates whether the reset password form should be displayed.
+ * @param {Function} props.setShowForm - Function to toggle the visibility of the reset password form.
+ *
+ * @returns {JSX.Element} The ResetPassword component.
+ */
 
 const ResetPassword =({
     newPassword,

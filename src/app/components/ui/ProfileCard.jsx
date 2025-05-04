@@ -98,7 +98,7 @@ return(
         <a href={`/u/${username}`} className="text-lg sm:text-md font-semibold text-text mt-2">{name} 
         {getConnectionDegree && <span className="text-sm font-bold text-muted-foreground"> •{getConnectionDegree}</span>}</a>
         <p className="text-sm sm:text-md font-thin text-text break-words whitespace-normal max-w-xs sm:max-w-sm ">{title}</p>
-        {(!(type === "applicant"))&& (
+        {(!(type === "applicant"))&& (mutualConnections?.count !== undefined)&& (
         <p className="text-xs sm:text-sm font-semibold text-secondary break-words whitespace-normal max-w-xs sm:max-w-sm ">{mutualConnections.count > 10 ? '10+' : mutualConnections.count} mutual connections</p>
         )}
         <p className="text-xs sm:text-sm font-bold text-secondary break-words whitespace-normal max-w-xs sm:max-w-sm ">{numberOfConnections} connections</p>

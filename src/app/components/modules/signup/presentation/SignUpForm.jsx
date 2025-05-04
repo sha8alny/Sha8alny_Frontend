@@ -206,14 +206,14 @@ const SignUpForm = ({
                 </a>
             </p>
         </div>  
-        <div className="mb-30">
+        {/* <div className="mb-30">
         <p className="text-center text-sm text-text mb-10">
         Looking to create a page for a business?{" "}
                 <a href="#" className="text-secondary hover:underline">
                  Get Help 
                 </a>
             </p>  
-            </div> 
+            </div>  */}
            </div>
         </div>
     );
