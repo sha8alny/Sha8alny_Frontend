@@ -7,7 +7,32 @@ import {
     InputOTPSeparator,
     InputOTPSlot,
   } from "../../../ui/Input-otp"
-
+/**
+ * ResetPassword component displays a form for users to reset their password.
+ * Handles user input for the reset code, new password, and confirm password fields.
+ * Provides a submit button to trigger the password reset process.
+ *
+ * @namespace signin
+ * @module signin
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.resetCode - The current value of the reset code input field.
+ * @param {Function} props.setResetCode - Function to update the reset code input field.
+ * @param {string} props.newPassword - The current value of the new password input field.
+ * @param {Function} props.setNewPassword - Function to update the new password input field.
+ * @param {string} props.confirmPassword - The current value of the confirm password input field.
+ * @param {Function} props.setConfirmPassword - Function to update the confirm password input field.
+ * @param {boolean} props.isFormValid - Indicates whether the form is valid for submission.
+ * @param {Function} props.validatePassword - Function to validate the new password input.
+ * @param {Function} props.validateResetCode - Function to validate the reset code input.
+ * @param {string|null} props.passwordError - Error message related to the new password input, if any.
+ * @param {string|null} props.confirmPasswordError - Error message related to the confirm password input, if any.
+ * @param {boolean} props.showForm - Indicates whether the reset password form should be displayed.
+ * @param {Function} props.setShowForm - Function to toggle the visibility of the reset password form.
+ *
+ * @returns {JSX.Element} The ResetPassword component.
+ */
 
 const ResetPassword =({
     newPassword,
@@ -51,21 +76,20 @@ const ResetPassword =({
             </div>
              <div className="flex items-center justify-center w-70 h-15  text-text rounded-full mx-auto">
             <InputOTP 
-            data-testid="otp-input"
             maxLength={6}
             value={resetCode}
             onChange={(value) => handleChange("resetCode",value )}
             >
             <InputOTPGroup >
-                <InputOTPSlot index={0} inputMode="numeric" pattern="[0-9]*" />
-                <InputOTPSlot index={1} inputMode="numeric" pattern="[0-9]*" />
-                <InputOTPSlot index={2} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input0" index={0} inputMode="numeric" pattern="[0-9]*" />
+                <InputOTPSlot data-testid="otp-input1" index={1} inputMode="numeric" pattern="[0-9]*" />
+                <InputOTPSlot data-testid="otp-input2" index={2} inputMode="numeric" pattern="[0-9]*"/>
             </InputOTPGroup>
             <InputOTPSeparator />
             <InputOTPGroup>
-                <InputOTPSlot index={3} inputMode="numeric" pattern="[0-9]*"/>
-                <InputOTPSlot index={4} inputMode="numeric" pattern="[0-9]*"/>
-                <InputOTPSlot index={5} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input3" index={3} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input4" index={4} inputMode="numeric" pattern="[0-9]*"/>
+                <InputOTPSlot data-testid="otp-input5" index={5} inputMode="numeric" pattern="[0-9]*"/>
             </InputOTPGroup>
             </InputOTP>
             </div>
@@ -117,13 +141,13 @@ const ResetPassword =({
                 </button>
                 <p className="text-center flex flex-col text-text text-sm mt-4">
                     Reset Code Expired Or Incorrect Email?
-                    <a href="/forget-password" className="text-secondary font-semibold hover:underline">
+                    <a href="/forget-password" className="text-secondary font-semibold hover:underline" data-testid="forgot-password-button">
                       Try Again 
                     </a>
                 </p>
                 <p className="text-center text-text text-sm mt-4">
                     Remembered your password? 
-                    <a href="/signin" className="text-secondary font-semibold hover:underline"> Sign In</a>
+                    <a href="/signin" className="text-secondary font-semibold hover:underline" data-testid="signin"> Sign In</a>
                 </p>
             </form>
 

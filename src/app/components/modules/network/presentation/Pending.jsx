@@ -2,6 +2,34 @@
 import ProfileCard from "@/app/components/ui/ProfileCard";
 import { ArrowForwardIos, ArrowBackIos } from "@mui/icons-material";
 
+/**
+ * Pending component displays a list of received or sent connection requests with pagination controls.
+ * Handles loading states, empty states, and provides functionality to manage or cancel requests.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.tab - The currently active tab ("received" or "sent").
+ * @param {Function} props.setTab - Function to set the active tab.
+ * @param {Array} props.data - The list of connection requests to display.
+ * @param {boolean} props.isLoading - Indicates whether the data is currently being loaded.
+ * @param {boolean} props.isError - Indicates whether there was an error loading the data.
+ * @param {Function} props.nextPage - Function to navigate to the next page of data.
+ * @param {Function} props.prevPage - Function to navigate to the previous page of data.
+ * @param {number} props.page - The current page number for pagination.
+ * @param {boolean} props.hasMore - Indicates whether there are more items to fetch for pagination.
+ * @param {Function} props.onManageRequest - Function to handle managing a received request (e.g., accept or reject).
+ * @param {Function} props.onCancelRequest - Function to handle canceling a sent request.
+ * @param {boolean} props.manageRequest - Indicates whether a request management action is in progress.
+ * @param {Object|null} props.openDeleteDialog - The currently open delete confirmation dialog, if any.
+ * @param {Function} props.setOpenDeleteDialog - Function to set the currently open delete confirmation dialog.
+ * @param {Function} props.getConnectionDegree - Function to get the connection degree of a user.
+ *
+ * @returns {JSX.Element} The Pending component.
+ */
+
 const Pending = ({
     tab,
     setTab,

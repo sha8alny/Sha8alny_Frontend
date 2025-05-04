@@ -6,19 +6,58 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
 import { useFilters } from "@/app/context/NetworkFilterContext";
 
+/**
+ * Container component for managing and displaying followers and followings.
+ * Handles state management, API calls, and passes data to the `FollowersAndFollowings` presentation component.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ */
+
 const FollowersAndFollowingsContainer =()=>{
     const [removeFollowLoading, setRemoveFollowLoading] = useState(false);
     const queryClient = useQueryClient();
     const toast = useToast();
     const [openDeleteDialog, setOpenDeleteDialog] = useState(null);
+      /**
+   * State for the current page number for followers pagination.
+   * @type {number}
+   */
     const [pageFollowers, setPageFollowers] = useState(1);
+      /**
+   * State for the current page number for followings pagination.
+   * @type {number}
+   */
     const [pageFollowing, setPageFollowing] = useState(1);
+      /**
+   * Indicates whether there are more followers to fetch for pagination.
+   * @type {boolean}
+   */
     const [hasMoreFollowers, setHasMoreFollowers] = useState(true);
+      /**
+   * Indicates whether there are more followings to fetch for pagination.
+   * @type {boolean}
+   */
     const [hasMoreFollowing, setHasMoreFollowing] = useState(true);
     const [tab, setTab] = useState("followers");
+      /**
+   * Filters applied to the followers and followings queries.
+   * @type {Object}
+   * @property {string} name - The name filter for followers and followings.
+   * @property {string} industry - The industry filter for followers and followings.
+   * @property {string} location - The location filter for followers and followings.
+   * @property {string} connectionDegree - The degree of connection filter (e.g., 1st, 2nd).
+   */
     const {filters} = useFilters();
 
-
+  /**
+   * Fetches the list of followers using React Query.
+   * @type {Object}
+   * @property {Array} data - The list of followers fetched from the server.
+   * @property {boolean} isLoading - Indicates if the followers are currently being loaded.
+   * @property {boolean} isError - Indicates if there was an error fetching the followers.
+   */
     const { data: followers=[], isLoading: isFollowersLoading, isErrorFollowers } = useQuery(
         {queryKey:["followers",filters,pageFollowers],
          queryFn:({queryKey})=>getFollowers(
@@ -29,6 +68,13 @@ const FollowersAndFollowingsContainer =()=>{
             queryKey[2],
         ),}
             );
+     /**
+   * Fetches the list of followings using React Query.
+   * @type {Object}
+   * @property {Array} data - The list of followings fetched from the server.
+   * @property {boolean} isLoading - Indicates if the followings are currently being loaded.
+   * @property {boolean} isError - Indicates if there was an error fetching the followings.
+   */         
     const { data: following=[], isLoading: isFollowingLoading, isErrorFollowings } = useQuery(
         {queryKey:["following",filters,pageFollowing],
          queryFn:({queryKey})=>getFollowing(
@@ -39,7 +85,9 @@ const FollowersAndFollowingsContainer =()=>{
             queryKey[2],
          ),
            });
-    
+    /**
+   * Effect to check if there are more followers to fetch for pagination.
+   */
 
     useEffect(() => {
         const checkHasMoreFollowers = async () => {
@@ -60,6 +108,9 @@ const FollowersAndFollowingsContainer =()=>{
                 setHasMoreFollowers(false);
             }
         };
+          /**
+   * Effect to check if there are more followings to fetch for pagination.
+   */
         const checkHasMoreFollowing = async () => {
             if (following && following.length === 9) {
                 try {

@@ -109,7 +109,11 @@ const validateForm = () => {
       validateField(name,value);
     }
   }
-
+  /**
+   * Handles the Google sign-in process.
+   * Authenticates the user using Firebase and sends the token to the backend for further validation.
+   * Redirects the user based on their profile completion status or saved redirect path.
+   */
   const handleGoogleLogIn = async () => {
     try{
         const result = await signInWithPopup(auth, provider);

@@ -1,6 +1,28 @@
 "use client"
 import ProfileCard from "@/app/components/ui/ProfileCard";
 import { ArrowForwardIos, ArrowBackIos } from "@mui/icons-material";
+/**
+ * Connections component displays a list of user connections with pagination controls.
+ * Handles loading states, empty states, and provides functionality to remove connections.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {boolean} props.loading - Indicates whether the connections are currently being loaded.
+ * @param {Array} props.connections - The list of user connections to display.
+ * @param {Function} props.onRemoveConnection - Function to handle removing a connection.
+ * @param {boolean} props.removeConnectionLoading - Indicates whether a connection removal is in progress.
+ * @param {Object|null} props.openDeleteDialog - The currently open delete confirmation dialog, if any.
+ * @param {Function} props.setOpenDeleteDialog - Function to set the currently open delete confirmation dialog.
+ * @param {Function} props.nextPage - Function to navigate to the next page of connections.
+ * @param {Function} props.prevPage - Function to navigate to the previous page of connections.
+ * @param {boolean} props.hasMore - Indicates whether there are more connections to fetch for pagination.
+ * @param {number} props.page - The current page number for pagination.
+ *
+ * @returns {JSX.Element} The Connections component.
+ */
 const Connections = ({
     loading,
     connections,

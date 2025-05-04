@@ -6,14 +6,69 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/app/context/ToastContext";
 import { useFilters } from "@/app/context/NetworkFilterContext";
 
+/**
+ * Container component for managing and displaying user connections.
+ * Handles state management, API calls, and passes data to the `Connections` presentation component.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ */
+
 const ConnectionsContainer =()=>{
+  /**
+ * Container component for managing and displaying user connections.
+ * Handles state management, API calls, and passes data to the `Connections` presentation component.
+ *
+ * @namespace network
+ * @module network
+ * @component
+ */
     const [deleteConnectionLoading, setDeleteConnectionLoading] = useState(false);
+      /**
+   * React Query's query client for managing cache and queries.
+   * @type {QueryClient}
+   */
     const queryClient = useQueryClient();
+    
+  /**
+   * Toast function for displaying notifications.
+   * @type {Function}
+   */
     const toast = useToast();
+    
+  /**
+   * State for controlling the visibility of the delete confirmation dialog.
+   * @type {Object|null}
+   */
     const [openDeleteDialog, setOpenDeleteDialog] = useState(null);
+    /**
+   * Current page number for pagination.
+   * @type {number}
+   */
     const [page, setPage] = useState(1);
+      /**
+   * Indicates whether there are more connections to fetch for pagination.
+   * @type {boolean}
+   */
     const [hasMore, setHasMore] = useState(true);
+      /**
+   * Filters applied to the connections query.
+   * @type {Object}
+   * @property {string} name - The name filter for connections.
+   * @property {string} industry - The industry filter for connections.
+   * @property {string} location - The location filter for connections.
+   * @property {string} connectionDegree - The degree of connection filter (e.g., 1st, 2nd).
+   */
     const {filters} = useFilters();
+
+      /**
+   * Fetches the list of connections using React Query.
+   * @type {Object}
+   * @property {Array} data - The list of connections fetched from the server.
+   * @property {boolean} isLoading - Indicates if the connections are currently being loaded.
+   * @property {boolean} isError - Indicates if there was an error fetching the connections.
+   */
 
     const { data: connections = [], isLoading, isError } = useQuery({
         queryKey: ["connections",filters, page],
@@ -50,7 +105,12 @@ const ConnectionsContainer =()=>{
         checkHasMore();
       }, [connections, page]);
       
-
+  /**
+   * Mutation for removing a connection.
+   * Calls the `removeConnection` function and invalidates the query cache on success.
+   * @type {Object}
+   * @property {Function} mutate - Function to trigger the mutation.
+   */
 
     const removeMutation = useMutation({
       mutationFn :(username)=> removeConnection(username),
