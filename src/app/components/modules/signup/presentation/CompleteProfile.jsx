@@ -1,6 +1,24 @@
 "use client";
 
 
+/**
+ * CompleteProfile Component
+ * 
+ * This component renders a form for users to complete their profile by uploading a profile picture,
+ * a cover picture, and filling out additional form data. It includes validation and submission handling.
+ * 
+ * @param {Object} props - The props object.
+ * @param {Object} props.formData - The form data object containing user input values.
+ * @param {string} props.profilePic - The URL of the profile picture.
+ * @param {string} props.coverPic - The URL of the cover picture.
+ * @param {Function} props.handleSubmit - The function to handle form submission.
+ * @param {Function} props.handleChange - The function to handle input changes.
+ * @param {boolean} props.isSubmitting - Indicates whether the form is currently being submitted.
+ * @param {Function} props.handleImageChange - The function to handle image file changes.
+ * @param {boolean} props.isFormValid - Indicates whether the form is valid for submission.
+ * 
+ * @returns {JSX.Element} The rendered CompleteProfile component.
+ */
 const CompleteProfile = ({
     formData,
     profilePic,

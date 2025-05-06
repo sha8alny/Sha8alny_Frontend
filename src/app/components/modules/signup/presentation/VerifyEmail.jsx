@@ -7,7 +7,24 @@ import {
     InputOTPSlot,
   } from "../../../ui/Input-otp"
 
-
+/**
+ * VerifyEmail Component
+ * 
+ * This component renders a form for verifying a user's email address using an OTP (One-Time Password).
+ * It includes input fields for the OTP, error handling, and options to resend the verification email.
+ * 
+ * @param {Object} props - The props object.
+ * @param {string} verifyCode - The OTP code entered by the user.
+ * @param {Function} setVerifyCode - Function to update the OTP code state.
+ * @param {Function} handleSubmit - Function to handle the form submission.
+ * @param {boolean} loading - Indicates whether the form is in a loading state.
+ * @param {string} verifyCodeError - Error message related to the OTP code.
+ * @param {boolean} isFormValid - Indicates whether the form is valid for submission.
+ * @param {Function} handleResendEmail - Function to handle resending the verification email.
+ * @param {string} emailToVerify - The email address being verified.
+ * 
+ * @returns {JSX.Element} The rendered VerifyEmail component.
+ */
 const VerifyEmail =({
     verifyCode,
     setVerifyCode,
