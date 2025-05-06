@@ -20,6 +20,19 @@ import { Reactions } from "@/app/utils/Reactions";
 import { report } from "@/app/services/privacy";
 import { useCallback } from "react";
 
+/**
+ * Updates comment counts recursively through the comment hierarchy
+ * 
+ * This utility function maintains accurate comment count display by:
+ * 1. Traversing up the comment tree to update counts for all ancestors
+ * 2. Modifying React Query cache data directly for optimistic UI updates
+ * 3. Supporting both top-level comments and nested replies
+ * 
+ * @param {Object} queryClient - React Query client instance for cache access
+ * @param {string} postId - ID of the post containing the comments
+ * @param {string|null} parentIdToUpdate - ID of the parent comment to update (null for post)
+ * @param {number} delta - Count change value (+1 for addition, negative for deletion)
+ */
 function updateAncestorCommentCounts(
   queryClient,
   postId,
@@ -125,6 +138,29 @@ function updateAncestorCommentCounts(
   }
 }
 
+/**
+ * CommentContainer - Container component for rendering and managing a comment and its replies
+ * 
+ * This component handles all comment functionality including:
+ * - Rendering comment content and replies with proper nesting
+ * - Managing reactions (likes) with optimistic UI updates
+ * - Creating, deleting, and reporting comments
+ * - Infinite scrolling for comment replies
+ * - User tagging in comment replies
+ * - Following comment authors
+ * - Visibility controls for reply threads
+ * 
+ * The component uses React Query for data fetching, caching, and mutations with
+ * optimistic updates to provide immediate UI feedback while operations complete.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.postId - ID of the post the comment belongs to
+ * @param {Object} props.comment - Comment data object
+ * @param {string} props.postUsername - Username of the post author
+ * @param {number} [props.nestCount=0] - Depth level of comment nesting
+ * @param {boolean} [props.isSingleComment=false] - Whether this is a standalone comment view
+ * @returns {JSX.Element} Rendered comment with its replies and interactive elements
+ */
 export default function CommentContainer({
   postId,
   comment,

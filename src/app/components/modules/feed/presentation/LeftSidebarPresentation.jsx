@@ -5,6 +5,22 @@ import TryPremium from "@/app/components/layout/TryPremium";
 import Container from "@/app/components/layout/Container";
 import { LocationCity } from "@mui/icons-material";
 
+/**
+ * LeftSidebarPresentation - Left sidebar for feed pages with user information
+ * 
+ * This component organizes and displays user-specific information and navigation:
+ * - User profile summary with photo, name and headline
+ * - Quick access links for common destinations
+ * - Premium account upsell for non-premium users
+ * - Usage statistics with visual indicators
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.sideBar - User and account information
+ * @param {Function} props.navigateTo - Navigation handler for routing
+ * @param {Array} props.trackedStats - Array of stats to display
+ * @param {Function} props.determineStat - Function to format stat values
+ * @returns {JSX.Element} Left sidebar with user information
+ */
 function LeftSidebarPresentation({
   sideBar,
   navigateTo,
@@ -30,6 +46,15 @@ function LeftSidebarPresentation({
   );
 }
 
+/**
+ * LeftSidebarPresentationSkeleton - Loading placeholder for left sidebar
+ * 
+ * Displays an animated skeleton UI while user data is loading.
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} [props.isLoading=true] - Whether content is loading
+ * @returns {JSX.Element} Animated loading skeleton for the left sidebar
+ */
 function LeftSidebarPresentationSkeleton({ isLoading = true }) {
   return (
     <aside

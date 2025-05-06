@@ -6,7 +6,16 @@ import { Shield } from "lucide-react";
  * @module profile
  */
 /**
- * A component that displays a profile strength indicator with a progress bar and checklist.
+ * ProfileStrength - Visual indicator for profile completion status
+ * 
+ * This component displays a user's profile completion status through:
+ * 1. A colored progress bar showing overall completion percentage
+ * 2. A visual label indicating strength level (e.g., "Beginner", "Intermediate")
+ * 3. A checklist of profile sections with completion status indicators
+ * 
+ * The component helps guide users to complete their profiles by clearly
+ * showing which sections need attention, encouraging higher quality profiles
+ * and better network engagement.
  *
  * @component
  * @param {Object} props

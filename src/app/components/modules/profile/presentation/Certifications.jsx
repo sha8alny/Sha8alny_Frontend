@@ -10,16 +10,25 @@ import { WorkspacePremium } from "@mui/icons-material";
  * @module profile
  */
 /**
- * A component that displays a certificate card with organization logo, certificate details, and associated skills
- * @param {Object} props - The component props
+ * CertificateCard - Displays a single certificate with its details and associated skills
+ * 
+ * This component renders a certificate card showing:
+ * - Certificate name (clickable if URL is provided)
+ * - Issuing organization information
+ * - Issue and expiration dates
+ * - Associated skills as tags
+ * - Edit option for user's own certificates
+ * 
+ * @param {Object} props - Component props
  * @param {Object} props.certificate - The certificate object containing details
  * @param {string} props.certificate.name - Name of the certificate
+ * @param {string} [props.certificate.certificateUrl] - URL linking to the certificate verification
  * @param {string} props.certificate.issuingOrganisationLogo - URL of the issuing organization's logo
  * @param {string} props.certificate.issuingOrganization - Name of the issuing organization
  * @param {Object} props.certificate.issueDate - Issue date object
  * @param {string} props.certificate.issueDate.month - Month of issue
  * @param {number} props.certificate.issueDate.year - Year of issue
- * @param {Object} props.certificate.expirationDate - Expiration date object
+ * @param {Object} [props.certificate.expirationDate] - Optional expiration date object
  * @param {string} props.certificate.expirationDate.month - Month of expiration
  * @param {number} props.certificate.expirationDate.year - Year of expiration
  * @param {string[]} props.certificate.skills - Array of skills associated with the certificate

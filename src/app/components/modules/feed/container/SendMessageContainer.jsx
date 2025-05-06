@@ -10,12 +10,34 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { Send } from "@mui/icons-material";
 import { useToast } from "@/app/context/ToastContext";
 
+/**
+ * SendMessageContainer - Dialog component for sharing content via direct messages
+ * 
+ * This component allows users to select a connection and send a shared link/URL 
+ * as a direct message. Features include:
+ * - Modal dialog with Send button trigger
+ * - Connection list with infinite scrolling pagination
+ * - User selection interface
+ * - Message sending functionality with success/error feedback
+ * - Proper connection relationship display
+ * 
+ * The component uses React Query for data fetching and mutations, with
+ * Intersection Observer for the infinite scrolling behavior.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.shareUrl - URL to be shared in the message
+ * @returns {JSX.Element} Send message dialog component
+ */
 export default function SendMessageContainer({ shareUrl }) {
   const [userToSend, setUserToSend] = useState(null);
   const [messageModalOpen, setMessageModalOpen] = useState(false);
   const observerTarget = useRef(null);
   const toast = useToast();
 
+  /**
+   * Infinite query for fetching paginated user connections
+   * Loads 10 connections per page with automatic pagination
+   */
   const {
     data,
     fetchNextPage,
@@ -33,6 +55,10 @@ export default function SendMessageContainer({ shareUrl }) {
     initialPageParam: 1,
   });
 
+  /**
+   * Sets up intersection observer for infinite scrolling
+   * Includes a short delay to ensure dialog is rendered before observing
+   */
   useEffect(() => {
     if (!messageModalOpen) return;
 
@@ -64,6 +90,10 @@ export default function SendMessageContainer({ shareUrl }) {
 
   const connections = data?.pages.flatMap((page) => page) || [];
 
+  /**
+   * Mutation for sending a message containing the share URL
+   * Provides toast notifications for success/error states
+   */
   const handleSendMessageMutation = useMutation({
     mutationFn: (params) => {
       const { receiverName, shareUrl } = params;
@@ -80,6 +110,11 @@ export default function SendMessageContainer({ shareUrl }) {
     },
   });
 
+  /**
+   * Formats connection degree numbers to display text
+   * @param {number} relation - Connection degree (0-3)
+   * @returns {string} Formatted connection label (1st, 2nd, 3rd, 3rd+)
+   */
   const changeRelation = (relation) => {
     switch (relation) {
       case 0:
@@ -93,11 +128,18 @@ export default function SendMessageContainer({ shareUrl }) {
     }
   };
 
+  /**
+   * Process connections data to include formatted relation text
+   */
   const allConnections = [...connections].map((connection) => ({
     ...connection,
     relation: changeRelation(connection?.connectionDegree),
   }));
 
+  /**
+   * Handles sending a message to the selected connection
+   * @param {string} receiverName - Username of the message recipient
+   */
   const handleSendMessage = async (receiverName) => {
     handleSendMessageMutation.mutate({
       receiverName,

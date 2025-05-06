@@ -6,9 +6,29 @@ import LeftSidebarPresentation, { LeftSidebarPresentationSkeleton } from "../pre
 import { fetchSidebarInfo } from "@/app/services/fetchSideBarInfo";
 import PostButton from "./PostButton";
 
+/**
+ * LeftSidebar - Container component for the application's left sidebar
+ * 
+ * This component displays user information and subscription plan details including:
+ * - User profile summary (name, headline, profile picture)
+ * - Plan usage statistics (connections, job applications, messages)
+ * - Plan expiry information with color-coded status indicators
+ * - Optional post creation button
+ * 
+ * The component handles data fetching, loading states, error conditions,
+ * and calculates visual indicators based on usage limits and premium status.
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} [props.addButton=false] - Whether to show the post creation button
+ * @returns {JSX.Element} Sidebar with user info and subscription details or loading skeleton
+ */
 function LeftSidebar({ addButton = false }) {
   const router = useRouter();
 
+  /**
+   * Fetch user and subscription information with React Query
+   * Uses a 30-minute cache to reduce unnecessary API calls
+   */
   const {
     data: sideBar,
     isLoading,
@@ -19,18 +39,25 @@ function LeftSidebar({ addButton = false }) {
     staleTime: 1000 * 60 * 30, // 30 minutes
   });
 
+  /**
+   * Navigation handler for sidebar links
+   * @param {string} path - Path to navigate to
+   */
   const handleNavigation = (path) => {
     router.push(path);
   };
 
+  // Show loading skeleton during data fetch
   if (isLoading) {
     return <LeftSidebarPresentationSkeleton />;
   }
 
+  // Show error skeleton if data fetch fails
   if (isError || !sideBar) {
     return <LeftSidebarPresentationSkeleton isLoading={isLoading} />;
   }
 
+  // Configuration for tracked subscription statistics
   const trackedStats = [
     { name: "Connections", icon: Group },
     { name: "Job Applications", icon: Work },
@@ -38,10 +65,26 @@ function LeftSidebar({ addButton = false }) {
     { name: "Plan Expiry Date", icon: CalendarMonth },
   ];
 
+  // Determine plan status
   const isExpired = new Date(sideBar?.planDetails?.expiryDate) < new Date();
   const isPremium = sideBar?.planDetails?.isPremium;
 
+  /**
+   * Determines the display format and color for a given statistic
+   * - Shows "Unlimited" for premium users where appropriate
+   * - Uses color coding based on usage percentage for free plan limits
+   * - Handles special cases like expiry dates
+   * 
+   * @param {Object} stat - Statistic object containing name and icon
+   * @returns {JSX.Element} Formatted display of the statistic value
+   */
   const determineStat = (stat) => {
+    /**
+     * Calculates color based on usage percentage
+     * @param {number} value - Current usage value
+     * @param {number} limit - Maximum allowed value
+     * @returns {string} Tailwind CSS color class
+     */
     const getColor = (value, limit) => {
       const ratio = value / limit;
       if (ratio == 1) return "text-red-600 dark:text-red-500 font-semibold";

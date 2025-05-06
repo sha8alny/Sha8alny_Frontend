@@ -10,19 +10,47 @@ import { useMutation } from "@tanstack/react-query";
 /**
  * @namespace profile
  * @module profile
+ * @description Component for managing profile visibility settings and username modification
+ */
+
+/**
+ * ModVisibility - Container component for profile visibility settings and username management
+ * 
+ * This component provides functionality to:
+ * 1. Change profile visibility between Public and Private
+ * 2. Update username with validation
+ * 3. Display success/error states during updates
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.userInfo - User information object
+ * @param {string} props.userInfo.visibility - Current visibility setting (Public/Private)
+ * @param {string} props.userInfo.username - Current username
+ * @returns {JSX.Element} Dialog component with visibility and username management UI
  */
 export default function ModVisibility({ userInfo }) {
+  // State for profile visibility setting
   const [visibility, setVisibility] = useState(userInfo?.visibility || "Public");
+  // Track if username has been modified from original
   const [userModified, setUserModified] = useState(false);
+  // State for username input field
   const [username, setUsername] = useState(userInfo?.username || "");
+  // General error state for the component
   const [error, setError] = useState(null);
+  // Username-specific validation errors
   const [usernameError, setUsernameError] = useState(null);
+  // UI flow stage (0: initial, 1: loading, 2: success, 3: error)
   const [currentStage, setCurrentStage] = useState(0);
+  // Dialog open/close state
   const [open, setOpen] = useState(false);
 
   const useUpdate = useUpdateProfile();
   const router = useRouter();
   
+  /**
+   * Mutation for updating the username
+   * On success, shows success state and redirects to the new profile URL
+   * On error, displays error and reverts to original username
+   */
   const updateUsernameMutation = useMutation({
     mutationFn: updateUsername,
     onSuccess: () => {
@@ -46,6 +74,12 @@ export default function ModVisibility({ userInfo }) {
 
   const usernameCopy = username;
 
+  /**
+   * Handles username input change events
+   * Validates username in real-time and provides appropriate error messages
+   * 
+   * @param {Event} e - Input change event
+   */
   const handleChange = (e) => {
     const { value } = e.target;
     setUsername(value);
@@ -67,6 +101,10 @@ export default function ModVisibility({ userInfo }) {
     }
   };
 
+  /**
+   * Handles save button click for username updates
+   * Validates before submission and triggers update mutation
+   */
   const handleSave = () => {
     if (userModified) {
       if (usernameError) {
@@ -79,6 +117,11 @@ export default function ModVisibility({ userInfo }) {
     }
   };
 
+  /**
+   * Updates the profile visibility setting
+   * 
+   * @param {string} value - New visibility value ('Public' or 'Private')
+   */
   const modifyVisibility = (value) => {
     useUpdate.mutate(
       {

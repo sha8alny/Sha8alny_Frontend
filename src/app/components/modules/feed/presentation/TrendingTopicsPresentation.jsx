@@ -1,6 +1,19 @@
 import Container from "@/app/components/layout/Container";
 import { TrendingUp } from "@mui/icons-material";
 
+/**
+ * TrendingTopicsPresentation - Displays a list of trending topics/hashtags
+ * 
+ * This component renders a card showing popular trends on the platform, including:
+ * - Clickable topic hashtags that navigate to search results
+ * - Post count indicators showing popularity
+ * - Empty state handling when no trends are available
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.trendingTopics - Array of trending topic objects with keyword and count
+ * @param {Function} props.navigateTo - Navigation handler function for clicking on topics
+ * @returns {JSX.Element} Trending topics card component
+ */
 const TrendingTopicsPresentation = ({ trendingTopics, navigateTo }) => {
   return (
     <Container
@@ -52,6 +65,17 @@ const TrendingTopicsPresentation = ({ trendingTopics, navigateTo }) => {
   );
 };
 
+/**
+ * TrendingTopicsPresentationSkeleton - Loading placeholder for trending topics
+ * 
+ * Displays an animated skeleton UI while trending data is loading or
+ * an error message when data fetching fails.
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.isLoading - Whether topics are currently loading
+ * @param {Object} props.error - Error object if data fetching failed
+ * @returns {JSX.Element} Trending topics skeleton or error state
+ */
 const TrendingTopicsPresentationSkeleton = ({ isLoading, error }) => {
   return (
     <Container

@@ -9,32 +9,71 @@ import { Button } from "@/app/components/ui/Button";
 import { XIcon } from "lucide-react";
 import { DescriptionOutlined } from "@mui/icons-material";
 
+/**
+ * PostButton - Container component for creating and publishing posts
+ * 
+ * This comprehensive component handles the complete post creation flow, including:
+ * 1. Text content with validation and character limits
+ * 2. Rich media handling:
+ *    - Multiple images (up to 20)
+ *    - Single video (MP4/WebM)
+ *    - Single document (PDF/DOC/DOCX)
+ * 3. User tagging with search functionality (up to 5 users)
+ * 4. Hashtag/keyword management (up to 10 tags)
+ * 5. Post scheduling for future publication
+ * 6. Optimistic UI updates for immediate feedback
+ * 7. Comprehensive error handling and validation
+ * 
+ * The component uses React Query for state management and API interactions,
+ * with optimized rendering through useCallback and useMemo hooks.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.userInfo - Current user information for attribution
+ * @param {string} props.userInfo.username - User's username
+ * @param {string} props.userInfo.profilePicture - User's profile picture URL
+ * @param {string} props.userInfo.name - User's display name
+ * @param {string} props.userInfo.headline - User's headline/tagline
+ * @returns {JSX.Element} Post creation button and dialog
+ */
 export default function PostButton({ userInfo }) {
+  // Post content state
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Media state management
+  const [images, setImages] = useState([]);
+  const [videos, setVideos] = useState(null);
+  const [document, setDocument] = useState(null);
+  const fileInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+  const documentInputRef = useRef(null);
+  
+  // Tags and mentions state
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [taggedUser, setTaggedUser] = useState("");
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState(null);
-  const [document, setDocument] = useState(null);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // UI control state
   const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
   const [taggedUserPopoverOpen, setTaggedUserPopoverOpen] = useState(false);
+  const [schedulePopoverOpen, setSchedulePopoverOpen] = useState(false);
+  
+  // Scheduling state
   const [scheduledDate, setScheduledDate] = useState(null);
   const [scheduledTime, setScheduledTime] = useState("");
-  const [schedulePopoverOpen, setSchedulePopoverOpen] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-  const fileInputRef = useRef(null);
-  const videoInputRef = useRef(null);
-  const documentInputRef = useRef(null);
 
   const toast = useToast();
   const queryClient = useQueryClient();
 
+  /**
+   * Mutation for creating a new post
+   * Handles optimistic updates, success/error states, and form reset
+   */
   const handlePostMutation = useMutation({
     mutationFn: (formData) => createPost(formData),
     onSuccess: (response) => {
@@ -121,6 +160,10 @@ export default function PostButton({ userInfo }) {
     },
   });
 
+  /**
+   * Handles post submission with validation and FormData preparation
+   * Validates text and media requirements before submission
+   */
   const handlePost = useCallback(() => {
     if (text.trim() === "" && images.length === 0 && !videos && !document) {
       setError("Please add text or media to your post.");
@@ -179,6 +222,12 @@ export default function PostButton({ userInfo }) {
     handlePostMutation,
   ]);
 
+  /**
+   * Processes media files for upload with validation
+   * Enforces size limits, format restrictions, and mutual exclusivity between media types
+   * 
+   * @param {File} media - Media file to process
+   */
   const handleAddMedia = useCallback(
     (media) => {
       const MAX_SIZE = 50 * 1024 * 1024;
@@ -248,6 +297,12 @@ export default function PostButton({ userInfo }) {
     [images, videos, document]
   );
 
+  /**
+   * Removes media from the post
+   * 
+   * @param {number} index - Index of the image to remove
+   * @param {string} type - Type of media to remove ('image' or 'video')
+   */
   const handleRemoveMedia = useCallback((index, type) => {
     if (type === "image") {
       setImages((prev) => prev.filter((_, i) => i !== index));
@@ -256,6 +311,12 @@ export default function PostButton({ userInfo }) {
     }
   }, []);
 
+  /**
+   * Handles document file uploads with validation
+   * Enforces document type restrictions and exclusivity with other media
+   * 
+   * @param {File} file - Document file to process
+   */
   const handleAddDocument = useCallback(
     (file) => {
       const supportedDocumentTypes = [
@@ -291,10 +352,16 @@ export default function PostButton({ userInfo }) {
     [images, videos, document]
   );
 
+  /**
+   * Removes uploaded document
+   */
   const handleRemoveDocument = useCallback(() => {
     setDocument(null);
   }, []);
 
+  /**
+   * Processes image input from file picker
+   */
   const handleImageInputChange = useCallback(
     (e) => {
       if (e.target.files?.length > 0) {
@@ -305,6 +372,9 @@ export default function PostButton({ userInfo }) {
     [handleAddMedia]
   );
 
+  /**
+   * Processes video input from file picker
+   */
   const handleVideoInputChange = useCallback(
     (e) => {
       if (e.target.files?.length > 0) {
@@ -315,6 +385,9 @@ export default function PostButton({ userInfo }) {
     [handleAddMedia]
   );
 
+  /**
+   * Processes document input from file picker
+   */
   const handleDocumentInputChange = useCallback(
     (e) => {
       if (e.target.files?.length > 0) {
@@ -325,6 +398,10 @@ export default function PostButton({ userInfo }) {
     [handleAddDocument]
   );
 
+  /**
+   * Handles tag creation via keyboard events
+   * Supports Enter, space, and comma delimiters
+   */
   const handleAddTagKeyDown = useCallback(
     (e) => {
       if (e.key === "Enter" || e.key === " " || e.key === ",") {
@@ -349,6 +426,9 @@ export default function PostButton({ userInfo }) {
     [tagInput, tags]
   );
 
+  /**
+   * Handles tag creation via button click
+   */
   const handleAddTagClick = useCallback(() => {
     const trimmedTag = tagInput.trim();
     if (trimmedTag && !tags.includes(trimmedTag)) {
@@ -367,16 +447,30 @@ export default function PostButton({ userInfo }) {
     }
   }, [tagInput, tags]);
 
+  /**
+   * Removes a tag from the tags list
+   * @param {string} tagToRemove - Tag to remove
+   */
   const handleRemoveTag = useCallback((tagToRemove) => {
     setTags((prevTags) => prevTags.filter((t) => t !== tagToRemove));
   }, []);
 
+  /**
+   * Removes a tagged user from the list
+   * @param {string} userIdToRemove - ID of user to remove from tags
+   */
   const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
     setTaggedUsers((prevUsers) =>
       prevUsers.filter((user) => user._id !== userIdToRemove)
     );
   }, []);
 
+  /**
+   * Adds a user to the tagged users list
+   * Enforces maximum tag limit and prevents duplicates
+   * 
+   * @param {Object} user - User object to add to tags
+   */
   const handleTagUserClick = useCallback(
     (user) => {
       if (taggedUsers.some((u) => u._id === user._id)) {
@@ -396,6 +490,12 @@ export default function PostButton({ userInfo }) {
     [taggedUsers]
   );
 
+  /**
+   * Searches for users to tag based on query string
+   * Filters out users that are already tagged
+   * 
+   * @param {string} query - Search query for finding users
+   */
   const handleUserSearch = useCallback(
     async (query) => {
       if (!query || query.length < 2) {
@@ -422,6 +522,9 @@ export default function PostButton({ userInfo }) {
     [taggedUsers]
   );
 
+  /**
+   * Memoized image previews array to prevent unnecessary re-renders
+   */
   const imagePreviews = useMemo(() => {
     return images?.map((image, index) => (
       <div
@@ -446,6 +549,9 @@ export default function PostButton({ userInfo }) {
     ));
   }, [images, handleRemoveMedia]);
 
+  /**
+   * Memoized video preview element to prevent unnecessary re-renders
+   */
   const videoPreview = useMemo(() => {
     if (!videos) return null;
     const videoUrl = URL.createObjectURL(videos);
@@ -469,6 +575,9 @@ export default function PostButton({ userInfo }) {
     );
   }, [videos, handleRemoveMedia]);
 
+  /**
+   * Memoized document preview element to prevent unnecessary re-renders
+   */
   const documentPreview = useMemo(() => {
     if (!document) return null;
     return (

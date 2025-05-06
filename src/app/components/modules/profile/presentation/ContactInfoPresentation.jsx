@@ -1,6 +1,21 @@
 import Dialog from "@/app/components/ui/DialogMod";
 import { ContentCopy, Launch, Mail } from "@mui/icons-material";
 
+/**
+ * ContactInfoPresentation - Presentation component for displaying user contact information
+ * 
+ * This component renders a dialog that shows the user's email address with options
+ * to copy it to clipboard or open the default email client. It also displays
+ * a notification when the email is successfully copied.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.userInfo - Information about the user whose contact info is displayed
+ * @param {string} props.userInfo.email - The user's email address
+ * @param {Function} props.onCopy - Handler function for copying email to clipboard
+ * @param {Function} props.onEmail - Handler function for opening the default email client
+ * @param {boolean} props.copied - Flag indicating if the email was copied to clipboard
+ * @returns {JSX.Element} Dialog component with contact information content
+ */
 export default function ContactInfoPresentation({
   userInfo,
   onCopy,

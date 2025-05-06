@@ -5,13 +5,20 @@ import { Textarea } from "@/app/components/ui/Textarea";
  * @module profile
  */
 /**
- * A presentation component for displaying and editing 'About' section in profile module
- * @param {Object} props - The component props
- * @param {string} props.about - The about text content
- * @param {string|null} props.error - Error message to display, if any
- * @param {Function} props.handleAbout - Callback function to handle changes in about text
- * @param {Function} props.handleSubmit - Callback function to handle form submission
- * @returns {JSX.Element} A form with textarea and submit button for editing about section
+ * ModAboutPresentation - A presentation component for editing the 'About' section in a user's profile
+ * 
+ * This component provides a form interface for users to update their profile's about section.
+ * It includes character count validation, loading state indication, and conditional button enabling
+ * based on whether changes have been made.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.about - The current about text content
+ * @param {string|null} props.error - Error message to display if validation fails
+ * @param {Function} props.handleAbout - Callback function that handles changes in the about text
+ * @param {Function} props.handleSubmit - Callback function that processes the form submission
+ * @param {boolean} props.isSubmitting - Indicates whether a submission is currently in progress
+ * @param {boolean} props.isModified - Indicates whether the about text has been modified from its original value
+ * @returns {JSX.Element} A form with textarea for editing the about section and a submit button
  */
 export default function ModAboutPresentation({
   about,

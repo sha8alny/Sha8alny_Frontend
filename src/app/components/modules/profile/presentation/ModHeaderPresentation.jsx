@@ -19,6 +19,29 @@ import Image from "next/image";
 /**
  * @namespace profile
  * @module profile
+ * @description Components for displaying and editing profile header information
+ */
+
+/**
+ * ModHeaderPresentation - Profile header component with conditional action buttons
+ * 
+ * This component renders different UI elements based on whether the profile 
+ * belongs to the current user or another user. It provides functionality for:
+ * - Resume download button (if available)
+ * - Edit profile button (for the user's own profile)
+ * - Connection management (connect, message, accept/decline) for other users' profiles
+ * - Loading states for connection actions
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.isMyProfile - Whether the profile belongs to the current user
+ * @param {Object} props.userInfo - User profile information
+ * @param {string} [props.userInfo.resume] - URL to user's resume if available
+ * @param {Function} props.handleClick - Function to handle connection button clicks
+ * @param {Function} props.handleResumeDownload - Function to handle resume download
+ * @param {boolean} props.isConnecting - Whether a connection request is in progress
+ * @param {boolean} props.isHandlingRequest - Whether handling an incoming connection request
+ * @param {string} props.connectionStatus - Current connection status ("connected", "pending", "requestReceived", "notConnected")
+ * @returns {JSX.Element} Profile header UI with appropriate action buttons
  */
 export default function ModHeaderPresentation({
   isMyProfile,
@@ -127,6 +150,19 @@ export default function ModHeaderPresentation({
   );
 }
 
+/**
+ * ButtonProfile - Standardized button component for profile actions
+ * 
+ * Renders a consistent styled button used throughout the profile interface
+ * with support for disabled states and custom text/content.
+ * 
+ * @param {Object} props - Component props
+ * @param {ReactNode} props.text - Button text or content (can be JSX)
+ * @param {boolean} [props.disabled=false] - Whether the button is disabled
+ * @param {Function} props.onClick - Click handler function
+ * @param {string} props.testId - Test ID for the button element
+ * @returns {JSX.Element} Styled button component
+ */
 const ButtonProfile = ({ text, disabled = false, onClick, testId }) => {
   return (
     <button
@@ -140,6 +176,49 @@ const ButtonProfile = ({ text, disabled = false, onClick, testId }) => {
   );
 };
 
+/**
+ * ModifyProfilePresentation - Comprehensive form for editing profile information
+ * 
+ * Multi-stage component that provides tabbed interface for editing profile details including:
+ * - Profile and cover pictures with upload/preview functionality
+ * - Personal information (name, location, headline, industry)
+ * - Resume upload and management
+ * - Real-time preview of profile changes
+ * - Form validation with error messages
+ * - Loading, success, and error state displays
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.profilePicture - Current profile picture URL
+ * @param {string} props.coverPicture - Current cover picture URL
+ * @param {Function} props.setCoverPicture - Function to update cover picture
+ * @param {Function} props.setProfilePicture - Function to update profile picture
+ * @param {string} props.name - User's name
+ * @param {Function} props.setName - Function to update name
+ * @param {string} props.location - User's location
+ * @param {Function} props.setLocation - Function to update location
+ * @param {string} props.headline - User's professional headline
+ * @param {Function} props.setHeadline - Function to update headline
+ * @param {string} props.resume - User's resume URL
+ * @param {Function} props.setResume - Function to update resume
+ * @param {number} props.currentStage - Current form stage (0: edit, 1: loading, 2: success, 3: error)
+ * @param {string|null} props.error - Error message
+ * @param {Function} props.handleFileChange - Handler for file input changes
+ * @param {Function} props.removeFile - Handler to remove uploaded files
+ * @param {Function} props.onSubmit - Form submission handler
+ * @param {string|null} props.nameError - Name validation error
+ * @param {string|null} props.locationError - Location validation error
+ * @param {string|null} props.headlineError - Headline validation error
+ * @param {boolean} props.isProfilePictureLoading - Whether profile picture is uploading
+ * @param {boolean} props.isCoverPictureLoading - Whether cover picture is uploading
+ * @param {boolean} props.isResumeLoading - Whether resume is uploading
+ * @param {string|null} props.profilePictureError - Profile picture error message
+ * @param {string|null} props.coverPictureError - Cover picture error message
+ * @param {string|null} props.resumeError - Resume error message
+ * @param {string} props.industry - User's industry
+ * @param {Function} props.setIndustry - Function to update industry
+ * @param {string|null} props.industryError - Industry validation error
+ * @returns {JSX.Element} Multi-stage profile editing interface
+ */
 export const ModifyProfilePresentation = ({
   profilePicture,
   coverPicture,

@@ -73,7 +73,6 @@ const GeneralSkeleton = () => {
                   data-testid={`education-skeleton-degree-${index}`}
                 />
 
-
                 <div
                   className="h-4 w-1/3 bg-primary/60 rounded-2xl"
                   data-testid={`education-skeleton-dates-${index}`}
@@ -228,13 +227,32 @@ export default function ProfilePresentation({
           />
           <Skills skills={userProfile.skills} isMyProfile={isMyProfile} />
         </section>
+        
+        {/* 
+          Sidebar Section - Right column of the profile page
+          
+          This section contains:
+          1. Profile management tools (only visible on user's own profile)
+          2. Network recommendations (people also viewed & people you may know)
+          3. Footer with site information and links
+          
+          The sidebar is hidden on mobile devices and shown on medium screens and larger.
+        */}
         <section className="hidden md:block flex-1 rounded-2xl space-y-2">
+          {/* Profile management tools - Only visible to the profile owner */}
           {isMyProfile && (
             <>
+              {/* URL customization component */}
               <ChangeURL userInfo={userProfile} />
+              {/* Profile completion indicator */}
               <ProfileStrength profileStrength={profileStrength} />
             </>
           )}
+          
+          {/* 
+            Network recommendations - Shows profiles similar users have viewed
+            Helps users discover relevant professional connections
+          */}
           <SuggestedUsersContainer
             title="People Also Viewed"
             username={userProfile?.username}
@@ -242,6 +260,11 @@ export default function ProfilePresentation({
             navigateTo={navigateTo}
             helperFunction={changeRelations}
           />
+          
+          {/* 
+            Connection suggestions - Shows potential connection recommendations
+            Based on the user's network, industry, and other profile attributes
+          */}
           <SuggestedUsersContainer
             title="People You May Know"
             username={userProfile?.username}

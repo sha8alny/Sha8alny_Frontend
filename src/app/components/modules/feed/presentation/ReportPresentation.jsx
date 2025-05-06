@@ -1,6 +1,29 @@
 import { Textarea } from "@/app/components/ui/Textarea";
 import { Done, Error } from "@mui/icons-material";
 
+/**
+ * ReportPresentation - Dialog content for reporting inappropriate content
+ * 
+ * This component provides a multi-step interface for reporting content:
+ * - Selection of predefined report reasons
+ * - Custom text input for detailed explanations
+ * - Animated states for submission feedback (loading, success, error)
+ * - Visual feedback to guide users through the reporting process
+ * 
+ * The component handles all states of the reporting flow from initial form
+ * to submission confirmation.
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.reportOptions - Array of predefined report reason options
+ * @param {Function} props.onReport - Handler for submitting the report
+ * @param {string} props.type - Type of content being reported (e.g., "post", "comment")
+ * @param {number} props.reportState - Current state of reporting process (0: input, 1: loading, 2: success, 3: error)
+ * @param {string|null} props.reportType - Selected reason for reporting
+ * @param {string} props.reportText - Custom report text for "Something Else" option
+ * @param {Function} props.setReportText - State setter for report text
+ * @param {Function} props.setReportType - State setter for report reason
+ * @returns {JSX.Element} Report dialog content with appropriate state display
+ */
 export default function ReportPresentation({
   reportOptions = [
     "Spam",

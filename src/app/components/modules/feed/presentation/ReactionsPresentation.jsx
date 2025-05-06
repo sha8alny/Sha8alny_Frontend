@@ -12,6 +12,11 @@ import {
 import { Reactions } from "@/app/utils/Reactions";
 import Link from "next/link";
 
+/**
+ * ReactionsSkeleton - Loading placeholder for reaction user cards
+ * 
+ * @returns {JSX.Element} Animated loading skeleton for a reaction user
+ */
 const ReactionsSkeleton = () => {
   return (
     <div className="flex items-center gap-2 p-4">
@@ -24,6 +29,29 @@ const ReactionsSkeleton = () => {
   );
 };
 
+/**
+ * ReactionsPresentation - Dialog content for displaying post/comment reactions
+ * 
+ * This component shows users who have reacted to content with:
+ * - Tabbed interface to filter by reaction type
+ * - User list with profile pictures, names, and reaction icons
+ * - Count indicators for each reaction type
+ * - Loading states and empty states
+ * - Infinite scrolling for pagination
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.users - Array of users who reacted
+ * @param {boolean} props.isLoading - Whether reactions are initially loading
+ * @param {boolean} props.isLoadingMore - Whether more reactions are being loaded
+ * @param {boolean} props.isError - Whether reaction loading encountered an error
+ * @param {boolean} props.hasNextPage - Whether more reactions are available
+ * @param {Object} props.loadMoreRef - Ref for infinite scrolling
+ * @param {number} props.numReactions - Total number of reactions
+ * @param {Function} props.handleReactionChange - Handler for switching reaction filters
+ * @param {Array} props.activeReactions - Array of active reaction types
+ * @param {Function} props.navigateTo - Navigation handler for routing
+ * @returns {JSX.Element} Reactions dialog content with tabbed user list
+ */
 export default function ReactionsPresentation({
   users,
   isLoading,
@@ -153,6 +181,14 @@ export default function ReactionsPresentation({
   );
 }
 
+/**
+ * UserCard - Card displaying a user who reacted and their reaction
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.user - User data with reaction information
+ * @param {Function} props.navigateTo - Navigation handler for routing
+ * @returns {JSX.Element} User card with reaction icon
+ */
 const UserCard = ({ user, navigateTo }) => {
   return (
     <div className="flex items-center gap-2 p-4 hover:bg-primary/5 rounded-md transition-colors">

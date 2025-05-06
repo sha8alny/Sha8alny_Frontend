@@ -12,10 +12,32 @@ import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback } from "react";
 
+/**
+ * CommentSectionContainer - Container component for post comment sections
+ * 
+ * Manages the complete comment section for a post, including:
+ * - Fetching and displaying top-level comments with infinite scrolling
+ * - Adding new comments with optimistic UI updates
+ * - User tagging functionality with search and selection
+ * - Error handling and validation
+ * 
+ * The component provides a comprehensive interface for users to view existing
+ * comments and add their own, with real-time feedback and optimistic updates.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.username - Username of the post author
+ * @param {string} props.postId - ID of the post to display comments for
+ * @returns {JSX.Element} Comment section with input and comment list
+ */
 export default function CommentSectionContainer({ username, postId }) {
+  // Comment input state
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
+  
+  // Company context state
   const [companyUsername, setCompanyUsername] = useState(null);
+  
+  // User tagging state
   const [taggedUser, setTaggedUser] = useState("");
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -26,6 +48,7 @@ export default function CommentSectionContainer({ username, postId }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Commented out company detection code
   // useEffect(() => {
   //   if (pathname) {
   //     const companyRegex = /^\/company\/([^/]+)\/admin\/posts(\/.*)?$/;
@@ -36,6 +59,10 @@ export default function CommentSectionContainer({ username, postId }) {
   //   }
   // }, [pathname]);
 
+  /**
+   * Removes a tagged user from the list
+   * @param {string} userIdToRemove - ID of the user to remove from tags
+   */
   const handleRemoveTaggedUser = useCallback((userIdToRemove) => {
     setTaggedUsers((prevUsers) =>
       prevUsers.filter((user) => user._id !== userIdToRemove)
@@ -43,6 +70,12 @@ export default function CommentSectionContainer({ username, postId }) {
     setTagError(null);
   }, []);
 
+  /**
+   * Adds a user to the tagged users list if not already tagged
+   * and if the maximum tag limit hasn't been reached
+   * 
+   * @param {Object} user - User object to add to tags
+   */
   const handleTagUserClick = useCallback(
     (user) => {
       if (taggedUsers.some((u) => u._id === user._id)) {
@@ -61,6 +94,12 @@ export default function CommentSectionContainer({ username, postId }) {
     [taggedUsers]
   );
 
+  /**
+   * Searches for users to tag based on query string
+   * Filters out users that are already tagged
+   * 
+   * @param {string} query - Search query for finding users
+   */
   const handleUserSearch = useCallback(
     async (query) => {
       if (!query || query.length < 2) {
@@ -87,6 +126,10 @@ export default function CommentSectionContainer({ username, postId }) {
     [taggedUsers]
   );
 
+  /**
+   * Infinite query hook to fetch comments with pagination
+   * Includes error handling for 404 responses and pagination control
+   */
   const {
     data,
     isLoading: isLoadingComments,
@@ -129,6 +172,7 @@ export default function CommentSectionContainer({ username, postId }) {
     gcTime: 0,
   });
 
+  // Process fetched comments data
   const comments =
     data?.pages?.flatMap((page) =>
       Array.isArray(page.data) ? page.data : []
@@ -137,6 +181,9 @@ export default function CommentSectionContainer({ username, postId }) {
   const isLoading = isLoadingComments && !isFetchingNextPage;
   const hasMore = hasNextPage && !isLoadingComments;
 
+  /**
+   * Track initial load state in session storage to handle refresh behavior
+   */
   useEffect(() => {
     const initialLoad =
       typeof window !== "undefined" &&
@@ -147,12 +194,20 @@ export default function CommentSectionContainer({ username, postId }) {
     }
   }, [postId]);
 
+  /**
+   * Load more comments when user scrolls to the end of the list
+   */
   const loadMore = () => {
     if (hasMore) {
       fetchNextPage();
     }
   };
 
+  /**
+   * Mutation for adding a new comment to the post
+   * Includes optimistic UI updates to immediately show the new comment
+   * and update comment counts
+   */
   const handleCommentMutation = useMutation({
     mutationFn: (params) =>
       addComment({
@@ -163,6 +218,7 @@ export default function CommentSectionContainer({ username, postId }) {
         companyUsername: companyUsername,
       }),
     onSuccess: (newComment) => {
+      // Reset form state
       setError(null);
       const oldComment = comment;
       setComment("");
@@ -172,8 +228,9 @@ export default function CommentSectionContainer({ username, postId }) {
       setIsSearching(false);
       setTagError(null);
 
+      // Optimistically update the comments list
       queryClient.setQueryData(["comments", postId], (oldData) => {
-        // Create the comment object with all required fields
+        // Create optimistic comment object
         const commentObj = {
           commentId: newComment.commentId,
           text: oldComment.trim(),
@@ -211,6 +268,7 @@ export default function CommentSectionContainer({ username, postId }) {
           age: determineAge(new Date()),
         };
 
+        // Add to existing data or create new data structure
         if (!oldData || !oldData.pages || !oldData.pages[0]) {
           return {
             pages: [{ data: [commentObj] }],
@@ -218,6 +276,7 @@ export default function CommentSectionContainer({ username, postId }) {
           };
         }
 
+        // Insert at beginning of comments list
         return {
           ...oldData,
           pages: [
@@ -251,6 +310,7 @@ export default function CommentSectionContainer({ username, postId }) {
       });
     },
     onError: (error) => {
+      // Handle error and reset form
       setError(error.message);
       setComment("");
       setTaggedUsers([]);
@@ -261,12 +321,20 @@ export default function CommentSectionContainer({ username, postId }) {
     },
   });
 
+  /**
+   * Navigate to the full post view
+   */
   const navigateTo = () => {
     router.push(`/u/${username}/post/${postId}`);
   };
 
+  // Check if we're already on the post detail page
   const isPost = pathname.includes("/post/");
 
+  /**
+   * Handle keyboard events for submitting comments with Enter
+   * @param {KeyboardEvent} e - Keyboard event
+   */
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -274,6 +342,9 @@ export default function CommentSectionContainer({ username, postId }) {
     }
   };
 
+  /**
+   * Submit a new comment if validation passes
+   */
   const handleComment = () => {
     if (!comment.trim()) {
       setError("Comment cannot be empty");

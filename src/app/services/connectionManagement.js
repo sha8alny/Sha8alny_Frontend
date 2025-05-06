@@ -39,7 +39,7 @@ export const removeConnection = async (username) => {
   if (!response.ok) {
     throw new Error("Failed to remove connection");
   }
-  return response.status;
+  return await response.json();
 }
 
 

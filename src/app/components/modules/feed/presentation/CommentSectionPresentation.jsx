@@ -14,6 +14,42 @@ import {
   AvatarImage,
 } from "@/app/components/ui/Avatar";
 
+/**
+ * CommentSectionPresentation - Renders the comments section for posts
+ * 
+ * This component handles the display of post comments including:
+ * - Comment input with user tagging functionality
+ * - List of existing comments with proper threading
+ * - Loading states during comment fetching
+ * - Infinite scrolling for pagination
+ * - Navigation to full comment view when appropriate
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.comments - Array of comment objects
+ * @param {boolean} props.isLoading - Whether comments are initially loading
+ * @param {boolean} props.hasMore - Whether more comments are available
+ * @param {Function} props.loadMore - Handler for loading more comments
+ * @param {Function} props.handleComment - Handler for submitting new comment
+ * @param {Function} props.handleKeyPress - Handler for keyboard events
+ * @param {string} props.comment - Current comment text input
+ * @param {Function} props.setComment - State setter for comment text
+ * @param {boolean} props.isSubmittingComment - Whether comment is being submitted
+ * @param {string} props.postId - ID of the post being commented on
+ * @param {Function} props.navigateTo - Navigation handler for routing
+ * @param {boolean} props.isPost - Whether component is on a single post page
+ * @param {boolean} props.isLoadingComments - Whether additional comments are loading
+ * @param {string} props.postUsername - Username of post author
+ * @param {string} props.taggedUser - Current user being tagged
+ * @param {Function} props.setTaggedUser - State setter for tagged user
+ * @param {Array} props.taggedUsers - Array of tagged users
+ * @param {Function} props.handleTagUserClick - Handler for adding tagged user
+ * @param {Function} props.handleRemoveTaggedUser - Handler for removing tagged user
+ * @param {Function} props.handleUserSearch - Handler for user search
+ * @param {boolean} props.isSearching - Whether user search is in progress
+ * @param {Array} props.searchResults - Search results for user tagging
+ * @param {string|null} props.tagError - Error message for tagging
+ * @returns {JSX.Element} Comment section with input and comment list
+ */
 export default function CommentSectionPresentation({
   comments,
   isLoading,

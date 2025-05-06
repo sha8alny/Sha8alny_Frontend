@@ -6,16 +6,43 @@ import Dialog from "@/app/components/ui/DialogMod";
 import ReactionsPresentation from "../presentation/ReactionsPresentation";
 import { Reactions } from "@/app/utils/Reactions";
 
+/**
+ * ReactionsContainer - Container component for displaying post/comment reactions
+ * 
+ * This component handles fetching, filtering, and displaying user reactions on posts or comments.
+ * Features include:
+ * - Modal dialog to display reactions
+ * - Filtering reactions by type (Like, Love, etc.)
+ * - Infinite scrolling to load additional reactions
+ * - Visual indication of reaction types and counts
+ * 
+ * The component serves as both the trigger for opening the reactions modal
+ * and the container for the reactions display content.
+ * 
+ * @param {Object} props - Component props
+ * @param {number} props.numReactions - Total number of reactions
+ * @param {Object} props.allReactions - Categorized reactions data 
+ * @param {Array} props.allReactions.topReactions - Top reactions with icon components
+ * @param {Array} props.allReactions.allActive - All active reaction types
+ * @param {string} props.postId - ID of the post with reactions
+ * @param {string|null} [props.commentId=null] - ID of comment with reactions (if applicable)
+ * @returns {JSX.Element} Reactions display component with modal functionality
+ */
 export default function ReactionsContainer({
   numReactions,
   allReactions,
   postId,
-  commentId = null, // Add commentId with default value
+  commentId = null,
 }) {
+  // Track currently selected reaction filter
   const [currentReaction, setCurrentReaction] = useState(null);
   const [reactionModalOpen, setReactionModalOpen] = useState(false);
   const loadMoreRef = useRef(null);
 
+  /**
+   * Infinite query for fetching paginated reactions with optional type filtering
+   * Only enabled when the reactions modal is open to prevent unnecessary requests
+   */
   const {
     data,
     isLoading,
@@ -39,6 +66,10 @@ export default function ReactionsContainer({
     enabled: reactionModalOpen,
   });
 
+  /**
+   * Sets up intersection observer for infinite scrolling of reactions
+   * Automatically fetches the next page when the user scrolls to the bottom
+   */
   useEffect(() => {
     if (!loadMoreRef.current || !hasNextPage) return;
 
@@ -66,12 +97,21 @@ export default function ReactionsContainer({
     reactionModalOpen,
   ]);
 
+  /**
+   * Handles switching between different reaction filters
+   * @param {string} reactionName - The name of the reaction to filter by, or "all" to show all
+   */
   const handleReactionChange = (reactionName) => {
     setCurrentReaction(reactionName === "all" ? null : reactionName);
   };
 
+  // Process and flatten the reactions data from all pages
   const users = data?.pages.flatMap((page) => page) || [];
 
+  /**
+   * Transform reaction data to include proper icon components
+   * Maps string reaction types to their corresponding icon components
+   */
   const correctedUsers = users.map((user) => ({
     ...user,
     reaction: Reactions[user.reaction].icon,

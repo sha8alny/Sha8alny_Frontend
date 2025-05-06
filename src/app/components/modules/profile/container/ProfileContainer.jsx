@@ -204,6 +204,10 @@ function ProfileContent({ username }) {
       queryClient.invalidateQueries(["connections"]);
       toast("Connection removed successfully");
     },
+    onError: (error) => {
+      console.error("Error removing connection:", error);
+      toast("Failed to remove connection", false);
+    },
   });
 
   const handleBlockMutation = useMutation({

@@ -23,8 +23,48 @@ import { useRef } from "react";
 import { messagingService } from "@/app/services/messagingService";
 import { useToast } from "@/app/context/ToastContext";
 
+/**
+ * PostContainer - Comprehensive container component for post management
+ * 
+ * This component handles all the complex logic and state for individual posts, including:
+ * - Post reactions/likes with multiple reaction types and animations
+ * - Commenting system with expandable comment sections
+ * - Post sharing functionality with URL generation and clipboard integration
+ * - Post reporting system with categorized reporting options
+ * - Post saving/bookmarking
+ * - User following functionality with optimistic UI updates
+ * - Post deletion with confirmation
+ * - Post editing with content validation
+ * - Media handling (images, videos, documents) with carousel navigation
+ * - Link extraction and formatting within post content
+ * - Responsive grid layouts for multiple media items
+ * 
+ * The component uses React Query for data management and mutations with
+ * optimistic updates for immediate UI feedback.
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.post - The post data object containing all post information
+ * @param {boolean} [props.singlePost=false] - Whether this is a standalone post view
+ * @returns {JSX.Element} Complete post with interactions, media, and comment section
+ */
 export default function PostContainer({ post, singlePost = false }) {
+  // UI interaction states
   const [commentSectionOpen, setCommentSectionOpen] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  
+  // Post content states
+  const [postText, setPostText] = useState(post?.text || "");
+  const [numReposts, setNumReposts] = useState(post?.numShares || 0);
+  
+  // User interaction tracking
+  const [isSaved, setIsSaved] = useState(post?.isSaved || false);
+  const [isFollowing, setIsFollowing] = useState(post?.isFollowed || false);
+  
+  // Reactions system state
   const [reactions, setReactions] = useState({
     current: post?.reaction || false,
     counts: {
@@ -43,37 +83,30 @@ export default function PostContainer({ post, singlePost = false }) {
         post?.numFunnies +
         post?.numInsightfuls || 0,
   });
-  const [isSaved, setIsSaved] = useState(post?.isSaved || false);
-  const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(post?.isFollowed || false);
-  const [numReposts, setNumReposts] = useState(post?.numShares || 0);
+  const [reactAnim, setReactAnim] = useState(false);
+  const prevReaction = useRef(reactions.current);
+  
+  // Reporting system state
   const [reportText, setReportText] = useState("");
   const [reportType, setReportType] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
   const [reportState, setReportState] = useState(0); // 0: initial, 1: loading, 2: success, 3: error
+  
+  // Image carousel state
   const [imagesOpen, setImagesOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(true);
-  const [reactAnim, setReactAnim] = useState(false);
+  
+  // Loading states
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  // Edit post states
-  const [postText, setPostText] = useState(post?.text || "");
-
+  // Hooks
   const toast = useToast();
-  const prevReaction = useRef(reactions.current);
+  const pathName = usePathname();
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    console.log("post?.isFollowed", post?.isFollowed);
-    if (post?.isFollowed !== isFollowing) {
-      setIsFollowing(post?.isFollowed);
-    }
-  }, [post?.isFollowed]);
-
+  // File metadata extraction
   const fileName = post?.media[0]?.split("/").pop() || "Document";
   const fileExtension = post?.media[0]?.split(".").pop()?.toUpperCase();
   const reportOptions = [
@@ -89,14 +122,30 @@ export default function PostContainer({ post, singlePost = false }) {
     "Something Else",
   ];
 
-  const pathName = usePathname();
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
+  // Navigation handler
   const navigateTo = (path) => {
     router.push(path);
   };
 
+  // Sync follow state with props
+  useEffect(() => {
+    if (post?.isFollowed !== isFollowing) {
+      setIsFollowing(post?.isFollowed);
+    }
+  }, [post?.isFollowed]);
+
+  // Set up reaction animation
+  useEffect(() => {
+    if (reactions.current && prevReaction.current !== reactions.current) {
+      setReactAnim(true);
+      prevReaction.current = reactions.current;
+    }
+  }, [reactions.current]);
+
+  /**
+   * Mutation for editing a post
+   * Updates post content across all relevant cache entries
+   */
   const handleEditMutation = useMutation({
     mutationFn: (data) => editPost(post.postId, data),
     onSuccess: () => {
@@ -148,11 +197,10 @@ export default function PostContainer({ post, singlePost = false }) {
     },
   });
 
-  const handleEdit = () => {
-    const formData = new FormData();
-    formData.append("text", postText);
-    handleEditMutation.mutate(formData);
-  };
+  /**
+   * Mutation for reacting to (liking) a post
+   * Handles optimistic UI updates for immediate feedback
+   */
   const handleLikeMutation = useMutation({
     mutationFn: (params) => {
       const { postId, reaction, previousReaction } = params;
@@ -175,6 +223,10 @@ export default function PostContainer({ post, singlePost = false }) {
     },
   });
 
+  /**
+   * Mutation for reposting/sharing content
+   * Handles error recovery for failed reposts
+   */
   const handleRepostMutation = useMutation({
     mutationFn: (postId) => repostPost(postId),
     onError: () => {
@@ -182,6 +234,10 @@ export default function PostContainer({ post, singlePost = false }) {
     },
   });
 
+  /**
+   * Mutation for reporting inappropriate content
+   * Manages reporting flow states (loading, success, error)
+   */
   const handleReportMutation = useMutation({
     mutationFn: (params) => {
       const { postId, reportObj } = params;
@@ -209,6 +265,10 @@ export default function PostContainer({ post, singlePost = false }) {
     },
   });
 
+  /**
+   * Mutation for saving/bookmarking posts
+   * Includes optimistic updates and error recovery
+   */
   const handleSaveMutation = useMutation({
     mutationFn: (postId) => savePost(postId),
     onMutate: () => {
@@ -221,6 +281,10 @@ export default function PostContainer({ post, singlePost = false }) {
     },
   });
 
+  /**
+   * Mutation for following post authors
+   * Updates follow status across all related content
+   */
   const handleFollowMutation = useMutation({
     mutationFn: (username) => followUser(username),
     onMutate: async (username) => {
@@ -306,6 +370,10 @@ export default function PostContainer({ post, singlePost = false }) {
     },
   });
 
+  /**
+   * Mutation for deleting posts
+   * Removes post from cache and redirects if on single post view
+   */
   const handleDeleteMutation = useMutation({
     mutationFn: (postId) => deletePost(postId),
     onSuccess: () => {
@@ -339,6 +407,21 @@ export default function PostContainer({ post, singlePost = false }) {
     },
   });
 
+  /**
+   * Handler for submitting post edits
+   */
+  const handleEdit = () => {
+    const formData = new FormData();
+    formData.append("text", postText);
+    handleEditMutation.mutate(formData);
+  };
+
+  /**
+   * Complex handler for post reactions with optimistic UI updates
+   * Manages adding, removing, and changing reaction types
+   * 
+   * @param {string} reaction - Type of reaction (Like, Celebrate, etc.)
+   */
   const handleLike = (reaction) => {
     const previousReaction = reactions.current;
 
@@ -391,11 +474,18 @@ export default function PostContainer({ post, singlePost = false }) {
     });
   };
 
+  /**
+   * Handler for reposting content with optimistic count update
+   */
   const handleRepost = () => {
     setNumReposts((prev) => prev + 1);
     handleRepostMutation.mutate(post.postId);
   };
 
+  /**
+   * Handler for reporting inappropriate content
+   * Validates and formats report data
+   */
   const handleReport = () => {
     if (!post?.postId) {
       console.error("Cannot report: postId is missing or invalid.", post);
@@ -416,19 +506,36 @@ export default function PostContainer({ post, singlePost = false }) {
     handleReportMutation.mutate({ postId: post.postId, reportObj });
   };
 
+  /**
+   * Handler for saving/bookmarking posts
+   */
   const handleSave = () => {
     handleSaveMutation.mutate(post.postId);
   };
 
+  /**
+   * Handler for following post authors
+   * 
+   * @param {string} username - Username to follow
+   */
   const handleFollow = (username) => {
     setIsFollowing(true);
     handleFollowMutation.mutate(username);
   };
 
+  /**
+   * Handler for post deletion with backend sync
+   */
   const handleDelete = () => {
     handleDeleteMutation.mutate(post.postId);
   };
 
+  /**
+   * Formats connection degree numbers into display text
+   * 
+   * @param {number} relation - Connection degree (1-3)
+   * @returns {string|null} Formatted connection degree
+   */
   const convertRelation = (relation) => {
     switch (relation) {
       case 1:
@@ -442,6 +549,13 @@ export default function PostContainer({ post, singlePost = false }) {
     }
   };
 
+  /**
+   * Determines responsive layout classes based on media count
+   * Creates optimal grid layouts for different image counts
+   * 
+   * @param {number} count - Number of media items
+   * @returns {Object} Layout classes for grid and items
+   */
   const getLayout = (count) => {
     switch (count) {
       case 1:
@@ -487,10 +601,14 @@ export default function PostContainer({ post, singlePost = false }) {
     }
   };
 
+  // Generate share URL based on post type
   const shareUrl = post?.isCompany
     ? `${process.env.NEXT_PUBLIC_DOMAIN_URL}/company/${post?.username}/post/${post?.postId}`
     : `${process.env.NEXT_PUBLIC_DOMAIN_URL}/u/${post?.username}/post/${post?.postId}`;
 
+  /**
+   * Copies post URL to clipboard with temporary feedback
+   */
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
@@ -499,6 +617,12 @@ export default function PostContainer({ post, singlePost = false }) {
 
   const encodedUrl = encodeURIComponent(shareUrl);
 
+  /**
+   * Detects if a media URL is a video based on extension
+   * 
+   * @param {string} mediaUrl - URL to check
+   * @returns {boolean} Whether the URL points to a video
+   */
   const isVideo = (mediaUrl) => {
     if (!mediaUrl) return false;
     const extension = mediaUrl.split(".").pop().toLowerCase();
@@ -506,6 +630,12 @@ export default function PostContainer({ post, singlePost = false }) {
     return videoExtensions.includes(extension);
   };
 
+  /**
+   * Detects if a media URL is a document based on extension
+   * 
+   * @param {string} mediaUrl - URL to check
+   * @returns {boolean} Whether the URL points to a document
+   */
   const isDocument = (mediaUrl) => {
     if (!mediaUrl) return false;
     const extension = mediaUrl.split(".").pop().toLowerCase();
@@ -521,6 +651,12 @@ export default function PostContainer({ post, singlePost = false }) {
     return documentExtensions.includes(extension);
   };
 
+  /**
+   * Parses text content and converts URLs to clickable links
+   * 
+   * @param {string} text - Post text content
+   * @returns {Object} Processed text with link elements and link status
+   */
   const extractLinks = (text) => {
     if (!text) return { element: null };
 
@@ -565,11 +701,15 @@ export default function PostContainer({ post, singlePost = false }) {
     };
   };
 
+  // Determine media types
   const videoCheck = isVideo(post?.media[0]) || post?.mediaType === "video";
-  const documentCheck =
-    isDocument(post?.media[0]) || post?.mediaType === "document";
+  const documentCheck = isDocument(post?.media[0]) || post?.mediaType === "document";
 
-  // Updated carousel functions with proper loading state management
+  /**
+   * Opens image carousel at specified index
+   * 
+   * @param {number} index - Index of image to display
+   */
   const openImageCarousel = (index) => {
     setCarouselIndex(index);
     setImagesOpen(true);
@@ -577,11 +717,17 @@ export default function PostContainer({ post, singlePost = false }) {
     document.body.style.overflow = "hidden";
   };
 
+  /**
+   * Closes image carousel and restores scroll
+   */
   const closeImageCarousel = () => {
     setImagesOpen(false);
     document.body.style.overflow = "";
   };
 
+  /**
+   * Advances to next image in carousel
+   */
   const nextImage = () => {
     setImageLoading(true);
     setCarouselIndex((prev) =>
@@ -589,6 +735,9 @@ export default function PostContainer({ post, singlePost = false }) {
     );
   };
 
+  /**
+   * Goes to previous image in carousel
+   */
   const prevImage = () => {
     setImageLoading(true);
     setCarouselIndex((prev) =>
@@ -596,21 +745,25 @@ export default function PostContainer({ post, singlePost = false }) {
     );
   };
 
+  /**
+   * Handles image loading completion in carousel
+   */
   const handleImageLoad = () => {
     setTimeout(() => {
       setImageLoading(false);
     }, 100);
   };
 
-  useEffect(() => {
-    if (reactions.current && prevReaction.current !== reactions.current) {
-      setReactAnim(true);
-      prevReaction.current = reactions.current;
-    }
-  }, [reactions.current]);
-
+  /**
+   * Ends reaction animation effect
+   */
   const handleAnimEnd = () => setReactAnim(false);
 
+  /**
+   * Processes reaction data to find active and top reactions
+   * 
+   * @returns {Object} Organized reaction data for display
+   */
   const getActiveReactions = () => {
     const reactionsList = [
       {
@@ -741,6 +894,16 @@ export default function PostContainer({ post, singlePost = false }) {
   );
 }
 
+/**
+ * PostContent - Component for fetching and displaying a single post by ID
+ * 
+ * This component handles loading a single post from the server using React Query,
+ * showing appropriate loading states, and rendering the post when data is available.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.postId - ID of the post to fetch and display
+ * @returns {JSX.Element} Post content or loading skeleton
+ */
 export const PostContent = ({ postId }) => {
   const {
     data: post,

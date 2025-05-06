@@ -40,6 +40,70 @@ import {
 } from "@/app/components/ui/Popover";
 import { Search } from "lucide-react";
 
+/**
+ * CommentPresentation - Renders a comment with user information, content, and interactive controls
+ * 
+ * This component handles the display of a comment and its replies, including:
+ * - User information (profile picture, name, headline)
+ * - Comment content and metadata (text, age, tags)
+ * - Interactive elements (like, reply, follow, report/delete)
+ * - Reply form with user tagging functionality
+ * - Nested replies display with threading and pagination
+ * - Interactive reactions panel
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.comment - Comment data object
+ * @param {string|boolean} props.isLiked - Current user's reaction to the comment
+ * @param {Function} props.onLike - Handler for reaction actions
+ * @param {string} props.postId - ID of the parent post
+ * @param {Function} props.onReply - Handler for submitting replies
+ * @param {Function} props.navigateTo - Navigation function
+ * @param {Array} props.displayedReplies - Array of reply comments to display
+ * @param {boolean} props.hasMoreReplies - Whether more replies are available
+ * @param {boolean} props.isLoadingReplies - Whether replies are loading
+ * @param {boolean} props.isFetchingMoreReplies - Whether more replies are being fetched
+ * @param {Function} props.loadMoreReplies - Function to load more replies
+ * @param {string} props.replyText - Current text in the reply input
+ * @param {Function} props.setReplyText - State setter for reply text
+ * @param {boolean} props.isReplying - Whether reply form is expanded
+ * @param {Function} props.setIsReplying - State setter for reply form visibility
+ * @param {Function} props.onFollow - Handler for following comment author
+ * @param {boolean} props.hasRepliesSection - Whether replies section is enabled
+ * @param {Object} props.userReactions - Available reaction types 
+ * @param {string} props.showMoreButtonText - Text for "show more" button
+ * @param {boolean} props.showReplies - Whether replies are visible
+ * @param {Function} props.onShowReplies - Handler to show replies
+ * @param {Function} props.onHideReplies - Handler to hide replies
+ * @param {Function} props.onDelete - Handler for comment deletion
+ * @param {boolean} props.isDeleting - Whether deletion is in progress
+ * @param {number} props.nestCount - Level of nesting (for nested replies)
+ * @param {string} props.postUsername - Username of the post author
+ * @param {boolean} props.isFollowing - Whether user follows the comment author
+ * @param {Function} props.onKeyPress - Handler for keyboard events
+ * @param {boolean} props.isCommenting - Whether a new reply is being submitted
+ * @param {string} props.reportText - Text for report submission
+ * @param {Function} props.setReportText - State setter for report text
+ * @param {string} props.reportType - Type of report
+ * @param {Function} props.setReportType - State setter for report type
+ * @param {number} props.reportState - Current state of reporting process
+ * @param {boolean} props.reportCommentModalOpen - Whether report modal is open
+ * @param {Function} props.setReportCommentModalOpen - State setter for report modal
+ * @param {boolean} props.deleteCommentModalOpen - Whether delete modal is open
+ * @param {Function} props.setDeleteCommentModalOpen - State setter for delete modal
+ * @param {Function} props.onReportComment - Handler for reporting comment
+ * @param {boolean} props.reactAnim - Whether reaction animation is active
+ * @param {Function} props.handleAnimEnd - Handler for animation end
+ * @param {string} props.taggedUser - Current user being tagged in reply
+ * @param {Function} props.setTaggedUser - State setter for tagged user
+ * @param {Array} props.taggedUsers - Array of tagged users
+ * @param {Function} props.handleTagUserClick - Handler for adding tagged user
+ * @param {Function} props.handleRemoveTaggedUser - Handler for removing tagged user
+ * @param {Function} props.handleUserSearch - Handler for user search
+ * @param {boolean} props.isSearching - Whether user search is in progress
+ * @param {Array} props.searchResults - Search results for user tagging
+ * @param {string|null} props.tagError - Error message for tagging
+ * @returns {JSX.Element} Comment component with replies and interactions
+ */
 export default function CommentPresentation({
   comment,
   isLiked,
@@ -646,6 +710,14 @@ export default function CommentPresentation({
   );
 }
 
+/**
+ * CommentSkeleton - Loading placeholder for comment items
+ * 
+ * Displays an animated skeleton UI while comment data is being loaded,
+ * maintaining the same visual structure as the actual comment component.
+ * 
+ * @returns {JSX.Element} Animated loading skeleton for a comment
+ */
 export const CommentSkeleton = () => {
   return (
     <div className="w-full flex gap-3 mb-4 animate-pulse">

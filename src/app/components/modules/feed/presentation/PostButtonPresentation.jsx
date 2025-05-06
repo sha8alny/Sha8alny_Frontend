@@ -25,6 +25,68 @@ import { Calendar } from "@/app/components/ui/Calendar2";
 import { format } from "date-fns";
 import { Search } from "lucide-react";
 
+/**
+ * PostButtonPresentation - Dialog content for creating and publishing posts
+ * 
+ * This comprehensive component provides a rich post creation interface with:
+ * - Text input with character monitoring
+ * - Media upload options (images, videos, documents)
+ * - Media preview with removal capability
+ * - User tagging with search functionality
+ * - Hashtag/keyword tagging
+ * - Post scheduling capabilities
+ * - Error display and validation feedback
+ * - Loading states during submission
+ * 
+ * The component handles all UI aspects of post creation while delegating
+ * actual data processing to its container handlers.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.text - Post text content
+ * @param {Function} props.setText - State setter for post text
+ * @param {Function} props.onPost - Handler for post submission
+ * @param {Function} props.onRemoveMedia - Handler for removing media items
+ * @param {Function} props.onRemoveDocument - Handler for removing documents
+ * @param {Function} props.onImageInputChange - Handler for image upload
+ * @param {Function} props.onVideoInputChange - Handler for video upload
+ * @param {Function} props.onDocumentInputChange - Handler for document upload
+ * @param {string} props.tagInput - Current tag input text
+ * @param {Function} props.setTagInput - State setter for tag input
+ * @param {Function} props.onAddTagKeyDown - Handler for keyboard events in tag input
+ * @param {Function} props.onAddTagClick - Handler for adding tags
+ * @param {Function} props.onRemoveTag - Handler for removing tags
+ * @param {Array} props.tags - Array of added hashtags
+ * @param {string} props.taggedUser - Current user being tagged
+ * @param {Function} props.setTaggedUser - State setter for tagged user input
+ * @param {Array} props.taggedUsers - Array of tagged users
+ * @param {Function} props.onAddTaggedUser - Handler for adding tagged users
+ * @param {Function} props.onRemoveTaggedUser - Handler for removing tagged users
+ * @param {Array} props.searchResults - User search results for tagging
+ * @param {Function} props.setSearchResults - State setter for search results
+ * @param {Object} props.fileInputRef - Ref for hidden file input
+ * @param {Object} props.videoInputRef - Ref for hidden video input
+ * @param {Object} props.documentInputRef - Ref for hidden document input
+ * @param {Object} props.userInfo - Current user information
+ * @param {boolean} props.isLoading - Whether post submission is in progress
+ * @param {string|null} props.error - Error message to display
+ * @param {boolean} props.tagPopoverOpen - Whether hashtag popover is open
+ * @param {Function} props.setTagPopoverOpen - State setter for hashtag popover
+ * @param {boolean} props.taggedUserPopoverOpen - Whether user tag popover is open
+ * @param {Function} props.setTaggedUserPopoverOpen - State setter for user tag popover
+ * @param {Array} props.imagePreviews - Processed image preview elements
+ * @param {JSX.Element} props.videoPreview - Processed video preview element
+ * @param {JSX.Element} props.documentPreview - Processed document preview element
+ * @param {Date|null} props.scheduledDate - Selected scheduled date
+ * @param {Function} props.setScheduledDate - State setter for scheduled date
+ * @param {string} props.scheduledTime - Selected scheduled time
+ * @param {Function} props.setScheduledTime - State setter for scheduled time
+ * @param {boolean} props.schedulePopoverOpen - Whether schedule popover is open
+ * @param {Function} props.setSchedulePopoverOpen - State setter for schedule popover
+ * @param {Function} props.handleUserSearch - Handler for user search
+ * @param {boolean} props.isSearching - Whether user search is in progress
+ * @param {Function} props.handleTagUserClick - Handler for selecting a user to tag
+ * @returns {JSX.Element} Post creation dialog content
+ */
 export default function PostButtonPresentation({
   text,
   setText,

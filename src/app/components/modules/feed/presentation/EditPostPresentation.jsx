@@ -1,3 +1,23 @@
+/**
+ * EditPostPresentation - Dialog content for editing an existing post
+ * 
+ * This component provides a simplified interface for modifying post content:
+ * - Text editing area with existing content pre-populated
+ * - Submit button with loading state
+ * - Error handling for failed edits
+ * 
+ * The component focuses solely on text editing functionality and
+ * maintains the same structure as the post creation form but with
+ * reduced options.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.postText - Current post text content
+ * @param {Function} props.setPostText - State setter for post text
+ * @param {Function} props.onEdit - Handler for submitting edit
+ * @param {boolean} props.isEditing - Whether edit is being processed
+ * @param {boolean} props.errorEditing - Whether editing encountered an error
+ * @returns {JSX.Element} Post editing dialog content
+ */
 export default function EditPostPresentation({
   postText,
   setPostText,

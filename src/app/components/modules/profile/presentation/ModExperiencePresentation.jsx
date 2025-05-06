@@ -17,8 +17,46 @@ import AddButton from "@/app/components/ui/AddButton";
  * @module profile
  */
 /**
- * A presentation component for displaying and managing experience information in a form.
- * Uses a multi-stage approach similar to ModEducationPresentation.
+ * ModExperiencePresentation - Multi-stage form for managing work experience entries
+ * 
+ * This component renders a comprehensive four-stage form interface for adding or editing
+ * professional experience information. It includes validation, form navigation, and status indicators.
+ * 
+ * The form progresses through these stages:
+ * 1. Basic Information - Job title, company, location, employment type
+ * 2. Time Period - Start and end dates with option for current position
+ * 3. Additional Details - Job description and related skills
+ * 4. Review - Final review of all information before submission
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.form - Form object from form library
+ * @param {Function} props.handleFormSubmit - Function to process form submission
+ * @param {Function} props.addSkill - Function to add a skill to the skills array
+ * @param {Function} props.removeSkill - Function to remove a skill from the skills array
+ * @param {Function} props.handleSubmit - Form submission handler from form library
+ * @param {boolean} props.isCurrent - Whether this is a current position
+ * @param {boolean} props.isValid - Whether the form is currently valid
+ * @param {string[]} props.months - Array of month names for dropdowns
+ * @param {string[]} props.years - Array of years for dropdowns
+ * @param {Object} props.errors - Object containing validation error messages
+ * @param {Function} props.setValue - Function to set form field values
+ * @param {string} props.skillInput - Current value of the skill input field
+ * @param {Function} props.setSkillInput - Function to update skill input value
+ * @param {Function} props.handleIsCurrent - Handler for toggling current position status
+ * @param {string[]} props.skills - Array of skills associated with this experience
+ * @param {Function} props.watch - Function to observe form field values
+ * @param {number} props.currentStage - Current form stage (1-4)
+ * @param {Function} props.validateStageAndProceed - Function to validate current stage and navigate
+ * @param {Object} props.stageValidation - Object tracking validation status of each stage
+ * @param {boolean} props.isLoading - Whether submission is in progress
+ * @param {string|null} props.submitError - Error message from submission attempt
+ * @param {boolean} props.showSuccess - Whether to display success message
+ * @param {Function} props.setSubmitError - Function to update submission error state
+ * @param {boolean} [props.adding=false] - Whether adding new (true) or editing existing (false)
+ * @param {Function} props.handleDeleteExperience - Function to delete the experience entry
+ * @param {Array} props.employmentTypes - Array of available employment type options
+ * @param {string[]} props.stageTitles - Array of titles for each stage
+ * @returns {JSX.Element} Multi-stage experience form with progress tracking
  */
 export default function ModExperiencePresentation({
   form,

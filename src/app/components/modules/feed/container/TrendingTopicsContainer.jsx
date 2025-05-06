@@ -6,6 +6,21 @@ import TrendingTopicsPresentation, {
 import { fetchTrendingTopics } from "@/app/services/post";
 import { useRouter } from "next/navigation";
 
+/**
+ * TrendingTopicsContainer - Container component for trending hashtags/topics
+ * 
+ * This component is responsible for:
+ * - Fetching trending topics data using React Query with appropriate caching
+ * - Handling loading and error states with skeleton UI
+ * - Formatting topic data for display (number formatting, text capitalization)
+ * - Providing navigation functionality when topics are clicked
+ * - Rendering the appropriate presentation component based on data state
+ * 
+ * The component implements the container pattern, separating data fetching and 
+ * processing logic from the presentation layer.
+ * 
+ * @returns {JSX.Element} Trending topics component with appropriate loading/error states
+ */
 function TrendingTopicsContainer() {
   const {
     data: trendingTopics,
@@ -20,6 +35,10 @@ function TrendingTopicsContainer() {
   });
   const router = useRouter();
 
+  /**
+   * Handles navigation to search results page for a specific topic
+   * @param {string} keyword - The topic keyword to search for
+   */
   const navigateTo = (keyword) => {
     router.push(`/search/results?keyword=${encodeURIComponent(keyword)}&type=post`);
   };
@@ -30,6 +49,11 @@ function TrendingTopicsContainer() {
   if (isError)
     return <TrendingTopicsPresentationSkeleton isLoading={isLoading} error={error}/>;
 
+  /**
+   * Formats large numbers to compact form with appropriate suffixes (k, m, b)
+   * @param {number} num - The number to format
+   * @returns {string|number} Formatted number with suffix or original number
+   */
   const roundNumber = (num) => {
     if (num >= 1000000000) {
       const value = num / 1000000000;
@@ -47,6 +71,12 @@ function TrendingTopicsContainer() {
     return num;
   };
 
+  /**
+   * Process and format topic data for display
+   * - Preserves the original keyword for navigation
+   * - Formats count numbers for readability (e.g., 1000 -> 1k)
+   * - Capitalizes the first letter of each word in keywords
+   */
   const formattedTopics = trendingTopics?.map((topic) => {
     if (!topic) return topic;
 

@@ -5,7 +5,7 @@ import Education, { EducationCard } from "./Education"; // Import both default a
 
 // --- Mocks ---
 jest.mock(
-  "@/app/components/layout/Container",
+  "../../../layout/Container",
   () =>
     ({ children, className, ...props }) =>
       (
@@ -14,7 +14,7 @@ jest.mock(
         </div>
       )
 );
-jest.mock("@/app/components/ui/Separator", () => ({
+jest.mock("../../../ui/Separator", () => ({
   Separator: () => <hr data-testid="separator" />,
 }));
 jest.mock("../container/ModEducation", () =>
@@ -180,7 +180,7 @@ describe("Education Presentation Component", () => {
     expect(screen.getByTestId("education-card-edu2")).toBeInTheDocument();
     expect(screen.getByTestId("education-card-edu3")).toBeInTheDocument();
     expect(screen.queryByTestId("education-card-edu4")).not.toBeInTheDocument();
-    expect(screen.getAllByTestId("separator")).toHaveLength(2); // Separator between items
+    expect(screen.getAllByTestId("separator")).toHaveLength(3); // Separator between items
   });
 
   it("renders all education entries when allEducation is true", () => {

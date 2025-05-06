@@ -7,6 +7,23 @@ import {
   X,
 } from "@mui/icons-material";
 
+/**
+ * SharePresentation - Modal content for sharing posts to various platforms
+ * 
+ * This component provides multiple sharing options for content:
+ * - Copy link to clipboard with visual confirmation
+ * - Share to social media platforms (Twitter/X, LinkedIn, Facebook)
+ * - Send via email
+ * 
+ * All sharing options are properly formatted with the appropriate sharing APIs
+ * and open in new windows/tabs for external platforms.
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.copied - Whether the link has been copied to clipboard
+ * @param {Function} props.copyToClipboard - Handler to copy URL to clipboard
+ * @param {string} props.shareUrl - Encoded URL to be shared
+ * @returns {JSX.Element} Share dialog content with multiple sharing options
+ */
 export default function SharePresentation({
   copied,
   copyToClipboard,

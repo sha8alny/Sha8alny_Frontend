@@ -443,12 +443,27 @@ export default function ProfileHeader({
         }
       />
 
-      {/* Enhanced Fullscreen Image Modal */}
+      {/* 
+        Enhanced Fullscreen Image Modal
+        
+        A modal component that displays profile or cover photos in fullscreen mode.
+        Features:
+        - Animated entrance/exit with fade and scale effects
+        - Click outside to dismiss
+        - Dedicated close button for accessibility
+        - Prevents event propagation on image click
+        - Responsive sizing with max dimensions based on viewport
+        
+        The modal is only rendered when fullscreenImage state contains an image URL.
+      */}
       {fullscreenImage && (
         <div
           className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center animate-fadeIn"
           onClick={closeFullscreen}
           data-testid="fullscreen-image-modal"
+          aria-modal="true"
+          role="dialog"
+          aria-label="Fullscreen image viewer"
         >
           <div
             className="relative max-w-[95vw] max-h-[95vh] animate-scaleIn"
@@ -489,6 +504,15 @@ export default function ProfileHeader({
   );
 }
 
+/**
+ * ProfileHeaderSkeleton - Loading placeholder for the profile header section
+ * 
+ * This component renders a skeleton UI while the profile data is being loaded,
+ * maintaining the same structure as the actual profile header but with placeholder
+ * elements that have loading animations.
+ *
+ * @returns {JSX.Element} Animated loading skeleton for profile header
+ */
 export function ProfileHeaderSkeleton() {
   return (
     <Container

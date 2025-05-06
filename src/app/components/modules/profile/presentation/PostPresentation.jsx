@@ -12,6 +12,45 @@ import {
   Repeat,
 } from "@mui/icons-material";
 
+
+/**
+ * @namespace profile
+ * @module profile
+ */
+/**
+ * PostPresentation - Component to render a single post with its content and interactions
+ * 
+ * This component displays a post with:
+ * - Share information (if applicable)
+ * - Post author information with avatar and headline
+ * - Post content (text, image, video or document)
+ * - Keywords/hashtags related to the post
+ * - Engagement statistics (reactions, comments, shares)
+ * 
+ * The component handles proper routing for both regular and company posts,
+ * and has specialized rendering for different media types.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.post - Post data object containing all post information
+ * @param {string} props.post.postId - Unique identifier for the post
+ * @param {string} props.post.username - Username of post author
+ * @param {string} props.post.fullName - Full name of post author
+ * @param {string} props.post.text - Text content of the post
+ * @param {Array} props.post.media - Array of media URLs attached to the post
+ * @param {Object} [props.post.isShared] - Information about original post if this is a share
+ * @param {boolean} props.post.isCompany - Whether the post is from a company account
+ * @param {string} props.post.profilePicture - URL to author's profile picture
+ * @param {string} props.post.headline - Author's headline/tagline
+ * @param {Array} props.post.keywords - Array of keywords/hashtags
+ * @param {string} props.post.age - Formatted age of the post (e.g., "2d")
+ * @param {number} props.post.numReacts - Count of reactions on the post
+ * @param {number} props.post.numComments - Count of comments on the post
+ * @param {number} props.post.numShares - Count of times the post was shared
+ * @param {Function} props.navigateTo - Function to navigate to different routes
+ * @param {Function} props.isVideo - Function to determine if media is a video
+ * @param {Function} props.isDocument - Function to determine if media is a document
+ * @returns {JSX.Element} Rendered post component
+ */
 export default function PostPresentation({
   post,
   navigateTo,
@@ -226,6 +265,17 @@ export default function PostPresentation({
   );
 }
 
+/**
+ * PostPresentationSkeleton - Loading state placeholder for post components
+ * 
+ * This component renders a skeleton UI for posts while they are being loaded,
+ * providing users with a visual indication that content is loading.
+ * It includes animated pulse effects for better user experience.
+ *
+ * @param {Object} props - Component props
+ * @param {boolean} [props.isLoading=true] - Whether the skeleton should show loading animation
+ * @returns {JSX.Element} Skeleton UI for post loading state
+ */
 export function PostPresentationSkeleton({ isLoading = true }) {
   return (
     <Container className="p-4 flex flex-col gap-2">

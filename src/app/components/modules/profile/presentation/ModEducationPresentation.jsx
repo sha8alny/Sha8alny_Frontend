@@ -16,8 +16,43 @@ import AddButton from "@/app/components/ui/AddButton";
  * @module profile
  */
 /**
- * Education form presentation component.
- * Displays a multi-stage form for users to add or edit education information in their profile.
+ * ModEducationPresentation - Multi-stage form for managing education entries in a user's profile
+ * 
+ * This component renders a comprehensive four-stage form interface for adding or editing
+ * education information. It includes validation, form navigation, and status indicators.
+ * 
+ * The form progresses through these stages:
+ * 1. Basic Information - School, degree, field of study, grade
+ * 2. Time Period - Start and end dates
+ * 3. Additional Details - Activities, description, and skills
+ * 4. Review - Final review of all information before submission
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.form - Form object from form library
+ * @param {string} props.educationId - ID of the education entry being edited
+ * @param {Function} props.deleteEducation - Function to delete the education entry
+ * @param {Function} props.handleFormSubmit - Function to handle form submission
+ * @param {Function} props.addSkill - Function to add a skill to the skills array
+ * @param {Function} props.removeSkill - Function to remove a skill from the skills array
+ * @param {Function} props.handleSubmit - Form submission handler from form library
+ * @param {boolean} props.isValid - Whether the form is currently valid
+ * @param {string[]} props.months - Array of month names for dropdowns
+ * @param {string[]} props.years - Array of years for dropdowns
+ * @param {Object} props.errors - Object containing validation error messages
+ * @param {Function} props.setValue - Function to set form field values
+ * @param {string} props.skillInput - Current value of the skill input field
+ * @param {Function} props.setSkillInput - Function to update skill input value
+ * @param {string[]} props.skills - Array of skills associated with this education entry
+ * @param {Function} props.watch - Function to observe form field values
+ * @param {number} props.currentStage - Current form stage (1-4)
+ * @param {Function} props.validateStageAndProceed - Function to validate current stage and navigate
+ * @param {Object} props.stageValidation - Object tracking validation status of each stage
+ * @param {boolean} props.isLoading - Whether submission is in progress
+ * @param {string|null} props.submitError - Error message from submission attempt
+ * @param {boolean} props.showSuccess - Whether to display success message
+ * @param {Function} props.setSubmitError - Function to update submission error state
+ * @param {boolean} [props.adding=false] - Whether adding new (true) or editing existing (false)
+ * @returns {JSX.Element} Multi-stage education form with progress tracking
  */
 export default function ModEducationPresentation({
   form,

@@ -21,6 +21,25 @@ import GeneralDeletePresentation from "@/app/components/layout/GeneralDelete";
 import { ConnectionsCardContainer } from "../container/Connections";
 import Link from "next/link";
 
+/**
+ * ConnectionsPresentation - Presentation component for displaying user connections
+ * 
+ * This component renders a list of user connections with infinite scrolling functionality.
+ * It handles different states including loading, error, and empty connections list.
+ * For the current user's profile, it also provides a button to find new connections.
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.connections - Array of connection objects to display
+ * @param {boolean} props.isMyProfile - Whether the profile being viewed belongs to the current user
+ * @param {Function} props.navigateTo - Function to handle navigation to other pages
+ * @param {Object} props.userInfo - Information about the profile owner
+ * @param {string} props.userInfo.name - Name of the profile owner
+ * @param {boolean} props.isLoading - Whether connections are currently being loaded
+ * @param {boolean} props.isFetchingNextPage - Whether the next page of connections is being fetched
+ * @param {boolean} props.isError - Whether an error occurred while fetching connections
+ * @param {Object} props.observerTarget - Ref object for infinite scrolling observation
+ * @returns {JSX.Element} Connections list with appropriate UI for different states
+ */
 export default function ConnectionsPresentation({
   connections,
   isMyProfile,

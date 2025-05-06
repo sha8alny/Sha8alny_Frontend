@@ -15,6 +15,34 @@ import { Cancel } from "@mui/icons-material";
 /**
  * @namespace profile
  * @module profile
+ * @description Component for managing profile visibility and custom username
+ */
+
+/**
+ * ModVisibilityPresentation - Multi-stage component for profile visibility and URL settings
+ * 
+ * This component allows users to:
+ * 1. Change their profile visibility (Public, Connections Only, Private)
+ * 2. Customize their profile URL by modifying their username
+ * 
+ * The component progresses through different stages:
+ * - Stage 0: Form for editing settings
+ * - Stage 1: Loading state during update
+ * - Stage 2: Success state after update
+ * - Stage 3: Error state if update fails
+ * 
+ * @param {Object} props - Component props
+ * @param {number} props.currentStage - Current UI stage (0: edit, 1: loading, 2: success, 3: error)
+ * @param {Function} props.handleSave - Handler for saving username changes
+ * @param {Function} props.setOpen - Function to control dialog open state
+ * @param {string|null} props.usernameError - Error message for username validation
+ * @param {Function} props.handleChange - Handler for username input changes
+ * @param {Function} props.modifyVisibility - Handler for visibility setting changes
+ * @param {string} props.visibility - Current visibility setting ('Public', 'Connections Only', or 'Private')
+ * @param {string|null} props.error - Error message from failed operation
+ * @param {string} props.username - Current username value
+ * @param {boolean} props.modifyingVisibility - Whether visibility is currently being updated
+ * @returns {JSX.Element} Multi-stage UI for profile visibility and URL settings
  */
 export default function ModVisibilityPresentation({
   currentStage,

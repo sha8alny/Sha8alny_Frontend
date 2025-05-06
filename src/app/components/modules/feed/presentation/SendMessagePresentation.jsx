@@ -4,6 +4,28 @@ import {
   AvatarImage,
 } from "@/app/components/ui/Avatar";
 
+/**
+ * SendMessagePresentation - Dialog content for sending direct messages
+ * 
+ * This component enables users to select a connection to send a message to:
+ * - Displays a scrollable list of the user's connections
+ * - Shows connection details (name, headline, relationship)
+ * - Provides selection mechanism for choosing a recipient
+ * - Includes loading states, infinite scrolling, and error handling
+ * - Empty state when user has no connections
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.connections - Array of user's connections
+ * @param {Object|null} props.userToSend - Currently selected connection
+ * @param {Function} props.setUserToSend - State setter for selected connection
+ * @param {boolean} props.isLoading - Whether connections are loading
+ * @param {boolean} props.isFetchingNextPage - Whether additional connections are being fetched
+ * @param {boolean} props.isError - Whether connection loading encountered an error
+ * @param {Function} props.sendMessage - Handler for sending the message
+ * @param {Object} props.observerTarget - Ref for infinite scrolling
+ * @param {boolean} props.isSendingMessage - Whether message sending is in progress
+ * @returns {JSX.Element} Message dialog content with connection selection
+ */
 export default function SendMessagePresentation({
   connections,
   userToSend,
@@ -86,6 +108,15 @@ export default function SendMessagePresentation({
   );
 }
 
+/**
+ * UserCard - Selectable card representing a connection
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.connection - Connection user data
+ * @param {Object|null} props.userToSend - Currently selected connection
+ * @param {Function} props.setUserToSend - State setter for selected connection
+ * @returns {JSX.Element} Selectable connection card
+ */
 const UserCard = ({ connection, userToSend, setUserToSend }) => {
   return (
     <div
@@ -136,6 +167,11 @@ const UserCard = ({ connection, userToSend, setUserToSend }) => {
   );
 };
 
+/**
+ * ConnectionsSkeleton - Loading placeholder for connections
+ * 
+ * @returns {JSX.Element} Animated loading skeleton for a connection
+ */
 const ConnectionsSkeleton = () => {
   return (
     <div

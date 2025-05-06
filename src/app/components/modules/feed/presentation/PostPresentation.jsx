@@ -72,6 +72,106 @@ import ReactionsContainer from "../container/ReactionsContainer";
 import SendMessageContainer from "../container/SendMessageContainer";
 import EditPostPresentation from "./EditPostPresentation";
 
+/**
+ * PostPresentation - Comprehensive presentation component for rendering social media posts
+ * 
+ * This complex component renders a complete social media post with multiple features:
+ * - User profile information with profile picture, name, relation, and follow capability
+ * - Post content display with text, hashtags, user tags, and timestamps
+ * - Media rendering for multiple content types (images, videos, documents)
+ * - Interactive image carousel with navigation controls and loading states
+ * - Reaction system with multiple reaction types and animations
+ * - Comment section with expanding/collapsing functionality
+ * - Action buttons for interactions (like, comment, repost, share, etc.)
+ * - Dropdown menu with additional actions (save, report, delete, edit)
+ * - Modal dialogs for sharing, reporting, editing, and deletion workflows
+ * - Responsive layouts for different media configurations
+ * - Special handling for reposted content
+ * - Company verification indicators
+ * - Link detection and rendering in post content
+ * 
+ * The component includes comprehensive error handling, loading states,
+ * and accessibility features throughout all interactive elements.
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.commentSectionOpen - Whether comment section is expanded
+ * @param {Function} props.setCommentSectionOpen - State setter for comment section
+ * @param {string|boolean} props.isLiked - Current user's reaction to the post
+ * @param {boolean} props.isSaved - Whether post is saved by current user
+ * @param {Function} props.onLike - Handler for reaction actions
+ * @param {Function} props.onFollow - Handler for following post author
+ * @param {Function} props.onRepost - Handler for reposting content
+ * @param {Function} props.onReport - Handler for reporting content
+ * @param {Function} props.onSave - Handler for saving post
+ * @param {Function} props.onDelete - Handler for post deletion
+ * @param {Function} props.navigateTo - Navigation handler function
+ * @param {Object} props.post - Post data object with content and metadata
+ * @param {Object} props.userReactions - Available reaction types with icons
+ * @param {string} props.layoutClass - CSS class for media layout grid
+ * @param {Array<string>} props.itemClasses - CSS classes for individual media items
+ * @param {boolean} props.isVideo - Whether post contains video content
+ * @param {boolean} props.shareModalOpen - Whether share modal is open
+ * @param {Function} props.setShareModalOpen - State setter for share modal
+ * @param {boolean} props.reportModalOpen - Whether report modal is open
+ * @param {Function} props.setReportModalOpen - State setter for report modal
+ * @param {boolean} props.deleteModalOpen - Whether delete modal is open
+ * @param {Function} props.setDeleteModalOpen - State setter for delete modal
+ * @param {boolean} props.copied - Whether share URL is copied to clipboard
+ * @param {Function} props.copyToClipboard - Handler for copying to clipboard
+ * @param {string} props.shareUrl - URL for sharing the post
+ * @param {boolean} props.isDocument - Whether post contains document content
+ * @param {boolean} props.isFollowing - Whether user follows the post author
+ * @param {Function} props.setIsLoading - State setter for loading state
+ * @param {Function} props.setHasError - State setter for error state
+ * @param {boolean} props.hasError - Whether document loading encountered error
+ * @param {boolean} props.isLoading - Whether document is loading
+ * @param {string} props.fileName - Name of attached document file
+ * @param {string} props.fileExtension - Extension of attached document
+ * @param {boolean} props.isDeleting - Whether post deletion is in progress
+ * @param {boolean} props.errorDeleting - Whether deletion encountered error
+ * @param {string} props.errorDeleteMessage - Error message for deletion failure
+ * @param {Array} props.reportOptions - Available report reason options
+ * @param {number} props.reportState - Current state of reporting workflow
+ * @param {string} props.reportText - Custom report text
+ * @param {Function} props.setReportText - State setter for report text
+ * @param {string} props.reportType - Selected report reason
+ * @param {Function} props.setReportType - State setter for report reason
+ * @param {boolean} props.isSinglePost - Whether viewing in single post mode
+ * @param {boolean} props.imagesOpen - Whether image carousel is open
+ * @param {number} props.carouselIndex - Current index in image carousel
+ * @param {Function} props.openImageCarousel - Handler to open image carousel
+ * @param {Function} props.closeImageCarousel - Handler to close image carousel
+ * @param {Function} props.nextImage - Handler to show next carousel image
+ * @param {Function} props.prevImage - Handler to show previous carousel image
+ * @param {boolean} props.imageLoading - Whether carousel image is loading
+ * @param {Function} props.handleImageLoad - Handler for image load completion
+ * @param {Function} props.setCarouselIndex - State setter for carousel index
+ * @param {Function} props.setImageLoading - State setter for image loading state
+ * @param {boolean} props.reactAnim - Whether reaction animation is active
+ * @param {Function} props.handleAnimEnd - Handler for animation end
+ * @param {Object} props.allReactions - Organized reaction data
+ * @param {number} props.numReacts - Total number of reactions
+ * @param {boolean} props.editModalOpen - Whether edit modal is open
+ * @param {Function} props.setEditModalOpen - State setter for edit modal
+ * @param {Function} props.onEdit - Handler for submitting post edit
+ * @param {string} props.postText - Post text content for editing
+ * @param {Function} props.setPostText - State setter for post text
+ * @param {Array} props.postTags - Hashtags for post
+ * @param {Function} props.setPostTags - State setter for post tags
+ * @param {Array} props.postKeywords - Keywords for post
+ * @param {Function} props.setPostKeywords - State setter for keywords
+ * @param {Array} props.postMedia - Media attachments for post
+ * @param {Function} props.setPostMedia - State setter for media
+ * @param {Array} props.postPhotos - Photo attachments for post
+ * @param {Function} props.setPostPhotos - State setter for photos
+ * @param {Object} props.postVideo - Video attachment for post
+ * @param {Function} props.setPostVideo - State setter for video
+ * @param {Object} props.postDocument - Document attachment for post
+ * @param {Function} props.setPostDocument - State setter for document
+ * @param {boolean} props.isEditing - Whether post edit is in progress
+ * @param {boolean} props.errorEditing - Whether editing encountered error
+ * @returns {JSX.Element} Complex post component with all interactive elements
+ */
 export default function PostPresentation({
   commentSectionOpen,
   setCommentSectionOpen,
@@ -946,6 +1046,14 @@ export default function PostPresentation({
   );
 }
 
+/**
+ * PostSkeleton - Loading placeholder for post content
+ * 
+ * Displays an animated skeleton UI matching the post structure while data is loading,
+ * providing visual continuity and preventing layout shifts when content arrives.
+ * 
+ * @returns {JSX.Element} Animated loading skeleton for a post
+ */
 export const PostSkeleton = () => {
   return (
     <Card className="w-full bg-foreground max-w-2xl mx-auto mb-4">

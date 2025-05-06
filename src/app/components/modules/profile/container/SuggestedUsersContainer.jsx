@@ -1,6 +1,7 @@
 /**
  * @namespace profile
  * @module profile
+ * @description Container component for displaying suggested users in profile context
  */
 "use client";
 import SuggestedUsers, {
@@ -8,6 +9,21 @@ import SuggestedUsers, {
 } from "@/app/components/layout/SuggestedUsers";
 import { useQuery } from "@tanstack/react-query";
 
+/**
+ * SuggestedUsersContainer - A flexible container for displaying suggested user lists
+ * 
+ * This component fetches user suggestions using the provided fetch function,
+ * applies optional transformations, and handles loading/error states.
+ * It supports custom relation formatting and filtering through helper functions.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.title - Title to display above the suggested users list
+ * @param {Function} props.fetchFunction - Function to fetch user suggestions from API
+ * @param {string} props.username - Username to pass to the fetch function
+ * @param {Function} props.navigateTo - Function to handle navigation when a user is clicked
+ * @param {Function} [props.helperFunction] - Optional function to transform or filter the data
+ * @returns {JSX.Element} Rendered SuggestedUsers component or loading skeleton
+ */
 export default function SuggestedUsersContainer({
   title,
   fetchFunction,
@@ -15,6 +31,12 @@ export default function SuggestedUsersContainer({
   navigateTo,
   helperFunction,
 }) {
+  /**
+   * Query to fetch suggested users with caching and refresh strategies
+   * - Uses the function name as part of the cache key for proper invalidation
+   * - Limits retries to prevent excessive API calls
+   * - Implements a 5-minute stale time for performance optimization
+   */
   const {
     data: suggestedUsers,
     isLoading,

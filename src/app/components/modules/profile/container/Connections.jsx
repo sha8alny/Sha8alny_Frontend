@@ -16,12 +16,31 @@ import { blockUser } from "@/app/services/privacy";
 import { removeConnection } from "@/app/services/connectionManagement";
 import { useToast } from "@/app/context/ToastContext";
 
+
+/**
+ * @namespace profile
+ * @module profile
+ */
+/**
+ * Connections component - Displays a user's connections in a dialog
+ *
+ * This component fetches and displays a paginated list of a user's connections.
+ * It includes infinite scrolling functionality to load more connections as the
+ * user scrolls through the list.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.userInfo - Information about the user whose connections to display
+ * @param {string} props.userInfo.username - Username of the user
+ * @param {number} props.userInfo.connectionsCount - Count of user's connections
+ * @returns {JSX.Element} Dialog component with connections list
+ */
 export default function Connections({ userInfo }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const observerTarget = useRef(null);
   const router = useRouter();
   const { isMyProfile } = useIsMyProfile();
 
+  // Fetch connections with infinite query for pagination
   const {
     data,
     fetchNextPage,
@@ -44,10 +63,19 @@ export default function Connections({ userInfo }) {
     initialPageParam: 1,
   });
 
+  /**
+   * Navigate to specified path using Next.js router
+   * @param {string} path - The path to navigate to
+   */
   const navigateTo = (path) => {
     router.push(path);
   };
 
+  /**
+   * Set up intersection observer for infinite scrolling
+   * This effect creates an observer that triggers loading more connections
+   * when the user scrolls to the bottom of the list
+   */
   useEffect(() => {
     if (!isDialogOpen) return;
 
@@ -79,6 +107,11 @@ export default function Connections({ userInfo }) {
 
   const connections = data?.pages.flatMap((page) => page) || [];
 
+  /**
+   * Format the connection date to a relative time string
+   * @param {string} dateString - ISO date string for when the connection was formed
+   * @returns {string} Formatted string (e.g., "Connected today", "Connected 2 weeks ago")
+   */
   const formatConnectedDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -114,6 +147,11 @@ export default function Connections({ userInfo }) {
     }
   };
 
+  /**
+   * Convert numeric connection degree to string representation
+   * @param {number} relation - Connection degree (0-3)
+   * @returns {string} String representation of connection degree (1st, 2nd, etc.)
+   */
   const changeRelation = (relation) => {
     switch (relation) {
       case 0:
@@ -127,6 +165,7 @@ export default function Connections({ userInfo }) {
     }
   };
 
+  // Process connections to add formatted date and relation text
   const allConnections = [...connections].map((connection) => ({
     ...connection,
     connectedAt: formatConnectedDate(connection?.connectedAt),
@@ -161,6 +200,19 @@ export default function Connections({ userInfo }) {
   );
 }
 
+/**
+ * ConnectionsCardContainer - Container component for individual connection cards
+ *
+ * This component handles the logic for connection-related actions like blocking
+ * users and removing connections.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.connection - Connection data to display
+ * @param {string} props.connection.username - Username of the connection
+ * @param {Function} props.navigateTo - Function to navigate to a different page
+ * @param {boolean} props.isMyProfile - Whether this is the current user's profile
+ * @returns {JSX.Element} Connection card with action handlers
+ */
 export const ConnectionsCardContainer = ({
   connection,
   navigateTo,
@@ -172,14 +224,23 @@ export const ConnectionsCardContainer = ({
   const queryClient = useQueryClient();
   const toast = useToast();
 
+  /**
+   * Handle blocking a user
+   * Triggers the block user mutation
+   */
   const handleBlock = () => {
     handleBlockMutation.mutate(connection?.username);
   };
 
+  /**
+   * Handle removing a connection
+   * Triggers the remove connection mutation
+   */
   const handleRemoveConnection = () => {
     handleDeleteMutation.mutate(connection?.username);
   };
 
+  // Mutation for blocking a user
   const handleBlockMutation = useMutation({
     mutationFn: (username) => blockUser(username),
     onSuccess: () => {
@@ -190,6 +251,7 @@ export const ConnectionsCardContainer = ({
     },
   });
 
+  // Mutation for removing a connection
   const handleDeleteMutation = useMutation({
     mutationFn: (username) => removeConnection(username),
     onSuccess: () => {
